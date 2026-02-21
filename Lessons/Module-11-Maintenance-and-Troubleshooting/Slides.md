@@ -751,19 +751,26 @@ openclaw config tools elevated off    # Disable elevated mode
 
 ---
 
-## Command Cheat Sheet: Configuration and Channels
+## Command Cheat Sheet: Configuration
 
 ```bash
-# Configuration
 openclaw config                       # Open configuration
 openclaw config gateway port          # Check/set port
 openclaw config provider key          # Update 🔑 API key
 openclaw config heartbeat interval    # Set heartbeat frequency
 openclaw config heartbeat model       # Set heartbeat model
+```
+
+---
+
+## Command Cheat Sheet: Channels and Cron Jobs
+
+```bash
 # Channels
 openclaw channels add [channel]       # Add messaging channel
 openclaw channels login               # Re-authenticate
 openclaw config channels [ch] dm-mode # Check/set DM mode
+
 # Cron Jobs
 openclaw cron list                    # List scheduled jobs
 openclaw cron add [name] --schedule [cron] --task [desc]

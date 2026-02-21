@@ -533,13 +533,22 @@ as my personal AI assistant.
 Please remember all of this.
 ```
 
-### Alternative: Let Your Agent Interview You
+<!-- Speaker notes: The template continues here. Make sure students fill in every section — vague goals are useless. The alternative interview approach on the next slide is often easier for people who struggle with self-description. -->
+
+---
+
+## Alternative: Let Your Agent Interview You
+
+Instead of writing a brain dump from scratch, let the agent ask:
 
 ```
 I want you to interview me. Ask me questions to build
 my SOUL.md and USER.md files. One question at a time.
 ```
-Often better -- the agent knows what format it needs.
+
+- Often better -- the agent knows what format it needs
+- Less intimidating for people who struggle with self-description
+- The agent asks targeted follow-up questions you would not think of
 
 ---
 
@@ -602,9 +611,7 @@ patience, directness, and quiet confidence.
 
 **Choosing your own name:**
 
-- Pick something you enjoy saying — you will use it often
-- Give it meaning (mythology, literature, history)
-- Avoid generic names like "Assistant" or "Bot"
+- Pick something meaningful you enjoy saying — you will use it often
 - The name becomes permanent in Module 05 when we edit `IDENTITY.md`
 
 ---
@@ -676,9 +683,7 @@ Tests: memory of your background, planning ability, personalization.
 
 ---
 
-## More First Conversations
-
-### Conversation 3: Test the Safety Boundary
+## Conversation 3: Test the Safety Boundary
 
 ```
 Before you do anything, tell me: what files exist
@@ -689,7 +694,12 @@ my permission.
 
 Tests: respect for "ask before acting," judgment about sensitive actions.
 
-### Conversation 4: Ask Your Agent to Reflect
+- A well-configured agent should pause and explain, not just act
+- If it lists files without asking, revisit your rules in the brain dump
+
+---
+
+## Conversation 4: Ask Your Agent to Reflect
 
 ```
 What do you know about me so far? Summarize what
@@ -698,6 +708,9 @@ thing you can help me with.
 ```
 
 Tests: how well your agent absorbed your brain dump.
+
+- The summary reveals gaps in your brain dump
+- Use this to identify what to add or clarify
 
 ---
 

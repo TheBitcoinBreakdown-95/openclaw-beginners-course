@@ -643,10 +643,20 @@ Memory systems fail in three predictable ways:
 
 | Tool | What It Does | Best For |
 |------|-------------|----------|
-| **QMD** | Local search combining BM25 + vectors + reranking | Power users who want full control |
-| **Mem0** | External memory layer with auto-capture + auto-recall | Compaction-proof persistent memory |
-| **Cognee** | Knowledge graphs for entity relationships | Enterprise and multi-agent setups |
-| **Obsidian** | Symlink memory folder or index vault via QMD | Users with existing Obsidian vaults |
+| **QMD** | Local search: BM25 + vectors + reranking | Power users wanting full control |
+| **Mem0** | Auto-capture + auto-recall memory layer | Compaction-proof persistence |
+| **Cognee** | Knowledge graphs for entity relationships | Enterprise / multi-agent setups |
+| **Obsidian** | Symlink or index vault via QMD | Users with existing Obsidian vaults |
+
+- **Start with QMD** for local search
+- Add **Mem0** if compaction keeps erasing context
+- **Cognee** only for multi-agent setups
+
+<!-- Speaker notes: The table gives an overview. Next slide dives deeper into QMD and Mem0 — the two tools most students will actually use. Cognee is enterprise-grade and rarely needed for personal agents. Obsidian integration is a bonus for users who already have vaults. -->
+
+---
+
+## QMD and Mem0 — Closer Look
 
 ### QMD (Recommended Starting Point)
 - Runs locally -- your data stays on your machine
@@ -656,11 +666,9 @@ Memory systems fail in three predictable ways:
 ### Mem0
 - Auto-captures and auto-recalls facts across conversations
 - **Compaction-proof** -- memory lives outside the context window
+- Best when `/compact` keeps erasing important context
 
-### Cognee
-- Builds knowledge graphs mapping entity relationships; best for enterprise/multi-agent setups
-
-> **Start with QMD** for local search. Add **Mem0** if compaction erases context. **Cognee** only for multi-agent setups.
+<!-- Speaker notes: QMD is the recommended starting point because it's local and privacy-preserving. Mem0 solves a specific problem: compaction data loss. If students aren't losing context to compaction, they don't need Mem0 yet. -->
 
 ---
 
@@ -686,15 +694,23 @@ Memory systems fail in three predictable ways:
 
 ---
 
-## Files 6-9: Supporting Files
+## Files 6-7: Tools and Heartbeat
 
 ### `TOOLS.md` — API Tools Documentation
 - Documents external tools and APIs the agent can access
 - Often auto-populated by installed 🐠 skills
+- You rarely edit this manually
 
 ### `HEARTBEAT.md` — Periodic Checks
 - Scheduled heartbeat tasks (every ~30 min)
-- Covered in Module 08
+- Covered in detail in Module 08
+- Controls what the agent does when you are not chatting
+
+<!-- Speaker notes: TOOLS.md is mostly auto-managed. HEARTBEAT.md becomes important in Module 08 when we set up cron jobs. For now, students just need to know these files exist. -->
+
+---
+
+## Files 8-9: Bootstrap and Boot
 
 ### `BOOTSTRAP.md` — First Boot Only
 - Runs once on very first ⛵ gateway startup, then deleted
@@ -702,7 +718,9 @@ Memory systems fail in three predictable ways:
 
 ### `BOOT.md` — Every Gateway Start
 - Runs on every ⛵ gateway restart
-- Startup tasks: check date, review schedule
+- Startup tasks: check date, review schedule, greet user
+
+<!-- Speaker notes: BOOTSTRAP.md is a one-time setup file — most students won't ever see it because it runs and deletes itself. BOOT.md is more useful: it defines what happens every time the gateway starts. Students can customize it later. -->
 
 ---
 
@@ -744,23 +762,16 @@ Your agent's response
 ## More Context Engineering Principles
 
 ### Principle 3: Use Structure
-
-- Use markdown headings, bullet points, tables
-- The AI parses structured text far better than prose paragraphs
-- Break information into clear, scannable sections
+- Markdown headings, bullets, and tables beat prose -- AI parses structured text far more accurately
 
 ### Principle 4: Update Regularly
-
-- Schedule a **monthly review** of all 9 files
-- Update goals, add new preferences, remove outdated info
+- Schedule a **monthly review** of all 9 files to remove stale info and add new goals
 
 ### Principle 5: Verbalize the Implicit
+- Write down knowledge you take for granted -- if it is not written, the AI cannot access it
+- Ask: "What do I always explain to new employees?"
 
-- Write down knowledge you take for granted
-- Ask yourself: "What do I always explain to new employees?"
-- If it is not written down, the AI cannot access it
-
-> **Verbalization is the most valuable skill of 2026.** Don't just say "I like short emails." Specify: tone, length, signature, when to CC, when to flag for review.
+<!-- Speaker notes: Verbalization is the most valuable skill of 2026. Don't just say "I like short emails." Specify: tone, length, signature, when to CC, when to flag for review. The more specific, the better. -->
 
 ---
 
@@ -768,23 +779,19 @@ Your agent's response
 
 **Dead files:** Sit on your hard drive unread. Tax returns, unfinished Word docs.
 
-**Living files:** Actively read and updated by your AI agent.
+**Living files:** Actively read and updated by your AI agent. The more you have, the smarter your agent becomes.
 
 ### Expand your living files:
 
-- `workspace/projects/portfolio-website.md` -- project status
-- `workspace/personal/health-goals.md` -- fitness tracking
-- `workspace/business/client-notes.md` -- client context
-
-```bash
-mkdir -p ~/.openclaw/workspace/{personal,business,projects}
-```
-
-> The more living files you have, the smarter your agent becomes.
+- `workspace/projects/` -- project status docs
+- `workspace/personal/` -- health goals, routines
+- `workspace/business/` -- client notes, invoices
 
 **Suggested categories:** `projects/`, `contacts/`, `interests/`, `procedures/`, `docs/`
 
 **Bonus:** Copy `OPERATIONS-Template.md` into your workspace -- written **for the agent** to diagnose problems.
+
+<!-- Speaker notes: To create the folders: mkdir -p ~/.openclaw/workspace/{personal,business,projects}. The key insight is that files inside the workspace are "living" because the agent reads them. Files sitting in your Downloads folder are "dead" to the agent. -->
 
 ---
 
@@ -815,20 +822,15 @@ Your workspace is precious. Back it up.
 
 ```bash
 cd ~/.openclaw
-git init
-git add -A
-git commit -m "Initial workspace backup"
-```
-
-**Regular backups:**
-
-```bash
-cd ~/.openclaw
+git init                                        # first time only
 git add -A
 git commit -m "Workspace update: $(date +%Y-%m-%d)"
 ```
 
-**Optional: Push to a private GitHub repo** (never public — contains personal info and API config).
+- Run `git add -A && git commit` regularly to save changes
+- **Optional:** Push to a **private** GitHub repo (never public -- contains personal info)
+
+<!-- Speaker notes: The git init only runs once. After that, students just need git add and git commit. Emphasize PRIVATE repo — the workspace contains API keys, personal preferences, and potentially sensitive notes. -->
 
 ---
 
@@ -873,16 +875,13 @@ git commit -m "Workspace update: $(date +%Y-%m-%d)"
 
 1. Restart the ⛵ gateway: `openclaw service restart`
 2. Open the 🐚 TUI: `openclaw tui`
-3. Ask your agent: *"What is your name, and what do you know about me?"*
-4. The response should reflect everything you wrote in the core files
-5. If it does not, check that you saved the files and restarted
+3. Ask: *"What is your name, and what do you know about me?"*
+4. If the response does not reflect your files, check that you saved and restarted
 
 ### Part 5: Back Up (5 min)
 
 ```bash
-cd ~/.openclaw
-git init
-git add -A
+cd ~/.openclaw && git init && git add -A
 git commit -m "Initial workspace: agent configured"
 ```
 

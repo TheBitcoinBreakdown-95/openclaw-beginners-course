@@ -529,6 +529,10 @@ curl -fsSL https://openclaw.ai/install.sh | bash
 - `-fsSL` = fail silently, no progress bar, follow redirects
 - Pipes the script into bash to execute
 
+---
+
+## Step 1: Install 🦞 OpenClaw (continued)
+
 **Expected output:**
 
 ```
@@ -536,9 +540,10 @@ Installing OpenClaw...
 Checking Node.js version... v22.x.x
 Installing OpenClaw packages...
 Installation complete!
-
 Run 'openclaw onboard' to get started.
 ```
+
+If you see "Installation complete!" you are ready for the onboarding wizard.
 
 ---
 
@@ -561,12 +566,10 @@ This starts an **interactive wizard** that asks a series of questions. We will w
 ### Question 1: Gateway Type
 
 ```
-? Gateway type:
-  > Local Gateway
-    Remote Gateway
+? Gateway type: > Local Gateway
 ```
 
-**Choose: Local Gateway** -- OpenClaw runs on this machine.
+**Choose: Local Gateway** -- runs on this machine.
 
 ### Question 2: Workspace Directory
 
@@ -574,9 +577,7 @@ This starts an **interactive wizard** that asks a series of questions. We will w
 ? Workspace directory: (~/.openclaw)
 ```
 
-**Choose: Accept the default** (press Enter)
-
-This creates `~/.openclaw/` in your Linux file system -- fast and correct. Do not move it to the Windows side.
+**Accept the default** (press Enter). Creates `~/.openclaw/` in your Linux file system. Do not move it to the Windows side.
 
 ---
 
@@ -619,19 +620,14 @@ The key starts with `sk-ant-...` and is very long.
 
 ## 🚩 Rough Waters: The Token Formatting Gotcha
 
-This is the **number one installation error** across all community guides.
-
-### The Problem
-Your clipboard can include hidden characters (line breaks, extra spaces) when copying from a browser. Pasting directly into the terminal **corrupts the key**.
+### The Problem (the #1 install error)
+Browsers add hidden characters (line breaks, spaces) when copying. Pasting directly into the terminal **corrupts the key**.
 
 ### The Solution -- The Notepad Trick
 1. Copy the 🔑 API key from the Anthropic console
-2. **Do NOT paste into the terminal yet**
-3. Open **Notepad** on Windows
-4. Paste into Notepad (`Ctrl + V`)
-5. Verify: **one single line**, no breaks, starts with `sk-ant-`
-6. Select all (`Ctrl + A`), copy (`Ctrl + C`)
-7. Paste into the terminal (`right-click` or `Ctrl + Shift + V`)
+2. Paste into **Notepad** on Windows -- verify it is **one single line** starting with `sk-ant-`
+3. Select all (`Ctrl + A`), copy (`Ctrl + C`)
+4. Paste into the terminal (`right-click` or `Ctrl + Shift + V`)
 
 ```
 ? Enter your Anthropic API key: sk-ant-api03-xxxx...
@@ -646,15 +642,12 @@ Your clipboard can include hidden characters (line breaks, extra spaces) when co
 ### Question 5: Model Selection
 
 ```
-? Select model:
-  > claude-opus-4-6
-    claude-sonnet-4-5
-    claude-haiku-4-5
+? Select model: > claude-opus-4-6
 ```
 
 **Choose: claude-opus-4-6** -- most capable, strongest prompt injection resistance.
 
-> In Module 09, you will configure cheaper models for routine tasks and keep Opus for important interactions.
+> Module 09 covers configuring cheaper models for routine tasks.
 
 ### Question 6: ⛵ Gateway Port
 
@@ -669,29 +662,23 @@ Your clipboard can include hidden characters (line breaks, extra spaces) when co
 ## Wizard Q7: ⛵ Gateway Bind
 
 ```
-? Gateway bind:
-  > Loopback
-    LAN
-    Tailscale
-    Custom
-    Auto
+? Gateway bind: > Loopback
 ```
 
-**Choose: Loopback** (most secure)
+**Choose: Loopback** (most secure -- only this computer can connect)
 
 | Option | Who Can Connect | When to Use |
 |--------|----------------|-------------|
 | **Loopback** | Only this computer | Default -- most secure |
-| **LAN** | Any device on your WiFi | Access from another local computer |
-| **Tailscale** | Devices on your Tailscale network | Secure remote access |
+| **LAN** | Devices on your WiFi | Access from another local machine |
+| **Tailscale** | Your Tailscale network | Secure remote access |
 | **Custom** | Whatever IP you specify | Advanced users only |
-| **Auto** | Automatic detection | May be less secure -- avoid |
 
-> You can change this later: `openclaw config gateway bind`
+> Change later with `openclaw config gateway bind`
 
 ---
 
-## Wizard Q8-Q10: Tailscale, Token, Channels
+## Wizard Q8-Q9: Tailscale and Token
 
 ### Question 8: Tailscale Exposure
 ```
@@ -703,32 +690,36 @@ Your clipboard can include hidden characters (line breaks, extra spaces) when co
 ```
 ? Gateway token: (leave blank to auto-generate)
 ```
-**Choose: Leave blank** -- auto-generates a secure random token. **Save it when displayed.**
+**Leave blank** -- auto-generates a secure random token. **Save it when displayed.**
 
-### Question 10: Chat Channels
+---
+
+## Wizard Q10: Chat Channels
+
 ```
-? Configure chat channels?
-  > Skip for now
-    WhatsApp / Telegram / Discord / Slack
+? Configure chat channels? > Skip for now
 ```
-**Choose: Skip for now** -- we set up Telegram in Module 06. Get the base working first.
+
+**Choose: Skip for now** -- we set up Telegram in Module 06.
+
+Get the base installation working first. You can always add channels later with `openclaw config channels`.
 
 ---
 
 ## Wizard Q11-Q14: 🐠 Skills, Hooks, Service
 
-### Q11: Skills -- **Skip all** (covered in Module 07)
+- **Q11: Skills** -- Skip all (covered in Module 07)
+- **Q12: Hooks** -- Enable BOOT.md and session 🪸 memory
+- **Q13: Service Runtime** -- Choose Node.js (only option)
+- **Q14: Install as Background Service:**
 
-### Q12: Hooks -- **Enable BOOT.md and session 🪸 memory**
-- **BOOT.md** runs on every gateway startup; **session memory** saves context between conversations
-
-### Q13: Service Runtime -- **Choose Node.js** (only option)
-
-### Q14: Install as Background Service
 ```
 ? Install gateway as background service? (Y/n)
 ```
+
 **Choose: Y** -- makes the ⛵ gateway start on boot and run 24/7.
+
+BOOT.md runs on every startup; session memory saves context between conversations.
 
 ---
 
@@ -740,18 +731,11 @@ The wizard finishes with output like this:
   Gateway configured
   AI provider connected (Anthropic - claude-opus-4-6)
   Daemon installed (systemd service)
-  Gateway started
-
   Dashboard:     http://127.0.0.1:18789/
   Gateway Token: abc123xyz... (save this!)
-
-  To open the TUI:  openclaw tui
-  To check status:  openclaw status
-  To view logs:     openclaw service logs
 ```
 
-### Save your gateway token immediately.
-Store it in a password manager, a secure note, or a safe text file. You need it for dashboard access.
+**Save your gateway token immediately** -- store it in a password manager or secure note. You need it for dashboard access.
 
 Retrieve it later with: `openclaw config gateway token`
 
@@ -778,22 +762,16 @@ openclaw service restart
 
 ## Step 4: Verify the Installation
 
-### Check ⛵ gateway status
+Run these three commands in order:
+
 ```bash
-openclaw status          # Look for: Gateway Status: Running
+openclaw status                      # Should show: Running
+openclaw doctor                      # All critical checks should pass
+openclaw security audit --deep --fix # Fixes file permissions
 ```
 
-### Check gateway health
-```bash
-openclaw doctor          # All critical checks should pass
-```
-Run `openclaw doctor fix` if any checks fail.
-
-### Run your first security audit
-```bash
-openclaw security audit --deep --fix
-```
-Fixes file permissions (700 for dirs, 600 for files).
+- If `doctor` reports failures, run `openclaw doctor fix`
+- Security audit sets dirs to 700 and files to 600
 
 ---
 
@@ -848,23 +826,26 @@ Hello! My name is [your name]. What's your name?
 
 ### Check the service status
 ```bash
-openclaw service status
+openclaw service status    # Look for: Active: active (running)
 ```
-Look for: **Active: active (running)**
 
 ### Test terminal independence
 1. **Close** your 🐚 Ubuntu terminal completely
-2. Wait 10 seconds
-3. Open your browser to `http://127.0.0.1:18789/`
-4. Dashboard should **still load**
+2. Wait 10 seconds, then open `http://127.0.0.1:18789/`
+3. Dashboard should **still load** -- the daemon kept it alive
 
-### Useful service commands
+---
+
+## Step 7: Service Commands Reference
+
 ```bash
 openclaw service start     # Start the daemon
 openclaw service stop      # Stop the daemon
 openclaw service restart   # Restart the daemon
 openclaw service logs      # View daemon logs
 ```
+
+Use `restart` after any config change. Use `logs` to debug startup issues.
 
 ---
 
@@ -892,15 +873,13 @@ openclaw service logs      # View daemon logs
 Complete this checklist before proceeding to Module 04:
 
 - [ ] `openclaw --version` shows a version number
-- [ ] `openclaw status` shows "Running"
-- [ ] `openclaw doctor` passes all critical checks
+- [ ] `openclaw status` shows "Running" and `openclaw doctor` passes
 - [ ] `openclaw security audit --deep` has no critical issues
-- [ ] `~/.openclaw/` is mode 700
 - [ ] Dashboard loads at `http://127.0.0.1:18789/`
-- [ ] TUI opens with `openclaw tui`
-- [ ] AI responds to a test message
+- [ ] TUI opens with `openclaw tui` and AI responds to a test message
 - [ ] ⛵ Gateway stays running after closing the terminal
 - [ ] Gateway token saved somewhere secure
+- [ ] `~/.openclaw/` directory is mode 700
 
 **Bonus:** Run `openclaw service logs` and read the last few lines.
 

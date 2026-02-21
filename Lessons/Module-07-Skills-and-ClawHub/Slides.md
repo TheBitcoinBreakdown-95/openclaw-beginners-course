@@ -583,21 +583,19 @@ openclaw skills inspect obsidian-notes
 
 - Does it request more permissions than it needs?
 - Does the markdown contain suspicious instructions?
-- Does it run commands unrelated to its purpose?
 - Is the author reputable? How many installs?
 
 **Red flags:**
 
 - Skills requesting elevated/admin access
 - Instructions to send data to external servers
-- Authors with no other published skills and no reviews
 - Instructions to disable security features
 
 <!-- Speaker notes: This is the most important step. Drilling this habit now prevents security incidents later. Skills are community-contributed — anyone can publish. Trust but verify. -->
 
 ---
 
-## Installing a Skill: Steps 3-5
+## Installing a Skill: Steps 3-4
 
 ### Step 3: Install (with version pinning)
 
@@ -607,13 +605,17 @@ openclaw skills install obsidian-notes --pin
 
 > **Always use `--pin`** to lock the version and detect integrity drift.
 
-### Step 4: Restart
+### Step 4: Restart the gateway
 
 ```bash
 openclaw service restart
 ```
 
-### Step 5: Test
+> Skills do NOT activate until you restart. This is the most common "it's not working" issue.
+
+---
+
+## Installing a Skill: Step 5 -- Test
 
 Open the TUI and try:
 
@@ -623,7 +625,7 @@ Can you list the notes in my Obsidian vault?
 
 Your agent should use the skill's instructions to interact with Obsidian.
 
-> Skills do NOT activate until you restart the ⛵ gateway. This is the most common "it's not working" issue.
+> If the skill does not respond, verify trigger words in the YAML front matter match what you typed.
 
 ---
 
@@ -667,15 +669,25 @@ Your agent should use the skill's instructions to interact with Obsidian.
 
 ---
 
-## Building a Custom 🐠 Skill
+## Building a Custom 🐠 Skill -- Step 1
 
-### Step 1: Create the file
+Create a new skill file in your workspace:
 
 ```bash
 nano ~/.openclaw/workspace/skills/daily-standup.md
 ```
 
-### Step 2: Write the YAML + markdown
+Custom skills use the exact same format as ClawHub skills. The only difference is you write them yourself and store them locally.
+
+> Custom skills live in `~/.openclaw/workspace/skills/`. One `.md` file per skill.
+
+<!-- Speaker notes: Custom skills follow the exact same format as ClawHub skills. The only difference is you write them yourself and store them in your workspace skills directory. -->
+
+---
+
+## Building a Custom 🐠 Skill -- Step 2
+
+Write the YAML front matter and markdown body:
 
 ```markdown
 ---
@@ -684,7 +696,6 @@ description: "Generates a daily standup report"
 triggers:
   - "standup"
   - "daily standup"
-  - "what did I do yesterday"
 ---
 
 # Daily Standup Generator
@@ -692,29 +703,20 @@ triggers:
 When the user asks for a standup, generate:
 ```
 
-<!-- Speaker notes: Custom skills follow the exact same format as ClawHub skills. The only difference is you write them yourself and store them in your workspace skills directory. -->
-
 ---
 
 ## Custom Skill: The Markdown Body
 
 ```markdown
 ## Format
-
-**Yesterday:**
-- [Check session history and memory]
-
-**Today:**
-- [Check user goals and scheduled tasks]
-
-**Blockers:**
-- [Any issues mentioned recently]
+**Yesterday:** [Check session history and memory]
+**Today:** [Check user goals and scheduled tasks]
+**Blockers:** [Any issues mentioned recently]
 
 ## Rules
-- Keep each section to 3-5 bullet points
-- Pull from actual history, don't make things up
+- Keep each section to 3-5 bullets
+- Pull from actual history, don't fabricate
 - If not enough info, ask the user
-- Format as clean markdown
 ```
 
 **Save** (`Ctrl + O`, Enter, `Ctrl + X`), **restart** (`openclaw service restart`), and **test** ("Give me my daily standup").
@@ -737,7 +739,7 @@ Build 🐠 skills that match YOUR workflow:
 
 ---
 
-## Skill Best Practices
+## Skill Best Practices (1 of 2)
 
 ### Write Better Descriptions
 Include **"Use when"** AND **"Don't use when"** in descriptions:
@@ -749,8 +751,12 @@ Don't use when user just wants a quick factual answer."
 ### Put Templates Inside Skills
 Templates cost **zero tokens when inactive** -- they only load when triggered. Build rich, detailed skills without context bloat.
 
+---
+
+## Skill Best Practices (2 of 2)
+
 ### Self-Improving Skills
-Add a "Lessons" section so your agent records what worked and failed. The agent never makes the same mistake twice.
+Add a "Lessons" section so your agent records what worked and failed:
 ```markdown
 ## Lessons Learned
 - 2026-02-15: User prefers bullet points over paragraphs
@@ -761,54 +767,52 @@ Keep **domain allowlists minimal**. Use `domain_secrets` for auth instead of emb
 
 ---
 
-## The "Twice = Skill" Rule & Channels as Departments
+## The "Twice = Skill" Rule
 
-### If You Do Something More Than Twice, Make a 🐠 Skill for It
-- The first time is exploration. The second time is a pattern. The **third time is waste**.
+### If you do something more than twice, make a 🐠 skill for it
+
+- First time is exploration. Second time is a pattern. **Third time is waste.**
 - Turn any repeated workflow into a skill and never explain the process again.
 
-### Channels as Departments
+> Ask yourself: "Have I explained this to my agent before?" If yes, write a skill so you never have to again.
+
+---
+
+## Channels as Departments
+
 Map each messaging channel to a specific skill:
 
-| Channel | Skill | Agent Behavior |
-|---------|-------|---------------|
-| `#x-scan` | X/Twitter skill | Scan threads, summarize posts, draft replies |
-| `#finances` | Finance skill | Track expenses, check markets, generate reports |
-| `#writing` | Writing skill | Draft, edit, format content |
-| `#research` | Research skill | Deep search, summarize sources, save findings |
+| Channel | Skill | Behavior |
+|---------|-------|----------|
+| `#x-scan` | X/Twitter | Scan threads, summarize, draft replies |
+| `#finances` | Finance | Track expenses, check markets |
+| `#research` | Research | Deep search, summarize sources |
 
-- The agent knows what **"mode" to be in** based on the channel it receives a message from
-- Gives you **multi-agent benefits** (separation of concerns) with **single-agent costs** (shared context and 🪸 memory)
-- Add routing rules to `AGENTS.md` so the agent switches behavior automatically
+- The agent switches **"mode"** based on which channel the message arrives from
+- Add routing rules to `AGENTS.md` for automatic behavior switching
 
-> This pattern is the cheapest way to get specialized behavior without running multiple agents. One agent, many hats.
+> One agent, many hats -- multi-agent benefits at single-agent cost.
 
 ---
 
 ## Guardrail Skills
 
-Not all skills add features. Some skills **prevent disasters**.
+Some skills **prevent disasters** instead of adding features.
 
 ### The `anti-loop.md` Pattern
-A tiny skill (~50 tokens) that saves you from runaway cost spirals:
 
 ```markdown
 ---
 name: "anti-loop"
-description: "Prevents the agent from looping on errors"
 triggers: ["error", "failed", "retry"]
 ---
 If you see the same error twice, STOP and ask the user.
-Check USER.md before asking questions the user
-may have already answered.
 ```
 
-### Why This Matters
-- **Loops on Opus can burn $5-20 in minutes** -- the agent retries the same failing approach over and over, each attempt consuming full-context tokens
-- A **50-token guardrail skill pays for itself instantly** -- one prevented loop saves more than the skill will ever cost
-- **Always check USER.md before asking questions** -- the user may have already documented the answer; asking again wastes their time and your tokens
+- **Loops on Opus burn $5-20 in minutes** -- the agent retries the same failing approach endlessly
+- A **50-token guardrail pays for itself instantly** -- one prevented loop saves more than it costs
 
-> Guardrail skills are the cheapest insurance in your entire setup. Build them before you build feature skills.
+> Build guardrail skills before feature skills. Cheapest insurance in your setup.
 
 <!-- Speaker notes: This is one of the most valuable patterns in the course. Students who have used Opus or any frontier model for agentic work will immediately relate to the pain of watching the agent loop on the same error 15 times. The anti-loop skill is trivial to write and prevents the single most expensive mistake in agentic AI work. -->
 
@@ -874,18 +878,15 @@ openclaw skills remove obsidian-notes
 ## ⚙️ Hands on Deck: Install One, Build One
 
 ### Part 1: Install from 🦀 ClawHub (10 min)
-1. Browse: `openclaw skills browse`
-2. Search for something relevant to you
-3. Inspect: `openclaw skills inspect [skill-name]`
-4. Check for security red flags
-5. Install: `openclaw skills install [skill-name]`
-6. Restart: `openclaw service restart`
-7. Test it in the TUI
+1. Browse and search: `openclaw skills browse`
+2. Inspect for red flags: `openclaw skills inspect [skill-name]`
+3. Install with pinning: `openclaw skills install [skill-name] --pin`
+4. Restart: `openclaw service restart`
+5. Test it in the TUI
 
 ### Part 2: Build a Custom Skill (15 min)
-1. Create: `nano ~/.openclaw/workspace/skills/my-skill.md`
-2. Write the YAML front matter and markdown instructions
-3. Save, restart, and test
+1. Create file: `nano ~/.openclaw/workspace/skills/my-skill.md`
+2. Write YAML front matter + markdown body, save, restart, and test
 
 ---
 

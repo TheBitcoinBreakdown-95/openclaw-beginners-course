@@ -558,10 +558,8 @@ wsl --install
 ```
 
 **What this does:**
-- Enables the WSL feature in Windows
-- Downloads the WSL2 Linux kernel
-- Downloads and installs Ubuntu
-- Sets WSL2 as the default version
+- Enables WSL2 and downloads the Linux kernel
+- Downloads and installs Ubuntu as the default distribution
 
 You should see messages about installing Virtual Machine Platform, WSL, and Ubuntu.
 
@@ -587,22 +585,18 @@ When you see `openclaw@YOURPC:~$` — that is your **🐚 Linux prompt**. You ar
 
 🦞 OpenClaw's daemon needs systemd. It is **not enabled by default** in WSL2.
 
-### Edit the WSL config file
+### Edit the WSL config file and add these lines
 
 ```bash
 sudo nano /etc/wsl.conf
 ```
-
-### Add these two lines
 
 ```
 [boot]
 systemd=true
 ```
 
-### Save and exit
-- `Ctrl + O` to save, then `Enter`
-- `Ctrl + X` to exit
+**Save and exit:** `Ctrl + O`, `Enter`, then `Ctrl + X`
 
 ---
 
@@ -675,15 +669,11 @@ sudo apt update && sudo apt upgrade -y
 sudo apt install -y git curl wget build-essential
 ```
 
-| Tool | Purpose |
-|------|---------|
-| `git` | Version control for your 🪸 workspace |
-| `curl` / `wget` | Download tools used by the installer |
-| `build-essential` | Compilation tools for npm packages |
+These provide version control, download utilities, and compilation tools needed by npm.
 
 ---
 
-## Step 6: Configure Power Settings
+## Step 6a: Power Settings — Disable Sleep
 
 For **24/7 operation**, your laptop must stay awake.
 
@@ -696,13 +686,28 @@ For **24/7 operation**, your laptop must stay awake.
 powercfg /hibernate off
 ```
 
-### Display can turn off -- that's fine
+### Display can turn off — that's fine
 - "Turn off screen after" → **5 minutes** (display off, computer still runs)
 
-### Verify
-Lock screen (`Win + L`), wait a minute, unlock, run `uptime` -- should show continuous uptime.
-
 <!-- Speaker notes: Keep it plugged in. Running 24/7 on battery is not practical. -->
+
+---
+
+## Step 6b: Power Settings — Verify
+
+### Confirm your laptop stays awake
+
+1. Lock screen (`Win + L`)
+2. Wait one minute
+3. Unlock and run:
+
+```bash
+uptime
+```
+
+You should see **continuous uptime** — not a fresh boot time. If it restarted, your sleep settings did not apply. Recheck the Power & sleep panel.
+
+<!-- Speaker notes: Quick sanity check. If uptime resets, sleep was still enabled somewhere. -->
 
 ---
 
@@ -727,20 +732,16 @@ Files in `/home/openclaw/` are fast. Files through `/mnt/c/` are **significantly
 
 Tailscale lets you access 🦞 OpenClaw from your phone or another computer. **Skip if** you'll only use this laptop.
 
-### Setup:
+### Setup
 1. Create account at **tailscale.com** (free plan works)
-2. Install on **Windows** (download from website)
-3. Install inside **WSL2** and authorize:
+2. Install on **Windows** (download from website) and inside **WSL2**:
 
 ```bash
 curl -fsSL https://tailscale.com/install.sh | sh
 sudo tailscale up
 ```
 
-### What access looks like
-- From this laptop: `http://127.0.0.1:18789/`
-- From your phone (Tailscale): `http://100.x.x.x:18789/`
-- From everywhere else: **no access** (secure by default)
+From your phone via Tailscale: `http://100.x.x.x:18789/`. From everywhere else: **no access** (secure by default).
 
 ---
 
@@ -816,17 +817,13 @@ Run each command in your 🐚 Ubuntu terminal:
 
 Complete this checklist:
 
-- [ ] **RAM:** At least 8 GB (how much? ______ GB)
-- [ ] **Disk space:** At least 20 GB free (how much? ______ GB)
-- [ ] **Windows version:** 1903+ or Windows 11 (your version: ______)
-- [ ] **WSL2:** Running, VERSION 2
-- [ ] **Ubuntu username:** Created (username: ______)
+- [ ] **Hardware:** 8+ GB RAM, 20+ GB free disk, Windows 1903+
+- [ ] **WSL2:** Running, VERSION 2, Ubuntu username created
 - [ ] **systemd:** Enabled and running
-- [ ] **Node.js:** v22.x.x installed
-- [ ] **npm:** 10.x.x installed
+- [ ] **Node.js + npm:** v22.x.x and 10.x.x installed
 - [ ] **Git:** Installed
 - [ ] **Power settings:** Sleep disabled (if running 24/7)
-- [ ] **File system:** In `/home/username/`, not `/mnt/c/`
+- [ ] **File system:** Working in `/home/username/`, not `/mnt/c/`
 - [ ] **Bonus:** Navigate to `\\wsl$\Ubuntu\home\openclaw\` in File Explorer
 
 ---

@@ -600,7 +600,7 @@ If your agent responds with your name (from `USER.md`), everything is connected 
 
 ## Security: DM Pairing Mode
 
-### Verify it is active:
+Verify your DM mode:
 
 ```bash
 openclaw config channels telegram dm-mode
@@ -612,14 +612,12 @@ If it shows `open`, change it immediately:
 openclaw config channels telegram dm-mode pairing
 ```
 
-| Mode | What Happens | Security Level |
-|------|-------------|----------------|
-| **pairing** | Unknown senders get a code; you must approve | High |
-| **allowlist** | Only pre-approved user IDs can message | Very High |
-| **open** | Anyone can message the bot | **DANGEROUS** |
-| **disabled** | Bot does not respond to any DMs | Maximum (but useless) |
+| Mode | What Happens |
+|------|-------------|
+| **pairing** | Unknown senders must enter a code you approve (recommended) |
+| **open** | Anyone can message the bot -- **NEVER use this** |
 
-> **Tip:** Run `openclaw doctor` after connecting any new 🪢 channel to surface risky DM policies.
+> **Tip:** Run `openclaw doctor` after connecting any channel. Also consider `allowlist` mode for maximum security.
 
 <!-- Speaker notes: This is the most important security slide in the module. Emphasize that "open" mode is never acceptable for a personal agent. -->
 
