@@ -760,12 +760,10 @@ openclaw config gateway port          # Check/set port
 openclaw config provider key          # Update 🔑 API key
 openclaw config heartbeat interval    # Set heartbeat frequency
 openclaw config heartbeat model       # Set heartbeat model
-
 # Channels
 openclaw channels add [channel]       # Add messaging channel
 openclaw channels login               # Re-authenticate
 openclaw config channels [ch] dm-mode # Check/set DM mode
-
 # Cron Jobs
 openclaw cron list                    # List scheduled jobs
 openclaw cron add [name] --schedule [cron] --task [desc]

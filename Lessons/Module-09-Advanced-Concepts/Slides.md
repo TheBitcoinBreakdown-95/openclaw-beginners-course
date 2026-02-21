@@ -728,26 +728,23 @@ Everything else: a **specialist library** (36+ types) spawned on demand by core 
 ## The Freshman Rule & 🐙 Multi-Agent 🪸 Memory
 
 ### The Freshman Rule
-- **One task per agent at a time** -- do not stack requests
-- Give **ground-up instructions every time** -- assume the agent knows nothing about the project unless it is written in files
-- If it is not in files, **it does not exist** -- do not assume agents remember project history from past sessions
+- **One task at a time** -- do not stack requests
+- **Ground-up instructions every time** -- assume the agent knows nothing unless it is in files
+- **If it is not in files, it does not exist** -- never assume agents remember past sessions
 
 ### Multi-Agent Memory: 4-Layer Architecture
 
 | Layer | What | Example |
 |-------|------|---------|
-| **Layer 1: Private memory** | Each agent has its own `MEMORY.md` | Midas remembers crypto positions; Sam remembers email threads |
-| **Layer 2: Shared directory** | A common `_shared/` folder all agents can read | User profile, agent roster, naming conventions |
-| **Layer 3: QMD shared paths** | Cross-agent search via QMD with shared indexed paths | Any agent can search another agent's docs folder |
-| **Layer 4: Coordinator agent** | A dedicated agent that maintains consistency across the team | Resolves conflicts, propagates updates, enforces conventions |
+| **1: Private** | Each agent has its own `MEMORY.md` | Midas knows crypto; Sam knows email |
+| **2: Shared dir** | A common `_shared/` folder all agents read | User profile, roster, conventions |
+| **3: QMD paths** | Cross-agent search via shared indexed paths | Any agent searches another's docs |
+| **4: Coordinator** | Dedicated agent maintaining consistency | Resolves conflicts, propagates updates |
 
 ### The Principle
-Treat agent memory like **human team documentation**:
-- Some docs are shared (company wiki, style guide)
-- Some docs are private (personal notes, task-specific context)
-- A team lead keeps everyone aligned
+Treat agent memory like **team documentation** -- shared docs (wiki, style guide), private docs (notes, task context), and a team lead keeping everyone aligned.
 
-> **If you would not expect a new employee to know something without documentation, do not expect your agent to know it either.**
+> **If you would not expect a new employee to know it without docs, do not expect your agent to know it either.**
 
 ---
 

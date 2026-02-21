@@ -486,17 +486,17 @@ Everything about your 🦞 agent lives in one place:
 
 ## The 9 Core Files — Overview
 
-| File | Purpose | One-Line Summary |
-|------|---------|-----------------|
-| `IDENTITY.md` | Who the agent is | Name, role, core purpose |
-| `SOUL.md` | Personality and tone | Communication style, values |
-| `USER.md` | Information about you | Your brain dump, made permanent |
-| `MEMORY.md` | 🪸 Long-term memory | Facts, decisions, learnings |
-| `AGENTS.md` | Operating rules | Permissions and boundaries |
+| File | Purpose | Summary |
+|------|---------|---------|
+| `IDENTITY.md` | Who the agent is | Name, role, purpose |
+| `SOUL.md` | Personality/tone | Style, values |
+| `USER.md` | Info about you | Brain dump, permanent |
+| `MEMORY.md` | 🪸 Long-term memory | Facts, decisions |
+| `AGENTS.md` | Operating rules | Permissions, boundaries |
 | `TOOLS.md` | API tools docs | External integrations |
-| `HEARTBEAT.md` | Periodic check instructions | What to do on scheduled checks |
-| `BOOTSTRAP.md` | First boot only | One-time setup (then deleted) |
-| `BOOT.md` | Every gateway start | Startup routine tasks |
+| `HEARTBEAT.md` | Periodic checks | Scheduled check tasks |
+| `BOOTSTRAP.md` | First boot only | One-time setup |
+| `BOOT.md` | Every gateway start | Startup tasks |
 
 <!-- Speaker notes: There are nine files. Students don't need to memorize all nine today. The "Big Three" — identity, soul, user — are where they should spend 80% of their time. -->
 
@@ -504,11 +504,10 @@ Everything about your 🦞 agent lives in one place:
 
 ## File 1: IDENTITY.md
 
-**Purpose:** Defines your agent's name, role, and fundamental identity.
+**Purpose:** Your agent's name, role, and identity.
 
 ```markdown
 # Identity
-
 Name: [Your Agent's Name]
 Role: Personal AI Assistant
 Creator: [Your name]
@@ -519,27 +518,23 @@ as a dedicated aide, helping with research, planning,
 writing, organization, and anything else needed.
 ```
 
-- This is the first thing the AI reads about itself
-- Keep it clear and concise
-- Sets the foundation for all other behavior
+- First thing the AI reads about itself
+- Keep it clear and concise -- sets the foundation for all behavior
 
 ---
 
 ## File 2: SOUL.md
 
-**Purpose:** Defines personality, communication style, and emotional character.
+**Purpose:** Personality, communication style, emotional character.
 
 ```markdown
 ## Communication Style
-- Be direct and concise. No unnecessary filler.
+- Be direct and concise. No filler.
 - Match the energy of the question.
-- Don't start responses with "Great question!"
-
 ## Personality
 - Confident but not arrogant
 - Honest, even when uncomfortable
 - Proactive — suggest things unprompted
-
 ## What You Are Not
 - Not a yes-man — push back on bad ideas
 - Not a search engine — synthesize and advise
@@ -547,22 +542,22 @@ writing, organization, and anything else needed.
 
 <!-- Speaker notes: SOUL.md is where students define HOW your agent talks to them. The most common complaint about AI assistants is their tone. This file fixes that. -->
 
-> **Key insight:** SOUL.md defines WHO the AI is, not what it does. Think of it as personality DNA -- update rarely, with intention.
+> **Key insight:** SOUL.md defines WHO the AI is, not what it does. Personality DNA -- update rarely, with intention.
 
 ---
 
 ## Soul Design: What Research Shows
 
-**Generic labels do nothing.** "You are a helpful assistant" = zero measurable improvement (tested on 2,410 questions across 4 LLM families).
+**Generic labels do nothing.** "You are a helpful assistant" = zero measurable improvement (tested across 4 LLM families).
 
-**Detailed, experiential descriptions work.** Not "You are a mathematician" but "a number theorist with expertise in analytic methods and two decades studying prime gap distributions."
+**Detailed descriptions work.** Not "You are a mathematician" but "a number theorist with two decades studying prime gap distributions."
 
 ### Writing effective soul documents:
-- **Write beliefs, not rules:** "I've learned that [insight] because [experience]"
+- **Write beliefs, not rules:** "I've learned that [X] because [Y]"
 - **Budget 30-40% for anti-patterns** -- what the agent *won't* do
-- **Soul goes first** in system prompt ("Lost in the Middle" research: 20%+ accuracy drop for info in the middle)
+- **Soul goes first** in system prompt (20%+ accuracy drop for mid-prompt info)
 - **Wrong soul is worse than no soul** -- miscalibrated persona degrades output
-- **Let the agent write its own soul** -- LLM-generated souls outperform human-written ones
+- **Let the agent write its own soul** -- LLM-generated souls outperform human-written
 
 <!-- Speaker notes: This is research-backed, not opinion. The difference between a generic label and a detailed experiential soul is enormous. If your SOUL.md is just a title and adjectives, rewrite it using the "I've learned that X because Y" format. Budget 30-40% of the soul for anti-patterns: specific things the agent will NEVER do. -->
 
@@ -570,22 +565,16 @@ writing, organization, and anything else needed.
 
 ## File 3: USER.md
 
-**Purpose:** Stores everything the agent knows about you. This is where your Module 04 brain dump becomes permanent.
+**Purpose:** Everything the agent knows about you. Your brain dump, made permanent.
 
 ```markdown
 ## Basic Info
 - Name: [Your name]
 - Location: Austin, Texas
 - Timezone: Central (UTC-6)
-
 ## Goals
-### Immediate (This Month)
-- Launch portfolio website
-- Land 2 new freelance clients
-
-### Long-Term (1-3 Years)
-- $10K/month from independent business
-
+- Immediate: Launch portfolio website, land 2 freelance clients
+- Long-term: $10K/month from independent business
 ## Challenges
 - Starts too many projects simultaneously
 - Procrastinates on administrative tasks
@@ -595,7 +584,7 @@ writing, organization, and anything else needed.
 
 ## File 4: MEMORY.md
 
-**Purpose:** Stores facts, decisions, and learnings that persist across all conversations. This file **grows over time**.
+**Purpose:** Facts, decisions, and learnings that persist across sessions. **Grows over time**.
 
 ```markdown
 ## Important Decisions
@@ -610,11 +599,13 @@ writing, organization, and anything else needed.
 - User wants daily morning brief at 7:00 AM
 ```
 
-- Add entries as you go
-- Your agent may also update this file automatically via session hooks
+- Add entries as you go -- your agent may also update this file via session hooks
 - Review monthly to keep it current
 
-### Advanced: The 4-File 🪸 Memory System
+---
+
+## Advanced: The 4-File 🪸 Memory System
+
 When MEMORY.md gets too large, split into:
 - `MEMORY.md` -- long-term context (permanent)
 - `memory/active-tasks.md` -- in-progress work
@@ -622,9 +613,9 @@ When MEMORY.md gets too large, split into:
 - `memory/YYYY-MM-DD.md` -- daily notes (archived periodically)
 
 ### Optional 5th File: `memory/decisions.md`
-Records **why** decisions were made, not just what was decided. Without this, context compaction (`/compact`) can erase the reasoning behind past choices -- and the agent may revisit or reverse them.
+Records **why** decisions were made, not just what. Without this, `/compact` can erase the reasoning behind past choices -- and the agent may revisit or reverse them.
 
-> **Cautionary tale:** One user nearly had their agent drop a production database table after compaction erased the schema decision context that explained why the table existed.
+> **Cautionary tale:** One user nearly had their agent drop a production database table after compaction erased the schema decision context.
 
 ---
 
@@ -632,19 +623,19 @@ Records **why** decisions were made, not just what was decided. Without this, co
 
 Memory systems fail in three predictable ways:
 
-1. **Memory never saved** -- the LLM decides what to save and often skips important information
-2. **Memory saved but never retrieved** -- the agent answers from context instead of searching memory
-3. **Compaction destroys knowledge** -- context trimming (`/compact`) removes information that was never saved to files
+1. **Memory never saved** -- the LLM decides what to save and skips info
+2. **Memory saved but never retrieved** -- agent uses context, not memory
+3. **Compaction destroys knowledge** -- `/compact` removes unsaved info
 
 ### The Fix: Memory Flush with Custom Prompt
 - Set a **40K token threshold** for automatic memory flush
-- Use a custom prompt that forces the agent to write important facts to `MEMORY.md` before compaction
+- Force the agent to write facts to `MEMORY.md` before compaction
 - Without this, every `/compact` is a potential data loss event
 
 ### Additional Safeguards
-- **Context pruning:** Set `cache-ttl` to **6 hours** to expire stale context automatically
-- **Hybrid search:** Combine **vector search + BM25** for retrieval -- vectors catch semantic meaning, BM25 catches exact terms
-- **Session indexing:** Index completed sessions so the agent can search past conversations
+- **Context pruning:** Set `cache-ttl` to **6 hours** to expire stale context
+- **Hybrid search:** Combine **vector + BM25** for retrieval
+- **Session indexing:** Index completed sessions for search
 
 ---
 
@@ -659,38 +650,34 @@ Memory systems fail in three predictable ways:
 
 ### QMD (Recommended Starting Point)
 - Runs locally -- your data stays on your machine
-- Can index external docs: Obsidian vaults, Notion exports, project folders
-- Combines three retrieval methods for high-quality search results
+- Can index Obsidian vaults, Notion exports, project folders
+- Combines three retrieval methods for high-quality results
 
 ### Mem0
-- Auto-captures facts during conversations, auto-recalls them when relevant
+- Auto-captures and auto-recalls facts across conversations
 - **Compaction-proof** -- memory lives outside the context window
-- Best for users who forget to manually save important information
 
 ### Cognee
-- Builds knowledge graphs that map relationships between entities (people, projects, decisions)
-- Overkill for single-agent setups; shines in enterprise and multi-agent environments
+- Builds knowledge graphs mapping entity relationships; best for enterprise/multi-agent setups
 
-> **Start with QMD** for local search, add **Mem0** if you find compaction keeps erasing important context, and consider **Cognee** only if you are running multiple agents that need to share structured knowledge.
+> **Start with QMD** for local search. Add **Mem0** if compaction erases context. **Cognee** only for multi-agent setups.
 
 ---
 
 ## File 5: AGENTS.md
 
-**Purpose:** Defines what your agent can and cannot do. The employee handbook.
+**Purpose:** The employee handbook -- what your agent can and cannot do.
 
 ```markdown
 ## Always
-- Ask before executing destructive commands
-- Provide a step-by-step plan before multi-step ops
-- Cite sources when presenting facts
-- Be transparent about uncertainty
+- Ask before destructive commands
+- Plan before multi-step operations
+- Cite sources; be transparent about uncertainty
 
 ## Never
-- Never access email without explicit permission
+- Never access email without permission
 - Never send messages without approval
-- Never install software without asking
-- Never delete files without confirmation
+- Never install software or delete files without asking
 
 ## Default Behavior
 - Simple questions: answer directly, no preamble
@@ -705,9 +692,9 @@ Memory systems fail in three predictable ways:
 - Documents external tools and APIs the agent can access
 - Often auto-populated by installed 🐠 skills
 
-### `HEARTBEAT.md` — Periodic Check Instructions
-- What to do during scheduled heartbeat checks (every ~30 min)
-- Covered in detail in Module 08
+### `HEARTBEAT.md` — Periodic Checks
+- Scheduled heartbeat tasks (every ~30 min)
+- Covered in Module 08
 
 ### `BOOTSTRAP.md` — First Boot Only
 - Runs once on very first ⛵ gateway startup, then deleted
@@ -715,30 +702,21 @@ Memory systems fail in three predictable ways:
 
 ### `BOOT.md` — Every Gateway Start
 - Runs on every ⛵ gateway restart
-- Startup tasks: check date, review schedule, check for missed heartbeats
+- Startup tasks: check date, review schedule
 
 ---
 
 ## How the Files Work Together
 
 ```
-You send a message to your agent
-         |
-         v
-   Gateway loads context:
-   IDENTITY.md  --> Who is your agent
-   SOUL.md      --> How to communicate
-   USER.md      --> Who are you
-   MEMORY.md    --> What it knows
-   AGENTS.md    --> What it can do
-   TOOLS.md     --> What tools exist
-   + Your message + conversation history
-         |
-         v
-   AI Model (Claude) processes everything
-         |
-         v
-   Your agent's response
+You send a message
+    ↓
+Gateway loads: IDENTITY · SOUL · USER · MEMORY
+               AGENTS · TOOLS + conversation history
+    ↓
+AI Model (Claude) processes everything
+    ↓
+Your agent's response
 ```
 
 **Editing these files = changing your agent's behavior before every interaction.**
@@ -753,13 +731,13 @@ You send a message to your agent
 
 **Bad:** `Be helpful and nice.`
 
-**Good:** `When I ask a question, answer directly without preamble. If I'm wrong, tell me directly. When giving recommendations, give exactly 3 options with pros and cons.`
+**Good:** `Answer directly, no preamble. If I'm wrong, say so. Give exactly 3 options with pros/cons.`
 
 ### Principle 2: Write for the Machine
 
 **Bad:** `I work in tech.`
 
-**Good:** `I'm a freelance web developer specializing in React and Next.js. My typical project takes 2-4 weeks and costs $3,000-$8,000.`
+**Good:** `Freelance React/Next.js developer. Typical project: 2-4 weeks, $3K-$8K.`
 
 ---
 
@@ -788,36 +766,25 @@ You send a message to your agent
 
 ## Living Files vs. Dead Files
 
-**Dead files:** Sit on your hard drive unread. Tax returns from 2019. That Word doc you never finished.
+**Dead files:** Sit on your hard drive unread. Tax returns, unfinished Word docs.
 
-**Living files:** Actively read, used, and updated by your AI agent. Your core files are living files.
+**Living files:** Actively read and updated by your AI agent.
 
 ### Expand your living files:
 
-- `~/.openclaw/workspace/projects/portfolio-website.md` — Project status and decisions
-- `~/.openclaw/workspace/personal/health-goals.md` — Fitness tracking
-- `~/.openclaw/workspace/business/client-notes.md` — Client context
+- `workspace/projects/portfolio-website.md` -- project status
+- `workspace/personal/health-goals.md` -- fitness tracking
+- `workspace/business/client-notes.md` -- client context
 
 ```bash
-mkdir -p ~/.openclaw/workspace/personal
-mkdir -p ~/.openclaw/workspace/business
-mkdir -p ~/.openclaw/workspace/projects
+mkdir -p ~/.openclaw/workspace/{personal,business,projects}
 ```
 
 > The more living files you have, the smarter your agent becomes.
 
-### Suggested living file categories:
-`projects/`, `contacts/`, `interests/`, `procedures/`, `docs/` (saved web research)
+**Suggested categories:** `projects/`, `contacts/`, `interests/`, `procedures/`, `docs/`
 
-### Bonus: OPERATIONS.md Template
-
-Copy the course's operational knowledge file into your workspace:
-
-```bash
-cp /path/to/course/Lessons/OPERATIONS-Template.md ~/.openclaw/workspace/OPERATIONS.md
-```
-
-Written **for the agent** -- deep troubleshooting knowledge so your agent can diagnose problems for you.
+**Bonus:** Copy `OPERATIONS-Template.md` into your workspace -- written **for the agent** to diagnose problems.
 
 ---
 
@@ -886,15 +853,15 @@ git commit -m "Workspace update: $(date +%Y-%m-%d)"
 ## ⚙️ Hands on Deck: Customize Your 9 Core Files
 
 ### Part 1: Edit the Big Three (20 min)
-1. **`IDENTITY.md`** — Name, role, purpose (at least 5 lines)
-2. **`SOUL.md`** — Personality and communication style (at least 10 lines)
-3. **`USER.md`** — Transfer your brain dump into structured format (at least 20 lines)
+1. **`IDENTITY.md`** — Name, role, purpose (5+ lines)
+2. **`SOUL.md`** — Personality and style (10+ lines)
+3. **`USER.md`** — Brain dump in structured format (20+ lines)
 
 ### Part 2: Set Your Rules (10 min)
-- Edit **`AGENTS.md`** with at least 3 "always" rules and 3 "never" rules
+- Edit **`AGENTS.md`** with 3 "always" and 3 "never" rules
 
 ### Part 3: Start Your 🪸 Memory (5 min)
-- Edit **`MEMORY.md`** with today's date, your AI provider, and one goal
+- Edit **`MEMORY.md`** with today's date and one goal
 
 ---
 

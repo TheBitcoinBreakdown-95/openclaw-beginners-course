@@ -469,12 +469,11 @@ Launch the terminal chat interface:
 openclaw tui
 ```
 
-**Key elements of the TUI:**
-
-- **Top bar** — Shows the model name and token count
+**Key elements:**
+- **Top bar** — Model name and token count
 - **Middle area** — The conversation (your messages + AI responses)
 - **Bottom input** — Where you type messages and commands
-- **Token counter** — Shows how many tokens you have used in this session
+- **Token counter** — Tokens used in this session (climbs with every message)
 
 <!-- Speaker notes: Have everyone open the TUI now. Give them a minute to look around. Point out the token counter — it starts at zero and climbs with every message. -->
 
@@ -526,27 +525,21 @@ as my personal AI assistant.
 - Short-term (next 30 days): [Current focus]
 - Medium-term (next 6 months): [What to accomplish]
 - Long-term (1-3 years): [Bigger vision]
-
 **What I want you to help me with:**
 - [Scheduling, research, writing, coding, etc.]
-- [Be as specific as possible]
-
 **Rules for you:**
 - [E.g., "Don't sugarcoat things"]
 - [E.g., "Always ask before taking any action"]
-
 Please remember all of this.
 ```
 
 ### Alternative: Let Your Agent Interview You
 
-Instead of writing the brain dump yourself:
 ```
-I want you to interview me. Ask me questions
-to build my SOUL.md and USER.md files. One question
-at a time.
+I want you to interview me. Ask me questions to build
+my SOUL.md and USER.md files. One question at a time.
 ```
-The agent asks structured questions and writes the 🪸 memory files from your answers. Often produces better results because the agent knows what format it needs.
+Often better -- the agent knows what format it needs.
 
 ---
 
@@ -620,13 +613,12 @@ patience, directness, and quiet confidence.
 
 | Command | What It Does | When to Use |
 |---------|-------------|-------------|
-| `/help` | Lists all available commands | When you need to find a command |
-| `/status` | Shows model, tokens, gateway, channels | When you want a system overview |
-| `/compact` | Summarizes conversation to free tokens | Token counter above 50,000 |
-| `/new` | Starts a fresh conversation session | Switching topics entirely |
-| `/think <level>` | Controls thinking depth (off/minimal/low/medium/high/xhigh) | Complex reasoning tasks |
-| `/exit` | Leaves the TUI (also: Ctrl+C) | When you are done chatting |
-| `/config` | Opens configuration settings | When changing model/gateway/channels |
+| `/help` | Lists all available commands | Need to find a command |
+| `/status` | Shows model, tokens, gateway info | System overview |
+| `/compact` | Summarizes conversation to free tokens | Token counter above 50K |
+| `/new` | Starts a fresh session | Switching topics entirely |
+| `/think <level>` | Sets thinking depth (off/low/medium/high) | Complex reasoning tasks |
+| `/exit` | Leaves the TUI (also: Ctrl+C) | Done chatting |
 
 <!-- Speaker notes: Five essential commands cover 90% of daily use. /compact is the most important one students tend to forget. -->
 
@@ -668,20 +660,19 @@ patience, directness, and quiet confidence.
 Ask something you already know the answer to:
 
 ```
-What are the three most important principles
-of personal finance?
+What are the three most important principles of personal finance?
 ```
 
-Evaluate: Is it accurate? Well-structured? Does the tone match your brain dump preferences?
+Evaluate: Is it accurate? Does the tone match your brain dump preferences?
 
 ### Conversation 2: Ask for a Plan
 
 ```
-I want to learn Bitcoin in 30 days. Create a
-study plan — 30 minutes per day, complete beginner.
+I want to learn Bitcoin in 30 days. Create a study plan —
+30 minutes per day, complete beginner.
 ```
 
-Tests: memory of your background, structured planning, personalization.
+Tests: memory of your background, planning ability, personalization.
 
 ---
 
@@ -715,18 +706,14 @@ Tests: how well your agent absorbed your brain dump.
 **Add this to any request that involves action:**
 
 ```
-Before you do anything, give me a step-by-step
-plan of what you intend to do. Do not execute
-any commands until I approve the plan.
+Before you do anything, give me a step-by-step plan
+of what you intend to do. Do not execute any commands
+until I approve the plan.
 ```
 
-This creates a two-step safety process:
+This creates a safety loop: agent explains the plan, you approve or modify, then agent acts.
 
-1. Your agent explains what it will do
-2. You approve or modify the plan
-3. Only then does your agent act
-
-**Especially important for:** file operations, system commands, network operations, sending messages.
+**Especially important for:** file ops, system commands, network access, sending messages.
 
 ---
 

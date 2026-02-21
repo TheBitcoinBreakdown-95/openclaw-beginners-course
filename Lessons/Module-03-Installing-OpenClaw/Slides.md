@@ -488,18 +488,14 @@ Also decide which AI provider you want to use...
 
 ## 🚩 Rough Waters: Claude Max/Pro Subscriptions
 
-**Can you use your Claude Max or Pro subscription with 🦞 OpenClaw?**
+**Can you use your Claude Max or Pro subscription with 🦞 OpenClaw?** No.
 
-### No.
-
-- Using Claude Max/Pro with OpenClaw is **against Anthropic's Terms of Service**
-- People have been **banned** for this
-- Getting banned means losing access to **all Anthropic products**
-- Some workarounds exist online -- we do **not** recommend them
+- Using Max/Pro with OpenClaw is **against Anthropic's Terms of Service**
+- People have been **banned** -- losing access to **all Anthropic products**
+- Workarounds exist online -- we do **not** recommend them
 
 ### The correct approach:
-- Use the **Anthropic API** with a separate 🔑 API key
-- Pay-as-you-go billing
+- Use the **Anthropic API** with a separate 🔑 API key (pay-as-you-go)
 - Set a **spending limit** (start at $20-50/month)
 - Module 09 covers how to reduce costs by up to **90%**
 
@@ -658,7 +654,7 @@ Your clipboard can include hidden characters (line breaks, extra spaces) when co
 
 **Choose: claude-opus-4-6** -- most capable, strongest prompt injection resistance.
 
-> Cost-saving tip: In Module 09, you will configure cheaper models for routine tasks and keep Opus for important interactions.
+> In Module 09, you will configure cheaper models for routine tasks and keep Opus for important interactions.
 
 ### Question 6: ⛵ Gateway Port
 
@@ -666,7 +662,7 @@ Your clipboard can include hidden characters (line breaks, extra spaces) when co
 ? Gateway port: (18789)
 ```
 
-**Choose: Accept the default** (press Enter). Port 18789 is the standard OpenClaw port.
+**Accept the default** (press Enter). Port 18789 is the standard OpenClaw port.
 
 ---
 
@@ -721,18 +717,14 @@ Your clipboard can include hidden characters (line breaks, extra spaces) when co
 
 ## Wizard Q11-Q14: 🐠 Skills, Hooks, Service
 
-### Question 11: Skills
-**Skip all** -- no 🐠 skills for now. We cover them in Module 07.
+### Q11: Skills -- **Skip all** (covered in Module 07)
 
-### Question 12: Hooks
-**Enable: BOOT.md and session 🪸 memory**
-- **BOOT.md** -- runs on every gateway startup (morning briefings)
-- **session memory** -- saves context between conversations
+### Q12: Hooks -- **Enable BOOT.md and session 🪸 memory**
+- **BOOT.md** runs on every gateway startup; **session memory** saves context between conversations
 
-### Question 13: Service Runtime
-**Choose: Node.js** (only option)
+### Q13: Service Runtime -- **Choose Node.js** (only option)
 
-### Question 14: Install as Background Service
+### Q14: Install as Background Service
 ```
 ? Install gateway as background service? (Y/n)
 ```
@@ -788,21 +780,20 @@ openclaw service restart
 
 ### Check ⛵ gateway status
 ```bash
-openclaw status
+openclaw status          # Look for: Gateway Status: Running
 ```
-Look for: **Gateway Status: Running**
 
 ### Check gateway health
 ```bash
-openclaw doctor
+openclaw doctor          # All critical checks should pass
 ```
-All critical checks should pass. Run `openclaw doctor fix` if any fail.
+Run `openclaw doctor fix` if any checks fail.
 
 ### Run your first security audit
 ```bash
 openclaw security audit --deep --fix
 ```
-Fixes file permissions (700 for directories, 600 for files).
+Fixes file permissions (700 for dirs, 600 for files).
 
 ---
 
@@ -835,6 +826,10 @@ A full-screen terminal interface opens. Type a simple greeting:
 ```
 Hello! My name is [your name]. What's your name?
 ```
+
+---
+
+## Step 6: Your First Chat (continued)
 
 **What should happen:**
 - Your message appears in the chat

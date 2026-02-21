@@ -740,25 +740,24 @@ Build 🐠 skills that match YOUR workflow:
 ## Skill Best Practices
 
 ### Write Better Descriptions
-Include **"Use when"** AND **"Don't use when"** in skill descriptions:
+Include **"Use when"** AND **"Don't use when"** in descriptions:
 ```yaml
 description: "Deep research. Use when user asks for analysis.
 Don't use when user just wants a quick factual answer."
 ```
 
 ### Put Templates Inside Skills
-Templates and reference material cost **zero tokens when the skill isn't active** -- they only load when triggered. Build rich, detailed skills without context bloat.
+Templates cost **zero tokens when inactive** -- they only load when triggered. Build rich, detailed skills without context bloat.
 
 ### Self-Improving Skills
-Add a "Lessons" section where your agent records what worked and what failed:
+Add a "Lessons" section so your agent records what worked and failed. The agent never makes the same mistake twice.
 ```markdown
 ## Lessons Learned
 - 2026-02-15: User prefers bullet points over paragraphs
 ```
-The agent never makes the same mistake twice.
 
 ### Skills + Networking = High Risk
-When skills have network access, keep **domain allowlists minimal**. Use `domain_secrets` for authentication instead of embedding 🔑 credentials in skill files.
+Keep **domain allowlists minimal**. Use `domain_secrets` for auth instead of embedding 🔑 credentials in skill files.
 
 ---
 
