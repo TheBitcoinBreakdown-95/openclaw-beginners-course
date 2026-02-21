@@ -1,0 +1,14 @@
+# Personal / development artifacts
+Activation/
+Research/
+GitHub-Repo/
+CLAUDE.md
+TRANSITION-PROMPT.md
+.claude/
+
+# OS / editor
+.DS_Store
+Thumbs.db
+*.swp
+*~
+.vscode/
