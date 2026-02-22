@@ -205,7 +205,9 @@ Beautiful. OpenClaw is installed. Now we wake it up and teach it who it's workin
 
 Type this command — and pay attention because there's a flag at the end that matters:
 
-`openclaw onboard --install-daemon`
+`npx openclaw onboard --install-daemon`
+
+Notice we're using `npx` at the front. That's important. The OpenClaw installer doesn't always add itself to your PATH — which means if you just type `openclaw` by itself, the terminal might say "command not found." That's NOT an error with your install. It just means the shortcut isn't set up. `npx` is the workaround — it finds and runs the package directly. We'll use `npx openclaw` for EVERY command in this module.
 
 That `--install-daemon` flag is important. It tells the wizard to also set up the background service so your agent keeps running even when you close the terminal. Without it, you'd have to do that manually later. With it, everything gets configured in one pass.
 
@@ -213,9 +215,11 @@ Hit enter.
 
 [pause]
 
-What you should see is an interactive wizard. It's going to ask you a series of questions — fourteen of them — one at a time. It waits for YOUR answer before moving on. There's no timer. There's no rush. If you need to think, think. If you need to ask me, ask.
+Now — if the terminal says "Need to install the following packages" and asks you to confirm — type `y` and press Enter. That's completely normal. It's downloading the OpenClaw package to your machine. Give it one to three minutes. It's downloading, not stuck. You'll see a progress bar or some output scrolling by. Let it work.
 
-And here's the beautiful part — if you mess something up? You can almost always fix it later by running `openclaw config` and changing individual settings. The wizard isn't a one-shot deal. So breathe. Relax. We're going to walk through EVERY question together.
+What you should see next is an interactive wizard. It's going to ask you a series of questions — fourteen of them — one at a time. It waits for YOUR answer before moving on. There's no timer. There's no rush. If you need to think, think. If you need to ask me, ask.
+
+And here's the beautiful part — if you mess something up? You can almost always fix it later by running `npx openclaw config` and changing individual settings. The wizard isn't a one-shot deal. So breathe. Relax. We're going to walk through EVERY question together.
 
 Fourteen questions. Fourteen answers. By the end, your agent is alive. Let's start.
 
@@ -268,6 +272,8 @@ Step three — and DO NOT skip this — set your spending limit. In the sidebar:
 Step four: create the actual API key. Settings, API Keys, click Create Key. Name it "OpenClaw" or whatever you want. Click Create. And now — LISTEN CAREFULLY — your API key appears. It starts with `sk-ant-` and it's long. Very long. And you can only see it ONCE. After you leave this page, it's gone forever. You'd have to make a new one.
 
 COPY IT. Right now. But — and here's the critical part — do NOT paste it into your terminal yet. There's one more step. And this step is the difference between your installation working on the first try and you spending forty-five minutes wondering why your perfectly valid API key is "invalid."
+
+Quick tip — if you created your API key on your phone or another computer and need to get it to this laptop, the easiest way is just email it to yourself and open the email in Edge on this machine. Copy it from the email, then do the Notepad trick we're about to cover. If you've got Tailscale set up from Module 02, you can also right-click a file on your other device and choose "Send with Tailscale" to beam it over. Either way works. Just get the key onto THIS machine's clipboard.
 
 ---
 
@@ -339,7 +345,7 @@ Custom — you specify an IP address. Advanced users only. If you don't know wha
 
 Auto — automatic detection. Skip this. "Auto" and "security" don't belong in the same sentence.
 
-Choose Loopback. Press enter. We can always change it later with `openclaw config gateway bind` if you decide you want phone access down the road. But for now? Lock it down. We can loosen later. You can never un-ring a security bell.
+Choose Loopback. Press enter. We can always change it later with `npx openclaw config` if you decide you want phone access down the road. But for now? Lock it down. We can loosen later. You can never un-ring a security bell.
 
 ---
 
@@ -379,7 +385,17 @@ Question fourteen: Install gateway as background service? YES. Since we used the
 
 [pause]
 
-And that... is the LAST question.
+Now — depending on your setup, the wizard might throw a few MORE questions at you after Q14. Don't panic. Here's what to do.
+
+If the wizard says "Gateway service already installed" and asks what to do — choose RESTART. It's already there from a previous attempt or from the daemon flag we passed, it just needs a fresh start. No drama.
+
+When it asks "How do you want to hatch your bot?" — choose "do this later." I know that sounds exciting, but we're going to test the TUI ourselves in a minute on our OWN terms. Don't let the wizard do it for us.
+
+When it asks "Enable bash shell completion?" — just say Yes. It's a convenience feature that lets you tab-complete OpenClaw commands in the terminal. Harmless and helpful. Say yes and move on.
+
+[pause]
+
+And THAT... is the last question. For real this time.
 
 ---
 
@@ -401,7 +417,7 @@ You just built something. Something real. Something that will be running on your
 
 Now — immediately — two things you need to do before the excitement makes you forget.
 
-First: SAVE YOUR GATEWAY TOKEN. It's displayed right there in the output. Copy it. Open a password manager, a notes app, a text file — anywhere secure. You need this token to access the web dashboard. If you lose it, you can retrieve it later with `openclaw config gateway token`, but let's not rely on that. Save it NOW.
+First: SAVE YOUR GATEWAY TOKEN. It's displayed right there in the output. Copy it. Open a password manager, a notes app, a text file — anywhere secure. You need this token to access the web dashboard. If you lose it, you can retrieve it later by running `cat ~/.openclaw/openclaw.json` and looking for the token field in that file — but let's not rely on that. Save it NOW.
 
 [pause]
 
@@ -409,15 +425,45 @@ Second thing — and this is important enough to get its own slide.
 
 ---
 
+## Slide 18b — Step 3b: Approve Device Pairing
+
+Alright, before we test anything, there's one more step that might pop up. OpenClaw has a security feature called device pairing. Think of it like your gateway asking for ID before letting anyone through the door. First time a new device tries to connect — whether that's the TUI, the dashboard, or anything else — the gateway says "Hold on. Who ARE you? I need to check the manifest."
+
+If you try to open the TUI or the dashboard and see "pairing required" — don't panic. This is GOOD. It means your security is working. It means your gateway doesn't just let any random process waltz onto the bridge. Here's what you do.
+
+Run this command:
+
+`npx openclaw devices list --json`
+
+You'll see a list of pending device requests. Look for the `requestId` field — it'll be a string of characters identifying the device that's trying to connect. Copy that ID.
+
+Then run:
+
+`npx openclaw devices approve [paste-the-requestId-here]`
+
+Replace the brackets with the actual ID you copied. Hit enter.
+
+[pause]
+
+Once approved, the TUI should connect. The dashboard should load. You only have to do this ONCE per device. It's like adding a crew member to the ship's roster — once they're on the list, the gateway recognizes them from now on.
+
+If you DON'T see the pairing prompt, that's fine too. Some installations handle this automatically during onboarding. But if it pops up, now you know exactly what to do. No mystery. No panic. Just approve and move on.
+
+[pause]
+
+---
+
 ## Slide 19 — Immediately After Onboarding: Install QMD
 
 Before you do ANYTHING else. Before you open the dashboard. Before you chat with your agent. Before you celebrate. Run these two commands:
 
-`openclaw skills install qmd`
+`npx clawhub install qmd`
+
+If the terminal says "Need to install the following packages: clawhub" — type y and press Enter. That's the ClawHub CLI — it's the skill marketplace tool, separate from the main OpenClaw command.
 
 Then:
 
-`openclaw service restart`
+`npx openclaw gateway restart`
 
 QMD is an on-device search engine for your agent's memory files. Here's why this matters and why it's FIRST on the post-install list.
 
@@ -437,11 +483,11 @@ Done? Good. Now let's make sure everything is shipshape.
 
 Trust but verify, crew. We're going to run three checks. Think of this as the post-launch inspection — checking the hull, testing the engines, scanning for leaks.
 
-Check one: Gateway status. Run `openclaw status`. What you're looking for is one phrase: "Gateway Status: Running." If it says Running, your engine is alive. You should also see your version number, the port (18789), the bind (loopback), and your provider (Anthropic, Claude Opus 4.6). Everything should match what we configured.
+Check one: Gateway status. Run `npx openclaw status`. What you're looking for is one phrase: "Gateway Status: Running." If it says Running, your engine is alive. You should also see your version number, the port (18789), the bind (loopback), and your provider (Anthropic, Claude Opus 4.6). Everything should match what we configured.
 
-Check two: Gateway health. Run `openclaw doctor`. This is your ship's doctor — it runs a full diagnostic. API key valid? Model reachable? Workspace accessible? Daemon active? You want all green checkmarks. If anything fails, the doctor will tell you what's wrong AND suggest fixes. You can even run `openclaw doctor fix` and it'll try to patch things up automatically.
+Check two: Gateway health. Run `npx openclaw doctor`. This is your ship's doctor — it runs a full diagnostic. API key valid? Model reachable? Workspace accessible? Daemon active? You want all green checkmarks. If anything fails, the doctor will tell you what's wrong AND suggest fixes. You can even run `npx openclaw doctor --fix` and it'll try to patch things up automatically.
 
-Check three: Security audit. Run `openclaw security audit --deep --fix`. This checks your file permissions, your gateway authentication, your bind settings — the whole security posture. The `--fix` flag means it automatically corrects anything it finds. It'll set proper permissions — 700 for directories, 600 for files — so only YOUR user account can read or write OpenClaw's configuration.
+Check three: Security audit. Run `npx openclaw security audit --deep --fix`. This checks your file permissions, your gateway authentication, your bind settings — the whole security posture. The `--fix` flag means it automatically corrects anything it finds. It'll set proper permissions — 700 for directories, 600 for files — so only YOUR user account can read or write OpenClaw's configuration.
 
 [ask the audience] Everyone getting green across the board? Any red flags? Any errors?
 
@@ -451,19 +497,21 @@ Three checks passed. Your ship is seaworthy. Now let's look around the bridge.
 
 ---
 
-## Slide 21 — Step 5: Access the Dashboard
+## Slide 21 — Step 5: Access the Dashboard (Optional on WSL)
 
-Time to see the pretty side of your operation. Open your WINDOWS web browser — Chrome, Edge, Firefox, whatever you've got — and go to:
+Time to see the pretty side of your operation. Fair warning though — the dashboard has a known authentication bug on WSL. It might not work. If it doesn't, that's fine — the TUI is the primary interface and does everything you need.
 
-`http://127.0.0.1:18789/`
+Let's try it anyway. In your Ubuntu terminal, run:
 
-That's HTTP — not HTTPS. Important distinction. And 127.0.0.1 is just "this computer" — it's the loopback address. Port 18789 is where your gateway is listening.
+`npx openclaw dashboard --no-open`
 
-You'll be asked for your gateway token. Remember that token you saved two minutes ago? Paste it in. And...
+This prints a URL with your token already baked in. Copy the FULL URL — the whole thing — and paste it into your Windows browser. That's HTTP — not HTTPS. Important distinction.
 
-You're in. Welcome to the Control UI. The dashboard. The bridge of your ship, rendered in a web browser.
+If it loads — you're in. Welcome to the Control UI. The dashboard. The bridge of your ship, rendered in a web browser.
 
 What you'll see: your gateway status front and center. Connected channels — none yet, that's Module 06. Agent information. Conversation history — empty for now, but not for long. Configuration options. It's clean, it's functional, and it's running entirely on YOUR machine.
+
+If it says "connect failed" or "auth failed" — don't panic, don't troubleshoot, just skip it. This is a known WSL bug. The TUI works perfectly and that's what matters.
 
 [pause]
 
@@ -483,7 +531,7 @@ Alright crew. This is the MOMENT. The one we've been building toward since Modul
 
 Go back to your Ubuntu terminal. Type:
 
-`openclaw tui`
+`npx openclaw tui`
 
 [pause]
 
@@ -519,7 +567,7 @@ Type `/exit` or press Ctrl + C to leave the TUI. We've got one more thing to che
 
 Your agent responded. Amazing. But here's the question: will it KEEP running when you walk away? That's what the daemon is for, and that's what we need to verify.
 
-First: check the service status. Run `openclaw service status`. Look for the magic words: "Active: active (running)." That means the systemd service is alive and well.
+First: check the service status. Run `npx openclaw gateway status`. Look for the magic words: "Active: active (running)." That means the systemd service is alive and well.
 
 Second: the REAL test. Close your Ubuntu terminal. Completely. Click the X. Kill it. Walk away from it.
 
@@ -527,23 +575,23 @@ Second: the REAL test. Close your Ubuntu terminal. Completely. Click the X. Kill
 
 Wait ten seconds. Let the silence sit. Your terminal is gone. No command line. No shell. Nothing.
 
-Now open your Windows browser. Go to `http://127.0.0.1:18789/`. The dashboard.
+Now reopen Ubuntu from the Start Menu. Type "Ubuntu," click it. Run `npx openclaw tui`.
 
-Does it load?
+Does it connect?
 
 [pause]
 
-If the dashboard loads — and it SHOULD — then your daemon is working perfectly. The gateway kept running even after you slammed the terminal shut. It's running as a background service now. A daemon. A tireless watchman standing guard while you live your life.
+If the TUI connects — and it SHOULD — then your daemon is working perfectly. The gateway kept running even after you slammed the terminal shut. It's running as a background service now. A daemon. A tireless watchman standing guard while you live your life.
 
 That's the whole point. Your agent doesn't need you babysitting it. It runs on its own. Starts on boot. Survives terminal closures. Keeps humming along twenty-four hours a day, seven days a week.
 
 Keep these service commands handy — write them on a sticky note, save them in a file, tattoo them somewhere visible:
 
-`openclaw service start` — starts the daemon.
-`openclaw service stop` — stops it.
-`openclaw service restart` — bounces it.
-`openclaw service logs` — shows you what it's been up to.
-`openclaw service status` — tells you if it's alive.
+`npx openclaw gateway start` — starts the daemon.
+`npx openclaw gateway stop` — stops it.
+`npx openclaw gateway restart` — bounces it.
+`npx openclaw gateway logs` — shows you what it's been up to.
+`npx openclaw gateway status` — tells you if it's alive.
 
 Those five commands are your engine room controls. You'll use them often.
 
@@ -553,17 +601,21 @@ Those five commands are your engine room controls. You'll use them often.
 
 Alright — let's talk about what happens when things go sideways. Because they WILL go sideways for somebody, and that somebody should not panic. Damage control. Stay calm. Here's your repair manual.
 
-"openclaw: command not found" — your PATH didn't update. Run `source ~/.bashrc` or just close and reopen your terminal. If that doesn't work, check if the installation actually completed by running `ls ~/.openclaw/`. If that directory doesn't exist, re-run the install command from Step 1.
+"openclaw: command not found" — this is the NUMBER ONE question I get. The install doesn't always add `openclaw` to your PATH. The fix is simple: use `npx openclaw` instead. Every command in this course uses `npx openclaw` for exactly this reason. If `npx` itself doesn't work, check that Node.js is installed with `node --version`. If you want to try fixing the PATH, run `source ~/.bashrc` or close and reopen your terminal — but `npx` is the reliable workaround.
 
-"API key invalid" — the token formatting gotcha. I TOLD you. Nine times out of ten, hidden characters in your clipboard corrupted the key. Go back to the Anthropic console, generate a FRESH key, run the Notepad trick, paste the clean version. Use `openclaw config provider key` to update it without re-running the whole wizard.
+"API key invalid" — the token formatting gotcha. I TOLD you. Nine times out of ten, hidden characters in your clipboard corrupted the key. Go back to the Anthropic console, generate a FRESH key, run the Notepad trick, paste the clean version. Use `npx openclaw config` to update it without re-running the whole wizard.
 
-"Port already in use" — something else claimed port 18789 before you did. Run `openclaw config gateway port 18790` to shift to a different port, then `openclaw service restart`.
+"Port already in use" — something else claimed port 18789 before you did. Run `npx openclaw config` to change the port, then `npx openclaw gateway restart`.
 
-"Connection refused" when opening the dashboard — the gateway isn't running. Check with `openclaw service status`. If it's down, run `openclaw service start`. Also make sure you're using HTTP, not HTTPS, in the browser URL. Common mistake.
+"Connection refused" when opening the dashboard — the gateway isn't running. Check with `npx openclaw gateway status`. If it's down, run `npx openclaw gateway start`. Also make sure you're using HTTP, not HTTPS, in the browser URL. Common mistake.
+
+"Pairing required" — this is the device pairing security feature we covered in Slide 18b. Run `npx openclaw devices list --json` to find the requestId, then `npx openclaw devices approve [requestId]`. You only have to do this once per device.
+
+"Auth failed" on the dashboard — run `npx openclaw dashboard --no-open` to get a tokenized URL. Copy the FULL URL and paste it into your browser. Make sure it says `http://` not `https://`. If it STILL won't connect, skip it — this is a known bug on WSL. The TUI works and that's what matters.
 
 Daemon doesn't start on boot — systemd probably isn't enabled. Run `systemctl is-system-running`. If that's the problem, go back to Module 02 and enable systemd in your wsl.conf.
 
-AI responses are very slow — like thirty seconds or more — check the Anthropic status page at status.anthropic.com. Opus IS slower than lighter models. One to ten seconds is normal. If it's consistently glacial, try switching to Sonnet temporarily with `openclaw config provider model claude-sonnet-4-5`.
+AI responses are very slow — like thirty seconds or more — check the Anthropic status page at status.anthropic.com. Opus IS slower than lighter models. One to ten seconds is normal. If it's consistently glacial, try switching to Sonnet temporarily with `npx openclaw config`.
 
 "Insufficient credits" — check your billing at console.anthropic.com. Make sure your spending limit hasn't already been hit.
 
@@ -583,19 +635,19 @@ ALL HANDS ON DECK! This is your launch day inspection. Ten items. Every single o
 
 Run through the list with me:
 
-One: `openclaw --version` shows a version number. Not an error. A number.
+One: `npx openclaw --version` shows a version number. Not an error. A number.
 
-Two: `openclaw status` shows "Running."
+Two: `npx openclaw status` shows "Running."
 
-Three: `openclaw doctor` passes all critical checks.
+Three: `npx openclaw doctor` passes all critical checks.
 
-Four: `openclaw security audit --deep` has no critical issues.
+Four: `npx openclaw security audit --deep` has no critical issues.
 
 Five: your `~/.openclaw/` directory is mode 700. That means only you can read or write it.
 
 Six: the dashboard loads at `http://127.0.0.1:18789/` in your browser.
 
-Seven: the TUI opens when you run `openclaw tui`.
+Seven: the TUI opens when you run `npx openclaw tui`.
 
 Eight: your AI responds to a test message. You already did this — but confirm it.
 
@@ -609,7 +661,7 @@ Ten: your gateway token is saved somewhere secure. Not "I'll remember it." SAVED
 
 If you're not there yet, that's okay. Take the next few minutes. Work through the ones that are failing. Ask for help. We'll get everyone across the finish line.
 
-BONUS for the overachievers: run `openclaw service logs` and read the last few lines. You should see entries showing the gateway starting up and handling your test message. That's your agent's logbook. Its own version of a ship's log.
+BONUS for the overachievers: run `npx openclaw gateway logs` and read the last few lines. You should see entries showing the gateway starting up and handling your test message. That's your agent's logbook. Its own version of a ship's log.
 
 ---
 
@@ -629,9 +681,9 @@ Five: the daemon keeps the gateway running twenty-four seven. Close the terminal
 
 Six: two interfaces. TUI for chatting. Dashboard for managing. You'll use both. Most daily interaction happens in the TUI.
 
-Seven: run the security audit after installation. `openclaw security audit --deep --fix` catches permission issues and misconfigurations before they become problems.
+Seven: run the security audit after installation. `npx openclaw security audit --deep --fix` catches permission issues and misconfigurations before they become problems.
 
-Eight: save your gateway token. You need it for dashboard access. Retrieve it with `openclaw config gateway token` if you lose it, but don't rely on that.
+Eight: save your gateway token. You need it for dashboard access. Retrieve it by running `cat ~/.openclaw/openclaw.json` and looking for the token field if you lose it, but don't rely on that.
 
 Nine: everything stays local except API calls. Your data, your memory, your conversations — all stored on YOUR machine. The only thing that leaves your ship is the text you send to the AI provider for processing. Everything else stays in YOUR hold.
 

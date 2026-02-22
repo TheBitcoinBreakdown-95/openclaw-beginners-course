@@ -270,18 +270,22 @@ STEP 21: Install OpenClaw
 
 curl -fsSL https://openclaw.ai/install.sh | bash
 
-(Wait for "Installation complete!" then run:)
-
-source ~/.bashrc
-
-(If you see "openclaw is not discoverable on path" — this fixes it.
-If it still doesn't work, close Ubuntu and reopen from Start Menu.)
+(Wait for "Installation complete!" You will see npm WARN deprecated messages — ignore these, they are harmless.)
 
 
 STEP 22: Run the onboarding wizard
 --------------------------------------------
 
-openclaw onboard --install-daemon
+(The install may not add openclaw to your PATH. If "openclaw" gives "command not found", use npx instead:)
+
+npx openclaw onboard --install-daemon
+
+(If it says "Need to install the following packages" — type y and press Enter. This is normal.)
+(Expect 1-3 minutes of downloading before the wizard appears. Be patient — it's not stuck.)
+(If the terminal freezes or paste stops working after download, close Ubuntu and reopen from Start Menu, then run the npx command again.)
+
+>>> IMPORTANT: When asked "Quick Setup" or "Manual" — choose MANUAL <<<
+(Quick Setup skips questions we need to configure. Choose Manual so you see every option.)
 
 (This starts an interactive wizard. Here's what to choose for each question:)
 
@@ -300,6 +304,15 @@ openclaw onboard --install-daemon
   Q13 Service runtime:       Node.js — press Enter
   Q14 Install as service:    Y — press Enter
 
+>>> IF THE WIZARD SAYS "Gateway service already installed" <<<
+Choose RESTART — it's already installed, just needs a fresh start.
+
+>>> WHEN ASKED "How do you want to hatch your bot?" <<<
+Choose "do this later" — we will test the TUI ourselves after setup.
+
+>>> WHEN ASKED "Enable bash shell completion?" <<<
+Choose Yes.
+
 >>> THE NOTEPAD TRICK (for Q4 — API key) <<<
 Browsers add hidden characters when copying. DO NOT paste directly into terminal.
 1. Copy API key from console.anthropic.com
@@ -308,71 +321,114 @@ Browsers add hidden characters when copying. DO NOT paste directly into terminal
 4. Select all (Ctrl+A), copy (Ctrl+C)
 5. Right-click in Ubuntu terminal to paste
 
+>>> TRANSFERRING YOUR API KEY FROM ANOTHER DEVICE <<<
+If you created your API key on your phone or another computer:
+- Easiest: email it to yourself, open the email on this laptop's browser, copy it
+- Tailscale: right-click the key file > "Send with Tailscale..." > pick this laptop
+
 >>> SAVE YOUR GATEWAY TOKEN <<<
 The wizard displays a gateway token at the end. Save it immediately!
-You need it to access the dashboard. Retrieve later with:
-openclaw config gateway token
+You need it to access the dashboard. If you lose it, look in:
+cat ~/.openclaw/openclaw.json
+(Search for the "token" field in the gateway section.)
 
 
-STEP 23: Install QMD (do this immediately)
+STEP 23: Approve device pairing (if needed)
 --------------------------------------------
 
-openclaw skills install qmd
-openclaw service restart
+(After onboarding, the TUI may require device pairing before it can connect.)
+(If you see "pairing required" when trying to use the TUI or dashboard:)
+
+npx openclaw devices list --json
+
+(Find the "requestId" for the pending entry — a long string of letters and numbers.)
+(Then approve it:)
+
+npx openclaw devices approve YOUR-REQUEST-ID-HERE
+
+(Replace YOUR-REQUEST-ID-HERE with the actual requestId from the JSON output.)
+(After approving, try the TUI again — it should connect.)
+
+
+STEP 24: Install QMD (do this immediately)
+--------------------------------------------
+
+npx clawhub install qmd
+
+(If it says "Need to install the following packages: clawhub" — type y and press Enter.)
+(If it asks for the slug and "qmd" doesn't work, try: npx clawhub search qmd — then use the slug it shows.)
+
+npx openclaw gateway restart
 
 (QMD is a search engine for your agent's memory — saves tokens from day one.)
 
 
-STEP 24: Verify the installation
+STEP 25: Verify the installation
 --------------------------------------------
 
-openclaw status
-openclaw doctor
-openclaw security audit --deep --fix
+npx openclaw status
+npx openclaw doctor
+npx openclaw security audit --deep --fix
 
 (status should show "Running", doctor should pass, audit fixes file permissions.)
+(If doctor asks to update config or restart, say Yes.)
 
 
-STEP 25: Test the dashboard
+STEP 26: Test the dashboard (optional — may not work on WSL)
 --------------------------------------------
 
-(Open your WINDOWS browser and go to:)
-http://127.0.0.1:18789/
+(The dashboard is a browser version of the TUI. It has a known auth bug on WSL.)
+(If it doesn't work, don't worry — the TUI is the primary interface.)
 
-(Enter your gateway token when prompted. If it loads, the dashboard works.)
+(To try it, run this in Ubuntu:)
+
+npx openclaw dashboard --no-open
+
+(It prints a URL with your token. Copy the FULL URL and paste it into your Windows browser.)
+(Use http:// NOT https:// — the S will cause an error.)
+(If it says "auth failed" or "connect failed", skip it — use the TUI instead.)
 
 
-STEP 26: Test the TUI (first chat)
+STEP 27: Test the TUI (first chat)
 --------------------------------------------
 
-openclaw tui
+npx openclaw tui
 
+(If you see "pairing required" — go back to STEP 23 and approve the device.)
+(If you see "gateway connected" — you're in!)
 (Type a short greeting and press Enter. If the AI responds, it works!)
 (Type /exit or press Ctrl+C to leave.)
 
 
-STEP 27: Verify the daemon
+STEP 28: Verify the daemon
 --------------------------------------------
 
-openclaw service status
+npx openclaw gateway status
 
 (Should show: Active: active (running))
 
-(Close the Ubuntu window completely, wait 10 seconds, then check
-http://127.0.0.1:18789/ in your browser. If it still loads, the daemon works.)
+(Close the Ubuntu window completely, wait 10 seconds, then reopen Ubuntu
+from the Start Menu. Run: npx openclaw tui
+If it connects, the daemon kept running in the background — that's the goal.)
 
 
 ============================
   USEFUL COMMANDS (reference)
 ============================
 
-openclaw service start       # Start the daemon
-openclaw service stop        # Stop the daemon
-openclaw service restart     # Restart after config changes
-openclaw service logs        # View daemon logs
-openclaw config gateway token  # Show your gateway token
-openclaw config gateway bind   # Change who can connect
-openclaw config provider key   # Update your API key
+npx openclaw gateway start       # Start the daemon
+npx openclaw gateway stop        # Stop the daemon
+npx openclaw gateway restart     # Restart after config changes
+npx openclaw gateway logs        # View daemon logs
+npx openclaw status              # Check gateway status
+npx openclaw doctor              # Health check
+npx openclaw tui                 # Chat with your agent
+npx openclaw devices list        # List paired/pending devices
+npx openclaw devices approve ID  # Approve a pending device
+
+To find your gateway token:
+cat ~/.openclaw/openclaw.json
+(Look for the "token" field in the gateway section.)
 
 
 ============================================

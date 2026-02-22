@@ -552,12 +552,14 @@ If you see "Installation complete!" you are ready for the onboarding wizard.
 Run the wizard with the daemon flag:
 
 ```bash
-openclaw onboard --install-daemon
+npx openclaw onboard --install-daemon
 ```
+
+(If it says "Need to install the following packages" -- type **y** and press Enter. This is normal.)
 
 This starts an **interactive wizard** that asks a series of questions. We will walk through **every single one**.
 
-> Take your time. If you make a mistake, you can re-run the wizard or change settings with `openclaw config`.
+> Take your time. If you make a mistake, you can re-run the wizard or change settings with `npx openclaw config`.
 
 ---
 
@@ -674,7 +676,7 @@ Browsers add hidden characters (line breaks, spaces) when copying. Pasting direc
 | **Tailscale** | Your Tailscale network | Secure remote access |
 | **Custom** | Whatever IP you specify | Advanced users only |
 
-> Change later with `openclaw config gateway bind`
+> Change later with `npx openclaw config` (re-runs the wizard)
 
 ---
 
@@ -702,7 +704,7 @@ Browsers add hidden characters (line breaks, spaces) when copying. Pasting direc
 
 **Choose: Skip for now** -- we set up Telegram in Module 06.
 
-Get the base installation working first. You can always add channels later with `openclaw config channels`.
+Get the base installation working first. You can always add channels later with `npx openclaw config` (re-runs the wizard).
 
 ---
 
@@ -711,15 +713,13 @@ Get the base installation working first. You can always add channels later with 
 - **Q11: Skills** -- Skip all (covered in Module 07)
 - **Q12: Hooks** -- Enable BOOT.md and session 🪸 memory
 - **Q13: Service Runtime** -- Choose Node.js (only option)
-- **Q14: Install as Background Service:**
+- **Q14: Install as Background Service** -- Choose **Y**
 
-```
-? Install gateway as background service? (Y/n)
-```
+If the wizard says "Gateway service already installed" -- choose **Restart**
 
-**Choose: Y** -- makes the ⛵ gateway start on boot and run 24/7.
+When asked "How do you want to hatch your bot?" -- choose **do this later**
 
-BOOT.md runs on every startup; session memory saves context between conversations.
+When asked "Enable bash shell completion?" -- choose **Yes**
 
 ---
 
@@ -737,7 +737,27 @@ The wizard finishes with output like this:
 
 **Save your gateway token immediately** -- store it in a password manager or secure note. You need it for dashboard access.
 
-Retrieve it later with: `openclaw config gateway token`
+Retrieve it later with: `cat ~/.openclaw/openclaw.json` (look for the token field)
+
+---
+
+## Step 3b: Approve Device Pairing
+
+After onboarding, the TUI requires **device pairing approval** before it can connect.
+
+If you see "pairing required" when launching the TUI:
+
+```bash
+npx openclaw devices list --json
+```
+
+Find the `requestId` for the pending entry, then approve it:
+
+```bash
+npx openclaw devices approve YOUR-REQUEST-ID
+```
+
+Replace `YOUR-REQUEST-ID` with the actual ID from the list output.
 
 ---
 
@@ -746,9 +766,11 @@ Retrieve it later with: `openclaw config gateway token`
 Before doing anything else, install **QMD** -- an on-device search engine for your agent's 🪸 memory files:
 
 ```bash
-openclaw skills install qmd
-openclaw service restart
+npx clawhub install qmd
+npx openclaw gateway restart
 ```
+
+(If npx says "Need to install clawhub" -- type **y**. ClawHub is the skill marketplace CLI.)
 
 **Why this matters:**
 - Without QMD, your agent re-reads files every time it needs information (wastes tokens)
@@ -765,22 +787,23 @@ openclaw service restart
 Run these three commands in order:
 
 ```bash
-openclaw status                      # Should show: Running
-openclaw doctor                      # All critical checks should pass
-openclaw security audit --deep --fix # Fixes file permissions
+npx openclaw status                      # Should show: Running
+npx openclaw doctor                      # All critical checks should pass
+npx openclaw security audit --deep --fix # Fixes file permissions
 ```
 
-- If `doctor` reports failures, run `openclaw doctor fix`
+- If `doctor` reports failures, run `npx openclaw doctor --fix`
 - Security audit sets dirs to 700 and files to 600
 
 ---
 
-## Step 5: Access the Dashboard
+## Step 5: Access the Dashboard (optional on WSL)
 
-1. Open your **Windows** web browser
-2. Go to `http://127.0.0.1:18789/`
-3. Enter your **⛵ gateway token**
-4. You are in!
+1. In Ubuntu, run: `npx openclaw dashboard --no-open`
+2. Copy the **full URL** it prints (includes your token)
+3. Paste it into your **Windows** browser
+
+> The dashboard has a known auth bug on WSL. If it won't connect, skip it — the **TUI is the primary interface**.
 
 ### Dashboard vs. TUI
 
@@ -796,7 +819,7 @@ Most day-to-day interaction happens in the **TUI**. The dashboard is for **manag
 ## Step 6: Your First Chat
 
 ```bash
-openclaw tui
+npx openclaw tui
 ```
 
 A full-screen terminal interface opens. Type a simple greeting:
@@ -826,7 +849,7 @@ Hello! My name is [your name]. What's your name?
 
 ### Check the service status
 ```bash
-openclaw service status    # Look for: Active: active (running)
+npx openclaw gateway status    # Look for: Active: active (running)
 ```
 
 ### Test terminal independence
@@ -839,10 +862,10 @@ openclaw service status    # Look for: Active: active (running)
 ## Step 7: Service Commands Reference
 
 ```bash
-openclaw service start     # Start the daemon
-openclaw service stop      # Stop the daemon
-openclaw service restart   # Restart the daemon
-openclaw service logs      # View daemon logs
+npx openclaw gateway start     # Start the daemon
+npx openclaw gateway stop      # Stop the daemon
+npx openclaw gateway restart   # Restart the daemon
+npx openclaw gateway logs      # View daemon logs
 ```
 
 Use `restart` after any config change. Use `logs` to debug startup issues.
@@ -855,14 +878,27 @@ Use `restart` after any config change. Use `logs` to debug startup issues.
 
 | Problem | Fix |
 |---------|-----|
-| `openclaw: command not found` | Run `source ~/.bashrc` or reopen terminal |
+| `openclaw: command not found` | Use `npx openclaw` instead -- the install does not add it to PATH |
 | "API key invalid" | Use the **Notepad trick** -- hidden line breaks are the cause |
-| "Port already in use" | `openclaw config gateway port 18790` then restart |
-| "Connection refused" in browser | Check `openclaw service status`; use `http://` not `https://` |
+| "Port already in use" | `npx openclaw config` (re-run wizard, change port), then restart |
+| "Connection refused" in browser | Check `npx openclaw gateway status`; use `http://` not `https://` |
 | Daemon does not start on boot | Verify systemd: `systemctl is-system-running` |
 | AI responses very slow (30s+) | Check `status.anthropic.com`; try Sonnet 4.5 temporarily |
+
+---
+
+<!-- _class: warning -->
+
+## 🚩 Damage Control (continued)
+
+| Problem | Fix |
+|---------|-----|
 | "Insufficient credits" | Check billing at console.anthropic.com |
 | Token counter climbs fast | Use `/compact` to compress history; start new chats with `/new` |
+| "pairing required" | Run `npx openclaw devices list --json`, find requestId, approve with `npx openclaw devices approve ID` |
+| "auth failed" on dashboard | Run `npx openclaw dashboard --no-open` to get a tokenized URL. Paste the full URL into your browser. |
+| Dashboard still won't connect | Known WSL issue. Skip it — the TUI is the primary interface. |
+| `http` vs `https` | Use `http://` not `https://` for the dashboard URL |
 
 ---
 
@@ -872,16 +908,16 @@ Use `restart` after any config change. Use `logs` to debug startup issues.
 
 Complete this checklist before proceeding to Module 04:
 
-- [ ] `openclaw --version` shows a version number
-- [ ] `openclaw status` shows "Running" and `openclaw doctor` passes
-- [ ] `openclaw security audit --deep` has no critical issues
+- [ ] `npx openclaw --version` shows a version number
+- [ ] `npx openclaw status` shows "Running" and `npx openclaw doctor` passes
+- [ ] `npx openclaw security audit --deep` has no critical issues
 - [ ] Dashboard loads at `http://127.0.0.1:18789/`
-- [ ] TUI opens with `openclaw tui` and AI responds to a test message
+- [ ] TUI opens with `npx openclaw tui` and AI responds to a test message
 - [ ] ⛵ Gateway stays running after closing the terminal
 - [ ] Gateway token saved somewhere secure
 - [ ] `~/.openclaw/` directory is mode 700
 
-**Bonus:** Run `openclaw service logs` and read the last few lines.
+**Bonus:** Run `npx openclaw gateway logs` and read the last few lines.
 
 ---
 
@@ -896,7 +932,7 @@ Complete this checklist before proceeding to Module 04:
 5. **The daemon keeps the gateway running 24/7** -- even after closing the terminal
 6. **Two interfaces**: TUI for chatting, Dashboard for managing
 7. **Run the security audit** after installation -- catches permission issues
-8. **Save your gateway token** -- retrieve with `openclaw config gateway token`
+8. **Save your gateway token** -- retrieve with `cat ~/.openclaw/openclaw.json`
 9. **Everything stays local except API calls** -- your data never leaves your machine
 
 ---

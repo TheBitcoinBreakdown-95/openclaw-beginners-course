@@ -6,6 +6,10 @@ CLAUDE.md
 TRANSITION-PROMPT.md
 .claude/
 
+# Large binary files (upload via GitHub Releases)
+*.tar.gz
+*.msi
+
 # OS / editor
 .DS_Store
 Thumbs.db
