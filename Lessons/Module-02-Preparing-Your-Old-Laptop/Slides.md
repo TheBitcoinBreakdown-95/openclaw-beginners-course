@@ -176,6 +176,10 @@ style: |
     font-size: 0.78em;
     line-height: 1.5;
   }
+  pre code *,
+  pre code span {
+    color: var(--parchment) !important;
+  }
 
   /* ═══════════════════════════════════════════════
      UTILITY CLASSES
@@ -412,11 +416,11 @@ style: |
 # Module 02
 # Preparing Your Laptop
 
-## 🦞 WSL2, Node.js, and Everything You Need
+## 🦞 USB Setup Kit, WSL2, and Everything You Need
 
 ### OpenClaw Course
 
-<!-- Speaker notes: This is the hands-on setup module. Students will follow along on their own laptops. Budget extra time -- installation issues are common and vary by machine. -->
+<!-- Speaker notes: This is the hands-on setup module. The USB-first approach means everyone follows the same steps — no branching, no "if this fails try that." Budget extra time for BIOS issues (virtualization) and power settings. -->
 
 ---
 
@@ -428,14 +432,14 @@ By the end of this module, you will be able to:
 
 1. **Verify** your laptop meets the minimum requirements
 2. **Explain** why WSL2 is required and what it does
-3. **Install** and configure WSL2 with Ubuntu on Windows 10
-4. **Enable** systemd inside WSL2 (required for the 🦞 OpenClaw daemon)
-5. **Install** Node.js 22+ inside your WSL2 environment
-6. **Verify** your entire environment is ready for 🦞 OpenClaw
-7. **Configure** your laptop for 24/7 operation
-8. **Optionally** set up Tailscale for secure remote access
+3. **Prepare** a USB Setup Kit with WSL installer + Ubuntu image
+4. **Install** WSL2 and Ubuntu from USB — no Store, no network needed
+5. **Enable** systemd inside WSL2 (required for the 🦞 OpenClaw daemon)
+6. **Install** Node.js 22+ inside your WSL2 environment
+7. **Verify** your entire environment is ready for 🦞 OpenClaw
+8. **Configure** your laptop for 24/7 operation
 
-<!-- Speaker notes: Steps 1-6 are required. Steps 7-8 are optional but recommended for anyone who wants your agent available around the clock. -->
+<!-- Speaker notes: The USB Setup Kit is new — students prepare it on their main computer before touching the OpenClaw laptop. This eliminates the #1 source of installation failures (Microsoft Store). Everyone follows the same path. -->
 
 ---
 
@@ -462,6 +466,7 @@ By the end of this module, you will be able to:
 |------|-----------|
 | **npm** | Node Package Manager -- installs JavaScript packages |
 | **nvm** | Node Version Manager -- install and switch between Node.js versions |
+| **USB Setup Kit** | A USB stick with the WSL installer and Ubuntu image, prepared on your main computer |
 | **PATH** | List of directories your computer checks when you type a command |
 | **Tailscale** | Secure networking tool for private remote access between your devices |
 | **Loopback** | Network address (127.0.0.1) that only your own computer can reach |
@@ -481,27 +486,9 @@ By the end of this module, you will be able to:
 
 **If restricted → clean install from USB** (not a reset). Download the Media Creation Tool from microsoft.com, boot from USB, choose "Custom Install," and wipe all partitions.
 
-> Without admin access, WSL2 installation and several steps in this module will be blocked.
+> Without admin access, WSL2 installation will be blocked.
 
-<!-- Speaker notes: Anyone using a pre-owned corporate laptop MUST do a clean install. A factory reset is not enough — enterprise policies survive it. This is the #1 gotcha for used laptops. If someone can't get admin access, this is why. -->
-
----
-
-## 🔑 Network Setup: Guest WiFi First
-
-Your 🦞 OpenClaw laptop needs **permanent** internet. Connect it to a **guest network** to isolate it from personal devices.
-
-### Set up a guest network
-1. Find your router address: run `ipconfig` in PowerShell, note the **Default Gateway**
-2. Open that address in a browser to reach router admin
-3. Enable **Guest Network** with a password, disable "access local network"
-4. Connect the 🦞 OpenClaw laptop to the **guest** network
-
-**Already on main WiFi?** Switch to guest, then forget it: **Settings > Wi-Fi > Manage known networks**
-
-> Module 10 covers network isolation in depth. This is the quick version.
-
-<!-- Speaker notes: The default gateway IS the router address. It's NOT always 192.168.1.1 — varies by ISP and router brand. ipconfig is the reliable way to find it. A guest network gives internet but isolates the device from phones, personal laptops, and smart home devices. -->
+<!-- Speaker notes: Anyone using a pre-owned corporate laptop MUST do a clean install. A factory reset is not enough. This is the #1 gotcha for used laptops. -->
 
 ---
 
@@ -542,7 +529,7 @@ Press `Win + R`, type `winver`, press Enter.
 | Version | WSL2 Support |
 |---------|-------------|
 | Windows 10 v1903+ (Build 18362) | Supported |
-| Windows 10 v2004+ | Simplified install (`wsl --install`) |
+| Windows 10 v2004+ | Supported with simplified setup |
 | **Windows 10 22H2** | Current -- fully supported |
 | Windows 11 | Fully supported |
 
@@ -566,109 +553,157 @@ Press `Win + R`, type `winver`, press Enter.
 
 ---
 
-## Step 1: Open PowerShell as Administrator
+## Why an Old Laptop?
 
-1. Click the **Start menu**
-2. Type `PowerShell`
-3. **Right-click** on Windows PowerShell
-4. Click **Run as administrator**
-5. Click **Yes** when prompted
+Most tutorials say: rent a VPS or buy a Mac Mini. Here's why a **used Windows laptop** wins:
 
-You should see:
+| Option | Cost | Privacy | Control |
+|--------|------|---------|---------|
+| **Old laptop** | $0-100 | Data stays home | You own everything |
+| VPS | $5-20/mo forever | Provider's computer | Provider can access it |
+| Mac Mini | $500-800 | Good, but pricey | Overkill for one agent |
 
-```
-PS C:\WINDOWS\system32>
-```
-
-The blinking cursor is waiting for your input.
-
-<!-- Speaker notes: Make sure every student has an admin PowerShell open before proceeding. This is where many first-time issues arise. -->
+**The old laptop wins on cost, privacy, AND control.** You pay once (or $0 if you already have one), your data never leaves your house, and nobody else can touch it.
 
 ---
 
-## Step 1: Install WSL with Ubuntu
+## Avoid Plug-and-Play Services
 
-Type this command exactly and press Enter:
+Some companies sell pre-configured OpenClaw boxes or hosted setups. **Be very careful.**
+
+> *"DO NOT use a service that sets up OpenClaw for you. I tried 5 popular services and pretty much all of them exposed the gateway, didn't have pairing mode, and allowed the root directory to be discovered by the internet."*
+
+### What "exposed the gateway" means
+- Anyone on the internet could connect to the agent
+- No pairing mode = no verification that YOU are the owner
+- Root directory exposed = your files visible to the world
+
+**This course teaches you to set it up yourself — correctly and securely.**
+
+---
+
+## Step 1: Connect to Guest WiFi & Update Windows
+
+Before installing anything, the laptop needs to be updated. But it should **never** connect to your main home WiFi.
+
+### Set up a guest network (from your phone or main computer)
+1. Find your router address: run `ipconfig`, note the **Default Gateway**
+2. Open that address in a browser to reach router admin
+3. Enable **Guest Network** with a password, disable "access local network"
+
+### Connect the OpenClaw laptop to guest WiFi, then update
+1. Connect to the **guest** network only
+2. **Settings > Update & Security > Windows Update**
+3. Click **"Check for updates"** — install everything, restart when prompted
+4. **Expect 20-30 minutes** — check for updates again after each restart
+
+<!-- Speaker notes: This step is essential for any laptop that's been wiped or factory-reset. Without cumulative updates, the WSL installer will refuse to run with error WSL_E_OS_NOT_SUPPORTED. The guest network gives internet access while keeping the laptop isolated from personal devices. -->
+
+---
+
+## Step 2: Prepare Your USB Setup Kit
+
+This step happens on your **main computer** (not the OpenClaw laptop). You need a USB stick with at least 1 GB free.
+
+### Download three files and copy all to your USB stick
+1. **WSL installer** (.msi) — from **github.com/microsoft/WSL/releases**, download the **x64** `.msi` (~70 MB)
+2. **Ubuntu image** — from **cloud-images.ubuntu.com/wsl/releases/24.04/current/**, download the **amd64** `.rootfs.tar.gz` (~340 MB)
+3. **Setup commands** — `setup-commands.txt` from the course materials (every command you need, ready to copy and paste)
+
+> If the Ubuntu link is empty, navigate from **cloud-images.ubuntu.com/wsl/** → releases → 24.04 → current
+
+> **Why USB?** This bypasses the Microsoft Store completely. No Store = no download failures, no typing long commands. Works every time, on any laptop.
+
+<!-- Speaker notes: This is the key change from previous versions of this module. Instead of running wsl --install and hoping the Store works, we pre-download everything. Two files on a USB stick. Done. Every student follows the same path. -->
+
+---
+
+## Step 3: Install WSL from USB
+
+Plug the USB into the **OpenClaw laptop**. No WiFi needed.
+
+1. **Copy all files** from USB to your **Downloads** folder
+2. In Downloads, **double-click** the `.msi` file — click **Yes**. Installs silently — that's normal.
+3. Open **PowerShell as Admin** (Start > type "PowerShell" > `Ctrl + Shift + Enter`)
+4. Open `setup-commands.txt` from Downloads. Copy-paste **STEP 1**:
 
 ```powershell
-wsl --install
+& 'C:\Program Files\WSL\wsl.exe' --install --no-distribution
 ```
 
-**What this does:** Enables WSL2, downloads the Linux kernel, and installs Ubuntu.
+5. **Restart** your computer (Start > Power > Restart)
 
-> **You MUST restart your computer after this step.** Use Restart, not Shut Down.
+> The .msi installs the WSL program. The command enables the Windows features WSL2 needs. Both are required.
 
-<!-- Speaker notes: If `wsl --install` succeeds with no errors, restart and proceed to the next slide. If Ubuntu fails with 0x80072EE7, DON'T troubleshoot the network — go straight to the fallback slide. -->
+<!-- Speaker notes: TWO things happen here: (1) double-click .msi installs the WSL binary, (2) the command enables Virtual Machine Platform and WSL optional components. Without the command, import fails. Copy to Downloads first so commands work on any machine. -->
 
 ---
 
-## If Ubuntu Failed to Install (Error `0x80072EE7`)
+## Step 4: Import Ubuntu
 
-The Microsoft Store is blocked or broken. **Skip the Store entirely** -- download Ubuntu directly.
+After restarting, open **PowerShell as Administrator** (`Ctrl + Shift + Enter`).
 
-1. Open your **browser** and go to: **cloud-images.ubuntu.com/wsl/noble/current/**
-2. Download the **amd64** file ending in `.rootfs.tar.gz`
-3. In admin PowerShell, run:
+Paste **STEP 2** and **STEP 3** from `setup-commands.txt`:
 
 ```powershell
 mkdir C:\WSL\Ubuntu
-wsl --import Ubuntu C:\WSL\Ubuntu [drag file here]
+& 'C:\Program Files\WSL\wsl.exe' --import Ubuntu C:\WSL\Ubuntu "$env:USERPROFILE\Downloads\ubuntu-noble-wsl-amd64-wsl.rootfs.tar.gz"
 ```
 
-**Drag the downloaded file** from File Explorer onto the PowerShell window to fill in the path, then press Enter.
+No output = success. Verify with **STEP 4**:
 
-<!-- Speaker notes: This is the fallback for when `wsl --install` can't download Ubuntu. Common on pre-owned laptops with broken Microsoft Store or networks that block Store traffic. The browser download works on ANY network. The drag trick avoids typing the long filename. -->
+```powershell
+& 'C:\Program Files\WSL\wsl.exe' -l -v
+```
+
+Expected: **Ubuntu, VERSION 2**
+
+> `$env:USERPROFILE` expands to your user folder automatically. No drive letters to guess — that's why we copied to Downloads.
+
+<!-- Speaker notes: Because students copied the tar.gz to Downloads in Step 3, the import command works on any machine with no editing. $env:USERPROFILE expands to C:\Users\TheirName. No USB drive letters to figure out. -->
 
 ---
 
-## Step 1: Complete Ubuntu Setup
+## Step 5: Configure Ubuntu (Create User)
 
-**If `wsl --install` worked:** Open **Ubuntu** from the Start menu after restarting.
+Open Ubuntu and create your account:
 
-**If you used the manual download:** Ubuntu won't appear in Start. Open **PowerShell** and type `wsl -d Ubuntu`. Then create your user:
+```powershell
+& 'C:\Program Files\WSL\wsl.exe' -d Ubuntu
+```
+
+You'll see a `root@` prompt. **To paste in Ubuntu: right-click** (Ctrl+V does NOT work here — right-click pastes automatically). Run these one at a time:
 
 ```bash
 adduser openclaw
 usermod -aG sudo openclaw
-echo -e "[user]\ndefault=openclaw" > /etc/wsl.conf
+echo -e "[boot]\nsystemd=true\n\n[user]\ndefault=openclaw" > /etc/wsl.conf
 ```
 
 - **Password won't show** when you type it -- no dots, no stars, nothing. This is normal!
 - Skip optional fields (Full Name, Room, etc.) by pressing Enter
-- After setup: type `exit`, run `wsl --shutdown` in PowerShell, reopen Ubuntu
 
-<!-- Speaker notes: The invisible password trips up everyone. Emphasize BEFORE they type. The manual import logs in as root by default -- the adduser + wsl.conf steps fix that. After wsl --shutdown and reopen, they should see openclaw@ not root@. -->
+Type `exit`, then in PowerShell: `& 'C:\Program Files\WSL\wsl.exe' --shutdown`. Wait 5 seconds, then `& 'C:\Program Files\WSL\wsl.exe' -d Ubuntu`. You should see **`openclaw@`** instead of `root@`.
 
----
-
-## Step 2: Enable systemd (Edit Config)
-
-🦞 OpenClaw's daemon needs systemd. It is **not enabled by default** in WSL2.
-
-### Edit the WSL config file and add these lines
-
-```bash
-sudo nano /etc/wsl.conf
-```
-
-```
-[boot]
-systemd=true
-```
-
-**Save and exit:** `Ctrl + O`, `Enter`, then `Ctrl + X`
+<!-- Speaker notes: The invisible password trips up everyone. Emphasize BEFORE they type. The echo command does two things: enables systemd AND sets the default user. After shutdown and reopen, they should see openclaw@ not root@. -->
 
 ---
 
-## Step 2: Enable systemd (Restart and Verify)
+## Step 5: Configure Ubuntu (Start Menu + Verify)
 
-### Restart WSL from PowerShell
+### Verify Start Menu shortcut
 
-```powershell
-wsl --shutdown
-```
+Type **ubuntu** in the Start menu. If it appears and launches, you're set — skip ahead.
 
-Wait 5 seconds, then reopen Ubuntu and verify:
+**If it doesn't appear**, create one manually:
+1. `Win+R` → type `shell:programs` → Enter
+2. Right-click > **New** > **Shortcut**
+3. Location: `"C:\Program Files\WSL\wsl.exe" -d Ubuntu`
+4. Name it **Ubuntu**, click Finish
+
+### Verify systemd
+
+Open Ubuntu from the Start Menu and run:
 
 ```bash
 systemctl is-system-running
@@ -676,9 +711,33 @@ systemctl is-system-running
 
 Expected: `running` (or `degraded` is OK)
 
+> You can safely remove the USB stick now. The remaining steps use guest WiFi.
+
+<!-- Speaker notes: The Start Menu shortcut is important — without it, students would have to open PowerShell every time. After this point, the USB is done. Everything else uses standard internet. -->
+
 ---
 
-## Step 3a: Install nvm
+## Step 7: Update Ubuntu and Install Tools
+
+In your Ubuntu terminal:
+
+### Update packages (5-10 minutes on first run)
+
+```bash
+sudo apt update && sudo apt upgrade -y
+```
+
+### Install essential tools
+
+```bash
+sudo apt install -y git curl wget build-essential
+```
+
+These provide version control, download utilities, and compilation tools needed by npm.
+
+---
+
+## Step 8a: Install nvm
 
 We use **nvm** (Node Version Manager) -- the recommended way.
 
@@ -693,11 +752,13 @@ source ~/.bashrc
 nvm --version          # Should show: 0.40.1
 ```
 
-> If you see `nvm: command not found` -- close and reopen your Ubuntu terminal, then try again.
+> If you see `nvm: command not found` -- close the Ubuntu window, then reopen it: **Start Menu** (type "Ubuntu") or **PowerShell**: `& 'C:\Program Files\WSL\wsl.exe' -d Ubuntu`
 
 ---
 
-## Step 3b: Install Node.js 22
+## Step 8b: Install Node.js 22
+
+> If paste isn't working, close the Ubuntu window, then reopen it: **Start Menu** (type "Ubuntu") or **PowerShell**: `& 'C:\Program Files\WSL\wsl.exe' -d Ubuntu`
 
 ```bash
 nvm install 22
@@ -715,25 +776,7 @@ As long as `node` starts with **v22**, you're fueled up.
 
 ---
 
-## Steps 4 and 5: Update Packages and Install Tools
-
-### Update Ubuntu packages (2-5 minutes)
-
-```bash
-sudo apt update && sudo apt upgrade -y
-```
-
-### Install essential tools
-
-```bash
-sudo apt install -y git curl wget build-essential
-```
-
-These provide version control, download utilities, and compilation tools needed by npm.
-
----
-
-## Step 6a: Power Settings — Disable Sleep
+## Step 9a: Power Settings — Disable Sleep
 
 For **24/7 operation**, your laptop must stay awake. **Two settings** must BOTH be changed.
 
@@ -752,7 +795,7 @@ For **24/7 operation**, your laptop must stay awake. **Two settings** must BOTH 
 
 ---
 
-## Step 6b: Hibernate, Display, and Plug In
+## Step 9b: Hibernate, Display, and Plug In
 
 ### Disable hibernate (requires admin PowerShell)
 
@@ -760,7 +803,7 @@ For **24/7 operation**, your laptop must stay awake. **Two settings** must BOTH 
 powercfg /hibernate off
 ```
 
-> Start menu > type "PowerShell" > **right-click** > **Run as administrator**. A regular terminal will reject this command.
+> Start menu > type "PowerShell" > press `Ctrl + Shift + Enter` for admin. A regular terminal will reject this command.
 
 ### Display can turn off — that's fine
 - "Turn off screen after" → **5 minutes** (display off, computer still runs)
@@ -771,7 +814,7 @@ Keep the laptop **plugged in** — running 24/7 on battery is not practical.
 
 ---
 
-## Step 6c: Power Settings — Verify
+## Step 9c: Power Settings — Verify
 
 ### Test with the lid closed (not just screen lock)
 
@@ -785,14 +828,14 @@ uptime
 ```
 
 You should see **continuous uptime** — not a fresh boot. If it restarted:
-- Recheck **lid close** in Control Panel (Step 6a)
-- Recheck **sleep** in Settings (Step 6a)
+- Recheck **lid close** in Control Panel (Step 9a)
+- Recheck **sleep** in Settings (Step 9a)
 
 <!-- Speaker notes: The real test is closing the lid, not just locking the screen. If uptime resets, lid close is still set to Sleep. -->
 
 ---
 
-## Step 7: Understand the File System Boundary
+## Step 10: Understand the File System Boundary
 
 There are **two separate file systems**. Knowing which you are in matters.
 
@@ -809,73 +852,61 @@ Files in `/home/openclaw/` are fast. Files through `/mnt/c/` are **significantly
 
 ---
 
-## Step 8: Tailscale (Optional)
+## Optional: Tailscale (Remote Access)
 
-Tailscale lets you access 🦞 OpenClaw from your phone or another computer. **Skip if** you'll only use this laptop.
-
-### Setup
-1. Create account at **tailscale.com** (free plan works)
-2. Install on **Windows** (download from website) and inside **WSL2**:
+Tailscale lets you access 🦞 OpenClaw from your phone or another computer. **Skip if** you'll only use this laptop locally.
 
 ```bash
 curl -fsSL https://tailscale.com/install.sh | sh
 sudo tailscale up
 ```
 
-From your phone via Tailscale: `http://100.x.x.x:18789/`. From everywhere else: **no access** (secure by default).
+This gives you a URL to open in your browser to authorize the device. Once connected:
+
+- **From this laptop:** `http://127.0.0.1:18789/`
+- **From your phone (on Tailscale):** `http://100.x.x.x:18789/`
+- **From everywhere else:** no access (secure by default)
+
+<!-- Speaker notes: Tailscale is optional. It's useful for checking on the agent from your phone or another computer. Skip it for now if students just want to get OpenClaw running. They can always add it later. -->
 
 ---
 
-## Step 8.5: Disk Encryption (Recommended)
+## Optional: Disk Encryption
 
-If your device stores API keys and personal data, encrypt the disk.
+If your laptop stores API keys, conversation history, and agent memory — encrypt the disk.
 
 | Platform | How |
 |----------|-----|
-| **Windows Pro/Enterprise** | BitLocker |
+| **Windows Pro/Enterprise** | BitLocker (Settings > Update & Security) |
 | **Windows Home** | Device Encryption (requires Microsoft account) |
-| **Linux (native, not WSL)** | LUKS -- enable during OS installation |
-| **Mac** | FileVault |
 
 > If that laptop walks off, encrypted data is unreadable without your password.
 
 ---
 
-## Step 9: Dedicated User Account (Optional)
-
-A security measure from Module 01's **Principle 2: Least Privilege**.
-
-```bash
-sudo adduser myagent
-su - myagent
-```
-
-- Set a password, skip optional fields
-- 🦞 OpenClaw installs under this account only
-- If something goes wrong, damage is limited to this account
-- Type `exit` to return to your regular account
-
-**Skip this if** you want simplicity or plan to use Docker sandboxing (Module 10).
-
----
-
 <!-- _class: warning -->
 
-## 🚩 Shoals and Sandbars
+## 🚩 Shoals and Sandbars (1/2)
 
 | Problem | Cause | Fix |
 |---------|-------|-----|
+| "Warning 1964" during .msi install | Cosmetic shortcut property | Ignore — WSL installed fine |
 | Error `0x80370102` | Virtualization disabled in BIOS | Enable "Intel VT" or "AMD-V" in BIOS settings |
-| Error `0x80004002` | Windows features not enabled | Run `dism.exe` commands to enable WSL and VM Platform |
-| `node: command not found` | nvm not loaded | Run `source ~/.bashrc` or reopen terminal |
+| "WSL optional component not enabled" | Windows features not activated | Run `--install --no-distribution` from Step 3 and restart |
+| USB stick not detected | Bad port or drive letter | Try another USB port; check File Explorer for drive letter |
+| `wsl --import` error | Wrong file path | Paste command from `setup-commands.txt` (path is pre-filled) |
+
+---
+
+## 🚩 Shoals and Sandbars (2/2)
+
+| Problem | Cause | Fix |
+|---------|-------|-----|
+| Paste stops working | Terminal gets stuck | Close the Ubuntu window, reopen from Start Menu |
+| `node: command not found` | nvm not loaded | Run `source ~/.bashrc` or reopen from Start Menu |
 | Password not accepted | Using Windows password | Use the **Linux** password from Ubuntu setup |
-| WSL2 uses too much RAM | Default is half your RAM | Create `.wslconfig` with `memory=4GB` |
-| `powercfg` needs admin | Regular PowerShell | **Right-click** > Run as administrator |
 | Laptop sleeps when lid closes | Lid close not configured | Control Panel > Power Options > lid → Do nothing |
 | "Run as admin" unavailable | Corporate policy remnants | Clean install from USB (not a reset) |
-| Error `0x80072EE7` on Ubuntu | MS Store blocked or broken | Use browser fallback: download from cloud-images.ubuntu.com |
-| No Ubuntu in Start menu | Used manual import method | Open PowerShell, type `wsl -d Ubuntu` |
-| Ubuntu terminal is slow | Windows Defender scanning | Exclude WSL2 directory from Defender |
 
 ---
 
@@ -904,12 +935,13 @@ Run each command in your 🐚 Ubuntu terminal:
 Complete this checklist:
 
 - [ ] **Hardware:** 8+ GB RAM, 20+ GB free disk, Windows 1903+
-- [ ] **WSL2:** Running, VERSION 2, Ubuntu username created
+- [ ] **USB Setup Kit:** Prepared with WSL .msi + Ubuntu .tar.gz
+- [ ] **WSL2:** Installed from USB, VERSION 2, username created
 - [ ] **systemd:** Enabled and running
 - [ ] **Node.js + npm:** v22.x.x and 10.x.x installed
 - [ ] **Git:** Installed
-- [ ] **Power settings:** Sleep disabled AND lid close set to "Do nothing" (if running 24/7)
-- [ ] **File system:** Working in `/home/username/`, not `/mnt/c/`
+- [ ] **Power settings:** Sleep disabled AND lid close set to "Do nothing"
+- [ ] **Network:** Connected to guest WiFi only
 - [ ] **Bonus:** Navigate to `\\wsl$\Ubuntu\home\openclaw\` in File Explorer
 
 ---
@@ -918,14 +950,14 @@ Complete this checklist:
 
 ## 💎 Treasure Chest
 
-1. **🦞 OpenClaw requires WSL2** -- it runs inside Linux, not directly on Windows
-2. **systemd must be enabled** -- add `[boot] systemd=true` to `/etc/wsl.conf`
-3. **Node.js 22+ is required** -- install with nvm for easy version management
-4. **Keep 🦞 OpenClaw files in the Linux file system** -- `/home/username/`, not `/mnt/c/`
-5. **Disable sleep AND configure lid close** -- both Settings and Control Panel must be changed
-6. **Tailscale is optional** but useful for remote access
-7. **A dedicated user account** adds security isolation
-8. **Most errors** come from virtualization disabled in BIOS or nvm not sourced
+1. **Prepare a USB Setup Kit** -- WSL .msi + Ubuntu image + setup-commands.txt on your main computer
+2. **Copy to Downloads, then install** -- no drive letters to guess, commands are ready to paste
+3. **🦞 OpenClaw requires WSL2** -- it runs inside Linux, not directly on Windows
+4. **systemd is enabled** during Ubuntu configuration -- one command handles it
+5. **Node.js 22+ is required** -- install with nvm for easy version management
+6. **Keep 🦞 OpenClaw files in the Linux file system** -- `/home/username/`, not `/mnt/c/`
+7. **Disable sleep AND configure lid close** -- both Settings and Control Panel must be changed
+8. **Guest WiFi only** -- the OpenClaw laptop never connects to your main home network
 
 ---
 
@@ -935,6 +967,6 @@ Complete this checklist:
 
 ## Module 03: Installing 🦞 OpenClaw
 
-> Your laptop is ready. Time to run the installer, walk through the onboarding wizard, and bring your agent to life.
+> Your laptop is ready — installed from USB, configured, and verified. Time to run the installer, walk through the onboarding wizard, and bring your agent to life.
 
 <!-- Speaker notes: Environment is set. Module 03 is the big one -- actual installation. Make sure every student's verification checklist passes before they leave today. -->

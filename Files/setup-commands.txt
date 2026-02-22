@@ -1,0 +1,380 @@
+============================================
+  OpenClaw Module 02 — Setup Commands
+  Copy and paste these into the right terminal
+============================================
+
+IMPORTANT: Open this file from your DOWNLOADS folder, not from the USB stick.
+Copying commands from a USB drive may not paste correctly.
+
+To paste in PowerShell: right-click OR press Ctrl+V
+To paste in Ubuntu: right-click (this pastes automatically)
+
+If paste stops working or you need to restart Ubuntu:
+  Close the Ubuntu window, then reopen it using EITHER method:
+  - Start Menu: type "Ubuntu" and click it
+  - PowerShell: & 'C:\Program Files\WSL\wsl.exe' -d Ubuntu
+
+
+============================
+  POWERSHELL COMMANDS
+  (Run as Admin: Start > type PowerShell > Ctrl + Shift + Enter)
+============================
+
+
+STEP 1: Enable WSL components
+--------------------------------------------
+
+& 'C:\Program Files\WSL\wsl.exe' --install --no-distribution
+
+>>> RESTART YOUR COMPUTER NOW <<<
+>>> After restarting, open PowerShell as Admin again <<<
+>>> (Start > type PowerShell > Ctrl + Shift + Enter) <<<
+
+
+STEP 2: Create the Ubuntu folder
+--------------------------------------------
+
+mkdir C:\WSL\Ubuntu
+
+
+STEP 3: Import Ubuntu from your Downloads folder
+--------------------------------------------
+
+& 'C:\Program Files\WSL\wsl.exe' --import Ubuntu C:\WSL\Ubuntu "$env:USERPROFILE\Downloads\ubuntu-noble-wsl-amd64-wsl.rootfs.tar.gz"
+
+
+STEP 4: Check that it worked
+--------------------------------------------
+
+& 'C:\Program Files\WSL\wsl.exe' -l -v
+
+(You should see: Ubuntu, VERSION 2)
+
+
+STEP 5: Open Ubuntu
+--------------------------------------------
+
+& 'C:\Program Files\WSL\wsl.exe' -d Ubuntu
+
+(You should see a root@ prompt)
+
+
+============================
+  UBUNTU COMMANDS (in the root@ prompt)
+  (Run these one at a time)
+============================
+
+
+STEP 6: Create your user account
+--------------------------------------------
+
+adduser openclaw
+
+(Password won't show when you type — no dots, no stars. That's normal!)
+(Skip optional fields like Full Name by pressing Enter)
+
+
+STEP 7: Give your user admin rights
+--------------------------------------------
+
+usermod -aG sudo openclaw
+
+
+STEP 8: Configure WSL settings
+--------------------------------------------
+
+echo -e "[boot]\nsystemd=true\n\n[user]\ndefault=openclaw" > /etc/wsl.conf
+
+
+STEP 9: Exit and restart Ubuntu
+--------------------------------------------
+
+exit
+
+(Now back in PowerShell, run these two commands:)
+
+& 'C:\Program Files\WSL\wsl.exe' --shutdown
+
+(Wait 5 seconds, then:)
+
+& 'C:\Program Files\WSL\wsl.exe' -d Ubuntu
+
+(You should now see openclaw@ instead of root@)
+
+
+STEP 10: Verify systemd is running
+--------------------------------------------
+
+systemctl is-system-running
+
+(Expected: "running" or "degraded" — both are OK)
+
+
+STEP 11: Verify Start Menu shortcut
+--------------------------------------------
+
+(Ubuntu should already appear in the Start menu from the WSL installer.)
+Type "ubuntu" in the Start menu to check. If it launches, skip to STEP 12.
+
+If it does NOT appear, create one manually:
+1. Press Win + R, type: shell:programs — press Enter
+2. Right-click empty space > New > Shortcut
+3. Paste this as the location:
+   C:\Program Files\WSL\wsl.exe -d Ubuntu
+4. Name it: Ubuntu
+5. Click Finish
+
+
+============================
+  UBUNTU COMMANDS (as openclaw@ user)
+  (Open Ubuntu from Start Menu)
+============================
+
+
+STEP 12: Update Ubuntu and install tools
+--------------------------------------------
+
+sudo apt update && sudo apt upgrade -y
+
+(Then install essential tools:)
+
+sudo apt install -y git curl wget build-essential
+
+
+STEP 13: Install nvm (Node Version Manager)
+--------------------------------------------
+
+curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.40.1/install.sh | bash
+
+(Then activate it:)
+
+source ~/.bashrc
+
+(If that doesn't work: close the Ubuntu window, then reopen using either method:)
+(  - Start Menu: type "Ubuntu" and click it)
+(  - PowerShell: & 'C:\Program Files\WSL\wsl.exe' -d Ubuntu)
+(Then continue from here.)
+
+(Check it works:)
+
+nvm --version
+
+(Should show: 0.40.1)
+
+
+STEP 14: Install Node.js 22
+--------------------------------------------
+
+(If paste isn't working, close the Ubuntu window, then reopen using either method:)
+(  - Start Menu: type "Ubuntu" and click it)
+(  - PowerShell: & 'C:\Program Files\WSL\wsl.exe' -d Ubuntu)
+
+nvm install 22
+nvm alias default 22
+
+(Check it works:)
+
+node --version
+npm --version
+
+(Should show: v22.x.x and 10.x.x)
+
+
+============================
+  POWER SETTINGS (back in Windows)
+============================
+
+
+STEP 15: Disable sleep
+--------------------------------------------
+
+(GUI — no commands needed)
+1. Settings > System > Power & sleep
+2. Set "Sleep" to NEVER (both battery and plugged in)
+
+
+STEP 16: Disable lid close sleep
+--------------------------------------------
+
+(GUI — no commands needed)
+1. Control Panel > Power Options > "Choose what closing the lid does"
+2. Set "When I close the lid" to DO NOTHING (both battery and plugged in)
+3. Click Save changes
+
+
+STEP 17: Disable hibernate (PowerShell as Admin)
+--------------------------------------------
+
+powercfg /hibernate off
+
+
+STEP 18: Verify everything works
+--------------------------------------------
+
+(In Ubuntu terminal, run:)
+
+node --version
+npm --version
+git --version
+curl --version
+systemctl is-system-running
+pwd
+
+(All should return valid output. pwd should show /home/openclaw)
+
+
+============================
+  OPTIONAL: TAILSCALE (remote access)
+  (Skip if you'll only use this laptop locally)
+============================
+
+
+STEP 19: Install Tailscale inside Ubuntu
+--------------------------------------------
+
+(In Ubuntu terminal, run:)
+
+curl -fsSL https://tailscale.com/install.sh | sh
+
+(Then start Tailscale:)
+
+sudo tailscale up
+
+(This gives you a URL — open it in your browser to authorize the device.)
+
+
+STEP 20: Verify Tailscale
+--------------------------------------------
+
+tailscale status
+
+(You should see your devices listed with Tailscale IPs like 100.x.x.x)
+
+Access your OpenClaw later:
+  - From this laptop: http://127.0.0.1:18789/
+  - From your phone (on Tailscale): http://100.x.x.x:18789/
+  - From everywhere else: no access (secure by default)
+
+(Also install Tailscale on Windows: download from https://tailscale.com/download)
+(Sign in with the same account you used above.)
+
+
+============================================
+  MODULE 03 — Installing OpenClaw
+  (Everything below happens in Ubuntu terminal)
+============================================
+
+
+STEP 21: Install OpenClaw
+--------------------------------------------
+
+curl -fsSL https://openclaw.ai/install.sh | bash
+
+(Wait for "Installation complete!" then run:)
+
+source ~/.bashrc
+
+(If you see "openclaw is not discoverable on path" — this fixes it.
+If it still doesn't work, close Ubuntu and reopen from Start Menu.)
+
+
+STEP 22: Run the onboarding wizard
+--------------------------------------------
+
+openclaw onboard --install-daemon
+
+(This starts an interactive wizard. Here's what to choose for each question:)
+
+  Q1  Gateway type:          Local Gateway
+  Q2  Workspace directory:   Accept default (~/.openclaw) — press Enter
+  Q3  AI provider:           Anthropic (or your choice)
+  Q4  API key:               Use the NOTEPAD TRICK (see below)
+  Q5  Model:                 claude-opus-4-6
+  Q6  Gateway port:          Accept default (18789) — press Enter
+  Q7  Gateway bind:          Loopback
+  Q8  Tailscale exposure:    Off
+  Q9  Gateway token:         Leave blank (auto-generate) — press Enter
+  Q10 Chat channels:         Skip for now
+  Q11 Skills:                Skip all — press Enter
+  Q12 Hooks:                 Enable BOOT.md and session memory (spacebar to toggle)
+  Q13 Service runtime:       Node.js — press Enter
+  Q14 Install as service:    Y — press Enter
+
+>>> THE NOTEPAD TRICK (for Q4 — API key) <<<
+Browsers add hidden characters when copying. DO NOT paste directly into terminal.
+1. Copy API key from console.anthropic.com
+2. Paste into Notepad on Windows
+3. Verify it's ONE line starting with sk-ant-
+4. Select all (Ctrl+A), copy (Ctrl+C)
+5. Right-click in Ubuntu terminal to paste
+
+>>> SAVE YOUR GATEWAY TOKEN <<<
+The wizard displays a gateway token at the end. Save it immediately!
+You need it to access the dashboard. Retrieve later with:
+openclaw config gateway token
+
+
+STEP 23: Install QMD (do this immediately)
+--------------------------------------------
+
+openclaw skills install qmd
+openclaw service restart
+
+(QMD is a search engine for your agent's memory — saves tokens from day one.)
+
+
+STEP 24: Verify the installation
+--------------------------------------------
+
+openclaw status
+openclaw doctor
+openclaw security audit --deep --fix
+
+(status should show "Running", doctor should pass, audit fixes file permissions.)
+
+
+STEP 25: Test the dashboard
+--------------------------------------------
+
+(Open your WINDOWS browser and go to:)
+http://127.0.0.1:18789/
+
+(Enter your gateway token when prompted. If it loads, the dashboard works.)
+
+
+STEP 26: Test the TUI (first chat)
+--------------------------------------------
+
+openclaw tui
+
+(Type a short greeting and press Enter. If the AI responds, it works!)
+(Type /exit or press Ctrl+C to leave.)
+
+
+STEP 27: Verify the daemon
+--------------------------------------------
+
+openclaw service status
+
+(Should show: Active: active (running))
+
+(Close the Ubuntu window completely, wait 10 seconds, then check
+http://127.0.0.1:18789/ in your browser. If it still loads, the daemon works.)
+
+
+============================
+  USEFUL COMMANDS (reference)
+============================
+
+openclaw service start       # Start the daemon
+openclaw service stop        # Stop the daemon
+openclaw service restart     # Restart after config changes
+openclaw service logs        # View daemon logs
+openclaw config gateway token  # Show your gateway token
+openclaw config gateway bind   # Change who can connect
+openclaw config provider key   # Update your API key
+
+
+============================================
+  DONE! OpenClaw is installed and running.
+============================================
