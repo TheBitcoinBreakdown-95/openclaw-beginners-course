@@ -33,6 +33,97 @@ By the end of this module, you will be able to:
 
 ---
 
+## Before You Begin: Used or Pre-Owned Laptops
+
+If you bought or were given a **used laptop** — especially one that came from a workplace — read this section carefully before doing anything else.
+
+### The Problem with "Wiped" Corporate Laptops
+
+Many used laptops were previously managed by a company's IT department. Corporate machines often have:
+
+- **Group Policy restrictions** — rules that limit what you can install, what settings you can change, and whether you can run programs as administrator
+- **MDM (Mobile Device Management) enrollment** — remote management software like Microsoft Intune that can push policies to the device even after a "reset"
+- **Monitoring software** — agents that report device activity back to a central server
+- **Restricted admin access** — the "Run as administrator" option may be blocked or broken
+
+**A factory reset does NOT remove these.** "Reset this PC" from Windows Settings reinstalls Windows on top of the existing configuration. The corporate policies, MDM enrollment, and admin restrictions survive the reset. This is by design — corporations specifically prevent employees from removing management by resetting their machines.
+
+### How to Check
+
+Run these checks to see if your laptop has corporate remnants:
+
+**Check 1: Domain membership**
+1. Right-click the **Start menu** > click **System** (or press `Windows + Pause`)
+2. Scroll down to "Related settings" and click **Domain or workgroup settings** (or look under "Device specifications")
+3. If you see a domain name (anything other than "WORKGROUP"), the laptop is still domain-joined
+
+**Check 2: MDM enrollment**
+1. Open **Settings** > **Accounts** > **Access work or school**
+2. If you see any connected accounts or organizations listed, the device is still enrolled in corporate management
+
+**Check 3: Admin access**
+1. Open the Start menu, type `PowerShell`
+2. Try pressing `Ctrl + Shift + Enter` to open it as administrator
+3. If you get an error like "the item you selected is unavailable" or a UAC prompt that won't accept your password, admin access is restricted
+
+### The Fix: Clean Install from USB
+
+If any of the above checks show corporate remnants, the safest path is a **clean Windows installation** from a USB drive — not a reset, not a refresh, a full clean install. This wipes the drive completely (including all corporate policies) and gives you a fresh, unmanaged copy of Windows.
+
+**How to do a clean install:**
+1. On a different computer, go to https://www.microsoft.com/software-download/windows10
+2. Download the **Media Creation Tool**
+3. Use it to create a bootable USB drive (you'll need an 8 GB+ USB stick)
+4. Plug the USB into the used laptop
+5. Restart the laptop and boot from USB (usually press F12, F2, or Esc during startup to access the boot menu)
+6. Choose **Custom: Install Windows only** (not "Upgrade")
+7. Delete all existing partitions and let Windows create fresh ones
+8. Complete the setup — create a local account (NOT a Microsoft account, for simplicity)
+
+This takes 30-60 minutes but gives you a guaranteed clean machine with full admin access. It's the right foundation for an always-on agent.
+
+> **If you can't do a clean install right now**, you can still follow this module — but you may hit admin-related blockers during setup. The troubleshooting section covers workarounds for common restrictions.
+
+---
+
+## Before You Begin: Network Setup
+
+Your OpenClaw laptop needs **ongoing internet access** — not just for setup, but permanently. API calls to your AI provider, Telegram messages, web searches for morning briefings — all of these require a live connection. You can't set it up and disconnect.
+
+The question is: **which network should it be on?**
+
+### Why This Matters
+
+Most home WiFi networks are "flat" — every device can see and talk to every other device. Your phone, your personal laptop, your smart TV, and now your OpenClaw machine are all neighbors on the same network. If the OpenClaw laptop is ever compromised (through a prompt injection attack, a malicious skill, or residual corporate software), an attacker could potentially reach your other devices.
+
+### Recommendation: Set Up a Guest Network First
+
+Most home routers have a **guest network** feature that provides internet access but **isolates devices** from your main network. Set this up BEFORE connecting the OpenClaw laptop.
+
+1. Find your router's address: open PowerShell and run `ipconfig` — look for **Default Gateway** (e.g., `192.168.1.1`, `10.0.0.1`, etc.). This varies by ISP and router brand
+2. Open that address in a browser to reach your router's admin panel (check the label on the router for the login password)
+3. Find the **Guest Network** or **Guest WiFi** settings (location varies by router brand)
+3. Enable the guest network and set a password
+4. Make sure **"Allow guests to access local network"** is **OFF** (this is the isolation setting)
+5. Connect your OpenClaw laptop to the **guest** network
+6. Keep your personal devices on the **main** network
+
+> **If your router doesn't support guest networks**, you can still proceed on your main network and revisit network isolation in Module 10 (Security Hardening), which covers this topic in depth.
+
+> **Note:** Some guest networks and pre-owned laptops block the Microsoft Store. If `wsl --install` can't download Ubuntu, don't panic — Section 1.6 provides a manual installation method that works on any computer with any network, no Store needed.
+
+### If You Already Connected to Your Main WiFi
+
+No harm done — but once you've set up a guest network, switch the OpenClaw laptop to it and then **forget** the main network:
+
+1. Open **Settings** > **Network & Internet** > **Wi-Fi**
+2. Click **Manage known networks**
+3. Find your main WiFi network and click **Forget**
+
+This removes the saved password so the laptop won't silently reconnect to your main network later.
+
+---
+
 ## Before We Start: Check Your Hardware
 
 Before installing anything, let's make sure your laptop can handle OpenClaw. We need to check three things: RAM, disk space, and Windows version.
@@ -206,6 +297,8 @@ The requested operation is successful. Changes will not be effective until the s
 
 > **Note:** The exact output may vary. If you see messages about features being enabled and Ubuntu being downloaded, you're on the right track.
 
+> **Error `0x80072EE7` (Ubuntu fails to download)?** The Microsoft Store is blocked or broken on your machine. This is common on pre-owned laptops and some networks. **Don't waste time troubleshooting the Store.** Skip to Section 1.6 below for the manual installation method — it works on any computer, any network.
+
 ### 1.3 Restart Your Computer
 
 This is required. WSL2 needs a reboot to fully activate.
@@ -272,9 +365,116 @@ openclaw@YOURPC:~$
 
 That last line (`openclaw@YOURPC:~$`) is your Linux prompt. You're now inside Ubuntu. The `~` means you're in your home directory.
 
-**Congratulations — WSL2 is installed!**
+**Congratulations — WSL2 is installed!** Skip Section 1.6 and go straight to Step 2.
 
 > **Troubleshooting:** If you see an error like `WslRegisterDistribution failed with error: 0x80370102`, it usually means virtualization is disabled in your BIOS. See the troubleshooting section at the end of this module.
+
+---
+
+### 1.6 If Ubuntu Failed to Install (Manual Method)
+
+If `wsl --install` gave you error `0x80072EE7`, or Ubuntu didn't download for any reason, **don't waste time troubleshooting the Microsoft Store**. The Store is frequently broken on pre-owned laptops and some networks block it. This manual method bypasses the Store entirely and works on any computer with any network.
+
+**Step 1: Download Ubuntu through your browser**
+
+1. Open your web browser (Edge, Chrome, whatever works)
+2. Go to: **cloud-images.ubuntu.com/wsl/noble/current/**
+3. Click the file that contains **amd64** and ends in **`.rootfs.tar.gz`** — it's the largest file on the page (about 500 MB)
+4. Wait for the download to finish
+
+> **AMD or ARM?** Choose **amd64** — this is for all standard Intel and AMD laptops. The ARM file is only for ARM-based devices like Surface Pro X.
+
+**Step 2: Import Ubuntu into WSL**
+
+Open your admin PowerShell and run:
+
+```powershell
+mkdir C:\WSL\Ubuntu
+```
+
+Then type this much (don't press Enter yet):
+
+```
+wsl --import Ubuntu C:\WSL\Ubuntu
+```
+
+Now open **File Explorer**, navigate to your **Downloads** folder, and **drag the downloaded file onto the PowerShell window**. This fills in the full path automatically so you don't have to type it. Now press Enter.
+
+If drag-and-drop doesn't work, type the beginning of the path and press **Tab** to auto-complete:
+
+```powershell
+wsl --import Ubuntu C:\WSL\Ubuntu C:\Users\YourName\Downloads\ubuntu
+```
+
+Press Tab → PowerShell completes the rest of the filename. Press Enter.
+
+No output means success. Verify it worked:
+
+```powershell
+wsl -l -v
+```
+
+You should see Ubuntu listed with VERSION 2.
+
+**Step 3: Create your user account**
+
+The manual import logs you in as `root` (the administrator account) by default. You need to create a normal user account.
+
+Open Ubuntu:
+
+```powershell
+wsl -d Ubuntu
+```
+
+You'll see a `root@` prompt. Run these commands one at a time:
+
+```bash
+adduser openclaw
+```
+
+- Set a password when prompted. **Nothing appears on screen when you type** — no dots, no stars, nothing. This is normal. Type your password and press Enter.
+- It asks for Full Name, Room Number, Work Phone, etc. — **press Enter to skip all of these**
+- Type **Y** when asked "Is the information correct?"
+
+Then run:
+
+```bash
+usermod -aG sudo openclaw
+```
+
+Then set this as the default user so you don't log in as root every time:
+
+```bash
+echo -e "[user]\ndefault=openclaw" > /etc/wsl.conf
+```
+
+Type `exit` to leave Ubuntu. In PowerShell, restart WSL:
+
+```powershell
+wsl --shutdown
+```
+
+Wait a few seconds, then open Ubuntu again:
+
+```powershell
+wsl -d Ubuntu
+```
+
+You should now see `openclaw@YOURPC` at the prompt instead of `root@`.
+
+**Step 4: Create a Start Menu shortcut**
+
+The manual import doesn't create a Start Menu entry. To add one:
+
+1. Open **File Explorer**
+2. Type `shell:programs` in the address bar and press Enter
+3. Right-click in the empty space > **New** > **Shortcut**
+4. For the location, type: `C:\Windows\System32\wsl.exe -d Ubuntu`
+5. Click Next, name it **Ubuntu**, click Finish
+
+Now you can open Ubuntu from the Start Menu like any other app. It opens as a command prompt window — that's normal, that's your Linux terminal.
+
+**Congratulations — WSL2 is installed!**
 
 ---
 
@@ -563,18 +763,35 @@ If you want your agent to be available 24/7 (receiving messages, running schedul
 
 > **Important:** If you're running on a laptop, keep it plugged in. Running 24/7 on battery will drain it quickly and isn't practical.
 
-### 6.2 Disable Hibernate (Optional but Recommended)
+### 6.2 Configure Lid Close Behavior (Laptops Only)
+
+This is the step most guides miss. The Power & sleep settings from 6.1 only control the *idle timeout* — what happens when you walk away. They do **NOT** control what happens when you **close the laptop lid**. By default, closing the lid puts the laptop to sleep regardless of your idle timeout settings. You must change this separately.
+
+1. Open **Control Panel** (type "Control Panel" in the Start menu search)
+2. Click **Hardware and Sound**
+3. Click **Power Options**
+4. On the left sidebar, click **Choose what closing the lid does**
+5. Under "When I close the lid":
+   - Set "On battery" → **Do nothing**
+   - Set "Plugged in" → **Do nothing**
+6. Click **Save changes**
+
+> **Why this matters:** If you set sleep to "Never" but leave lid close on its default, your laptop will still sleep the moment you close the lid. Your agent goes dark, scheduled tasks stop, messages pile up unanswered. Both settings must be changed.
+
+### 6.3 Disable Hibernate (Optional but Recommended)
 
 Hibernate saves your computer's state to disk and shuts down. It can interrupt WSL2. To disable it:
 
-1. Open PowerShell as Administrator (right-click > Run as administrator)
+1. Open **PowerShell as Administrator** (Start menu > type "PowerShell" > right-click > Run as administrator)
 2. Run:
 
 ```powershell
 powercfg /hibernate off
 ```
 
-### 6.3 Prevent the Display from Turning Off (Optional)
+> **Note:** This command requires administrator privileges. If you see "The operation requires administrator privilege," you opened a regular PowerShell instead of an admin one. Close it and reopen with right-click > Run as administrator.
+
+### 6.4 Prevent the Display from Turning Off (Optional)
 
 You might want the screen off to save power, but the computer itself stays on:
 
@@ -583,20 +800,23 @@ You might want the screen off to save power, but the computer itself stays on:
    - "When plugged in, turn off after" → Your preference (5 minutes is fine)
    - This only turns off the display — the computer and WSL2 keep running
 
-### 6.4 Verify WSL2 Survives Screen Lock
+### 6.5 Verify WSL2 Survives Lid Close
 
-After making these changes:
-1. Lock your screen (`Windows + L`)
-2. Wait a minute
-3. Unlock and open your Ubuntu terminal
-4. Type `uptime`
+After making these changes, verify everything works together:
+1. Close your laptop lid
+2. Wait one minute
+3. Open the lid and log back in
+4. Open your **Ubuntu terminal** (not PowerShell) and type `uptime`
 
 **Expected output:**
 ```
  14:30:22 up 5 min,  1 user,  load average: 0.00, 0.01, 0.00
 ```
 
-The "up X min" should show continuous uptime, not a reset. If WSL2 restarted (uptime shows a very low number), your power settings may not have saved properly.
+The "up X min" should show continuous uptime, not a reset. If WSL2 restarted (uptime shows a very low number), check that:
+- Lid close is set to "Do nothing" in Control Panel (Step 6.2)
+- Sleep is set to "Never" in Settings (Step 6.1)
+- Both settings are configured for "Plugged in" (keep the laptop plugged in)
 
 ---
 
@@ -973,6 +1193,18 @@ dism.exe /online /enable-feature /featurename:VirtualMachinePlatform /all /nores
 
 Restart your computer, then try `wsl --install` again.
 
+### Error 0x80072EE7 — Ubuntu Fails to Download
+
+**What happened:** WSL2 installed successfully, but Ubuntu couldn't download. Error code `0x80072EE7` means the Microsoft Store can't connect. This is common on pre-owned laptops (corporate images often break or disable the Store) and on some networks that block Store traffic.
+
+**Fix:** Don't troubleshoot the Store — it's a rabbit hole. Use the manual installation method in **Section 1.6** of this module instead. It downloads Ubuntu directly from Canonical's website using your browser, completely bypassing the Microsoft Store.
+
+### No Ubuntu App in the Start Menu
+
+**What happened:** You used the manual import method (`wsl --import`) to install Ubuntu. This method doesn't create a Start Menu shortcut.
+
+**Fix:** Create one manually — see the "Create a Start Menu shortcut" step in Section 1.6. Or just open PowerShell and type `wsl -d Ubuntu` any time you need Ubuntu.
+
 ### "node: command not found" After Installing nvm
 
 **What happened:** nvm hasn't been loaded into your current shell session.
@@ -1003,6 +1235,17 @@ wsl -u root passwd openclaw
 ```
 
 (Replace `openclaw` with your Linux username.)
+
+### "Run as administrator" Is Unavailable or Blocked
+
+**What happened:** The laptop has residual corporate Group Policy restrictions. This is common on used laptops that were previously managed by a company's IT department. A "Reset this PC" does not remove these restrictions.
+
+**Fix:** Try these alternatives:
+1. Start menu > type "PowerShell" > press `Ctrl + Shift + Enter` (instead of right-clicking)
+2. Open Task Manager (`Ctrl + Shift + Esc`) > File > Run new task > type `powershell` > check "Create this task with administrative privileges"
+3. Start menu > type "cmd" > press `Ctrl + Shift + Enter` > type `powershell` inside the admin command prompt
+
+If none of these work, the corporate policy is actively blocking elevation. The permanent fix is a **clean Windows install from USB** (see "Before You Begin: Used or Pre-Owned Laptops" at the top of this module).
 
 ### WSL2 Uses Too Much RAM
 
@@ -1075,7 +1318,7 @@ Complete the following checklist. Each item should have a checkmark before you p
 - [ ] **Node.js:** Version 22+ installed (`node --version` shows v22.x.x)
 - [ ] **npm:** Installed (`npm --version` shows 10.x.x)
 - [ ] **Git:** Installed (`git --version` shows a version number)
-- [ ] **Power settings:** Sleep disabled (if running 24/7)
+- [ ] **Power settings:** Sleep disabled AND lid close set to "Do nothing" (if running 24/7)
 - [ ] **File system:** You're in `/home/username/`, not `/mnt/c/`
 - [ ] **Optional: Tailscale** installed and connected
 - [ ] **Optional: Dedicated user account** created
@@ -1090,7 +1333,7 @@ Complete the following checklist. Each item should have a checkmark before you p
 2. **systemd must be enabled** for the OpenClaw daemon to work — add `[boot] systemd=true` to `/etc/wsl.conf`
 3. **Node.js 22+ is required** — install it with nvm inside WSL2 for easy version management
 4. **Keep OpenClaw files in the Linux file system** (`/home/username/`), not the Windows file system (`/mnt/c/`) — performance matters
-5. **Disable sleep** if you want 24/7 operation — Windows will pause WSL2 when it sleeps
+5. **Disable sleep AND configure lid close behavior** if you want 24/7 operation — the Settings app idle timeout and the Control Panel lid close setting are separate; both must be changed
 6. **Tailscale is optional** but useful for remote access — we'll configure it with the gateway in Module 03
 7. **A dedicated user account is optional** but adds a layer of security isolation
 8. **Most installation errors** come from virtualization being disabled in BIOS or nvm not being sourced — the troubleshooting section covers both

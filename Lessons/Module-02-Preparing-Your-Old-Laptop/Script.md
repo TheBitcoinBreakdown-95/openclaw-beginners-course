@@ -1,7 +1,7 @@
 # Module 02 Teaching Script: Preparing Your Old Laptop
 
 **Total speaking time:** ~30 minutes (plus 10-minute hands-on activity)
-**Slides:** 22
+**Slides:** 30 (deck has 30 slides; script groups related slides into 23 teaching sections)
 
 ---
 
@@ -81,11 +81,61 @@ And Loopback — 127.0.0.1. Also called "localhost." This is a network address t
 
 [pause]
 
-Logbook's stowed. Vocabulary's loaded. Now — everybody crack open your laptops. It's inspection time.
+Logbook's stowed. Vocabulary's loaded. But before we crack open those laptops — two important warnings.
 
 ---
 
-## Slide 5 — Check Your Hardware: RAM
+## Slide 5 — Used or Pre-Owned Laptops (Slides 5-6)
+
+Alright, hands up — how many of you are using a laptop that used to belong to someone else? Maybe you bought it used, maybe it was a hand-me-down from work, maybe you snagged it off eBay or Facebook Marketplace. Hands up.
+
+[wait for responses]
+
+If your hand is up, this slide is SPECIFICALLY for you. And if you got your laptop from a workplace — a company, a school, any kind of organization — listen VERY carefully because this could save you hours of headaches.
+
+Here's the thing about corporate laptops. When a company gives you a laptop, their IT department installs management software on it. Group policies that restrict what you can install. MDM enrollment — that stands for Mobile Device Management — which lets the company push rules and updates to the device remotely. Admin restrictions that prevent you from making system changes. Sometimes even monitoring software that reports back to the company.
+
+Now here's the kicker. You might think "but I reset it! I did the factory reset!" And that's great. But a factory reset — "Reset this PC" from Windows Settings — does NOT remove any of that. Not the group policies. Not the MDM enrollment. Not the admin restrictions. NONE of it. A factory reset reinstalls Windows on top of the existing corporate configuration. The company DESIGNED it that way. They don't WANT employees removing management by resetting their machines.
+
+So if you got a corporate laptop and you "wiped it" with a factory reset, you're still running a corporate-managed machine. Which means when you try to run PowerShell as administrator and it says "the item you selected is unavailable" — THAT'S why.
+
+[pause]
+
+Three quick checks. One — right-click the Start menu, click System, and look for a domain name. If it says anything other than "WORKGROUP," the laptop is still domain-joined to the old company. Two — go to Settings, Accounts, "Access work or school." If you see any connected organizations there, MDM is still active. Three — try opening PowerShell with Ctrl + Shift + Enter. If admin access is blocked, corporate policy is still in charge.
+
+If ANY of those checks show corporate remnants, the fix is a CLEAN Windows install from USB. Not a reset — a real, from-scratch installation. Download the Media Creation Tool from microsoft.com on a different computer, create a bootable USB, boot from it, choose Custom Install, delete ALL existing partitions, and let Windows start fresh. Takes about 30 to 60 minutes, but it gives you a guaranteed clean machine with full admin access.
+
+I know that sounds like a big step. But think of it this way — you're about to give an AI agent access to run shell commands on this machine. You want to KNOW that machine is clean, that nothing's phoning home, and that YOU have full control. Start with a clean deck.
+
+Now — even if your laptop is brand new or you're sure it's clean, there's one more thing to do BEFORE we connect it to the internet.
+
+---
+
+## Slide 5 (continued) — Network Setup: Guest WiFi First
+
+Your OpenClaw laptop needs permanent internet. Not just for setup — forever. API calls to your AI provider, Telegram messages, web searches for morning briefings — all of that needs a live connection. You can't just connect for setup and disconnect.
+
+So the question is — WHICH network should this laptop live on?
+
+If you connect it to your regular home WiFi, it sits on the same network as your phone, your personal laptop, your smart TV, maybe your smart home devices. They can all see each other. And if the OpenClaw laptop is ever compromised — through a prompt injection attack, a malicious skill, even leftover corporate software — that attacker can potentially reach your other devices too.
+
+The fix is simple. Most home routers have a GUEST NETWORK feature. A guest network gives internet access but ISOLATES the device from everything else on your network. It's like putting the OpenClaw laptop in a separate harbor — it can still reach the open ocean, but it can't wander into the docks where your personal ships are moored.
+
+Set this up BEFORE connecting the OpenClaw laptop to anything. First, you need your router's address. Open PowerShell and type ipconfig — look for the line that says Default Gateway. That's your router's address. It might be 192.168.1.1, it might be 10.0.0.1, it might be something else entirely — it varies by ISP and router brand. Type that address into a browser and you'll get the router admin page. The login password is usually on a sticker on the router itself. Find the guest network settings, enable it, set a password, and make sure "allow guests to access local network" is turned OFF. That last part is the isolation.
+
+Then connect the OpenClaw laptop to the GUEST network. Keep your personal devices on the main network. Done.
+
+[pause]
+
+If you ALREADY connected the laptop to your main WiFi — no panic, just switch it to the guest network when you can, and then go to Settings, Network and Internet, Wi-Fi, Manage known networks, find your main network, and hit Forget. That removes the saved password so it won't silently reconnect to your main network later.
+
+If your router doesn't support guest networks, don't worry — you can still proceed. Module 10 covers network isolation in detail with more advanced options. But if you CAN do it now, do it now. It takes five minutes and it's worth it.
+
+Alright — NOW let's crack open those laptops. It's inspection time.
+
+---
+
+## Slide 6 — Check Your Hardware: RAM
 
 First thing's first — hull inspection. We need to know what we're working with before we start bolting an engine into this thing.
 
@@ -107,7 +157,7 @@ Let's check the next gauge.
 
 ---
 
-## Slide 6 — Check Your Hardware: Disk Space and Windows Version
+## Slide 7 — Check Your Hardware: Disk Space and Windows Version
 
 Two more inspections. Quick ones.
 
@@ -135,7 +185,7 @@ Three inspections done. RAM? Check. Disk? Check. Windows? Check. The hull is sou
 
 ---
 
-## Slide 7 — Why WSL2 Is Required
+## Slide 8 — Why WSL2 Is Required
 
 But first — I owe you an explanation. Because I know what someone in this room is thinking right now. "Why can't I just install OpenClaw directly on Windows? Why do we need this extra Linux stuff? This feels like unnecessary work."
 
@@ -153,7 +203,7 @@ Two tenants. One building. No conflict. That's the setup. Now let's build it.
 
 ---
 
-## Slide 8 — Step 1: Open PowerShell as Administrator
+## Slide 9 — Step 1: Open PowerShell as Administrator
 
 Alright — tools down, eyes on me. This is where we start the REAL work. Step one, and I need EVERYONE to follow along. Do not get ahead. Do not freestyle. We do this TOGETHER.
 
@@ -177,7 +227,7 @@ Good? Good. Next command. Here's where the magic happens.
 
 ---
 
-## Slide 9 — Step 1: Install WSL with Ubuntu
+## Slide 10 — Step 1: Install WSL with Ubuntu
 
 This is it, crew. One command. ONE command, and your laptop transforms from a regular Windows machine into something that can run OpenClaw. Are you ready? Type this EXACTLY as I say it:
 
@@ -195,6 +245,12 @@ Now WATCH your screen. What's happening right now is beautiful. Windows is enabl
 
 You should see messages about "Installing: Virtual Machine Platform," "Installing: Windows Subsystem for Linux," "Installing: Ubuntu." And then the big one — "The requested operation is successful. Changes will not be effective until the system is restarted."
 
+NOW — hands up if you see an error code 0x80072EE7 next to the Ubuntu component. Anyone?
+
+[wait for responses]
+
+If you got that error — don't worry, don't panic, and DEFINITELY don't spend an hour trying to fix the Microsoft Store. The Store is frequently broken on pre-owned laptops. We have a fallback that works on ANY computer. I'll walk you through it after the reboot. For now, the WSL2 kernel DID install successfully — it's just Ubuntu that couldn't download. We'll grab Ubuntu a different way.
+
 [pause]
 
 That last part is NON-NEGOTIABLE. You MUST restart your computer for this to take effect. Not shut down — RESTART. There's a difference. Shut down on modern Windows doesn't fully clear the state. Restart does. So — save any open work. Close your tabs. Click Start, Power, RESTART.
@@ -207,37 +263,71 @@ I'll give everyone two minutes to restart. When you come back up, we'll complete
 
 ---
 
-## Slide 10 — Step 1: Complete Ubuntu Setup
+## Slide 11 — Step 1: Complete Ubuntu Setup
 
-Welcome back from reboot! Now — one of two things happened when your computer came back up. Either a terminal window popped up automatically asking you to create a username and password — or nothing happened and you're just looking at your normal desktop. Both are fine.
+Welcome back from reboot! Now — two groups of people in this room right now.
 
-If nothing popped up automatically, click your Start menu, type "Ubuntu," and click the Ubuntu app that appears. A terminal window will open.
+GROUP ONE: Your wsl --install worked perfectly. Either a terminal window popped up automatically asking you to create a username and password, or you can click Start, type "Ubuntu," and the app opens. If that's you — great, stay right there.
 
-[pause]
-
-Either way, you should now see a message that says "Please create a default UNIX user account." This is Linux asking you to create YOUR login for the Linux side of the apartment building. Remember — Windows and Linux are separate tenants. They have separate keys.
-
-Type a simple, lowercase username. No spaces. No capitals. No fancy characters. Something like "openclaw" or your first name in lowercase. Press Enter.
-
-Now — PASSWORD. And THIS is the part that trips up ABSOLUTELY everyone the first time, so listen carefully.
-
-When you type your password, NOTHING appears on the screen. No dots. No asterisks. No little stars. NOTHING. The screen looks completely frozen. It is NOT frozen. It's working. Linux hides your password input for security. Just type your password blind and press Enter. Then type it again to confirm.
+GROUP TWO: You got that 0x80072EE7 error. Ubuntu didn't download. If that's you — don't touch anything yet. I'm coming to you in a moment.
 
 [pause]
 
-I can see some nervous faces. Trust the process. Type it. Hit Enter. Type it again. Hit Enter.
+GROUP ONE — let's get you set up first. You should see a message that says "Please create a default UNIX user account." Type a simple, lowercase username. No spaces. No capitals. Something like "openclaw." Press Enter.
 
-[ask the audience] Who's got a prompt that looks something like "openclaw@YOURPC" with a dollar sign? Raise your hand!
+Now — PASSWORD. THIS is the part that trips up ABSOLUTELY everyone the first time, so listen carefully.
+
+When you type your password, NOTHING appears on the screen. No dots. No asterisks. No little stars. NOTHING. The screen looks completely frozen. It is NOT frozen. Linux hides your password input for security. Just type your password blind and press Enter. Then type it again to confirm.
+
+[pause]
+
+Trust the process. Type it. Hit Enter. Type it again. Hit Enter.
+
+GROUP ONE — you should now see a prompt like "openclaw@YOURPC" with a dollar sign. That's your Linux prompt. You're inside Ubuntu. Welcome aboard! Hold tight while I help Group Two.
+
+[pause]
+
+GROUP TWO — here's your path. We're going to download Ubuntu directly from the people who make it. No Microsoft Store needed.
+
+Step one. Open your web browser — Edge, Chrome, whatever you've got. Go to cloud-images.ubuntu.com/wsl/noble/current/ — I'll spell it out and it's on the slide. On that page, click the file that has "amd64" in the name and ends in ".rootfs.tar.gz." It's the biggest file on the page, about 500 megabytes. AMD, not ARM — even if you have an Intel processor, you want the AMD one. Let that download.
+
+[pause for download — 1-3 minutes depending on speed]
+
+Step two. In your admin PowerShell, type: mkdir C:\WSL\Ubuntu — press Enter. Then type: wsl --import Ubuntu C:\WSL\Ubuntu — and here's the trick — DON'T press Enter yet. Open File Explorer, go to your Downloads folder, find the file you just downloaded, and DRAG it onto the PowerShell window. It fills in the full path for you. NOW press Enter.
+
+If drag doesn't work, type the beginning of the path up to "ubuntu" and press Tab — PowerShell auto-completes it.
+
+No output means success. Type: wsl -l -v — you should see Ubuntu, VERSION 2.
+
+[pause]
+
+Step three. Type: wsl -d Ubuntu — that opens Ubuntu. You'll see a root@ prompt. Now you need to create your user account, just like Group One did. Type these commands one at a time:
+
+adduser openclaw — it asks for a password. Remember, NOTHING shows when you type. That's normal. Set the password, then press Enter through all the optional stuff like Full Name, Room Number — skip all of it. Type Y to confirm.
+
+Then: usermod -aG sudo openclaw
+
+Then: echo -e "[user]\ndefault=openclaw" > /etc/wsl.conf
+
+That last one makes openclaw your default user so you don't log in as root every time.
+
+Type exit. In PowerShell, type wsl --shutdown. Wait a few seconds. Then type wsl -d Ubuntu again. You should now see openclaw@ instead of root@.
+
+[pause]
+
+Last thing for Group Two — Ubuntu won't appear in your Start menu because we didn't use the Store. Let's fix that. Open File Explorer, type shell:programs in the address bar, press Enter. Right-click in the empty space, New, Shortcut. For the location type: C:\Windows\System32\wsl.exe -d Ubuntu. Click Next, name it Ubuntu, click Finish. Now you can open Ubuntu from the Start menu like everyone else. It opens as a command prompt window — that's your Linux terminal.
+
+[pause]
+
+[ask the audience] Both groups — who's got a prompt that shows "openclaw@" with a dollar sign? Raise your hand!
 
 [wait for responses]
 
-THAT is your Linux prompt. You are now INSIDE Ubuntu. You are standing on the second deck of your ship. Welcome aboard the Linux side, crew! WSL2 is installed and running.
-
-That little dollar sign prompt? Get used to it. That's where you'll be spending a LOT of time from here on out. That's your new command center.
+THAT is your Linux prompt. You are inside Ubuntu. Welcome aboard the Linux side, crew! WSL2 is installed and running. That dollar sign prompt is your new command center.
 
 ---
 
-## Slide 11 — Step 2: Enable systemd
+## Slide 12 — Step 2: Enable systemd
 
 Alright — engine's mounted. But right now it's just sitting there. We need an ignition system. That's what systemd is. Without it, the OpenClaw daemon can't start automatically. And an agent that can't start automatically is an agent that needs you to babysit it every time your computer reboots. That's not a crew member — that's a liability.
 
@@ -284,7 +374,7 @@ Ignition system: ONLINE. Your daemon will be able to start automatically when we
 
 ---
 
-## Slide 12 — Step 3: Install Node.js 22+
+## Slide 13 — Step 3: Install Node.js 22+
 
 Time to load the fuel. OpenClaw runs on JavaScript, and Node.js is the engine that makes JavaScript work outside a web browser. We need version 22 or newer. Anything older and OpenClaw won't even launch.
 
@@ -340,7 +430,7 @@ The fuel's loaded. The engine's running. We're getting closer to launch.
 
 ---
 
-## Slide 13 — Steps 4 and 5: Update Packages and Install Tools
+## Slide 14 — Steps 4 and 5: Update Packages and Install Tools
 
 Two quick maintenance tasks before we move on. Think of this as stocking the supply closet — making sure we've got all the provisions we need for the voyage ahead.
 
@@ -374,19 +464,31 @@ Supply closet: stocked. Moving on.
 
 ---
 
-## Slide 14 — Step 6: Configure Power Settings
+## Slide 15 — Step 6: Configure Power Settings (Slides 19-21)
 
-Here's one that people forget about and then WONDER why their agent goes dark at 2 AM. If you want your agent standing watch 24/7 — always listening, always ready, always running scheduled tasks — your laptop needs to stay AWAKE. Windows, by default, puts your computer to sleep after a period of inactivity. Which is great for saving battery. And TERRIBLE for running a daemon that's supposed to be your always-on digital crew member.
+Here's one that people forget about and then WONDER why their agent goes dark at 2 AM. If you want your agent standing watch 24/7 — always listening, always ready, always running scheduled tasks — your laptop needs to stay AWAKE. Windows, by default, puts the computer to sleep. Which is great for saving battery. And TERRIBLE for running a daemon that's supposed to be your always-on digital crew member.
 
 When Windows sleeps, WSL2 sleeps. When WSL2 sleeps, your agent sleeps. When your agent sleeps, nobody's manning the helm. Messages pile up unanswered. Scheduled tasks don't run. Your morning briefing never arrives. Your ship is adrift.
 
-So let's fix that. Open Windows Settings — press Windows + I. Go to System, then Power and Sleep. Under the Sleep section, set "When plugged in, PC goes to sleep after" to NEVER. If there's a battery option, set that to Never too.
+Now here's the thing — and this is the part that trips up EVERYONE, and I mean everyone, so listen carefully. There are TWO separate settings that control whether your laptop sleeps. TWO. And you need to change BOTH of them. Miss one and you're sunk.
+
+Setting number one — the idle sleep timeout. This is the one most guides tell you about. Open Windows Settings — press Windows + I. Go to System, then Power and Sleep. Under the Sleep section, set "When plugged in, PC goes to sleep after" to NEVER. If there's a battery option, set that to Never too. This controls what happens when you WALK AWAY from your laptop. Good. That's done.
+
+[pause]
+
+But here's the gotcha. Setting number TWO — what happens when you CLOSE THE LID. The Settings app does NOT control this. This is a COMPLETELY separate setting, buried in the OLD Control Panel. And by default? Closing the lid puts the laptop to sleep. Regardless of what you just set in Settings. You could set every sleep option in the universe to Never, and the MOMENT you close that lid, your laptop goes to sleep anyway.
+
+So let's fix it. Open the Start menu, type "Control Panel," click it. Go to Hardware and Sound, then Power Options. On the left sidebar, click "Choose what closing the lid does." Now look at the "When I close the lid" row. Set BOTH columns — On battery AND Plugged in — to "Do nothing." Click Save changes.
+
+[ask the audience] Has everyone found that setting? It's in the old-school Control Panel, NOT the modern Settings app. Two different places, two different settings, and BOTH have to be changed. Raise your hand when you've got "Do nothing" saved.
+
+[wait for responses]
 
 [pause]
 
 And PLEASE — keep this thing plugged in. Running 24/7 on battery is like trying to cross the Atlantic powered by a hamster wheel. It's technically running, but it's not going to end well.
 
-Optional but recommended — disable hibernate. Open PowerShell as administrator and run:
+Now — hibernate. Open PowerShell as administrator — and I mean ADMINISTRATOR. Start menu, type PowerShell, RIGHT-CLICK, "Run as administrator." If you just click it normally, the next command will yell at you about needing admin privileges. You need captain's authority for this one.
 
 ```
 powercfg /hibernate off
@@ -396,11 +498,11 @@ Hibernate can interrupt WSL2, and it's basically sleep's more aggressive cousin.
 
 For the display — you CAN let the screen turn off after a few minutes. That's just the display going dark to save power. The computer itself keeps running. WSL2 keeps running. Your agent keeps running. The ship's still sailing even when the lights on deck go out.
 
-Quick verification — lock your screen with Windows + L. Wait a minute. Unlock it. Open your Ubuntu terminal and type "uptime." The number should show continuous uptime, not a reset. If WSL2 restarted, your power settings didn't save properly. Go back and double-check.
+Now — verification. And this is important — we're testing with the LID, not just a screen lock. Close your laptop lid. Wait one minute. Open it back up. Log in. Open your UBUNTU terminal — not PowerShell, the Ubuntu terminal — and type "uptime." The number should show continuous uptime, not a reset. If WSL2 restarted and shows a fresh boot time, one of your two settings didn't take. Go back and check BOTH — the idle timeout in Settings AND the lid close in Control Panel.
 
 ---
 
-## Slide 15 — Step 7: Understand the File System Boundary
+## Slide 16 — Step 7: Understand the File System Boundary
 
 STOP. Everybody stop what you're doing and listen because this next bit trips up MORE Windows users running WSL2 than almost anything else. And the mistake is invisible — you won't know you made it until things start running slow and you can't figure out why.
 
@@ -426,7 +528,7 @@ When we install OpenClaw in the next module, it'll create its files in /home/ope
 
 ---
 
-## Slide 16 — Step 8: Tailscale (Optional)
+## Slide 17 — Step 8: Tailscale (Optional)
 
 Alright — this one's optional. I want to be clear about that up front. If you're only going to access your agent from this laptop and nowhere else, you can skip this step entirely and come back to it later. No judgment. Your ship still sails without it.
 
@@ -449,7 +551,7 @@ One more thing while we're talking about security — if your device is going to
 
 ---
 
-## Slide 17 — Step 9: Dedicated User Account (Optional)
+## Slide 18 — Step 9: Dedicated User Account (Optional)
 
 One more optional step — and this one's for the security-minded among you. Remember Module 01? Principle 2 — Least Privilege? The idea that you give things ONLY the access they need and nothing more?
 
@@ -479,7 +581,7 @@ Now — if you want to keep things simple for now, skip this. It's not required.
 
 ---
 
-## Slide 18 — Shoals and Sandbars (Troubleshooting)
+## Slide 19 — Shoals and Sandbars (Troubleshooting)
 
 Before we do our verification checks, let me chart out the KNOWN hazards. These are the rocks that people run aground on most often. If you hit ANY of these during today's work, don't panic. Every one of them has a fix.
 
@@ -493,6 +595,10 @@ Password not accepted — you're using your WINDOWS password instead of your LIN
 
 WSL2 using too much RAM — by default, WSL2 can grab up to half your total RAM. If that's causing problems, create a .wslconfig file in your Windows user profile that caps it at 4 gigs. Plenty for OpenClaw.
 
+Error 0x80072EE7 — Ubuntu failed to download during wsl --install. The Microsoft Store is blocked or broken — common on pre-owned laptops and some networks. Don't troubleshoot the Store. Use the manual method: download Ubuntu from cloud-images.ubuntu.com in your browser and import it with wsl --import. It's all in the lesson materials and we walked through it today.
+
+No Ubuntu app in the Start menu — if you used the manual import method, Ubuntu won't appear automatically. You either open PowerShell and type "wsl -d Ubuntu," or create a Start menu shortcut using the steps in the lesson.
+
 Ubuntu terminal running slow — sometimes Windows Defender gets overzealous and starts scanning WSL2 files in real time. You can exclude the WSL2 directory from Defender scanning. That usually fixes the sluggishness immediately.
 
 [pause]
@@ -501,7 +607,7 @@ These are all charted hazards. Known shoals. If you hit one, you know exactly wh
 
 ---
 
-## Slide 19 — The Verification Checklist
+## Slide 20 — The Verification Checklist
 
 Alright — moment of truth, crew! We've built the ship. We've mounted the engine. We've loaded the fuel. We've stocked the supplies. Now we do a FULL systems check before we declare this vessel seaworthy.
 
@@ -569,7 +675,7 @@ Seven checks. All green? Then your vessel is SEAWORTHY, crew!
 
 ---
 
-## Slide 20 — Hands on Deck (Activity)
+## Slide 21 — Hands on Deck (Activity)
 
 ALL HANDS ON DECK! Time to make it official. I want every single person to work through this checklist and fill in the blanks. This is your ship's certification. Your vessel inspection report. You're not leaving the shipyard without it.
 
@@ -613,7 +719,7 @@ How's everyone doing? Anyone stuck? Anyone need a hand?
 
 ---
 
-## Slide 21 — Treasure Chest (Key Takeaways)
+## Slide 22 — Treasure Chest (Key Takeaways)
 
 Let's bring this ship out of dry dock and anchor up the treasure we've earned today. Eight pieces of hard-won knowledge, every one of them forged in the shipyard.
 
@@ -625,7 +731,7 @@ Three — Node.js 22 or newer is required. Install it with nvm, not from a websi
 
 Four — keep OpenClaw's files in the LINUX file system. /home/username/. NOT /mnt/c/. Performance matters. The wrong file system will slow your agent to a crawl.
 
-Five — disable sleep if you want 24/7 operation. Windows will pause WSL2 when it sleeps. A sleeping ship doesn't answer messages.
+Five — disable sleep AND configure the lid close behavior. Two separate settings, two separate places. The Settings app controls idle timeout. The Control Panel controls what happens when you close the lid. Miss EITHER one and your laptop still sleeps. Your ship goes dark. Remember — both settings, both changed. That was our gotcha of the day.
 
 Six — Tailscale is optional but powerful. Your long-range radio for reaching your agent from anywhere in the world.
 
@@ -637,7 +743,7 @@ Every plank is nailed. Every rivet is set. Your ship is BUILT, crew.
 
 ---
 
-## Slide 22 — Next Port of Call: Module 03 — Installing OpenClaw
+## Slide 23 — Next Port of Call: Module 03 — Installing OpenClaw
 
 [pause — let the energy build]
 

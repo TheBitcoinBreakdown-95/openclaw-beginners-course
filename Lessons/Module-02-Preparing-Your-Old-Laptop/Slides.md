@@ -468,6 +468,43 @@ By the end of this module, you will be able to:
 
 ---
 
+<!-- _class: warning -->
+
+## 🚩 Used or Pre-Owned Laptops
+
+**"Reset this PC" does NOT remove corporate policies.** Admin restrictions, MDM enrollment, and monitoring software survive a factory reset.
+
+### Check for corporate remnants
+- **Start > System** — is a domain listed? (should say "WORKGROUP")
+- **Settings > Accounts > Access work or school** — any organizations?
+- Can you open PowerShell as admin? (`Ctrl + Shift + Enter`)
+
+**If restricted → clean install from USB** (not a reset). Download the Media Creation Tool from microsoft.com, boot from USB, choose "Custom Install," and wipe all partitions.
+
+> Without admin access, WSL2 installation and several steps in this module will be blocked.
+
+<!-- Speaker notes: Anyone using a pre-owned corporate laptop MUST do a clean install. A factory reset is not enough — enterprise policies survive it. This is the #1 gotcha for used laptops. If someone can't get admin access, this is why. -->
+
+---
+
+## 🔑 Network Setup: Guest WiFi First
+
+Your 🦞 OpenClaw laptop needs **permanent** internet. Connect it to a **guest network** to isolate it from personal devices.
+
+### Set up a guest network
+1. Find your router address: run `ipconfig` in PowerShell, note the **Default Gateway**
+2. Open that address in a browser to reach router admin
+3. Enable **Guest Network** with a password, disable "access local network"
+4. Connect the 🦞 OpenClaw laptop to the **guest** network
+
+**Already on main WiFi?** Switch to guest, then forget it: **Settings > Wi-Fi > Manage known networks**
+
+> Module 10 covers network isolation in depth. This is the quick version.
+
+<!-- Speaker notes: The default gateway IS the router address. It's NOT always 192.168.1.1 — varies by ISP and router brand. ipconfig is the reliable way to find it. A guest network gives internet but isolates the device from phones, personal laptops, and smart home devices. -->
+
+---
+
 ## Check Your Hardware: RAM
 
 Open **Task Manager** (`Ctrl + Shift + Esc`) > **Performance** tab > **Memory**.
@@ -557,27 +594,50 @@ Type this command exactly and press Enter:
 wsl --install
 ```
 
-**What this does:**
-- Enables WSL2 and downloads the Linux kernel
-- Downloads and installs Ubuntu as the default distribution
-
-You should see messages about installing Virtual Machine Platform, WSL, and Ubuntu.
+**What this does:** Enables WSL2, downloads the Linux kernel, and installs Ubuntu.
 
 > **You MUST restart your computer after this step.** Use Restart, not Shut Down.
+
+<!-- Speaker notes: If `wsl --install` succeeds with no errors, restart and proceed to the next slide. If Ubuntu fails with 0x80072EE7, DON'T troubleshoot the network — go straight to the fallback slide. -->
+
+---
+
+## If Ubuntu Failed to Install (Error `0x80072EE7`)
+
+The Microsoft Store is blocked or broken. **Skip the Store entirely** -- download Ubuntu directly.
+
+1. Open your **browser** and go to: **cloud-images.ubuntu.com/wsl/noble/current/**
+2. Download the **amd64** file ending in `.rootfs.tar.gz`
+3. In admin PowerShell, run:
+
+```powershell
+mkdir C:\WSL\Ubuntu
+wsl --import Ubuntu C:\WSL\Ubuntu [drag file here]
+```
+
+**Drag the downloaded file** from File Explorer onto the PowerShell window to fill in the path, then press Enter.
+
+<!-- Speaker notes: This is the fallback for when `wsl --install` can't download Ubuntu. Common on pre-owned laptops with broken Microsoft Store or networks that block Store traffic. The browser download works on ANY network. The drag trick avoids typing the long filename. -->
 
 ---
 
 ## Step 1: Complete Ubuntu Setup
 
-After restarting, open the **Ubuntu** app from the Start menu.
+**If `wsl --install` worked:** Open **Ubuntu** from the Start menu after restarting.
 
-- Type a **lowercase** username (e.g., `openclaw`)
-- Set a password you will remember
-- **Nothing appears on screen when typing the password** -- this is normal!
+**If you used the manual download:** Ubuntu won't appear in Start. Open **PowerShell** and type `wsl -d Ubuntu`. Then create your user:
 
-When you see `openclaw@YOURPC:~$` — that is your **🐚 Linux prompt**. You are inside Ubuntu.
+```bash
+adduser openclaw
+usermod -aG sudo openclaw
+echo -e "[user]\ndefault=openclaw" > /etc/wsl.conf
+```
 
-<!-- Speaker notes: The invisible password trips up almost everyone. Emphasize this before they type. -->
+- **Password won't show** when you type it -- no dots, no stars, nothing. This is normal!
+- Skip optional fields (Full Name, Room, etc.) by pressing Enter
+- After setup: type `exit`, run `wsl --shutdown` in PowerShell, reopen Ubuntu
+
+<!-- Speaker notes: The invisible password trips up everyone. Emphasize BEFORE they type. The manual import logs in as root by default -- the adduser + wsl.conf steps fix that. After wsl --shutdown and reopen, they should see openclaw@ not root@. -->
 
 ---
 
@@ -675,39 +735,60 @@ These provide version control, download utilities, and compilation tools needed 
 
 ## Step 6a: Power Settings — Disable Sleep
 
-For **24/7 operation**, your laptop must stay awake.
+For **24/7 operation**, your laptop must stay awake. **Two settings** must BOTH be changed.
 
-### Disable sleep mode
-1. **Settings** > **System** > **Power & sleep**
-2. Set "When plugged in, PC goes to sleep after" → **Never**
+### Idle sleep timeout
+- **Settings** > **System** > **Power & sleep** → set sleep to **Never**
 
-### Disable hibernate (optional)
+### Lid close behavior (most guides miss this!)
+1. **Control Panel** > **Hardware and Sound** > **Power Options**
+2. Click **Choose what closing the lid does**
+3. Set "When I close the lid" → **Do nothing** (both columns)
+4. Click **Save changes**
+
+> Without BOTH settings, your laptop sleeps when the lid closes — regardless of idle timeout.
+
+<!-- Speaker notes: The Settings app only controls idle timeout. Lid close is a separate setting in the old Control Panel. Miss this and the laptop still sleeps when closed. This is the #1 gotcha for 24/7 laptop setups. -->
+
+---
+
+## Step 6b: Hibernate, Display, and Plug In
+
+### Disable hibernate (requires admin PowerShell)
+
 ```powershell
 powercfg /hibernate off
 ```
 
+> Start menu > type "PowerShell" > **right-click** > **Run as administrator**. A regular terminal will reject this command.
+
 ### Display can turn off — that's fine
 - "Turn off screen after" → **5 minutes** (display off, computer still runs)
 
-<!-- Speaker notes: Keep it plugged in. Running 24/7 on battery is not practical. -->
+Keep the laptop **plugged in** — running 24/7 on battery is not practical.
+
+<!-- Speaker notes: The powercfg command requires admin privileges. If students get "requires administrator privilege" they opened a regular PowerShell. -->
 
 ---
 
-## Step 6b: Power Settings — Verify
+## Step 6c: Power Settings — Verify
 
-### Confirm your laptop stays awake
+### Test with the lid closed (not just screen lock)
 
-1. Lock screen (`Win + L`)
+1. Close your laptop lid
 2. Wait one minute
-3. Unlock and run:
+3. Open the lid, log back in
+4. Open your **Ubuntu terminal** (not PowerShell) and run:
 
 ```bash
 uptime
 ```
 
-You should see **continuous uptime** — not a fresh boot time. If it restarted, your sleep settings did not apply. Recheck the Power & sleep panel.
+You should see **continuous uptime** — not a fresh boot. If it restarted:
+- Recheck **lid close** in Control Panel (Step 6a)
+- Recheck **sleep** in Settings (Step 6a)
 
-<!-- Speaker notes: Quick sanity check. If uptime resets, sleep was still enabled somewhere. -->
+<!-- Speaker notes: The real test is closing the lid, not just locking the screen. If uptime resets, lid close is still set to Sleep. -->
 
 ---
 
@@ -789,6 +870,11 @@ su - myagent
 | `node: command not found` | nvm not loaded | Run `source ~/.bashrc` or reopen terminal |
 | Password not accepted | Using Windows password | Use the **Linux** password from Ubuntu setup |
 | WSL2 uses too much RAM | Default is half your RAM | Create `.wslconfig` with `memory=4GB` |
+| `powercfg` needs admin | Regular PowerShell | **Right-click** > Run as administrator |
+| Laptop sleeps when lid closes | Lid close not configured | Control Panel > Power Options > lid → Do nothing |
+| "Run as admin" unavailable | Corporate policy remnants | Clean install from USB (not a reset) |
+| Error `0x80072EE7` on Ubuntu | MS Store blocked or broken | Use browser fallback: download from cloud-images.ubuntu.com |
+| No Ubuntu in Start menu | Used manual import method | Open PowerShell, type `wsl -d Ubuntu` |
 | Ubuntu terminal is slow | Windows Defender scanning | Exclude WSL2 directory from Defender |
 
 ---
@@ -822,7 +908,7 @@ Complete this checklist:
 - [ ] **systemd:** Enabled and running
 - [ ] **Node.js + npm:** v22.x.x and 10.x.x installed
 - [ ] **Git:** Installed
-- [ ] **Power settings:** Sleep disabled (if running 24/7)
+- [ ] **Power settings:** Sleep disabled AND lid close set to "Do nothing" (if running 24/7)
 - [ ] **File system:** Working in `/home/username/`, not `/mnt/c/`
 - [ ] **Bonus:** Navigate to `\\wsl$\Ubuntu\home\openclaw\` in File Explorer
 
@@ -836,7 +922,7 @@ Complete this checklist:
 2. **systemd must be enabled** -- add `[boot] systemd=true` to `/etc/wsl.conf`
 3. **Node.js 22+ is required** -- install with nvm for easy version management
 4. **Keep 🦞 OpenClaw files in the Linux file system** -- `/home/username/`, not `/mnt/c/`
-5. **Disable sleep** for 24/7 operation -- Windows pauses WSL2 when it sleeps
+5. **Disable sleep AND configure lid close** -- both Settings and Control Panel must be changed
 6. **Tailscale is optional** but useful for remote access
 7. **A dedicated user account** adds security isolation
 8. **Most errors** come from virtualization disabled in BIOS or nvm not sourced
