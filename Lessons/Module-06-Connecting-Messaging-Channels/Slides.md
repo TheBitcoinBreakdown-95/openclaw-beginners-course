@@ -176,6 +176,9 @@ style: |
     font-size: 0.78em;
     line-height: 1.5;
   }
+  pre code *, pre code span {
+    color: var(--parchment) !important;
+  }
 
   /* ═══════════════════════════════════════════════
      UTILITY CLASSES
@@ -530,7 +533,7 @@ Use this token to access the HTTP API:
 In your Ubuntu terminal:
 
 ```bash
-openclaw channels add telegram
+npx openclaw channels add telegram
 ```
 
 The wizard asks for your bot 🔑 token:
@@ -556,7 +559,7 @@ The wizard asks for your bot 🔑 token:
 **Restart the ⛵ gateway:**
 
 ```bash
-openclaw service restart
+npx openclaw gateway restart
 ```
 
 **Start a chat with your bot:**
@@ -603,13 +606,13 @@ If your agent responds with your name (from `USER.md`), everything is connected 
 Verify your DM mode:
 
 ```bash
-openclaw config channels telegram dm-mode
+npx openclaw config channels telegram dm-mode
 ```
 
 If it shows `open`, change it immediately:
 
 ```bash
-openclaw config channels telegram dm-mode pairing
+npx openclaw config channels telegram dm-mode pairing
 ```
 
 | Mode | What Happens |
@@ -617,7 +620,7 @@ openclaw config channels telegram dm-mode pairing
 | **pairing** | Unknown senders must enter a code you approve (recommended) |
 | **open** | Anyone can message the bot -- **NEVER use this** |
 
-> **Tip:** Run `openclaw doctor` after connecting any channel. Also consider `allowlist` mode for maximum security.
+> **Tip:** Run `npx openclaw doctor` after connecting any channel. Also consider `allowlist` mode for maximum security.
 
 <!-- Speaker notes: This is the most important security slide in the module. Emphasize that "open" mode is never acceptable for a personal agent. -->
 
@@ -628,7 +631,7 @@ openclaw config channels telegram dm-mode pairing
 For extra security, specify exactly who can message the bot:
 
 ```bash
-openclaw config channels telegram allowlist \
+npx openclaw config channels telegram allowlist \
   add YOUR_TELEGRAM_USER_ID
 ```
 
@@ -680,7 +683,7 @@ The only exception requires sandboxing (Module 10), require-mention, and tool po
 7. Enable Developer Mode, copy **Server ID** and **Channel ID**
 
 ```bash
-openclaw channels add discord
+npx openclaw channels add discord
 ```
 
 > **Discord security:** Use a private server. Never add the bot to public servers.
@@ -692,7 +695,7 @@ openclaw channels add discord
 ## Setting Up WhatsApp (Optional)
 
 ```bash
-openclaw channels add whatsapp
+npx openclaw channels add whatsapp
 ```
 
 1. A QR code appears in the terminal
@@ -707,7 +710,7 @@ openclaw channels add whatsapp
 - If compromised, damage is limited to the secondary account
 
 ```bash
-openclaw config channels whatsapp allowlist \
+npx openclaw config channels whatsapp allowlist \
   add +1234567890
 ```
 
@@ -724,7 +727,7 @@ openclaw config channels whatsapp allowlist \
 | Bot is NOT in any group chats | [ ] |
 | Bot 🔑 token is stored securely (not in public repos or screenshots) | [ ] |
 
-<!-- Speaker notes: Walk through each item with the class. Have students check off each one as they verify it. This is a good time to run openclaw doctor to catch anything missed. -->
+<!-- Speaker notes: Walk through each item with the class. Have students check off each one as they verify it. This is a good time to run npx openclaw doctor to catch anything missed. -->
 
 ---
 
@@ -765,7 +768,7 @@ Store bot 🔑 credentials in a **dedicated password manager vault** (e.g., "Sha
 | Bot does not respond on Telegram | Check dashboard for pending pairing requests |
 | "Unauthorized" error | Regenerate 🔑 token via BotFather, use Notepad trick |
 | Bot responds to strangers | Change DM mode to "pairing" immediately |
-| WhatsApp connection drops | Re-scan QR code: `openclaw channels login` |
+| WhatsApp connection drops | Re-scan QR code: `npx openclaw channels login` |
 | Discord bot can't see messages | Enable Message Content Intent in Developer Portal |
 | Bot is slow to respond | Normal: AI responses take 2-10 seconds |
 | Bot 🔑 token accidentally shared | Regenerate immediately via BotFather `/revoke` |

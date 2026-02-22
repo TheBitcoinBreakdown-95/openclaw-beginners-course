@@ -409,7 +409,7 @@ Now here's the thing that trips up EVERY class I've ever taught, and I need you 
 
 After you edit the files, you MUST restart the gateway.
 
-`openclaw service restart`
+`npx openclaw gateway restart`
 
 The gateway loads these files on startup. If you edit SOUL.md and don't restart, your agent is still running on the OLD soul. You'll sit there wondering why nothing changed, getting frustrated, thinking you did something wrong — and the answer is just that you forgot to restart. It's always the restart. ALWAYS.
 
@@ -454,9 +454,9 @@ Mistake number two: writing vague instructions. "Be good." "Be helpful." "Be nic
 
 Mistake number three: putting everything in one file. Your SOUL.md should not contain your schedule, your goals, your project notes, AND your rules. Each file has a purpose. Use them.
 
-Mistake number four: editing JSON config files directly with a text editor. One misplaced comma and your installation breaks. Use `openclaw config` or the TUI `/config` command instead.
+Mistake number four: editing JSON config files directly with a text editor. One misplaced comma and your installation breaks. Use `npx openclaw config` or the TUI `/config` command instead.
 
-Mistake number five: THE BIG ONE. Forgetting to restart after changes. Say it with me — `openclaw service restart`.
+Mistake number five: THE BIG ONE. Forgetting to restart after changes. Say it with me — `npx openclaw gateway restart`.
 
 Mistake number six: never updating. Your goals change. Your preferences evolve. Your files should too. Monthly review. Put it in your calendar.
 
@@ -494,9 +494,9 @@ Alright, pens down — or, keyboards down. Fingers off the keys. Let's see if th
 
 Part four: restart and test. Ten minutes.
 
-Step one: restart the gateway. `openclaw service restart`. Say it with me. Out loud. I'm serious. OPENCLAW SERVICE RESTART. Good. Now actually do it.
+Step one: restart the gateway. `npx openclaw gateway restart`. Say it with me. Out loud. I'm serious. NPX OPENCLAW GATEWAY RESTART. Good. Now actually do it.
 
-Step two: open the TUI. `openclaw tui`.
+Step two: open the TUI. `npx openclaw tui`.
 
 Step three: ask your agent this exact question — "What is your name, and what do you know about me?"
 

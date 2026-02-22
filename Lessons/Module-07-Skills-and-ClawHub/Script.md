@@ -127,7 +127,7 @@ Now, before you go building every skill from scratch, let me introduce you to Cl
 
 Over 5,700 skills available. That is a LOT of pre-built capability sitting there waiting for you.
 
-You can browse from the terminal with `openclaw skills browse`. You can do it from inside the TUI with `/skills browse`. Either way, you will see a categorized list of everything available.
+You can browse from the terminal with `npx openclaw skills browse`. You can do it from inside the TUI with `/skills browse`. Either way, you will see a categorized list of everything available.
 
 And look at these categories. Communication skills for email, Slack, SMS, Telegram. Productivity skills for Obsidian, Notion, task management, calendars. Development skills for GitHub, code review, deployment pipelines. Research skills for web search, data analysis, even academic papers. Social media skills for Twitter, LinkedIn, Instagram. Creative skills for image generation, writing assistance, music. Smart home skills for Home Assistant and IoT devices. Finance skills for crypto tracking, accounting, invoicing.
 
@@ -147,7 +147,7 @@ But remember what I said at the start. ClawHub is the npm of OpenClaw skills. An
 
 Step one is FINDING the skill you want. Let me walk you through a real example.
 
-Say you use Obsidian for note-taking and you want your agent to be able to read and search your vault. You run `openclaw skills search "obsidian"` and you get back results.
+Say you use Obsidian for note-taking and you want your agent to be able to read and search your vault. You run `npx clawhub search "obsidian"` and you get back results.
 
 Three options show up here. obsidian-notes, version 1.2.3, four out of five stars, 423 installs. obsidian-daily, version 0.8.1, three stars, 156 installs. And obsidian-tasks, version 2.0.0, five stars, 812 installs.
 
@@ -169,7 +169,7 @@ Alright, everybody. Eyes up here. This is the slide I need you to BURN into your
 
 DO. NOT. INSTALL. SKILLS. BLINDLY.
 
-I do not care how many stars it has. I do not care if it has ten thousand installs. I do not care if your best friend recommended it. Before you install ANY skill, you RUN this command: `openclaw skills inspect` followed by the skill name.
+I do not care how many stars it has. I do not care if it has ten thousand installs. I do not care if your best friend recommended it. Before you install ANY skill, you RUN this command: `npx openclaw skills inspect` followed by the skill name.
 
 This shows you EVERYTHING. The full YAML front matter, so you can see what tools it uses and what triggers it has. The full markdown instructions, so you can see EXACTLY what it tells the AI to do. The author, the version, community reviews.
 
@@ -187,13 +187,13 @@ This inspection step is not optional. It is not "nice to have." It is your DUTY 
 
 Alright, you have found your skill, you have inspected it, and it checks out. Everything looks clean. NOW you install.
 
-Step three: `openclaw skills install obsidian-notes --pin`. Notice that `--pin` flag. That is important. ALWAYS use it. What pinning does is lock the version you inspected AND store integrity metadata. So if the skill ever changes after you installed it, OpenClaw will detect that and warn you about integrity drift.
+Step three: `npx clawhub install obsidian-notes --pin`. Notice that `--pin` flag. That is important. ALWAYS use it. What pinning does is lock the version you inspected AND store integrity metadata. So if the skill ever changes after you installed it, OpenClaw will detect that and warn you about integrity drift.
 
 Why does this matter? Without pinning, a skill can SILENTLY UPDATE and change behavior. The version you inspected might be perfectly safe. But a week later, the author pushes an update, and suddenly there are new instructions in there that you never reviewed. Or worse, the author's account gets compromised and an attacker pushes malicious code to all those users who did not pin their versions.
 
 If you EVER see an integrity drift warning, do NOT ignore it. Stop. Investigate. Re-inspect.
 
-Step four: restart. `openclaw service restart`. And THIS is the most common "it is not working" issue. Skills do NOT activate until you restart the gateway. I guarantee at least one person in this room is going to install a skill, not restart, wonder why it is not working, and then remember this moment.
+Step four: restart. `npx openclaw gateway restart`. And THIS is the most common "it is not working" issue. Skills do NOT activate until you restart the gateway. I guarantee at least one person in this room is going to install a skill, not restart, wonder why it is not working, and then remember this moment.
 
 [ask the audience]
 
@@ -275,7 +275,7 @@ The Format section tells the agent exactly what structure to use. Yesterday: wha
 
 Then the Rules section. Keep each section to three to five bullet points. Pull from ACTUAL history and memory, do NOT make things up. If you do not have enough information, ASK the user. Format as clean markdown.
 
-That is it. That is the entire skill. You save it with Ctrl+O, Enter, Ctrl+X. You restart with `openclaw service restart`. And then you test it. Walk into the TUI and say "Give me my daily standup."
+That is it. That is the entire skill. You save it with Ctrl+O, Enter, Ctrl+X. You restart with `npx openclaw gateway restart`. And then you test it. Walk into the TUI and say "Give me my daily standup."
 
 [pause]
 
@@ -395,13 +395,13 @@ Think of it like cargo weight. Every crate you load onto the ship slows it down 
 
 Here are the commands you need to manage your skill inventory. These are your dock management tools.
 
-`openclaw skills list` shows you everything you have installed. Run this regularly. Know what is on your ship.
+`npx openclaw skills list` shows you everything you have installed. Run this regularly. Know what is on your ship.
 
-`openclaw skills disable obsidian-notes` turns a skill off without removing it. It stays installed but does not load into context. ZERO token cost when disabled. This is perfect for skills you use sometimes but not every day.
+`npx openclaw skills disable obsidian-notes` turns a skill off without removing it. It stays installed but does not load into context. ZERO token cost when disabled. This is perfect for skills you use sometimes but not every day.
 
-`openclaw skills enable obsidian-notes` turns it back on when you need it.
+`npx openclaw skills enable obsidian-notes` turns it back on when you need it.
 
-And `openclaw skills remove obsidian-notes` deletes it entirely. Gone. Off the ship.
+And `npx openclaw skills remove obsidian-notes` deletes it entirely. Gone. Off the ship.
 
 [pause]
 
@@ -417,11 +417,11 @@ Think of disable like putting a crate in the hold below deck. Out of the way, no
 
 Let me save you some pain. Here are the rocks other sailors have crashed into so you do not have to.
 
-Mistake number one: installing skills without reading them. You know this by now. I have hammered it. Always use `openclaw skills inspect` first. No exceptions.
+Mistake number one: installing skills without reading them. You know this by now. I have hammered it. Always use `npx openclaw skills inspect` first. No exceptions.
 
 Mistake number two: installing too many skills at once. You get excited, you install twenty skills in one sitting, and suddenly your agent is slow and your bill is higher. Start with two or three. Add more as needed. Build up gradually.
 
-Mistake number three: not restarting after installing. This one catches EVERYONE at least once. You install a skill, try to use it, it does not work, you panic. You did not restart. Run `openclaw service restart` after every installation.
+Mistake number three: not restarting after installing. This one catches EVERYONE at least once. You install a skill, try to use it, it does not work, you panic. You did not restart. Run `npx openclaw gateway restart` after every installation.
 
 Mistake number four: skill does not seem to work. You DID restart, but the skill still does not fire. Check the trigger words in the YAML front matter. If the skill triggers on "standup" but you are saying "status report," the skill will not activate. Your words need to match the triggers.
 
@@ -439,17 +439,17 @@ This exercise has two parts. Part one: install a community skill from ClawHub. P
 
 Part one. You have ten minutes. Here is your procedure, and do NOT skip any steps.
 
-Step one, browse. `openclaw skills browse`. Look around. See what is out there.
+Step one, browse. `npx openclaw skills browse`. Look around. See what is out there.
 
 Step two, search. Find something relevant to YOUR use case. Something you would actually want your agent to do.
 
-Step three, and this is the one I KNOW some of you are going to be tempted to skip: INSPECT. `openclaw skills inspect` followed by the skill name. Read the full content. Check for red flags. Is the author reputable? Does it request weird permissions? Does the markdown body look clean?
+Step three, and this is the one I KNOW some of you are going to be tempted to skip: INSPECT. `npx openclaw skills inspect` followed by the skill name. Read the full content. Check for red flags. Is the author reputable? Does it request weird permissions? Does the markdown body look clean?
 
 Step four, check for security red flags. Take thirty seconds and actually LOOK.
 
-Step five, install. `openclaw skills install` with the `--pin` flag. Always pin.
+Step five, install. `npx clawhub install` with the `--pin` flag. Always pin.
 
-Step six, restart. `openclaw service restart`. Do not forget this.
+Step six, restart. `npx openclaw gateway restart`. Do not forget this.
 
 Step seven, test it in the TUI. Make sure it actually works.
 

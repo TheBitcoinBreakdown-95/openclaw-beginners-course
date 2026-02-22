@@ -32,8 +32,8 @@ This takes about 2 minutes. Do it every day during your first month, then as nee
 ```
 DAILY CHECK (2 minutes)
 ========================
-□ Gateway is running:      openclaw status
-□ No errors in logs:       openclaw service logs (scan last few entries)
+□ Gateway is running:      npx openclaw status
+□ No errors in logs:       npx openclaw gateway logs (scan last few entries)
 □ Token usage reasonable:  Check your provider dashboard
 □ Morning brief was sent:  Check Telegram
 □ No pending pairing reqs: Check dashboard for unknown senders
@@ -50,13 +50,13 @@ This takes about 10 minutes. Do it every weekend.
 ```
 WEEKLY CHECK (10 minutes)
 ==========================
-□ Security audit:          openclaw security audit --deep
-□ Health check:            openclaw doctor
-□ Fix any issues:          openclaw security audit --deep --fix && openclaw doctor fix
+□ Security audit:          npx openclaw security audit --deep
+□ Health check:            npx openclaw doctor
+□ Fix any issues:          npx openclaw security audit --deep --fix && npx openclaw doctor fix
 □ Review API spending:     Visit console.anthropic.com (or your provider)
 □ Workspace backup:        cd ~/.openclaw && git add -A && git commit -m "Weekly backup $(date +%Y-%m-%d)"
 □ Review core files:       Are USER.md and MEMORY.md still accurate?
-□ Disable unused skills:   openclaw skills list (disable what you don't use)
+□ Disable unused skills:   npx openclaw skills list (disable what you don't use)
 □ Check disk space:        df -h (inside WSL2)
 ```
 
@@ -145,7 +145,7 @@ OpenClaw receives regular updates. Here's how to update safely.
 ### Check Current Version
 
 ```bash
-openclaw --version
+npx openclaw --version
 ```
 
 ### Release Channels
@@ -167,10 +167,10 @@ The changelog shows frequent breaking changes and security hardening between ver
 cd ~/.openclaw && git add -A && git commit -m "Pre-update backup $(date +%Y-%m-%d)"
 
 # Record current state (useful if you need to compare after update)
-openclaw status --json > ~/pre-update-status.json
+npx openclaw status --json > ~/pre-update-status.json
 
 # Update OpenClaw
-openclaw update
+npx openclaw update
 ```
 
 Or manually:
@@ -183,14 +183,14 @@ npm update -g @tinybox/openclaw
 
 ```bash
 # Restart the gateway
-openclaw service restart
+npx openclaw gateway restart
 
 # Verify everything works
-openclaw status
-openclaw doctor
+npx openclaw status
+npx openclaw doctor
 
 # Run security audit (updates may change defaults)
-openclaw security audit --deep
+npx openclaw security audit --deep
 ```
 
 ### If an Update Breaks Something
@@ -200,12 +200,12 @@ openclaw security audit --deep
 3. If necessary, roll back:
    ```bash
    npm install -g @tinybox/openclaw@[previous-version]
-   openclaw service restart
+   npx openclaw gateway restart
    ```
 4. Restore your workspace from Git backup if needed:
    ```bash
    cd ~/.openclaw && git checkout HEAD~1
-   openclaw service restart
+   npx openclaw gateway restart
    ```
 
 ---
@@ -233,19 +233,19 @@ tar -czf ~/openclaw-backup-$(date +%Y%m%d).tar.gz ~/.openclaw/
 cd ~/.openclaw
 git log --oneline    # Find the commit you want to restore
 git checkout [commit-hash]
-openclaw service restart
+npx openclaw gateway restart
 ```
 
 **From archive:**
 ```bash
 # Stop the gateway first
-openclaw service stop
+npx openclaw gateway stop
 
 # Restore
 tar -xzf ~/openclaw-backup-20260216.tar.gz -C /
 
 # Restart
-openclaw service start
+npx openclaw gateway start
 ```
 
 ### What to Back Up
@@ -267,7 +267,7 @@ openclaw service start
 When something feels broken, run the built-in diagnostics before investigating manually:
 
 ```bash
-openclaw doctor --fix
+npx openclaw doctor --fix
 ```
 
 This catches a surprising number of issues. As one community member put it: *"Half the 'my agent is stupid' complaints are actually 'my config is borked' problems."* The doctor command checks configuration integrity, file permissions, service health, and dependency versions — and auto-fixes what it can.
@@ -286,10 +286,10 @@ If you set up email, calendar, Telegram, web scraping, and reporting all at once
 
 **"Gateway not running"**
 ```
-Symptom:  openclaw status shows "Stopped"
+Symptom:  npx openclaw status shows "Stopped"
 Cause:    Gateway crashed or wasn't started
-Fix:      openclaw service start
-Check:    openclaw service logs (look for error messages)
+Fix:      npx openclaw gateway start
+Check:    npx openclaw gateway logs (look for error messages)
 ```
 
 **"Port already in use"**
@@ -297,7 +297,7 @@ Check:    openclaw service logs (look for error messages)
 Symptom:  Gateway fails to start, error mentions port 18789
 Cause:    Another process is using the port, or a zombie gateway process
 Fix:      lsof -i :18789 to find the process, then kill it
-          OR change port: openclaw config gateway port 18790
+          OR change port: npx openclaw config gateway port 18790
 ```
 
 **"Gateway refuses to start — config schema rejection"**
@@ -305,19 +305,19 @@ Fix:      lsof -i :18789 to find the process, then kill it
 Symptom:  Gateway won't boot at all, or exits immediately with a validation error
 Cause:    openclaw.json contains an unknown key, invalid type, or malformed value.
           OpenClaw uses STRICT schema validation — one bad key blocks everything.
-Fix:      1. Run: openclaw doctor (it will identify the invalid key)
+Fix:      1. Run: npx openclaw doctor (it will identify the invalid key)
           2. Fix the specific key in ~/.openclaw/openclaw.json
           3. Common causes: typos (e.g., "hearbeat"), deprecated fields after
              an update, or copy-pasted config from a different OpenClaw version
-Prevention: Use "openclaw config" commands instead of editing JSON directly
+Prevention: Use "npx openclaw config" commands instead of editing JSON directly
 ```
 
 **"Gateway keeps crashing"**
 ```
 Symptom:  Gateway starts and stops repeatedly
 Cause:    Bad configuration, corrupted state, or a faulty plugin
-Fix:      openclaw service logs (check for specific errors)
-          openclaw doctor fix
+Fix:      npx openclaw gateway logs (check for specific errors)
+          npx openclaw doctor fix
           If persistent: stop gateway, restore config from backup, restart
 Note:     Plugins run in-process — a buggy plugin crash is a Gateway crash.
           Try disabling recently installed plugins if crashes started after install.
@@ -328,10 +328,10 @@ Note:     Plugins run in-process — a buggy plugin crash is a Gateway crash.
 Symptom:  Agent shows "busy" status that never clears, messages get no response
 Cause:    Session lock not released — usually from a failed compaction or
           an abort signal not being respected during compaction wait
-Fix:      openclaw service restart (releases all locks and clears stuck sessions)
+Fix:      npx openclaw gateway restart (releases all locks and clears stuck sessions)
 Prevention: Keep context manageable with /compact, avoid very large tool outputs
             that trigger emergency compaction
-Diagnosis: openclaw status --json (shows session states including "busy")
+Diagnosis: npx openclaw status --json (shows session states including "busy")
 ```
 
 ### API Errors
@@ -343,7 +343,7 @@ Cause:    Token formatting issue, expired key, or billing problem
 Fix:      1. Check key at your provider's console
           2. Regenerate if needed
           3. Use Notepad trick when pasting new key
-          4. openclaw config provider key [NEW_KEY]
+          4. npx openclaw config provider key [NEW_KEY]
 ```
 
 **"Rate limit exceeded"**
@@ -368,7 +368,7 @@ Fix:      Add credits at your provider's billing page
 ```
 Symptom:  Messages sent on Telegram get no reply
 Cause:    Gateway down, DM pairing incomplete, or token invalid
-Fix:      1. Check gateway: openclaw status
+Fix:      1. Check gateway: npx openclaw status
           2. Check pairing: look for pending requests in dashboard
           3. Check token: verify in BotFather → /mybots → API Token
 ```
@@ -377,16 +377,16 @@ Fix:      1. Check gateway: openclaw status
 ```
 Symptom:  WhatsApp messages not going through
 Cause:    Session expired (happens periodically)
-Fix:      openclaw channels login (re-scan QR code)
+Fix:      npx openclaw channels login (re-scan QR code)
 ```
 
 **"Discord bot offline"**
 ```
 Symptom:  Bot shows as offline in Discord
 Cause:    Gateway not running, or bot token expired
-Fix:      1. openclaw status
+Fix:      1. npx openclaw status
           2. Regenerate bot token in Discord Developer Portal
-          3. Update: openclaw config channels discord token [NEW_TOKEN]
+          3. Update: npx openclaw config channels discord token [NEW_TOKEN]
 ```
 
 ### WSL2 Errors
@@ -462,66 +462,66 @@ Prevention: Compact proactively before the context fills up. Avoid asking the
 ### Gateway Management
 
 ```bash
-openclaw status                    # Check gateway status
-openclaw status --json             # Machine-readable status (useful for debugging stuck sessions)
-openclaw service start             # Start the daemon
-openclaw service stop              # Stop the daemon
-openclaw service restart           # Restart the daemon
-openclaw service logs              # View daemon logs
-openclaw doctor                    # Health check
-openclaw doctor fix                # Auto-fix health issues
+npx openclaw status                    # Check gateway status
+npx openclaw status --json             # Machine-readable status (useful for debugging stuck sessions)
+npx openclaw gateway start             # Start the daemon
+npx openclaw gateway stop              # Stop the daemon
+npx openclaw gateway restart           # Restart the daemon
+npx openclaw gateway logs              # View daemon logs
+npx openclaw doctor                    # Health check
+npx openclaw doctor fix                # Auto-fix health issues
 ```
 
 ### Security
 
 ```bash
-openclaw security audit --deep     # Full security audit
-openclaw security audit --deep --fix  # Audit and auto-fix
-openclaw config gateway auth       # Check auth settings
-openclaw config gateway token rotate  # Rotate gateway token
-openclaw config sandbox mode [mode]   # Set sandbox mode
-openclaw config tools deny [tool]     # Deny a tool
+npx openclaw security audit --deep     # Full security audit
+npx openclaw security audit --deep --fix  # Audit and auto-fix
+npx openclaw config gateway auth       # Check auth settings
+npx openclaw config gateway token rotate  # Rotate gateway token
+npx openclaw config sandbox mode [mode]   # Set sandbox mode
+npx openclaw config tools deny [tool]     # Deny a tool
 ```
 
 ### Configuration
 
 ```bash
-openclaw config                    # Open configuration
-openclaw config gateway bind       # Check/set bind address
-openclaw config gateway port       # Check/set port
-openclaw config provider key       # Update API key
-openclaw config heartbeat interval # Set heartbeat frequency
-openclaw config heartbeat model    # Set heartbeat model
+npx openclaw config                    # Open configuration
+npx openclaw config gateway bind       # Check/set bind address
+npx openclaw config gateway port       # Check/set port
+npx openclaw config provider key       # Update API key
+npx openclaw config heartbeat interval # Set heartbeat frequency
+npx openclaw config heartbeat model    # Set heartbeat model
 ```
 
 ### Channels
 
 ```bash
-openclaw channels add [channel]    # Add a messaging channel
-openclaw channels login            # Re-authenticate channels
-openclaw config channels [channel] dm-mode  # Check/set DM mode
+npx openclaw channels add [channel]    # Add a messaging channel
+npx openclaw channels login            # Re-authenticate channels
+npx openclaw config channels [channel] dm-mode  # Check/set DM mode
 ```
 
 ### Skills
 
 ```bash
-openclaw skills browse             # Browse ClawHub
-openclaw skills search [query]     # Search skills
-openclaw skills inspect [name]     # View skill details
-openclaw skills install [name]     # Install a skill
-openclaw skills list               # List installed skills
-openclaw skills enable [name]      # Enable a skill
-openclaw skills disable [name]     # Disable a skill
-openclaw skills remove [name]      # Uninstall a skill
+npx clawhub browse             # Browse ClawHub
+npx clawhub search [query]     # Search skills
+npx openclaw skills inspect [name]     # View skill details
+npx clawhub install [name]     # Install a skill
+npx openclaw skills list               # List installed skills
+npx openclaw skills enable [name]      # Enable a skill
+npx openclaw skills disable [name]     # Disable a skill
+npx openclaw skills remove [name]      # Uninstall a skill
 ```
 
 ### Cron Jobs
 
 ```bash
-openclaw cron list                 # List scheduled jobs
-openclaw cron add [name] --schedule [cron] --task [desc]  # Add a job
-openclaw cron remove [name]        # Remove a job
-openclaw cron disable [name]       # Disable a job
+npx openclaw cron list                 # List scheduled jobs
+npx openclaw cron add [name] --schedule [cron] --task [desc]  # Add a job
+npx openclaw cron remove [name]        # Remove a job
+npx openclaw cron disable [name]       # Disable a job
 ```
 
 ### TUI Commands (Inside the Chat)
@@ -543,43 +543,43 @@ openclaw cron disable [name]       # Disable a job
 ## Quick Command Cheat Sheet (Print This)
 
 ```
-╔══════════════════════════════════════════════════════════╗
-║               OPENCLAW QUICK REFERENCE                   ║
-╠══════════════════════════════════════════════════════════╣
-║                                                          ║
-║  START / STOP                                            ║
-║  openclaw service start     Start the daemon             ║
-║  openclaw service stop      Stop the daemon              ║
-║  openclaw service restart   Restart the daemon           ║
-║  openclaw tui               Open chat interface          ║
-║                                                          ║
-║  CHECK STATUS                                            ║
-║  openclaw status            Is the gateway running?      ║
-║  openclaw doctor            Health check                 ║
-║  openclaw service logs      View logs                    ║
-║                                                          ║
-║  SECURITY                                                ║
-║  openclaw security audit --deep         Full audit       ║
-║  openclaw security audit --deep --fix   Audit + fix      ║
-║  openclaw config gateway token rotate   New token        ║
-║                                                          ║
-║  INSIDE THE CHAT (TUI)                                   ║
-║  /compact     Save tokens (compress history)             ║
-║  /new         Fresh conversation                         ║
-║  /model X     Switch AI model                            ║
-║  /think X     Thinking depth (off/low/medium/high/xhigh) ║
-║  /status      Session info                               ║
-║  /help        All commands                               ║
-║  /exit        Leave chat                                 ║
-║                                                          ║
-║  EMERGENCY (INCIDENT RESPONSE)                           ║
-║  1. openclaw service stop        STOP the agent          ║
-║  2. Set bind to loopback         CLOSE access            ║
-║  3. Rotate all tokens/keys       FREEZE secrets          ║
-║  4. Review logs and sessions     INVESTIGATE             ║
-║  5. Fix, audit, restart          RESTORE                 ║
-║                                                          ║
-╚══════════════════════════════════════════════════════════╝
+╔════════════════════════════════════════════════════════════════════╗
+║                    OPENCLAW QUICK REFERENCE                       ║
+╠════════════════════════════════════════════════════════════════════╣
+║                                                                   ║
+║  START / STOP                                                     ║
+║  npx openclaw gateway start       Start the daemon                ║
+║  npx openclaw gateway stop        Stop the daemon                 ║
+║  npx openclaw gateway restart     Restart the daemon              ║
+║  npx openclaw tui                 Open chat interface             ║
+║                                                                   ║
+║  CHECK STATUS                                                     ║
+║  npx openclaw status              Is the gateway running?         ║
+║  npx openclaw doctor              Health check                    ║
+║  npx openclaw gateway logs        View logs                       ║
+║                                                                   ║
+║  SECURITY                                                         ║
+║  npx openclaw security audit --deep         Full audit            ║
+║  npx openclaw security audit --deep --fix   Audit + fix           ║
+║  npx openclaw config gateway token rotate   New token             ║
+║                                                                   ║
+║  INSIDE THE CHAT (TUI)                                            ║
+║  /compact     Save tokens (compress history)                      ║
+║  /new         Fresh conversation                                  ║
+║  /model X     Switch AI model                                     ║
+║  /think X     Thinking depth (off/low/medium/high/xhigh)          ║
+║  /status      Session info                                        ║
+║  /help        All commands                                        ║
+║  /exit        Leave chat                                          ║
+║                                                                   ║
+║  EMERGENCY (INCIDENT RESPONSE)                                    ║
+║  1. npx openclaw gateway stop     STOP the agent                  ║
+║  2. Set bind to loopback          CLOSE access                    ║
+║  3. Rotate all tokens/keys        FREEZE secrets                  ║
+║  4. Review logs and sessions      INVESTIGATE                     ║
+║  5. Fix, audit, restart           RESTORE                         ║
+║                                                                   ║
+╚════════════════════════════════════════════════════════════════════╝
 ```
 
 ---
@@ -630,7 +630,7 @@ When you're stuck:
 When asking for help, include:
 1. What you were trying to do
 2. The exact error message
-3. Your OpenClaw version (`openclaw --version`)
+3. Your OpenClaw version (`npx openclaw --version`)
 4. Your OS (Windows 10 WSL2 in our case)
 5. What you've already tried
 

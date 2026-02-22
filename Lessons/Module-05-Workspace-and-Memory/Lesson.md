@@ -710,7 +710,7 @@ Start with basic facts and decisions. This file will grow the most over time.
 
 > **Tip:** After editing, restart the gateway to load the new files:
 > ```bash
-> openclaw service restart
+> npx openclaw gateway restart
 > ```
 
 ---
@@ -763,8 +763,8 @@ git push -u origin main
 | Not editing the core files at all | Your agent remains generic and unhelpful | Spend 30 minutes customizing at least IDENTITY.md, SOUL.md, and USER.md |
 | Writing vague instructions | "Be good" tells the AI nothing useful | Be specific: "Respond in 2-3 sentences for simple questions" |
 | Putting everything in one file | Hard to maintain, hard for the AI to parse | Use each file for its intended purpose |
-| Editing JSON config files directly | Can break your installation | Use `openclaw config` or the TUI `/config` command instead |
-| Forgetting to restart after changes | The gateway loads files on startup; changes won't take effect until restart | Run `openclaw service restart` after editing core files |
+| Editing JSON config files directly | Can break your installation | Use `npx openclaw config` or the TUI `/config` command instead |
+| Forgetting to restart after changes | The gateway loads files on startup; changes won't take effect until restart | Run `npx openclaw gateway restart` after editing core files |
 | Never updating the files | Your agent's knowledge becomes stale | Schedule a monthly review of all core files |
 | Making the workspace repo public | Exposes personal information and API configurations | Always use a **private** repository |
 | Not backing up at all | A corrupted file or failed update could lose everything | Set up Git and commit regularly |
@@ -797,8 +797,8 @@ Edit **`MEMORY.md`** with:
 
 ### Part 4: Restart and Test (10 minutes)
 
-1. Restart the gateway: `openclaw service restart`
-2. Open the TUI: `openclaw tui`
+1. Restart the gateway: `npx openclaw gateway restart`
+2. Open the TUI: `npx openclaw tui`
 3. Ask your agent: *"What is your name, and what do you know about me?"*
 4. The response should reflect everything you wrote in the core files
 5. If it doesn't, check that you saved the files and restarted the gateway

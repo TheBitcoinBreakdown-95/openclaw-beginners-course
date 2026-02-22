@@ -82,7 +82,7 @@ ClawHub is the community marketplace for skills. As of early 2026, there are ove
 
 **From the terminal:**
 ```bash
-openclaw skills browse
+npx openclaw skills browse
 ```
 
 **From the TUI:**
@@ -116,7 +116,7 @@ Skills are categorized by type:
 ### Step 1: Find a Skill
 
 ```bash
-openclaw skills search "obsidian"
+npx clawhub search "obsidian"
 ```
 
 This searches ClawHub for skills related to Obsidian. You'll see results like:
@@ -135,7 +135,7 @@ This searches ClawHub for skills related to Obsidian. You'll see results like:
 **Do not install skills blindly.** Read the skill's content first:
 
 ```bash
-openclaw skills inspect obsidian-notes
+npx openclaw skills inspect obsidian-notes
 ```
 
 This shows you:
@@ -161,7 +161,7 @@ This shows you:
 Once you've inspected and are satisfied, install with the `--pin` flag to lock the version:
 
 ```bash
-openclaw skills install obsidian-notes --pin
+npx clawhub install obsidian-notes --pin
 ```
 
 **Expected output:**
@@ -177,7 +177,7 @@ openclaw skills install obsidian-notes --pin
 ### Step 4: Restart
 
 ```bash
-openclaw service restart
+npx openclaw gateway restart
 ```
 
 ### Step 5: Test
@@ -273,7 +273,7 @@ When the user asks for a standup report, generate a structured update with:
 Save the file (`Ctrl + O`, Enter, `Ctrl + X`), then restart:
 
 ```bash
-openclaw service restart
+npx openclaw gateway restart
 ```
 
 ### Step 4: Test It
@@ -426,16 +426,16 @@ If you install 50 skills, each with 500 tokens of instructions, that's 25,000 to
 
 ```bash
 # List all installed skills
-openclaw skills list
+npx openclaw skills list
 
 # Disable a skill (keeps it installed but doesn't load it)
-openclaw skills disable obsidian-notes
+npx openclaw skills disable obsidian-notes
 
 # Enable a previously disabled skill
-openclaw skills enable obsidian-notes
+npx openclaw skills enable obsidian-notes
 
 # Remove a skill entirely
-openclaw skills remove obsidian-notes
+npx openclaw skills remove obsidian-notes
 ```
 
 ---
@@ -444,9 +444,9 @@ openclaw skills remove obsidian-notes
 
 | Mistake | Why It's a Problem | Fix |
 |---------|-------------------|-----|
-| Installing skills without reading them | Potential security risk | Always use `openclaw skills inspect` first |
+| Installing skills without reading them | Potential security risk | Always use `npx openclaw skills inspect` first |
 | Installing too many skills at once | Context window fills up, costs increase | Start with 2-3, add more as needed |
-| Not restarting after installing a skill | Skill doesn't activate until gateway restarts | Run `openclaw service restart` |
+| Not restarting after installing a skill | Skill doesn't activate until gateway restarts | Run `npx openclaw gateway restart` |
 | Skill doesn't seem to work | Trigger words might not match what you're saying | Check the skill's triggers in the YAML front matter |
 | Building a custom skill with vague instructions | AI doesn't know what to do | Be specific in your markdown instructions |
 | Leaving unused skills enabled | Wastes context window tokens | Disable or remove skills you're not using |
@@ -457,12 +457,12 @@ openclaw skills remove obsidian-notes
 
 ### Part 1: Install from ClawHub (10 minutes)
 
-1. Browse available skills: `openclaw skills browse`
+1. Browse available skills: `npx openclaw skills browse`
 2. Search for something relevant to your use case
-3. Inspect the skill: `openclaw skills inspect [skill-name]`
+3. Inspect the skill: `npx openclaw skills inspect [skill-name]`
 4. Check for security red flags
-5. Install it: `openclaw skills install [skill-name]`
-6. Restart: `openclaw service restart`
+5. Install it: `npx clawhub install [skill-name]`
+6. Restart: `npx openclaw gateway restart`
 7. Test it in the TUI
 
 ### Part 2: Build a Custom Skill (15 minutes)

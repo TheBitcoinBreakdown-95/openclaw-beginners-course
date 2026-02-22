@@ -176,6 +176,9 @@ style: |
     font-size: 0.78em;
     line-height: 1.5;
   }
+  pre code *, pre code span {
+    color: var(--parchment) !important;
+  }
 
   /* ═══════════════════════════════════════════════
      UTILITY CLASSES
@@ -468,8 +471,8 @@ Email automation, trading bots, social media management, code projects, multi-st
 
 This takes about **2 minutes**. Do it every day during your first month.
 
-- ⛵ Gateway is running: `openclaw status`
-- No errors in logs: `openclaw service logs`
+- ⛵ Gateway is running: `npx openclaw status`
+- No errors in logs: `npx openclaw gateway logs`
 - Token usage reasonable: check your provider dashboard
 - Morning brief was sent: check Telegram
 - No pending pairing requests: check dashboard for unknown senders
@@ -482,13 +485,13 @@ This takes about **2 minutes**. Do it every day during your first month.
 
 This takes about **10 minutes**. Do it every weekend.
 
-- Security audit: `openclaw security audit --deep`
-- Health check: `openclaw doctor`
+- Security audit: `npx openclaw security audit --deep`
+- Health check: `npx openclaw doctor`
 - Fix any issues: `--fix` flags on both commands
 - Review API spending: visit your provider dashboard
 - 🪸 Workspace backup: `git add -A && git commit -m "Weekly backup"`
 - Review core files: are `USER.md` and `MEMORY.md` still accurate?
-- Disable unused 🐠 skills: `openclaw skills list`
+- Disable unused 🐠 skills: `npx openclaw skills list`
 - Check disk space: `df -h` (inside WSL2)
 
 ---
@@ -548,29 +551,29 @@ This takes about **10 minutes**. Do it every weekend.
 
 ```bash
 cd ~/.openclaw && git add -A && git commit -m "Pre-update backup"
-openclaw status --json > ~/pre-update-status.json
+npx openclaw status --json > ~/pre-update-status.json
 ```
 
 ### Update:
 
 ```bash
-openclaw update
+npx openclaw update
 ```
 
 ### After updating:
 
 ```bash
-openclaw service restart
-openclaw status
-openclaw doctor
-openclaw security audit --deep
+npx openclaw gateway restart
+npx openclaw status
+npx openclaw doctor
+npx openclaw security audit --deep
 ```
 
 ### If an update breaks something:
 
 ```bash
 npm install -g @tinybox/openclaw@[previous-version]
-openclaw service restart
+npx openclaw gateway restart
 ```
 
 ---
@@ -603,7 +606,7 @@ tar -czf ~/openclaw-backup-$(date +%Y%m%d).tar.gz ~/.openclaw/
 
 Before diving into specific errors, adopt this approach:
 
-### Rule 1: Run `openclaw doctor --fix` First
+### Rule 1: Run `npx openclaw doctor --fix` First
 Most "my agent is being stupid" issues are actually **configuration problems**, not AI problems. The doctor command catches and fixes the majority of them automatically.
 
 ### Rule 2: One Workflow at a Time
@@ -623,28 +626,28 @@ Get one workflow running **end-to-end** before adding the next. Every new integr
 
 **"Gateway refuses to start" (config schema rejection)**
 - **Cause:** One invalid key in `openclaw.json` blocks boot entirely
-- **Fix:** Run `openclaw doctor` -- it identifies the bad key. Fix it, restart.
-- **Prevention:** Use `openclaw config` commands instead of editing JSON directly
+- **Fix:** Run `npx openclaw doctor` -- it identifies the bad key. Fix it, restart.
+- **Prevention:** Use `npx openclaw config` commands instead of editing JSON directly
 
 **"Gateway not running"**
-- Check: `openclaw status`
-- Fix: `openclaw service start`
-- Review: `openclaw service logs`
+- Check: `npx openclaw status`
+- Fix: `npx openclaw gateway start`
+- Review: `npx openclaw gateway logs`
 
 **"Port already in use"**
 - Find the process: `lsof -i :18789`
-- Kill it, or change port: `openclaw config gateway port 18790`
+- Kill it, or change port: `npx openclaw config gateway port 18790`
 
 **"Gateway keeps crashing"**
 - Check logs for specific errors
-- Run: `openclaw doctor fix`
+- Run: `npx openclaw doctor fix`
 - If a plugin was recently installed, try disabling it (plugins run in-process)
 - If persistent: restore config from backup, restart
 
 **"Session stuck on busy"**
 - **Cause:** Session lock not released (compaction/abort failure)
-- **Fix:** `openclaw service restart` (releases all locks)
-- **Diagnosis:** `openclaw status --json` shows stuck sessions
+- **Fix:** `npx openclaw gateway restart` (releases all locks)
+- **Diagnosis:** `npx openclaw status --json` shows stuck sessions
 
 ---
 
@@ -655,19 +658,19 @@ Get one workflow running **end-to-end** before adding the next. Every new integr
 **"API key invalid"**
 - Check 🔑 key at your provider's console
 - Regenerate if needed (use the Notepad trick when pasting)
-- Update: `openclaw config provider key [NEW_KEY]`
+- Update: `npx openclaw config provider key [NEW_KEY]`
 
 **"Rate limit exceeded"**
 - Wait 1-5 minutes, then retry
 - If persistent: reduce heartbeat frequency
 
 **"Telegram bot not responding"**
-- Check ⛵ gateway: `openclaw status`
+- Check ⛵ gateway: `npx openclaw status`
 - Check pairing: look for pending requests
 - Verify token in BotFather
 
 **"WhatsApp disconnected"**
-- Re-scan QR code: `openclaw channels login`
+- Re-scan QR code: `npx openclaw channels login`
 
 ---
 
@@ -714,16 +717,16 @@ Get one workflow running **end-to-end** before adding the next. Every new integr
 
 ```bash
 # Start / Stop
-openclaw service start         # Start the daemon
-openclaw service stop          # Stop the daemon
-openclaw service restart       # Restart the daemon
-openclaw tui                   # Open chat interface
+npx openclaw gateway start         # Start the daemon
+npx openclaw gateway stop          # Stop the daemon
+npx openclaw gateway restart       # Restart the daemon
+npx openclaw tui                   # Open chat interface
 
 # Check Status
-openclaw status                # Is the gateway running?
-openclaw doctor                # Health check
-openclaw doctor fix            # Auto-fix health issues
-openclaw service logs          # View logs
+npx openclaw status                # Is the gateway running?
+npx openclaw doctor                # Health check
+npx openclaw doctor fix            # Auto-fix health issues
+npx openclaw gateway logs          # View logs
 ```
 
 ---
@@ -732,21 +735,21 @@ openclaw service logs          # View logs
 
 ```bash
 # Security Audit
-openclaw security audit --deep        # Full audit
-openclaw security audit --deep --fix  # Audit and auto-fix
+npx openclaw security audit --deep        # Full audit
+npx openclaw security audit --deep --fix  # Audit and auto-fix
 
 # Authentication
-openclaw config gateway auth          # Check auth settings
-openclaw config gateway token rotate  # Rotate token
-openclaw config gateway bind          # Check bind address
+npx openclaw config gateway auth          # Check auth settings
+npx openclaw config gateway token rotate  # Rotate token
+npx openclaw config gateway bind          # Check bind address
 
 # Sandboxing
-openclaw config sandbox mode [mode]   # off / non-main / all
-openclaw config sandbox scope [scope] # session / agent / shared
+npx openclaw config sandbox mode [mode]   # off / non-main / all
+npx openclaw config sandbox scope [scope] # session / agent / shared
 
 # Tool Policies
-openclaw config tools deny [tool]     # Deny a tool
-openclaw config tools elevated off    # Disable elevated mode
+npx openclaw config tools deny [tool]     # Deny a tool
+npx openclaw config tools elevated off    # Disable elevated mode
 ```
 
 ---
@@ -754,11 +757,11 @@ openclaw config tools elevated off    # Disable elevated mode
 ## Command Cheat Sheet: Configuration
 
 ```bash
-openclaw config                       # Open configuration
-openclaw config gateway port          # Check/set port
-openclaw config provider key          # Update 🔑 API key
-openclaw config heartbeat interval    # Set heartbeat frequency
-openclaw config heartbeat model       # Set heartbeat model
+npx openclaw config                       # Open configuration
+npx openclaw config gateway port          # Check/set port
+npx openclaw config provider key          # Update 🔑 API key
+npx openclaw config heartbeat interval    # Set heartbeat frequency
+npx openclaw config heartbeat model       # Set heartbeat model
 ```
 
 ---
@@ -767,15 +770,15 @@ openclaw config heartbeat model       # Set heartbeat model
 
 ```bash
 # Channels
-openclaw channels add [channel]       # Add messaging channel
-openclaw channels login               # Re-authenticate
-openclaw config channels [ch] dm-mode # Check/set DM mode
+npx openclaw channels add [channel]       # Add messaging channel
+npx openclaw channels login               # Re-authenticate
+npx openclaw config channels [ch] dm-mode # Check/set DM mode
 
 # Cron Jobs
-openclaw cron list                    # List scheduled jobs
-openclaw cron add [name] --schedule [cron] --task [desc]
-openclaw cron remove [name]           # Remove a job
-openclaw cron disable [name]          # Disable a job
+npx openclaw cron list                    # List scheduled jobs
+npx openclaw cron add [name] --schedule [cron] --task [desc]
+npx openclaw cron remove [name]           # Remove a job
+npx openclaw cron disable [name]          # Disable a job
 ```
 
 ---
@@ -784,12 +787,12 @@ openclaw cron disable [name]          # Disable a job
 
 ```bash
 # Skills
-openclaw skills browse        # Browse ClawHub
-openclaw skills search [q]    # Search skills
-openclaw skills install [n]   # Install a skill
-openclaw skills list           # List installed
-openclaw skills enable [n]    # Enable a skill
-openclaw skills disable [n]   # Disable a skill
+npx clawhub browse        # Browse ClawHub
+npx clawhub search [q]    # Search skills
+npx clawhub install [n]   # Install a skill
+npx openclaw skills list           # List installed
+npx openclaw skills enable [n]    # Enable a skill
+npx openclaw skills disable [n]   # Disable a skill
 ```
 
 ### Inside the Chat (TUI):
@@ -812,11 +815,11 @@ openclaw skills disable [n]   # Disable a skill
 
 | Step | Action | Command |
 |------|--------|---------|
-| **1. STOP** | Kill the agent | `openclaw service stop` |
-| **2. CLOSE** | Lock down access | `openclaw config gateway bind loopback` |
-| **3. FREEZE** | Rotate all tokens/keys | `openclaw config gateway token rotate` |
-| **4. INVESTIGATE** | Review logs and sessions | `openclaw service logs` |
-| **5. RESTORE** | Fix, audit, restart | `openclaw security audit --deep --fix` |
+| **1. STOP** | Kill the agent | `npx openclaw gateway stop` |
+| **2. CLOSE** | Lock down access | `npx openclaw config gateway bind loopback` |
+| **3. FREEZE** | Rotate all tokens/keys | `npx openclaw config gateway token rotate` |
+| **4. INVESTIGATE** | Review logs and sessions | `npx openclaw gateway logs` |
+| **5. RESTORE** | Fix, audit, restart | `npx openclaw security audit --deep --fix` |
 
 > Print this table and keep it next to your computer.
 
@@ -835,7 +838,7 @@ openclaw skills disable [n]   # Disable a skill
 ### When asking for help, include:
 1. What you were trying to do
 2. The exact error message
-3. Your 🦞 OpenClaw version (`openclaw --version`)
+3. Your 🦞 OpenClaw version (`npx openclaw --version`)
 4. Your OS (Windows 10 WSL2)
 5. What you have already tried
 

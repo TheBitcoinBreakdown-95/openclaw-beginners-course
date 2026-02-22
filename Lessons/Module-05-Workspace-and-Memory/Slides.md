@@ -176,6 +176,9 @@ style: |
     font-size: 0.78em;
     line-height: 1.5;
   }
+  pre code *, pre code span {
+    color: var(--parchment) !important;
+  }
 
   /* ═══════════════════════════════════════════════
      UTILITY CLASSES
@@ -809,7 +812,7 @@ nano ~/.openclaw/workspace/IDENTITY.md
 **After editing, restart the ⛵ gateway to load changes:**
 
 ```bash
-openclaw service restart
+npx openclaw gateway restart
 ```
 
 Changes do NOT take effect until you restart. This is the most common mistake students make.
@@ -843,8 +846,8 @@ git commit -m "Workspace update: $(date +%Y-%m-%d)"
 | Not editing core files at all | Spend 30 min on identity, soul, and user |
 | Writing vague instructions | Be specific: "Respond in 2-3 sentences for simple questions" |
 | Putting everything in one file | Use each file for its intended purpose |
-| Editing JSON config files directly | Use `openclaw config` or `/config` instead |
-| Forgetting to restart after changes | Run `openclaw service restart` |
+| Editing JSON config files directly | Use `npx openclaw config` or `/config` instead |
+| Forgetting to restart after changes | Run `npx openclaw gateway restart` |
 | Never updating the files | Schedule a monthly review |
 | Making the workspace repo public | Always use a **private** repository |
 
@@ -873,8 +876,8 @@ git commit -m "Workspace update: $(date +%Y-%m-%d)"
 
 ### Part 4: Restart and Test (10 min)
 
-1. Restart the ⛵ gateway: `openclaw service restart`
-2. Open the 🐚 TUI: `openclaw tui`
+1. Restart the ⛵ gateway: `npx openclaw gateway restart`
+2. Open the 🐚 TUI: `npx openclaw tui`
 3. Ask: *"What is your name, and what do you know about me?"*
 4. If the response does not reflect your files, check that you saved and restarted
 

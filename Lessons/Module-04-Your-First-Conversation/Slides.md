@@ -176,6 +176,9 @@ style: |
     font-size: 0.78em;
     line-height: 1.5;
   }
+  pre code *, pre code span {
+    color: var(--parchment) !important;
+  }
 
   /* ═══════════════════════════════════════════════
      UTILITY CLASSES
@@ -466,8 +469,10 @@ By the end of this module, you will be able to:
 Launch the terminal chat interface:
 
 ```bash
-openclaw tui
+npx openclaw tui
 ```
+
+> **Paste tip:** Ctrl+V does not work in the Ubuntu terminal. Use **right-click** to paste text into the TUI.
 
 **Key elements:**
 - **Top bar** — Model name and token count
@@ -735,7 +740,7 @@ This creates a safety loop: agent explains the plan, you approve or modify, then
 Typing long messages is slow. **Telegram supports voice messages natively.**
 
 ### Setup:
-- Install **Groq** (free) for transcription: `openclaw skills install groq-transcription`
+- Install **Groq** (free) for transcription: `npx clawhub install groq-transcription`
 - Talk naturally into Telegram — your agent transcribes and processes
 
 ### Best for:
@@ -775,8 +780,8 @@ Typing long messages is slow. **Telegram supports voice messages natively.**
 - At least **2 rules** for the agent
 
 ### Part 2: Send It (5 min)
-1. Open the TUI: `openclaw tui`
-2. Paste your brain dump
+1. Open the TUI: `npx openclaw tui`
+2. Paste your brain dump (remember: **right-click** to paste, not Ctrl+V)
 3. Read your agent's response — does it show understanding?
 
 ---

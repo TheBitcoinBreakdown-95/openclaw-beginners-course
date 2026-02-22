@@ -101,9 +101,9 @@ Now we get practical. This is your daily routine. Two minutes. That's it. Do thi
 
 Five things. Five quick checks.
 
-One: Is the gateway running? `openclaw status`. Takes two seconds. Green means go. Stopped means something crashed overnight and you need to restart it.
+One: Is the gateway running? `npx openclaw status`. Takes two seconds. Green means go. Stopped means something crashed overnight and you need to restart it.
 
-Two: Any errors in the logs? `openclaw service logs`. Scan the last few entries. You're not reading every line — you're looking for anything red, anything scary, anything that says ERROR in big capital letters. If it's all clean, move on.
+Two: Any errors in the logs? `npx openclaw gateway logs`. Scan the last few entries. You're not reading every line — you're looking for anything red, anything scary, anything that says ERROR in big capital letters. If it's all clean, move on.
 
 Three: Token usage reasonable? Pop open your provider dashboard — Anthropic, OpenAI, whatever you're using. Is the number where you expected it? Or did something go haywire overnight and burn through forty bucks while you slept? You want to catch that EARLY, not at the end of the month.
 
@@ -121,9 +121,9 @@ Five checks. Two minutes. Coffee in one hand, terminal in the other. Make it a h
 
 Every weekend. Ten minutes. Non-negotiable. This is your deep maintenance pass.
 
-Security audit first. `openclaw security audit --deep`. We hammered this in Module Ten. If anything changed — a skill was installed, a config was tweaked, an update was applied — the audit catches misconfigurations before they become vulnerabilities.
+Security audit first. `npx openclaw security audit --deep`. We hammered this in Module Ten. If anything changed — a skill was installed, a config was tweaked, an update was applied — the audit catches misconfigurations before they become vulnerabilities.
 
-Health check. `openclaw doctor`. The good doctor looks at EVERYTHING. Config integrity, file permissions, service health, dependency versions. If it finds issues, slap `--fix` on both commands and let it auto-repair what it can.
+Health check. `npx openclaw doctor`. The good doctor looks at EVERYTHING. Config integrity, file permissions, service health, dependency versions. If it finds issues, slap `--fix` on both commands and let it auto-repair what it can.
 
 Review API spending. Visit your provider dashboard. Not just a glance — actually LOOK at the numbers. What's your daily average? Is it trending up or down? Did any particular day spike? Understand your spending pattern because that pattern is telling you a story about how your agent is behaving.
 
@@ -209,7 +209,7 @@ Set your limits. Protect your wallet. Sail smart.
 
 OpenClaw gets regular updates. New features, bug fixes, security patches. You WANT to stay current. But you want to do it CAREFULLY.
 
-First — always know what version you're running. `openclaw --version`. Write it down. Know it.
+First — always know what version you're running. `npx openclaw --version`. Write it down. Know it.
 
 Second — release channels. There are three. Stable, beta, and dev. You are using STABLE. Say it with me: STABLE. Beta has new features but might have bugs. Dev is for contributors and testers and people who enjoy suffering. Stable is tested, production-ready, and the right choice for everyone in this room. Full stop.
 
@@ -217,9 +217,9 @@ Now here's the update process, and I want you to follow this EXACTLY. Every sing
 
 Step one: BACK UP FIRST. Before you touch anything. `cd ~/.openclaw && git add -A && git commit -m "Pre-update backup"`. I don't care if the update is tiny. I don't care if the release notes say "minor bug fix." Back up. Always. No exceptions.
 
-Step two: Save your current state. `openclaw status --json > ~/pre-update-status.json`. This gives you a snapshot you can compare against after the update, in case something subtle changes.
+Step two: Save your current state. `npx openclaw status --json > ~/pre-update-status.json`. This gives you a snapshot you can compare against after the update, in case something subtle changes.
 
-Step three: Run the update. `openclaw update`. That's the actual update command.
+Step three: Run the update. `npx openclaw update`. That's the actual update command.
 
 Step four: After updating — restart the gateway, check status, run the doctor, run a security audit. Four commands, takes thirty seconds, and confirms everything came through clean.
 
@@ -265,7 +265,7 @@ Before we dive into the error catalog, I need to install two rules in your brain
 
 Rule one: Run the doctor first.
 
-When something feels broken — your agent is acting weird, messages aren't going through, things are slow, something just feels OFF — your first instinct is going to be to start poking around. Reading logs. Googling error messages. Asking on Discord. NO. Stop. Before any of that, run ONE command: `openclaw doctor --fix`.
+When something feels broken — your agent is acting weird, messages aren't going through, things are slow, something just feels OFF — your first instinct is going to be to start poking around. Reading logs. Googling error messages. Asking on Discord. NO. Stop. Before any of that, run ONE command: `npx openclaw doctor --fix`.
 
 The doctor checks configuration integrity, file permissions, service health, dependency versions — and it auto-fixes what it can. A surprising number of "my agent is stupid" complaints are actually "my config is broken" problems. The doctor catches them. The doctor fixes them. Let the doctor do its job FIRST.
 
@@ -287,15 +287,15 @@ The pattern that works: Get ONE workflow running end-to-end. Running without you
 
 Alright, here we go. The error catalog. These are the most common problems you'll hit, and I'm giving you the exact fix for each one. This is your field guide. Dog-ear this page.
 
-"Gateway refuses to start — config schema rejection." This is a nasty one because it's a COMPLETE block. One invalid key in your `openclaw.json` file and the gateway won't boot AT ALL. OpenClaw uses strict schema validation. One typo — like spelling "heartbeat" as "hearbeat" — and the whole thing refuses to start. The fix? Run `openclaw doctor`. It'll identify exactly which key is bad. Fix it. Restart. And going forward, use `openclaw config` commands instead of editing the JSON directly. Let the tool validate for you.
+"Gateway refuses to start — config schema rejection." This is a nasty one because it's a COMPLETE block. One invalid key in your `openclaw.json` file and the gateway won't boot AT ALL. OpenClaw uses strict schema validation. One typo — like spelling "heartbeat" as "hearbeat" — and the whole thing refuses to start. The fix? Run `npx openclaw doctor`. It'll identify exactly which key is bad. Fix it. Restart. And going forward, use `npx openclaw config` commands instead of editing the JSON directly. Let the tool validate for you.
 
-"Gateway not running." The classic. `openclaw status` shows "Stopped." The gateway crashed or wasn't started. Fix: `openclaw service start`. Then check the logs with `openclaw service logs` to find out WHY it stopped in the first place. Don't just restart and walk away — find the cause.
+"Gateway not running." The classic. `npx openclaw status` shows "Stopped." The gateway crashed or wasn't started. Fix: `npx openclaw gateway start`. Then check the logs with `npx openclaw gateway logs` to find out WHY it stopped in the first place. Don't just restart and walk away — find the cause.
 
-"Port already in use." The gateway tries to start but something else is already using port 18789. Find the culprit with `lsof -i :18789`, kill it, or change your port with `openclaw config gateway port 18790`. Usually this means a zombie gateway process from a previous crash is still hanging around.
+"Port already in use." The gateway tries to start but something else is already using port 18789. Find the culprit with `lsof -i :18789`, kill it, or change your port with `npx openclaw config gateway port 18790`. Usually this means a zombie gateway process from a previous crash is still hanging around.
 
-"Gateway keeps crashing." Starts and stops repeatedly. Check the logs for specific errors. Run `openclaw doctor fix`. If you recently installed a plugin, that might be your problem — plugins run IN-PROCESS, so a buggy plugin crash IS a gateway crash. Try disabling recent plugins. If nothing works, restore config from backup and restart.
+"Gateway keeps crashing." Starts and stops repeatedly. Check the logs for specific errors. Run `npx openclaw doctor fix`. If you recently installed a plugin, that might be your problem — plugins run IN-PROCESS, so a buggy plugin crash IS a gateway crash. Try disabling recent plugins. If nothing works, restore config from backup and restart.
 
-"Session stuck on busy." Your agent shows "busy" and never clears. Messages get no response. This is a stuck session lock, usually from a failed compaction. The fix is simple: `openclaw service restart`. That releases all locks and clears stuck sessions. Use `openclaw status --json` to see the session states if you want to diagnose it.
+"Session stuck on busy." Your agent shows "busy" and never clears. Messages get no response. This is a stuck session lock, usually from a failed compaction. The fix is simple: `npx openclaw gateway restart`. That releases all locks and clears stuck sessions. Use `npx openclaw status --json` to see the session states if you want to diagnose it.
 
 [pause]
 
@@ -307,7 +307,7 @@ Gateway errors are the most common category. And the good news? Every single one
 
 API errors. These are about your connection to the AI brain.
 
-"API key invalid." The AI doesn't respond. Authentication error. This usually means one of three things: the key has a formatting issue from when you pasted it, the key expired, or you have a billing problem. Go to your provider's console, check the key, regenerate if needed. Remember the Notepad trick from Module Three — paste the key into Notepad first to strip hidden characters, then copy from Notepad into the terminal. Update with `openclaw config provider key` and the new key.
+"API key invalid." The AI doesn't respond. Authentication error. This usually means one of three things: the key has a formatting issue from when you pasted it, the key expired, or you have a billing problem. Go to your provider's console, check the key, regenerate if needed. Remember the Notepad trick from Module Three — paste the key into Notepad first to strip hidden characters, then copy from Notepad into the terminal. Update with `npx openclaw config provider key` and the new key.
 
 "Rate limit exceeded." The AI stops responding temporarily. You sent too many requests too fast. Just wait one to five minutes and try again. If it keeps happening, reduce your heartbeat frequency. You might be hitting the provider's rate ceiling.
 
@@ -315,9 +315,9 @@ API errors. These are about your connection to the AI brain.
 
 Now, channel errors. These are about your messaging connections.
 
-"Telegram bot not responding." Three things to check, in order. One: is the gateway running? `openclaw status`. Two: is the pairing complete? Check for pending requests. Three: is the bot token still valid? Verify in BotFather. Nine times out of ten, it's the gateway. It crashed overnight and nobody noticed because nobody was doing their daily check. See? The daily checklist matters.
+"Telegram bot not responding." Three things to check, in order. One: is the gateway running? `npx openclaw status`. Two: is the pairing complete? Check for pending requests. Three: is the bot token still valid? Verify in BotFather. Nine times out of ten, it's the gateway. It crashed overnight and nobody noticed because nobody was doing their daily check. See? The daily checklist matters.
 
-"WhatsApp disconnected." Session expired. This happens periodically with WhatsApp. Just re-scan the QR code: `openclaw channels login`. Annoying but fast.
+"WhatsApp disconnected." Session expired. This happens periodically with WhatsApp. Just re-scan the QR code: `npx openclaw channels login`. Annoying but fast.
 
 [pause]
 
@@ -365,17 +365,17 @@ We're going to go through this category by category, and I want you to think of 
 
 Gateway and status commands. The basics. The foundation of everything.
 
-`openclaw service start` — starts the daemon. `openclaw service stop` — stops it. `openclaw service restart` — the universal "have you tried turning it off and on again" of OpenClaw. These three commands will solve more problems than any amount of debugging.
+`npx openclaw gateway start` — starts the daemon. `npx openclaw gateway stop` — stops it. `npx openclaw gateway restart` — the universal "have you tried turning it off and on again" of OpenClaw. These three commands will solve more problems than any amount of debugging.
 
-`openclaw tui` — opens the chat interface. This is how you talk to your agent from the terminal.
+`npx openclaw tui` — opens the chat interface. This is how you talk to your agent from the terminal.
 
-`openclaw status` — is the gateway running? One-word answer. Running or stopped.
+`npx openclaw status` — is the gateway running? One-word answer. Running or stopped.
 
-`openclaw doctor` — the health check. Catches configuration issues, permission problems, dependency mismatches.
+`npx openclaw doctor` — the health check. Catches configuration issues, permission problems, dependency mismatches.
 
-`openclaw doctor fix` — same as above but it actually FIXES what it finds instead of just reporting it.
+`npx openclaw doctor fix` — same as above but it actually FIXES what it finds instead of just reporting it.
 
-`openclaw service logs` — view the daemon logs. When something goes wrong, this is where the story is written.
+`npx openclaw gateway logs` — view the daemon logs. When something goes wrong, this is where the story is written.
 
 [pause]
 
@@ -387,19 +387,19 @@ These eight commands are your core toolkit. You'll use them more than anything e
 
 Security commands. Module Ten gave you the theory. These are the actual tools.
 
-`openclaw security audit --deep` — the full security audit. Checks everything. Run this weekly. Run this after every update. Run this after every config change. Run it when you're bored. You can't run it too often.
+`npx openclaw security audit --deep` — the full security audit. Checks everything. Run this weekly. Run this after every update. Run this after every config change. Run it when you're bored. You can't run it too often.
 
-`openclaw security audit --deep --fix` — same audit but with auto-fix. It doesn't just tell you what's wrong, it FIXES what it can. This is the one-two punch.
+`npx openclaw security audit --deep --fix` — same audit but with auto-fix. It doesn't just tell you what's wrong, it FIXES what it can. This is the one-two punch.
 
-`openclaw config gateway auth` — check your authentication settings. Is auth enabled? What type? Is it configured correctly?
+`npx openclaw config gateway auth` — check your authentication settings. Is auth enabled? What type? Is it configured correctly?
 
-`openclaw config gateway token rotate` — rotate your gateway token. Do this periodically. Do this immediately if you suspect any kind of compromise.
+`npx openclaw config gateway token rotate` — rotate your gateway token. Do this periodically. Do this immediately if you suspect any kind of compromise.
 
-`openclaw config gateway bind` — check your bind address. This should be loopback. If it's not loopback and you don't have a VERY good reason, change it back to loopback.
+`npx openclaw config gateway bind` — check your bind address. This should be loopback. If it's not loopback and you don't have a VERY good reason, change it back to loopback.
 
-`openclaw config sandbox mode` — set your sandboxing mode. Off, non-main, or all. We went deep on this in Module Ten.
+`npx openclaw config sandbox mode` — set your sandboxing mode. Off, non-main, or all. We went deep on this in Module Ten.
 
-`openclaw config tools deny` — deny a specific tool. If there's a tool your agent should NEVER have access to, this is how you block it.
+`npx openclaw config tools deny` — deny a specific tool. If there's a tool your agent should NEVER have access to, this is how you block it.
 
 [pause]
 
@@ -411,27 +411,27 @@ Security commands aren't exciting. They're not flashy. But they're the differenc
 
 Configuration commands. The knobs and dials of your ship.
 
-`openclaw config` — opens the main configuration. The dashboard for everything.
+`npx openclaw config` — opens the main configuration. The dashboard for everything.
 
-`openclaw config gateway port` — check or change your gateway port. Default is 18789 but you can change it if something else is using that port.
+`npx openclaw config gateway port` — check or change your gateway port. Default is 18789 but you can change it if something else is using that port.
 
-`openclaw config provider key` — update your API key. When you rotate keys at your provider, this is how you tell OpenClaw about the new one.
+`npx openclaw config provider key` — update your API key. When you rotate keys at your provider, this is how you tell OpenClaw about the new one.
 
-`openclaw config heartbeat interval` — set how often your agent's heartbeat fires. Remember: fifty-five minutes for optimal caching.
+`npx openclaw config heartbeat interval` — set how often your agent's heartbeat fires. Remember: fifty-five minutes for optimal caching.
 
-`openclaw config heartbeat model` — set which model runs the heartbeat. Haiku. The answer is Haiku. Or Gemini Flash. Something cheap and fast.
+`npx openclaw config heartbeat model` — set which model runs the heartbeat. Haiku. The answer is Haiku. Or Gemini Flash. Something cheap and fast.
 
 Channel commands. Your messaging connections.
 
-`openclaw channels add` — add a new messaging channel. Telegram, Discord, WhatsApp, whatever.
+`npx openclaw channels add` — add a new messaging channel. Telegram, Discord, WhatsApp, whatever.
 
-`openclaw channels login` — re-authenticate your channels. When WhatsApp disconnects or a token expires, this is your fix.
+`npx openclaw channels login` — re-authenticate your channels. When WhatsApp disconnects or a token expires, this is your fix.
 
-`openclaw config channels dm-mode` — check or set DM pairing mode for a channel. Controls who can talk to your agent.
+`npx openclaw config channels dm-mode` — check or set DM pairing mode for a channel. Controls who can talk to your agent.
 
 Cron job commands. Your scheduled automation.
 
-`openclaw cron list` — see all your scheduled jobs. `openclaw cron add` — create a new one. `openclaw cron remove` — delete one. `openclaw cron disable` — turn one off without deleting it.
+`npx openclaw cron list` — see all your scheduled jobs. `npx openclaw cron add` — create a new one. `npx openclaw cron remove` — delete one. `npx openclaw cron disable` — turn one off without deleting it.
 
 [pause]
 
@@ -443,7 +443,7 @@ Configuration, channels, and cron jobs. The three C's that keep your ship runnin
 
 Last category. Skills and TUI commands.
 
-Skills management. `openclaw skills browse` — browse ClawHub. Window shopping for new capabilities. `openclaw skills search` — search for something specific. `openclaw skills install` — install a skill. `openclaw skills list` — see what you've got installed. `openclaw skills enable` and `openclaw skills disable` — toggle skills on and off without uninstalling them. This is KEY for cost management. Disable what you're not using. Re-enable when you need it.
+Skills management. `npx clawhub browse` — browse ClawHub. Window shopping for new capabilities. `npx clawhub search` — search for something specific. `npx clawhub install` — install a skill. `npx openclaw skills list` — see what you've got installed. `npx openclaw skills enable` and `npx openclaw skills disable` — toggle skills on and off without uninstalling them. This is KEY for cost management. Disable what you're not using. Re-enable when you need it.
 
 And then the TUI commands — the ones you type INSIDE the chat with your agent.
 
@@ -471,13 +471,13 @@ That's the complete cheat sheet. Every command you'll ever need for daily operat
 
 Now. The emergency procedure. We covered incident response in Module Ten, but this is the condensed, print-it-out, tape-it-next-to-your-monitor version. Five steps. In order. No thinking required.
 
-Step one: STOP. `openclaw service stop`. Kill the agent. Whatever it's doing, it stops NOW. Don't negotiate. Don't investigate first. Don't try to figure out what went wrong while it's still running. STOP IT.
+Step one: STOP. `npx openclaw gateway stop`. Kill the agent. Whatever it's doing, it stops NOW. Don't negotiate. Don't investigate first. Don't try to figure out what went wrong while it's still running. STOP IT.
 
-Step two: CLOSE. Lock down access. `openclaw config gateway bind loopback`. No one gets in. No external connections. The drawbridge goes up.
+Step two: CLOSE. Lock down access. `npx openclaw config gateway bind loopback`. No one gets in. No external connections. The drawbridge goes up.
 
-Step three: FREEZE. Rotate all tokens and keys. `openclaw config gateway token rotate`. Then rotate your API keys at your provider. If something was compromised, the old credentials are now useless.
+Step three: FREEZE. Rotate all tokens and keys. `npx openclaw config gateway token rotate`. Then rotate your API keys at your provider. If something was compromised, the old credentials are now useless.
 
-Step four: INVESTIGATE. NOW you read the logs. `openclaw service logs`. NOW you look at sessions. NOW you figure out what happened. But only AFTER the agent is stopped, access is locked, and secrets are rotated.
+Step four: INVESTIGATE. NOW you read the logs. `npx openclaw gateway logs`. NOW you look at sessions. NOW you figure out what happened. But only AFTER the agent is stopped, access is locked, and secrets are rotated.
 
 Step five: RESTORE. Fix whatever went wrong. Run the security audit. Restart when you're confident everything is clean.
 
@@ -609,7 +609,7 @@ OpenClaw is evolving fast. New features. New skills. New models. New integration
 
 [pause]
 
-So here's what I want you to do. Go home tonight. Open that terminal. Run `openclaw status`. Make sure your agent is running. Talk to it. Ask it something. Give it a task. Use the thing you built.
+So here's what I want you to do. Go home tonight. Open that terminal. Run `npx openclaw status`. Make sure your agent is running. Talk to it. Ask it something. Give it a task. Use the thing you built.
 
 And then tomorrow? Do it again. And the next day. And the day after that. Because the more you use it, the better it gets. The more memory it builds, the more useful it becomes, the more it feels like... yours. Not a tool you borrowed. Not a service you rent. YOURS. Running on YOUR machine. Under YOUR control. Knowing YOUR life.
 

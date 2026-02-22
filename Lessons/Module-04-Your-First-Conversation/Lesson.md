@@ -33,8 +33,10 @@ By the end of this module, you will be able to:
 Open your Ubuntu terminal and run:
 
 ```bash
-openclaw tui
+npx openclaw tui
 ```
+
+> **Paste tip:** Ctrl+V does not work in the Ubuntu terminal. Whenever you need to paste text into the TUI, use **right-click** instead. If paste stops working, close the Ubuntu window and reopen it from the Start Menu.
 
 The TUI takes over your terminal and becomes a full-screen chat interface. Here's what you see:
 
@@ -171,7 +173,7 @@ Please remember all of this.
 
 ### Send the Brain Dump
 
-Paste your filled-in template into the TUI and press Enter. your agent will respond — usually with something like:
+Paste your filled-in template into the TUI (remember: **right-click** to paste) and press Enter. Your agent will respond — usually with something like:
 
 ```
 Thank you for the thorough introduction! I've noted all of this and will use it
@@ -208,8 +210,6 @@ After the interview, the agent can format everything into structured markdown th
 
 Your OpenClaw agent deserves a name. It gives you something to call it, makes the experience more personal, and reinforces the "AI employee" mental model.
 
-For this course, we're using **your agent** — the Great Lion from C.S. Lewis's *The Chronicles of Narnia*. Creator of worlds. Wise, powerful, gentle when needed, terrifying when necessary. Always working behind the scenes.
-
 ### How to Name Your Agent
 
 Send a message like:
@@ -225,9 +225,9 @@ Your agent will acknowledge the name and start using it.
 
 > **Note:** The name is stored in memory for this session, but to make it permanent, we'll configure it in the identity files in Module 05. For now, this is enough.
 
-### Choosing Your Own Name
+### Choosing a Name
 
-If you don't want to use your agent, pick whatever resonates with you. Some guidelines:
+Some guidelines:
 
 - **Make it something you'll enjoy saying.** You'll use this name a lot.
 - **Give it meaning.** Names with personal significance (from books, mythology, history) make the relationship feel more real.
@@ -511,8 +511,8 @@ Using the template provided above, write your personal brain dump. Include:
 
 ### Part 2: Send It (5 minutes)
 
-1. Open the TUI: `openclaw tui`
-2. Paste your brain dump
+1. Open the TUI: `npx openclaw tui`
+2. Paste your brain dump (**right-click** to paste — Ctrl+V does not work)
 3. Read your agent's response carefully — does it show understanding of your key points?
 
 ### Part 3: Test (10 minutes)

@@ -176,6 +176,9 @@ style: |
     font-size: 0.78em;
     line-height: 1.5;
   }
+  pre code *, pre code span {
+    color: var(--parchment) !important;
+  }
 
   /* ═══════════════════════════════════════════════
      UTILITY CLASSES
@@ -497,7 +500,7 @@ A heartbeat is a periodic "wake-up" for your agent. Every X minutes, the ⛵ gat
 ## Configuring Heartbeat Frequency
 
 ```bash
-openclaw config heartbeat interval 30
+npx openclaw config heartbeat interval 30
 ```
 
 | Interval | Use Case | Cost Impact |
@@ -512,7 +515,7 @@ openclaw config heartbeat interval 30
 - **To disable heartbeats entirely:**
 
 ```bash
-openclaw config heartbeat interval 0
+npx openclaw config heartbeat interval 0
 ```
 
 ---
@@ -522,13 +525,13 @@ openclaw config heartbeat interval 0
 Most heartbeat checks are routine: "Any new messages? Any tasks due? No? Go back to sleep." This does not require Opus 4.6.
 
 ```bash
-openclaw config heartbeat model claude-haiku-4-5
+npx openclaw config heartbeat model claude-haiku-4-5
 ```
 
 Or with Google Gemini:
 
 ```bash
-openclaw config heartbeat model gemini-flash-3
+npx openclaw config heartbeat model gemini-flash-3
 ```
 
 <!-- Speaker notes: This single change -- routing heartbeats to a cheap model -- is the fastest way to cut your bill. Five seconds of configuration, $50-190/month saved. -->
@@ -583,7 +586,7 @@ Run heartbeats on **local 3-4B models** for literally zero cost -- no API calls,
 Anthropic's extended cache stays warm for about **55 minutes**. Set your heartbeat to 55 minutes so every heartbeat hits warm cache:
 
 ```bash
-openclaw config heartbeat interval 55
+npx openclaw config heartbeat interval 55
 ```
 
 ### Combined savings: Haiku + prompt caching + 55-min interval
@@ -628,7 +631,7 @@ The morning brief is the "killer feature" most 🦞 OpenClaw users set up first.
 
 **Method 2: Via cron job** -- precise timing:
 ```bash
-openclaw cron add "morning-brief" \
+npx openclaw cron add "morning-brief" \
   --schedule "0 7 * * *" \
   --task "Send my morning brief to Telegram"
 ```
@@ -704,18 +707,18 @@ Cron uses five fields: `minute hour day-of-month month day-of-week`
 
 ```bash
 # List all cron jobs
-openclaw cron list
+npx openclaw cron list
 
 # Add a cron job
-openclaw cron add "weekly-review" \
+npx openclaw cron add "weekly-review" \
   --schedule "0 9 * * 1" \
   --task "Conduct my weekly review"
 
 # Remove a cron job
-openclaw cron remove "weekly-review"
+npx openclaw cron remove "weekly-review"
 
 # Temporarily disable a cron job
-openclaw cron disable "weekly-review"
+npx openclaw cron disable "weekly-review"
 ```
 
 - Use **cheap models** for routine cron jobs
@@ -770,7 +773,7 @@ by helping small businesses with AI automation.
 
 ### Schedule a Cron to Reverse-Prompt
 ```bash
-openclaw cron add "mission-nudge" \
+npx openclaw cron add "mission-nudge" \
   --schedule "0 8 * * *" \
   --task "What is 1 task we can do today to get closer to our mission?"
 ```

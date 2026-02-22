@@ -437,7 +437,7 @@ Number three: Enable sandboxing for untrusted inputs. When the agent processes c
 
 Number four: Set gateway authentication. Require a token to connect to your gateway. This is the front door of your entire operation. Lock it.
 
-Number five: Run security audits regularly. OpenClaw has a built-in command: `openclaw security audit --deep`. Run it after any configuration change and at least once a week.
+Number five: Run security audits regularly. OpenClaw has a built-in command: `npx openclaw security audit --deep`. Run it after any configuration change and at least once a week.
 
 ---
 
@@ -461,7 +461,7 @@ Number nine: Know your incident response plan. BEFORE something goes wrong, know
 
 Listen up. When things go wrong — and eventually, SOMETHING will — you follow these five steps. IN ORDER. No improvising. No skipping. Five steps. Five words. Memorize them.
 
-STOP. Kill the gateway. `openclaw stop`. If that doesn't work, `pkill -f openclaw`. This immediately halts ALL AI activity. Your agent goes DARK. No more commands, no more messages, no more actions. Do this FIRST. Before anything else. STOP THE BLEEDING.
+STOP. Kill the gateway. `npx openclaw gateway stop`. If that doesn't work, `pkill -f openclaw`. This immediately halts ALL AI activity. Your agent goes DARK. No more commands, no more messages, no more actions. Do this FIRST. Before anything else. STOP THE BLEEDING.
 
 CLOSE. Lock down access. Set the gateway to loopback only — local connections only. Disable all messaging channels. Even if someone restarts the gateway, nothing gets in and nothing gets out.
 
@@ -591,7 +591,7 @@ You're going to fill out your personal incident response card. This is YOUR plan
 
 Fill in these blanks:
 
-STOP — How do I kill the gateway? Write the EXACT command you'll run. `openclaw stop`. Write it down.
+STOP — How do I kill the gateway? Write the EXACT command you'll run. `npx openclaw gateway stop`. Write it down.
 
 CLOSE — How do I lock down access? What channels do you need to disable? Write it.
 

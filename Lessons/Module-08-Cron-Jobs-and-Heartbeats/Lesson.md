@@ -75,8 +75,8 @@ Here's how the costs compound:
 **Our recommended configuration** (combines cheapest model + prompt caching for maximum savings):
 
 ```bash
-openclaw config heartbeat interval 55
-openclaw config heartbeat model claude-haiku-4-5
+npx openclaw config heartbeat interval 55
+npx openclaw config heartbeat model claude-haiku-4-5
 ```
 
 Why 55 minutes specifically? Anthropic's prompt cache stays warm for about 55 minutes. By setting your heartbeat to 55 minutes, every heartbeat hits the warm cache — meaning your system prompt (3,000-14,000 tokens) is charged at a **90% discount** instead of full price. Combined with routing to Haiku, this drops heartbeat costs from ~$100+/month to ~$0.50/month. That's the single biggest cost optimization in this entire course.
@@ -96,7 +96,7 @@ If 55 minutes feels too infrequent for your needs, here are common settings:
 If you're not ready for proactive behavior, or you want to minimize costs while learning:
 
 ```bash
-openclaw config heartbeat interval 0
+npx openclaw config heartbeat interval 0
 ```
 
 This disables heartbeats entirely. your agent only acts when you talk to it. You can enable them later when you're ready.
@@ -112,13 +112,13 @@ Most heartbeat checks are routine — "any new messages? any tasks due? no? go b
 ### Configure a Heartbeat Model
 
 ```bash
-openclaw config heartbeat model claude-haiku-4-5
+npx openclaw config heartbeat model claude-haiku-4-5
 ```
 
 Or if you have Google Gemini configured:
 
 ```bash
-openclaw config heartbeat model gemini-flash-3
+npx openclaw config heartbeat model gemini-flash-3
 ```
 
 ### Cost Comparison
@@ -176,7 +176,7 @@ With those 3,000-14,000 token system prompts being sent with every API call, cac
 Here's the trick: Anthropic's extended cache stays warm for about **55 minutes**. If you set your heartbeat interval to 55 minutes (instead of the default 30), every heartbeat hits warm cache:
 
 ```bash
-openclaw config heartbeat interval 55
+npx openclaw config heartbeat interval 55
 ```
 
 Combined with routing heartbeats to Haiku and enabling prompt caching, your heartbeats drop from **~$100+/month to ~$0.50/month**. That's a 99.5% reduction on heartbeat costs alone.
@@ -188,8 +188,8 @@ We'll cover how to enable prompt caching in your configuration in Module 09.
 Context compaction (summarizing conversation history to free up token space) should be a default configuration, not something you set up when the agent crashes from context overflow. Configure compaction thresholds now:
 
 ```bash
-openclaw config compaction threshold 80000
-openclaw config compaction flush 80000
+npx openclaw config compaction threshold 80000
+npx openclaw config compaction flush 80000
 ```
 
 This tells the agent to compact (summarize and trim) its context when it reaches 80,000 tokens, keeping sessions lean and preventing runaway token costs. Without this, a long-running session can accumulate 200K+ tokens of context — all of which gets re-sent with every API call.
@@ -246,7 +246,7 @@ When preparing the morning brief, include:
 Save (`Ctrl + O`, Enter, `Ctrl + X`) and restart:
 
 ```bash
-openclaw service restart
+npx openclaw gateway restart
 ```
 
 ---
@@ -264,7 +264,7 @@ If your heartbeat interval is 30 minutes or less, the heartbeat will catch the 6
 For exact timing, you can set up a cron job. In your Ubuntu terminal:
 
 ```bash
-openclaw cron add "morning-brief" --schedule "0 7 * * *" --task "Send my morning brief to Telegram"
+npx openclaw cron add "morning-brief" --schedule "0 7 * * *" --task "Send my morning brief to Telegram"
 ```
 
 This creates a cron job that runs at exactly 7:00 AM every day.
@@ -353,16 +353,16 @@ Cron uses five fields: `minute hour day-of-month month day-of-week`
 
 ```bash
 # List all cron jobs
-openclaw cron list
+npx openclaw cron list
 
 # Add a cron job
-openclaw cron add "weekly-review" --schedule "0 9 * * 1" --task "Conduct my weekly review"
+npx openclaw cron add "weekly-review" --schedule "0 9 * * 1" --task "Conduct my weekly review"
 
 # Remove a cron job
-openclaw cron remove "weekly-review"
+npx openclaw cron remove "weekly-review"
 
 # Temporarily disable a cron job
-openclaw cron disable "weekly-review"
+npx openclaw cron disable "weekly-review"
 ```
 
 ---
@@ -429,13 +429,13 @@ Before you build custom automations, set up these three maintenance cron jobs. E
 
 ```bash
 # Session cleanup - every 72 hours
-openclaw cron add "session-cleanup" --schedule "0 0 */3 * *" --task "Clean up session files older than 7 days to free disk space. Remove bloated or orphaned session data."
+npx openclaw cron add "session-cleanup" --schedule "0 0 */3 * *" --task "Clean up session files older than 7 days to free disk space. Remove bloated or orphaned session data."
 
 # Daily security audit - every morning at 6 AM
-openclaw cron add "security-audit" --schedule "0 6 * * *" --task "Run a security audit: check firewall status, fail2ban logs, SSH config, open ports, Docker status. Send results to Telegram. Alert immediately for any critical findings."
+npx openclaw cron add "security-audit" --schedule "0 6 * * *" --task "Run a security audit: check firewall status, fail2ban logs, SSH config, open ports, Docker status. Send results to Telegram. Alert immediately for any critical findings."
 
 # Silent backups - every 2 hours
-openclaw cron add "workspace-backup" --schedule "0 */2 * * *" --task "Git commit and push the workspace. Commit message: 'Auto-backup [timestamp]'. Do not message me unless the backup fails."
+npx openclaw cron add "workspace-backup" --schedule "0 */2 * * *" --task "Git commit and push the workspace. Commit message: 'Auto-backup [timestamp]'. Do not message me unless the backup fails."
 ```
 
 Set these up first. Everything else is a bonus.

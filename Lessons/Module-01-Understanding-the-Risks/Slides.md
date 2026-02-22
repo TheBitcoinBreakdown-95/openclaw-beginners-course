@@ -176,6 +176,9 @@ style: |
     font-size: 0.78em;
     line-height: 1.5;
   }
+  pre code *, pre code span {
+    color: var(--parchment) !important;
+  }
 
   /* ═══════════════════════════════════════════════
      UTILITY CLASSES
@@ -719,7 +722,7 @@ If the AI does not recognize this as injection, it executes a **malicious script
 
 ### 4. Monitoring and Auditability
 - Review **session transcripts** regularly
-- Run `openclaw security audit --deep` periodically
+- Run `npx openclaw security audit --deep` periodically
 - Watch your **🔑 API spending**
 
 ### 5. Defense in Depth
@@ -737,7 +740,7 @@ If the AI does not recognize this as injection, it executes a **malicious script
 | 2 | Require **mentions in groups** | Better yet: no groups at all |
 | 3 | Enable **sandboxing** for untrusted inputs | Module 10 |
 | 4 | Set **⛵ gateway authentication** | Required for remote access |
-| 5 | Run **security audits** regularly | `openclaw security audit --deep` |
+| 5 | Run **security audits** regularly | `npx openclaw security audit --deep` |
 
 <!-- Speaker notes: Nine items. Each one addresses a specific threat category we discussed earlier. Print this checklist and tape it to the wall next to your setup. -->
 
@@ -767,8 +770,8 @@ When something goes wrong, follow these five steps **in order**:
 | 5 | Fix and restart | **RESTORE** | Hours-Days |
 
 ```bash
-openclaw stop          # Step 1: Kill it immediately
-pkill -f openclaw      # If that does not work
+npx openclaw gateway stop   # Step 1: Kill it immediately
+pkill -f openclaw           # If that does not work
 ```
 
 **Mnemonic: Stop. Close. Freeze. Investigate. Restore.**

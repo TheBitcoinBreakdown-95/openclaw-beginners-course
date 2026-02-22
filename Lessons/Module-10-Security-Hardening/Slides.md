@@ -176,6 +176,9 @@ style: |
     font-size: 0.78em;
     line-height: 1.5;
   }
+  pre code *, pre code span {
+    color: var(--parchment) !important;
+  }
 
   /* ═══════════════════════════════════════════════
      UTILITY CLASSES
@@ -478,7 +481,7 @@ Since initial setup, you have added:
 | **all** | Everything is sandboxed, including your main session | Maximum security for untrusted content |
 
 ```bash
-openclaw config sandbox mode non-main
+npx openclaw config sandbox mode non-main
 ```
 
 ### What "non-main" means in practice:
@@ -502,7 +505,7 @@ openclaw config sandbox mode non-main
 | **shared** | All agents share one container | Lowest -- agents can see each other's files | Low |
 
 ```bash
-openclaw config sandbox scope agent
+npx openclaw config sandbox scope agent
 ```
 
 **Recommended:** `agent` scope -- each agent gets its own sandbox without per-session overhead.
@@ -545,10 +548,10 @@ docker run hello-world
 ### Step 4-5: Configure 🦞 OpenClaw sandboxing
 
 ```bash
-openclaw sandbox setup
-openclaw config sandbox mode non-main
-openclaw config sandbox scope agent
-openclaw service restart
+npx openclaw sandbox setup
+npx openclaw config sandbox mode non-main
+npx openclaw config sandbox scope agent
+npx openclaw gateway restart
 ```
 
 <!-- Speaker notes: Docker is a prerequisite for sandboxing. Without it, sandbox mode settings are ignored. Walk students through each step and make sure docker run hello-world succeeds before moving on. -->
@@ -594,10 +597,10 @@ Tool policies are **layered** (global > provider > agent > sandbox) and **deny a
 ### Example: Lock down external channels
 
 ```bash
-openclaw config tools deny exec --context channels
-openclaw config tools deny browser --context channels
-openclaw config tools deny process --context channels
-openclaw config tools allow file-read --context channels
+npx openclaw config tools deny exec --context channels
+npx openclaw config tools deny browser --context channels
+npx openclaw config tools deny process --context channels
+npx openclaw config tools allow file-read --context channels
 ```
 
 > **Known issue:** Agent-specific tool configs may not be forwarded to cron agents or CLI paths. Test tool availability in those contexts.
@@ -622,10 +625,10 @@ openclaw config tools allow file-read --context channels
 
 ```bash
 # Check status
-openclaw config tools elevated
+npx openclaw config tools elevated
 
 # Disable if enabled
-openclaw config tools elevated off
+npx openclaw config tools elevated off
 ```
 
 > If elevated mode is on and you did not intentionally set it, treat this as a security incident.
@@ -639,26 +642,26 @@ openclaw config tools elevated off
 ### Verify authentication is required:
 
 ```bash
-openclaw config gateway auth
+npx openclaw config gateway auth
 ```
 
 ### Rotate your ⛵ gateway token (periodic maintenance or after incident):
 
 ```bash
-openclaw config gateway token rotate
+npx openclaw config gateway token rotate
 ```
 
 ### Verify bind configuration:
 
 ```bash
-openclaw config gateway bind
+npx openclaw config gateway bind
 ```
 
 **Expected:** `loopback` (unless you intentionally configured LAN or Tailscale).
 
 ```bash
 # Reset to loopback if unexpected
-openclaw config gateway bind loopback
+npx openclaw config gateway bind loopback
 ```
 
 ### Additional Hardening
@@ -755,7 +758,7 @@ Every entry should show `drwx------` or `-rw-------`.
 ### Run the deep audit:
 
 ```bash
-openclaw security audit --deep
+npx openclaw security audit --deep
 ```
 
 ### Understanding the output:
@@ -767,14 +770,14 @@ openclaw security audit --deep
 ### Auto-fix common issues:
 
 ```bash
-openclaw security audit --deep --fix
+npx openclaw security audit --deep --fix
 ```
 
 ### Separate health check:
 
 ```bash
-openclaw doctor
-openclaw doctor fix
+npx openclaw doctor
+npx openclaw doctor fix
 ```
 
 <!-- Speaker notes: The security audit is the single best tool for catching misconfigurations. The --deep flag checks everything including file permissions, gateway config, sandbox status, and tool policies. Run it weekly. -->
@@ -790,14 +793,14 @@ If you have enabled browser control for your agent:
 - **Restrict browser access** to your main session only:
 
 ```bash
-openclaw config tools deny browser --context sandbox
-openclaw config tools allow browser --context main
+npx openclaw config tools deny browser --context sandbox
+npx openclaw config tools allow browser --context main
 ```
 
 ### If you do not need browser control:
 
 ```bash
-openclaw config tools deny browser
+npx openclaw config tools deny browser
 ```
 
 Most users do not need browser control, especially when starting out.
@@ -813,12 +816,12 @@ Install a security prompt in `AGENTS.md` that makes the agent smarter about reco
 
 ### The 10-Minute Weekly Check:
 
-1. Run security audit: `openclaw security audit --deep`
-2. Run health check: `openclaw doctor`
+1. Run security audit: `npx openclaw security audit --deep`
+2. Run health check: `npx openclaw doctor`
 3. Fix any issues: `--fix` flags
 4. Check API spending: visit your provider dashboard
-5. Verify DM modes: `openclaw config channels [channel] dm-mode`
-6. Verify sandbox status: `openclaw config sandbox mode`
+5. Verify DM modes: `npx openclaw config channels [channel] dm-mode`
+6. Verify sandbox status: `npx openclaw config sandbox mode`
 7. Commit workspace backup: `git add -A && git commit -m "Weekly backup"`
 
 ### Automate it:
@@ -858,33 +861,33 @@ CRITICAL issues. Otherwise just confirm all clear.
 
 ### STOP
 ```bash
-openclaw service stop
+npx openclaw gateway stop
 pkill -9 -f openclaw    # if it won't stop gracefully
 ```
 
 ### CLOSE
 ```bash
-openclaw config gateway bind loopback
-openclaw config channels telegram dm-mode disabled
+npx openclaw config gateway bind loopback
+npx openclaw config channels telegram dm-mode disabled
 ```
 
 ### FREEZE
 ```bash
-openclaw config gateway token rotate
-openclaw config provider key [NEW_KEY]
-openclaw config channels telegram token [NEW_TOKEN]
+npx openclaw config gateway token rotate
+npx openclaw config provider key [NEW_KEY]
+npx openclaw config channels telegram token [NEW_TOKEN]
 ```
 
 ### INVESTIGATE
 ```bash
-openclaw service logs
+npx openclaw gateway logs
 ls -lt ~/.openclaw/sessions/ | head -20
 ```
 
 ### RESTORE
 ```bash
-openclaw security audit --deep --fix
-openclaw service start
+npx openclaw security audit --deep --fix
+npx openclaw gateway start
 ```
 
 <!-- Speaker notes: Walk students through each step with the commands. Emphasize that STOP comes first -- do not try to investigate while the agent is still running and potentially compromised. Contain, then investigate. -->
@@ -899,7 +902,7 @@ openclaw service start
 |---------|-----|
 | Not setting up Docker | Install Docker -- required for sandboxing |
 | Sandbox mode "off" | Set to "non-main" at minimum |
-| Elevated mode enabled | Disable: `openclaw config tools elevated off` |
+| Elevated mode enabled | Disable: `npx openclaw config tools elevated off` |
 | Loose file permissions | `chmod 700` directories, `chmod 600` files |
 | Never running security audit | Run `--deep` weekly |
 | Using personal browser profile | Create a dedicated profile for the agent |
@@ -915,11 +918,11 @@ openclaw service start
 ## ⚙️ Hands on Deck
 
 ### Part 1: Run the Audit (5 min)
-- `openclaw security audit --deep`
+- `npx openclaw security audit --deep`
 - Note every finding: critical, warning, or info
 
 ### Part 2: Fix All Issues (10 min)
-- `openclaw security audit --deep --fix`
+- `npx openclaw security audit --deep --fix`
 - Manually fix anything auto-fix missed
 
 ### Part 3: Set Up Docker and Sandboxing (15 min)

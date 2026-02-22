@@ -53,7 +53,7 @@ The brain dump exercise is the keystone here. EVERYTHING else in this course bui
 
 Before we set sail, let us get our vocabulary squared away. Four terms in this first batch.
 
-TUI. Terminal User Interface. This is the interactive chat that lives inside your terminal. When you type `openclaw tui`, this is what takes over your screen. It is not a website. It is not an app. It is right there in your terminal, lean and fast. The bridge of your ship.
+TUI. Terminal User Interface. This is the interactive chat that lives inside your terminal. When you type `npx openclaw tui`, this is what takes over your screen. It is not a website. It is not an app. It is right there in your terminal, lean and fast. The bridge of your ship.
 
 Context window. This is the amount of text -- measured in tokens -- that your AI can hold in its head during a single conversation. Think of it like the desk in the captain's quarters. You can pile papers on that desk, but at some point the desk is FULL. And when it is full, papers start falling off the other side. Old messages, gone. Your agent forgets them. That is the context window.
 
@@ -83,9 +83,9 @@ Good. Those seven terms are your vocabulary for today. You will hear them over a
 
 Alright, crew. Hands on keyboards. This is where it gets real.
 
-Two words. That is all it takes.
+Two words. Well, three words. That is all it takes.
 
-`openclaw tui`
+`npx openclaw tui`
 
 Type that into your Ubuntu terminal, hit Enter, and BOOM -- the TUI takes over your screen. Your terminal transforms into a full-screen chat interface. It is beautiful in its simplicity.
 
@@ -98,6 +98,8 @@ In the MIDDLE, you have the conversation area. This is where your messages and t
 At the BOTTOM, you have your input field. That little prompt that says "Type your message here." This is where you talk to your agent. This is where you type your commands. This is home base.
 
 [ask the audience]
+
+Now, IMPORTANT reminder from Module 02. Ctrl+V does NOT work in the Ubuntu terminal. When you need to paste something — and you WILL need to paste your brain dump in a few minutes — use RIGHT-CLICK. Right-click pastes. Ctrl+V does nothing. Burned into your brain? Good.
 
 Has everyone got the TUI open? Raise your hand if you see that interface on your screen.
 
@@ -205,7 +207,7 @@ Good. Hold onto that. We are going to write it for real in the exercise.
 
 So you have written your brain dump. You have poured your heart and your goals and your rules into that template. Now what?
 
-You paste it into the TUI. You hit Enter. And you WAIT.
+You paste it into the TUI — remember, RIGHT-CLICK to paste, not Ctrl+V. You hit Enter. And you WAIT.
 
 [pause]
 
@@ -439,7 +441,7 @@ And at least TWO rules. Standing orders for your first mate. "Always ask before 
 
 [pause]
 
-Part Two: SEND IT. Five minutes. Open the TUI with `openclaw tui`. Paste your brain dump. Hit Enter. Read your agent's response carefully. Does it show genuine understanding of YOUR key points? Or did it just parrot back generic acknowledgments?
+Part Two: SEND IT. Five minutes. Open the TUI with `npx openclaw tui`. Paste your brain dump — RIGHT-CLICK to paste, remember. Hit Enter. Read your agent's response carefully. Does it show genuine understanding of YOUR key points? Or did it just parrot back generic acknowledgments?
 
 [pause]
 
@@ -503,7 +505,7 @@ EIGHT: LLMs hallucinate. They make things up with total confidence. Verify impor
 
 Crew. Take a breath. Look at what you just did.
 
-You sat down at a terminal. You typed two words -- `openclaw tui` -- and for the first time, you talked to YOUR agent. Not a demo. Not a tutorial. YOUR agent, with YOUR name, YOUR goals, YOUR rules.
+You sat down at a terminal. You typed two words -- `npx openclaw tui` -- and for the first time, you talked to YOUR agent. Not a demo. Not a tutorial. YOUR agent, with YOUR name, YOUR goals, YOUR rules.
 
 That is not a small thing. That is the beginning of something REAL.
 

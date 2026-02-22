@@ -171,7 +171,7 @@ Got your token? Stored safely? Notepad trick done? Good. Let's connect this thin
 
 Open your Ubuntu terminal. You can have the TUI running in one terminal and a fresh terminal window open alongside it — they play nicely together.
 
-Type: openclaw channels add telegram. Hit enter.
+Type: npx openclaw channels add telegram. Hit enter.
 
 The wizard fires up and asks for your bot token. Paste it in — the CLEAN copy from Notepad. Not the raw copy from Telegram. The Notepad copy. Hit enter.
 
@@ -193,7 +193,7 @@ Nine times out of ten, if you got an error here, it's the token. Extra space. Li
 
 Two more steps and your agent goes MOBILE. We're so close I can taste the salt air.
 
-First — restart the gateway. In your terminal: openclaw service restart. This tells OpenClaw to pick up the new Telegram configuration and start listening on that channel.
+First — restart the gateway. In your terminal: npx openclaw gateway restart. This tells OpenClaw to pick up the new Telegram configuration and start listening on that channel.
 
 Second — grab your phone. Open Telegram. Search for your bot's username — the one you created with BotFather. Tap on it. Hit Start.
 
@@ -243,7 +243,7 @@ Alright crew, the celebration's over. The radio is working. Now we SECURE it. An
 
 DM pairing mode. This is your FIRST line of defense. Your primary hull plating. If this is misconfigured, nothing else matters.
 
-Run this command: openclaw config channels telegram dm-mode. It should come back with one word: pairing. If it says ANYTHING else — especially if it says "open" — you fix it RIGHT NOW. Not later. Not tomorrow. Right now. Run: openclaw config channels telegram dm-mode pairing.
+Run this command: npx openclaw config channels telegram dm-mode. It should come back with one word: pairing. If it says ANYTHING else — especially if it says "open" — you fix it RIGHT NOW. Not later. Not tomorrow. Right now. Run: npx openclaw config channels telegram dm-mode pairing.
 
 Look at this table. Four modes. One is correct. One is acceptable. One is useless. And one will sink your ship.
 
@@ -259,7 +259,7 @@ And then there's OPEN mode. Open means ANYONE on Telegram — any of Telegram's 
 
 Never. Set. It. To. Open. Not for testing. Not "just to try it." Not because you're curious. Never.
 
-And here's a pro tip — after connecting any new channel, run openclaw doctor. It scans your configuration and flags anything risky. Think of it as a hull inspection. Do it every time.
+And here's a pro tip — after connecting any new channel, run npx openclaw doctor. It scans your configuration and flags anything risky. Think of it as a hull inspection. Do it every time.
 
 ---
 
@@ -269,7 +269,7 @@ Want to go one step further than pairing mode? Set an allowlist. This is the dea
 
 With an allowlist, you specify EXACTLY which Telegram user IDs are permitted to message your bot. Not usernames — user IDs. Numeric IDs that can't be spoofed.
 
-The command is: openclaw config channels telegram allowlist add, followed by your Telegram user ID.
+The command is: npx openclaw config channels telegram allowlist add, followed by your Telegram user ID.
 
 "But wait," you say, "how do I find my Telegram user ID?" Great question. Search for @userinfobot on Telegram. Start a chat with it. It immediately tells you your numeric ID. Copy that number. Plug it into the allowlist command.
 
@@ -323,7 +323,7 @@ Then you need an invite link. OAuth2 section, check the "bot" scope, set permiss
 
 And HERE is the critical part — invite it to a PRIVATE server. A server where YOU are the only member. Create a brand new server if you have to. Do NOT — and I cannot stress this enough — do NOT add your bot to a public server. Do NOT add it to your friend's gaming server with two hundred people in it. Remember what we JUST said about group chats? A Discord server with multiple people is a group chat. Same rules apply.
 
-Enable Developer Mode in Discord settings so you can right-click and copy your Server ID and Channel ID. Then run: openclaw channels add discord. Provide the token, the server ID, the channel ID. Restart the service. Done.
+Enable Developer Mode in Discord settings so you can right-click and copy your Server ID and Channel ID. Then run: npx openclaw channels add discord. Provide the token, the server ID, the channel ID. Restart the gateway. Done.
 
 [pause]
 
@@ -335,7 +335,7 @@ Discord security in three words: private server only. That's it. That's the whol
 
 WhatsApp. The one that makes me a little nervous. Also optional. Also has some unique considerations you need to hear.
 
-The command is simple: openclaw channels add whatsapp. A QR code appears in your terminal. You scan it from your phone — Settings, Linked Devices, Link a Device — just like linking WhatsApp Web. Familiar process.
+The command is simple: npx openclaw channels add whatsapp. A QR code appears in your terminal. You scan it from your phone — Settings, Linked Devices, Link a Device — just like linking WhatsApp Web. Familiar process.
 
 But here's where WhatsApp is FUNDAMENTALLY different from Telegram and Discord.
 
@@ -347,7 +347,7 @@ Let that sink in for a second. If the bot is compromised — if someone gains ac
 
 THIS is why I strongly — STRONGLY — recommend using a second phone number for WhatsApp if you go this route. Get a cheap prepaid SIM. Set up Google Voice. Whatever it takes to create a separate WhatsApp account that isn't your personal one. If something goes wrong, the blast radius is contained to the secondary account. Your personal WhatsApp stays untouched.
 
-Set the allowlist immediately after connecting: openclaw config channels whatsapp allowlist add, followed by your phone number.
+Set the allowlist immediately after connecting: npx openclaw config channels whatsapp allowlist add, followed by your phone number.
 
 [pause]
 
@@ -431,15 +431,15 @@ Quick troubleshooting pass. These are the rocks people hit most often. Let me sa
 
 "Unauthorized error when connecting." Your bot token is wrong. It has a formatting issue. Extra space. Line break. Invisible character. Regenerate the token via BotFather, do the Notepad trick AGAIN, and re-paste. This fixes it almost every time.
 
-"My bot responds to STRANGERS." Red alert. Your DM mode is set to "open." Change it IMMEDIATELY. openclaw config channels telegram dm-mode pairing. Do it right now. Do not pass go. Do not collect two hundred dollars.
+"My bot responds to STRANGERS." Red alert. Your DM mode is set to "open." Change it IMMEDIATELY. npx openclaw config channels telegram dm-mode pairing. Do it right now. Do not pass go. Do not collect two hundred dollars.
 
-"WhatsApp connection keeps dropping." Session expired or your phone disconnected. Re-scan the QR code with openclaw channels login. Keep WhatsApp running on your phone — if you close it, the linked session can drop.
+"WhatsApp connection keeps dropping." Session expired or your phone disconnected. Re-scan the QR code with npx openclaw channels login. Keep WhatsApp running on your phone — if you close it, the linked session can drop.
 
 "Discord bot doesn't see messages." You forgot to enable Message Content Intent in the Developer Portal. Go to your application, Bot settings, Privileged Gateway Intents, flip the switch. Without it, your bot is deaf.
 
 "The bot is really slow to respond." That's... normal. AI responses take two to ten seconds depending on how complex your question is and how long the response needs to be. That's the API call plus network latency plus response generation. It's not instant messaging speed. It's thoughtful assistant speed.
 
-And the big one — "I accidentally shared my bot token." STOP EVERYTHING. Go to BotFather RIGHT NOW. Type /revoke. Regenerate a new token. Update it in OpenClaw with openclaw channels add telegram. The old token is dead the instant you revoke it. Anyone who had it? Locked out. Crisis averted. But you have to act FAST.
+And the big one — "I accidentally shared my bot token." STOP EVERYTHING. Go to BotFather RIGHT NOW. Type /revoke. Regenerate a new token. Update it in OpenClaw with npx openclaw channels add telegram. The old token is dead the instant you revoke it. Anyone who had it? Locked out. Crisis averted. But you have to act FAST.
 
 [ask the audience] Has anyone hit any of these during setup today? Don't be shy — these are EXPECTED bumps.
 

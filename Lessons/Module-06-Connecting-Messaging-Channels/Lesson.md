@@ -124,13 +124,13 @@ Just like with your API key in Module 03:
 In your Ubuntu terminal (you can have the TUI and a regular terminal open at the same time):
 
 ```bash
-openclaw config channels telegram
+npx openclaw config channels telegram
 ```
 
 Or use the onboarding-style channel setup:
 
 ```bash
-openclaw channels add telegram
+npx openclaw channels add telegram
 ```
 
 The wizard will ask for your bot token. Paste it (using the clean copy from Notepad).
@@ -150,7 +150,7 @@ Press Enter.
 ### Step 5: Restart the Gateway
 
 ```bash
-openclaw service restart
+npx openclaw gateway restart
 ```
 
 ### Step 6: Start a Chat with Your Bot
@@ -199,7 +199,7 @@ Now that Telegram is connected, let's make sure the security is right. Refer bac
 ### Verify DM Pairing Mode Is Active
 
 ```bash
-openclaw config channels telegram dm-mode
+npx openclaw config channels telegram dm-mode
 ```
 
 **Expected:** `pairing`
@@ -207,12 +207,12 @@ openclaw config channels telegram dm-mode
 If it shows `open`, change it immediately:
 
 ```bash
-openclaw config channels telegram dm-mode pairing
+npx openclaw config channels telegram dm-mode pairing
 ```
 
 **Never set this to "open"** unless you have a very specific reason and understand the prompt injection risks.
 
-> **Tip:** Run `openclaw doctor` after connecting any new channel. It will surface risky or misconfigured DM policies and other potential issues with your channel setup.
+> **Tip:** Run `npx openclaw doctor` after connecting any new channel. It will surface risky or misconfigured DM policies and other potential issues with your channel setup.
 
 ### What the Modes Mean
 
@@ -228,7 +228,7 @@ openclaw config channels telegram dm-mode pairing
 If you want to lock it down even further, you can specify exactly who is allowed to message the bot:
 
 ```bash
-openclaw config channels telegram allowlist add YOUR_TELEGRAM_USER_ID
+npx openclaw config channels telegram allowlist add YOUR_TELEGRAM_USER_ID
 ```
 
 To find your Telegram user ID:
@@ -276,7 +276,7 @@ Discord is a solid second channel, especially if you already use it. The setup i
 ### Step 5: Connect to OpenClaw
 
 ```bash
-openclaw channels add discord
+npx openclaw channels add discord
 ```
 
 Provide:
@@ -287,7 +287,7 @@ Provide:
 ### Step 6: Restart and Test
 
 ```bash
-openclaw service restart
+npx openclaw gateway restart
 ```
 
 Go to your Discord server and type a message in the configured channel.
@@ -316,13 +316,13 @@ WhatsApp integration uses your WhatsApp account — the bot sends messages as yo
 ### Step 1: Connect WhatsApp
 
 ```bash
-openclaw channels login
+npx openclaw channels login
 ```
 
 Or:
 
 ```bash
-openclaw channels add whatsapp
+npx openclaw channels add whatsapp
 ```
 
 ### Step 2: Scan QR Code
@@ -338,7 +338,7 @@ The terminal will display a QR code. Open WhatsApp on your phone:
 Set which phone numbers can communicate with the bot:
 
 ```bash
-openclaw config channels whatsapp allowlist add +1234567890
+npx openclaw config channels whatsapp allowlist add +1234567890
 ```
 
 (Replace with your actual phone number.)
@@ -434,8 +434,8 @@ For now (and probably forever for most users): **DMs only.**
 |---------|---------------|-----|
 | Bot doesn't respond on Telegram | DM pairing not completed | Check the dashboard for pending pairing requests |
 | "Unauthorized" error when connecting | Bot token is wrong or has formatting issues | Regenerate the token via BotFather, use Notepad trick |
-| Bot responds to strangers | DM mode is set to "open" | Change to "pairing": `openclaw config channels telegram dm-mode pairing` |
-| WhatsApp connection drops frequently | Session expired or phone disconnected | Re-scan QR code with `openclaw channels login` |
+| Bot responds to strangers | DM mode is set to "open" | Change to "pairing": `npx openclaw config channels telegram dm-mode pairing` |
+| WhatsApp connection drops frequently | Session expired or phone disconnected | Re-scan QR code with `npx openclaw channels login` |
 | Discord bot doesn't see messages | Message Content Intent not enabled | Enable it in Discord Developer Portal > Bot settings |
 | Bot is very slow to respond via Telegram | Normal — API call + network latency | AI responses take 2-10 seconds. Longer responses take more time |
 | Bot token accidentally shared | Anyone with the token can control the bot | Regenerate immediately via BotFather (`/revoke`) and update OpenClaw |

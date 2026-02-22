@@ -141,7 +141,7 @@ But here's the good news: it's completely fixable. The next few slides are going
 
 The first knob you're going to turn: how often does the clock tick?
 
-The command is dead simple. `openclaw config heartbeat interval` and then a number. That number is minutes. Thirty means every 30 minutes. Sixty means every hour. Zero means never — heartbeats off, agent sleeps until you talk to it.
+The command is dead simple. `npx openclaw config heartbeat interval` and then a number. That number is minutes. Thirty means every 30 minutes. Sixty means every hour. Zero means never — heartbeats off, agent sleeps until you talk to it.
 
 Now look at this table. Fifteen minutes — that's for urgent monitoring. If you're tracking something time-sensitive and you need near-real-time awareness. Higher cost. Use with caution.
 
@@ -167,13 +167,13 @@ Most heartbeat checks are BORING. I mean that in the best possible way. "Any new
 
 So you route your heartbeats to a cheap model. Haiku 4.5. One command:
 
-`openclaw config heartbeat model claude-haiku-4-5`
+`npx openclaw config heartbeat model claude-haiku-4-5`
 
 Done. That's it. Your heartbeats now run on Haiku instead of Opus. Same wake-up cycle. Same standing orders. Same checks. But at a FRACTION of the cost.
 
 Or if you've got Google Gemini configured:
 
-`openclaw config heartbeat model gemini-flash-3`
+`npx openclaw config heartbeat model gemini-flash-3`
 
 Flash is even cheaper. And for the task of "look around, is there anything to do, no? ok bye" — it's more than capable.
 
@@ -289,7 +289,7 @@ Three ways to set it up:
 
 Method one — put it in your HEARTBEAT.md. We just talked about that. If your heartbeat interval is frequent enough to catch the 6:30 to 7:00 AM window, the heartbeat handles it automatically. Simplest approach.
 
-Method two — use a cron job for precise timing. `openclaw cron add "morning-brief" --schedule "0 7 * * *" --task "Send my morning brief to Telegram"`. That fires at EXACTLY 7:00 AM. Not 6:47, not 7:12 — seven o'clock, sharp. Every day.
+Method two — use a cron job for precise timing. `npx openclaw cron add "morning-brief" --schedule "0 7 * * *" --task "Send my morning brief to Telegram"`. That fires at EXACTLY 7:00 AM. Not 6:47, not 7:12 — seven o'clock, sharp. Every day.
 
 Method three — the lazy captain's method, and honestly? My favorite. Just ASK your agent. Tell it: "Set up a daily morning brief at 7 AM on Telegram. Include weather, top AI news, my tasks, and one suggestion." Your agent will configure the automation FOR you. It'll set up the cron job, write the template, wire up the delivery. You just told it what you wanted and it handled the rigging.
 
@@ -375,13 +375,13 @@ Let's talk about the day-to-day management. How do you wrangle these scheduled t
 
 Four commands. That's your whole toolkit.
 
-`openclaw cron list` — shows you everything that's scheduled. Your full roster of standing orders. Run this first to see what's already there.
+`npx openclaw cron list` — shows you everything that's scheduled. Your full roster of standing orders. Run this first to see what's already there.
 
-`openclaw cron add` — creates a new job. Give it a name, a schedule, and a task description. Be SPECIFIC about what you want. "Conduct my weekly review" is okay. "Conduct my weekly review: compare this week's accomplishments against my goals in MEMORY.md, list lessons learned, identify anything I procrastinated on, set three priorities for next week, and send it as a formatted message to Telegram" — THAT is better. The more specific you are, the better the output.
+`npx openclaw cron add` — creates a new job. Give it a name, a schedule, and a task description. Be SPECIFIC about what you want. "Conduct my weekly review" is okay. "Conduct my weekly review: compare this week's accomplishments against my goals in MEMORY.md, list lessons learned, identify anything I procrastinated on, set three priorities for next week, and send it as a formatted message to Telegram" — THAT is better. The more specific you are, the better the output.
 
-`openclaw cron remove` — deletes a job permanently. Use the name you gave it when you created it.
+`npx openclaw cron remove` — deletes a job permanently. Use the name you gave it when you created it.
 
-`openclaw cron disable` — temporarily turns off a job without deleting it. Going on vacation? Disable your price alerts. Coming back? Enable them again. The configuration stays, you just flip the switch.
+`npx openclaw cron disable` — temporarily turns off a job without deleting it. Going on vacation? Disable your price alerts. Coming back? Enable them again. The configuration stays, you just flip the switch.
 
 And remember the three principles: use CHEAP models for routine jobs. COMBINE related checks into a single job whenever possible. And ENABLE prompt caching to reduce that system prompt overhead on every trigger.
 

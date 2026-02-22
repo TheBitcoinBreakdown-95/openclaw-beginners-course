@@ -402,7 +402,7 @@ You need to know what your AI is doing. Not just when things go wrong — all th
 **How to apply it:**
 - Review your agent's session transcripts regularly (especially in the first weeks)
 - Check what commands the AI ran during autonomous periods (heartbeats, cron jobs)
-- Run `openclaw security audit --deep` periodically
+- Run `npx openclaw security audit --deep` periodically
 - Set up alerts for unusual activity
 - Keep an eye on your API spending (the AI can burn through tokens fast)
 
@@ -473,7 +473,7 @@ Print this page. Pin it next to your computer. Refer back to it.
 **What:** OpenClaw has a built-in security audit command:
 
 ```bash
-openclaw security audit --deep
+npx openclaw security audit --deep
 ```
 
 This checks your configuration for known vulnerabilities and misconfigurations.
@@ -485,7 +485,7 @@ This checks your configuration for known vulnerabilities and misconfigurations.
 **The fix flag:** Add `--fix` to automatically fix common issues:
 
 ```bash
-openclaw security audit --deep --fix
+npx openclaw security audit --deep --fix
 ```
 
 ### 6. Use a Dedicated Browser Profile
@@ -550,7 +550,7 @@ The single fastest thing you can do is stop the OpenClaw gateway process. This i
 
 ```bash
 # From your WSL terminal:
-openclaw stop
+npx openclaw gateway stop
 
 # If that doesn't work, force kill:
 pkill -f openclaw
@@ -610,7 +610,7 @@ Now figure out what actually happened:
 Once you understand what happened:
 
 1. Fix the root cause (the misconfiguration, the malicious skill, the exposed port — whatever allowed the incident)
-2. Run a security audit: `openclaw security audit --deep --fix`
+2. Run a security audit: `npx openclaw security audit --deep --fix`
 3. Start the gateway back up with tighter configuration
 4. Reconnect channels one at a time, testing each one
 5. Monitor closely for the first 24-48 hours
@@ -739,7 +739,7 @@ You're doing this the right way — security first, installation second.
 | Installing skills without reading them | Malicious skills can include hidden instructions | Read every skill's YAML and markdown before installing |
 | Skipping the incident response plan | "It won't happen to me" — it might, and you need to be ready | Complete the class exercise at the end of this module |
 | Giving the AI your personal passwords | The AI doesn't need your credentials — it needs its own | Create separate accounts for the agent where needed |
-| Ignoring security audit results | The audit exists for a reason — it catches real vulnerabilities | Run `openclaw security audit --deep --fix` and address every finding |
+| Ignoring security audit results | The audit exists for a reason — it catches real vulnerabilities | Run `npx openclaw security audit --deep --fix` and address every finding |
 
 ---
 

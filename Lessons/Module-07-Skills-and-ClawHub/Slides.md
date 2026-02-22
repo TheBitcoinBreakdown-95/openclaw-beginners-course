@@ -176,6 +176,9 @@ style: |
     font-size: 0.78em;
     line-height: 1.5;
   }
+  pre code *, pre code span {
+    color: var(--parchment) !important;
+  }
 
   /* ═══════════════════════════════════════════════
      UTILITY CLASSES
@@ -524,7 +527,7 @@ When this skill is active and you say "check my inbox," your agent knows exactly
 **Over 5,700 skills available.** Browse them:
 
 ```bash
-openclaw skills browse      # Terminal
+npx openclaw skills browse      # Terminal
 ```
 
 ```
@@ -549,7 +552,7 @@ openclaw skills browse      # Terminal
 ## Installing a Skill: Step 1 — Find
 
 ```bash
-openclaw skills search "obsidian"
+npx clawhub search "obsidian"
 ```
 
 Results:
@@ -576,7 +579,7 @@ Look at **star rating** and **install count** as initial trust signals.
 **Do not install skills blindly.** Read the content first:
 
 ```bash
-openclaw skills inspect obsidian-notes
+npx openclaw skills inspect obsidian-notes
 ```
 
 **What to look for:**
@@ -600,7 +603,7 @@ openclaw skills inspect obsidian-notes
 ### Step 3: Install (with version pinning)
 
 ```bash
-openclaw skills install obsidian-notes --pin
+npx clawhub install obsidian-notes --pin
 ```
 
 > **Always use `--pin`** to lock the version and detect integrity drift.
@@ -608,7 +611,7 @@ openclaw skills install obsidian-notes --pin
 ### Step 4: Restart the gateway
 
 ```bash
-openclaw service restart
+npx openclaw gateway restart
 ```
 
 > Skills do NOT activate until you restart. This is the most common "it's not working" issue.
@@ -719,7 +722,7 @@ When the user asks for a standup, generate:
 - If not enough info, ask the user
 ```
 
-**Save** (`Ctrl + O`, Enter, `Ctrl + X`), **restart** (`openclaw service restart`), and **test** ("Give me my daily standup").
+**Save** (`Ctrl + O`, Enter, `Ctrl + X`), **restart** (`npx openclaw gateway restart`), and **test** ("Give me my daily standup").
 
 ---
 
@@ -842,16 +845,16 @@ Every active skill takes up context window space.
 
 ```bash
 # List all installed skills
-openclaw skills list
+npx openclaw skills list
 
 # Disable (keeps installed, doesn't load)
-openclaw skills disable obsidian-notes
+npx openclaw skills disable obsidian-notes
 
 # Enable a previously disabled skill
-openclaw skills enable obsidian-notes
+npx openclaw skills enable obsidian-notes
 
 # Remove entirely
-openclaw skills remove obsidian-notes
+npx openclaw skills remove obsidian-notes
 ```
 
 > **Disable vs. Remove:** Disable keeps the skill for later. Remove deletes it. Prefer disabling unless you are sure you will never need it again.
@@ -864,9 +867,9 @@ openclaw skills remove obsidian-notes
 
 | Mistake | Fix |
 |---------|-----|
-| Installing skills without reading them | Always use `openclaw skills inspect` first |
+| Installing skills without reading them | Always use `npx openclaw skills inspect` first |
 | Installing too many skills at once | Start with 2-3, add more as needed |
-| Not restarting after installing | Run `openclaw service restart` |
+| Not restarting after installing | Run `npx openclaw gateway restart` |
 | Skill does not seem to work | Check trigger words in the YAML front matter |
 | Custom skill has vague instructions | Be specific in your markdown body |
 | Leaving unused skills enabled | Disable or remove to save tokens |
@@ -878,10 +881,10 @@ openclaw skills remove obsidian-notes
 ## ⚙️ Hands on Deck: Install One, Build One
 
 ### Part 1: Install from 🦀 ClawHub (10 min)
-1. Browse and search: `openclaw skills browse`
-2. Inspect for red flags: `openclaw skills inspect [skill-name]`
-3. Install with pinning: `openclaw skills install [skill-name] --pin`
-4. Restart: `openclaw service restart`
+1. Browse and search: `npx openclaw skills browse`
+2. Inspect for red flags: `npx openclaw skills inspect [skill-name]`
+3. Install with pinning: `npx clawhub install [skill-name] --pin`
+4. Restart: `npx openclaw gateway restart`
 5. Test it in the TUI
 
 ### Part 2: Build a Custom Skill (15 min)
