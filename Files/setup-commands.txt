@@ -416,19 +416,49 @@ If it connects, the daemon kept running in the background — that's the goal.)
   USEFUL COMMANDS (reference)
 ============================
 
+
+--- Gateway (daemon) ---
+
 npx openclaw gateway start       # Start the daemon
 npx openclaw gateway stop        # Stop the daemon
 npx openclaw gateway restart     # Restart after config changes
+npx openclaw gateway status      # Check if daemon is running
 npx openclaw gateway logs        # View daemon logs
-npx openclaw status              # Check gateway status
-npx openclaw doctor              # Health check
-npx openclaw tui                 # Chat with your agent
+npx openclaw gateway install     # Reinstall the daemon service
+
+
+--- Chat & Dashboard ---
+
+npx openclaw tui                 # Chat with your agent (primary interface)
+npx openclaw dashboard --no-open # Get a tokenized URL for the browser dashboard
+
+
+--- Device Management ---
+
 npx openclaw devices list        # List paired/pending devices
+npx openclaw devices list --json # Detailed list with requestIds
 npx openclaw devices approve ID  # Approve a pending device
 
-To find your gateway token:
-cat ~/.openclaw/openclaw.json
-(Look for the "token" field in the gateway section.)
+
+--- Health & Security ---
+
+npx openclaw status              # Quick gateway status check
+npx openclaw doctor              # Health check (may update config)
+npx openclaw security audit --deep --fix  # Security audit with auto-fix
+
+
+--- Configuration ---
+
+npx openclaw onboard --install-daemon  # Run the setup wizard again
+npx openclaw config set KEY VALUE      # Change a single setting
+cat ~/.openclaw/openclaw.json          # View all config (find gateway token here)
+
+
+--- Skills (ClawHub) ---
+
+npx clawhub search KEYWORD       # Search for skills
+npx clawhub install SKILL        # Install a skill
+npx openclaw skills              # List installed skills
 
 
 ============================================
