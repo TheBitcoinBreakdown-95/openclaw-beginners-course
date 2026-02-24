@@ -141,7 +141,7 @@ But here's the good news: it's completely fixable. The next few slides are going
 
 The first knob you're going to turn: how often does the clock tick?
 
-The command is dead simple. `npx openclaw config heartbeat interval` and then a number. That number is minutes. Thirty means every 30 minutes. Sixty means every hour. Zero means never — heartbeats off, agent sleeps until you talk to it.
+The command is dead simple. `npx openclaw config set agents.defaults.heartbeat.every` and then a value in quotes with a unit — like `"55m"` for 55 minutes. `"30m"` means every 30 minutes. `"2h"` means every two hours. `"0m"` means never — heartbeats off, agent sleeps until you talk to it.
 
 Now look at this table. Fifteen minutes — that's for urgent monitoring. If you're tracking something time-sensitive and you need near-real-time awareness. Higher cost. Use with caution.
 
@@ -167,13 +167,13 @@ Most heartbeat checks are BORING. I mean that in the best possible way. "Any new
 
 So you route your heartbeats to a cheap model. Haiku 4.5. One command:
 
-`npx openclaw config heartbeat model claude-haiku-4-5`
+`npx openclaw config set agents.defaults.heartbeat.model "claude-haiku-4-5"`
 
 Done. That's it. Your heartbeats now run on Haiku instead of Opus. Same wake-up cycle. Same standing orders. Same checks. But at a FRACTION of the cost.
 
 Or if you've got Google Gemini configured:
 
-`npx openclaw config heartbeat model gemini-flash-3`
+`npx openclaw config set agents.defaults.heartbeat.model "gemini-flash-3"`
 
 Flash is even cheaper. And for the task of "look around, is there anything to do, no? ok bye" — it's more than capable.
 

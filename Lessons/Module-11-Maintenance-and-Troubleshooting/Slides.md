@@ -636,11 +636,11 @@ Get one workflow running **end-to-end** before adding the next. Every new integr
 
 **"Port already in use"**
 - Find the process: `lsof -i :18789`
-- Kill it, or change port: `npx openclaw config gateway port 18790`
+- Kill it, or change port: `npx openclaw config set gateway.port 18790`
 
 **"Gateway keeps crashing"**
 - Check logs for specific errors
-- Run: `npx openclaw doctor fix`
+- Run: `npx openclaw doctor --fix`
 - If a plugin was recently installed, try disabling it (plugins run in-process)
 - If persistent: restore config from backup, restart
 
@@ -658,7 +658,7 @@ Get one workflow running **end-to-end** before adding the next. Every new integr
 **"API key invalid"**
 - Check 🔑 key at your provider's console
 - Regenerate if needed (use the Notepad trick when pasting)
-- Update: `npx openclaw config provider key [NEW_KEY]`
+- Update: `npx openclaw config set models.providers.anthropic.apiKey "[NEW_KEY]"`
 
 **"Rate limit exceeded"**
 - Wait 1-5 minutes, then retry
@@ -725,7 +725,7 @@ npx openclaw tui                   # Open chat interface
 # Check Status
 npx openclaw status                # Is the gateway running?
 npx openclaw doctor                # Health check
-npx openclaw doctor fix            # Auto-fix health issues
+npx openclaw doctor --fix          # Auto-fix health issues
 npx openclaw gateway logs          # View logs
 ```
 
@@ -739,17 +739,17 @@ npx openclaw security audit --deep        # Full audit
 npx openclaw security audit --deep --fix  # Audit and auto-fix
 
 # Authentication
-npx openclaw config gateway auth          # Check auth settings
-npx openclaw config gateway token rotate  # Rotate token
-npx openclaw config gateway bind          # Check bind address
+npx openclaw config get gateway.auth.mode          # Check auth settings
+npx openclaw config set gateway.auth.token "$(openssl rand -hex 32)"  # Rotate token
+npx openclaw config get gateway.bind               # Check bind address
 
 # Sandboxing
-npx openclaw config sandbox mode [mode]   # off / non-main / all
-npx openclaw config sandbox scope [scope] # session / agent / shared
+npx openclaw config set sandbox.mode "[mode]"      # off / non-main / all
+npx openclaw config set sandbox.scope "[scope]"    # session / agent / shared
 
 # Tool Policies
-npx openclaw config tools deny [tool]     # Deny a tool
-npx openclaw config tools elevated off    # Disable elevated mode
+npx openclaw config set tools.deny "[tool]"        # Deny a tool
+npx openclaw config set tools.elevated "off"       # Disable elevated mode
 ```
 
 ---
@@ -757,11 +757,11 @@ npx openclaw config tools elevated off    # Disable elevated mode
 ## Command Cheat Sheet: Configuration
 
 ```bash
-npx openclaw config                       # Open configuration
-npx openclaw config gateway port          # Check/set port
-npx openclaw config provider key          # Update 🔑 API key
-npx openclaw config heartbeat interval    # Set heartbeat frequency
-npx openclaw config heartbeat model       # Set heartbeat model
+npx openclaw config                       # Open configuration (re-runs wizard)
+npx openclaw config get gateway.port      # Check port
+npx openclaw config set models.providers.anthropic.apiKey "[KEY]"  # Update 🔑 API key
+npx openclaw config set agents.defaults.heartbeat.every "[N]m"     # Set heartbeat frequency
+npx openclaw config set agents.defaults.heartbeat.model "[model]"  # Set heartbeat model
 ```
 
 ---
@@ -772,7 +772,7 @@ npx openclaw config heartbeat model       # Set heartbeat model
 # Channels
 npx openclaw channels add [channel]       # Add messaging channel
 npx openclaw channels login               # Re-authenticate
-npx openclaw config channels [ch] dm-mode # Check/set DM mode
+npx openclaw config get channels.[ch].dmPolicy  # Check DM mode
 
 # Cron Jobs
 npx openclaw cron list                    # List scheduled jobs
@@ -816,8 +816,8 @@ npx openclaw skills disable [n]   # Disable a skill
 | Step | Action | Command |
 |------|--------|---------|
 | **1. STOP** | Kill the agent | `npx openclaw gateway stop` |
-| **2. CLOSE** | Lock down access | `npx openclaw config gateway bind loopback` |
-| **3. FREEZE** | Rotate all tokens/keys | `npx openclaw config gateway token rotate` |
+| **2. CLOSE** | Lock down access | `npx openclaw config set gateway.bind "loopback"` |
+| **3. FREEZE** | Rotate all tokens/keys | `npx openclaw config set gateway.auth.token "$(openssl rand -hex 32)"` |
 | **4. INVESTIGATE** | Review logs and sessions | `npx openclaw gateway logs` |
 | **5. RESTORE** | Fix, audit, restart | `npx openclaw security audit --deep --fix` |
 

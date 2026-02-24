@@ -481,7 +481,7 @@ Since initial setup, you have added:
 | **all** | Everything is sandboxed, including your main session | Maximum security for untrusted content |
 
 ```bash
-npx openclaw config sandbox mode non-main
+npx openclaw config set sandbox.mode "non-main"
 ```
 
 ### What "non-main" means in practice:
@@ -505,7 +505,7 @@ npx openclaw config sandbox mode non-main
 | **shared** | All agents share one container | Lowest -- agents can see each other's files | Low |
 
 ```bash
-npx openclaw config sandbox scope agent
+npx openclaw config set sandbox.scope "agent"
 ```
 
 **Recommended:** `agent` scope -- each agent gets its own sandbox without per-session overhead.
@@ -549,8 +549,8 @@ docker run hello-world
 
 ```bash
 npx openclaw sandbox setup
-npx openclaw config sandbox mode non-main
-npx openclaw config sandbox scope agent
+npx openclaw config set sandbox.mode "non-main"
+npx openclaw config set sandbox.scope "agent"
 npx openclaw gateway restart
 ```
 
@@ -642,26 +642,27 @@ npx openclaw config tools elevated off
 ### Verify authentication is required:
 
 ```bash
-npx openclaw config gateway auth
+npx openclaw config get gateway.auth.mode
 ```
 
 ### Rotate your ⛵ gateway token (periodic maintenance or after incident):
 
 ```bash
-npx openclaw config gateway token rotate
+npx openclaw config set gateway.auth.token "$(openssl rand -hex 32)"
+npx openclaw gateway restart
 ```
 
 ### Verify bind configuration:
 
 ```bash
-npx openclaw config gateway bind
+npx openclaw config get gateway.bind
 ```
 
 **Expected:** `loopback` (unless you intentionally configured LAN or Tailscale).
 
 ```bash
 # Reset to loopback if unexpected
-npx openclaw config gateway bind loopback
+npx openclaw config set gateway.bind "loopback"
 ```
 
 ### Additional Hardening
@@ -777,7 +778,7 @@ npx openclaw security audit --deep --fix
 
 ```bash
 npx openclaw doctor
-npx openclaw doctor fix
+npx openclaw doctor --fix
 ```
 
 <!-- Speaker notes: The security audit is the single best tool for catching misconfigurations. The --deep flag checks everything including file permissions, gateway config, sandbox status, and tool policies. Run it weekly. -->
@@ -820,8 +821,8 @@ Install a security prompt in `AGENTS.md` that makes the agent smarter about reco
 2. Run health check: `npx openclaw doctor`
 3. Fix any issues: `--fix` flags
 4. Check API spending: visit your provider dashboard
-5. Verify DM modes: `npx openclaw config channels [channel] dm-mode`
-6. Verify sandbox status: `npx openclaw config sandbox mode`
+5. Verify DM modes: `npx openclaw config get channels.telegram.dmPolicy`
+6. Verify sandbox status: `npx openclaw config get sandbox.mode`
 7. Commit workspace backup: `git add -A && git commit -m "Weekly backup"`
 
 ### Automate it:
@@ -867,15 +868,16 @@ pkill -9 -f openclaw    # if it won't stop gracefully
 
 ### CLOSE
 ```bash
-npx openclaw config gateway bind loopback
-npx openclaw config channels telegram dm-mode disabled
+npx openclaw config set gateway.bind "loopback"
+npx openclaw config set channels.telegram.dmPolicy "disabled"
 ```
 
 ### FREEZE
 ```bash
-npx openclaw config gateway token rotate
-npx openclaw config provider key [NEW_KEY]
-npx openclaw config channels telegram token [NEW_TOKEN]
+npx openclaw config set gateway.auth.token "$(openssl rand -hex 32)"
+npx openclaw gateway restart
+npx openclaw config set models.providers.anthropic.apiKey "[NEW_KEY]"
+npx openclaw config set channels.telegram.botToken "[NEW_TOKEN]"
 ```
 
 ### INVESTIGATE

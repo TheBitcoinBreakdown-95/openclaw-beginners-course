@@ -268,7 +268,7 @@ class RouterSkill(Skill):
 
 Enable it with:
 ```bash
-openclaw skills enable router --path skills/router.py
+npx openclaw skills enable router --path skills/router.py
 ```
 
 Don't let the code scare you — ask your agent to help you build and customize it. The main point is giving the system rules so it doesn't treat all tokens as equal.
@@ -387,12 +387,12 @@ OpenClaw's built-in web search is functional, but Perplexity Pro is significantl
 
 3. **Add to OpenClaw:**
    ```bash
-   openclaw config provider add openrouter --key YOUR_API_KEY
+   npx openclaw config set models.providers.openrouter.apiKey "YOUR_API_KEY"
    ```
 
 4. **Configure Perplexity as a search model:**
    ```bash
-   openclaw config search model perplexity-pro
+   npx openclaw config set models.search.model "perplexity-pro"
    ```
 
 ### Using It
@@ -445,7 +445,7 @@ They share the same gateway but operate independently.
 ### Setting Up a Second Agent
 
 ```bash
-openclaw agents create work-agent
+npx openclaw agents create work-agent
 ```
 
 This creates a new agent directory with its own set of core files. You then customize those files for the work context:
@@ -769,8 +769,11 @@ ollama pull qwen3:32b
 # Or a smaller model for testing
 ollama pull qwen3:8b
 
-# Configure OpenClaw to use it
-openclaw config provider add ollama --model qwen3:32b
+# Configure OpenClaw to use the Ollama provider
+npx openclaw config set models.providers.ollama.baseUrl "http://localhost:11434"
+
+# Set Qwen 3 32B as your model for Ollama
+npx openclaw config set agents.defaults.model.primary "ollama/qwen3:32b"
 ```
 
 > **For this course,** we'll stick with cloud models. Local models are best explored after you've mastered the basics and want to optimize for specific use cases.

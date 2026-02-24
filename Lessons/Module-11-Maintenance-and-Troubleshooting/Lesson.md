@@ -52,7 +52,7 @@ WEEKLY CHECK (10 minutes)
 ==========================
 □ Security audit:          npx openclaw security audit --deep
 □ Health check:            npx openclaw doctor
-□ Fix any issues:          npx openclaw security audit --deep --fix && npx openclaw doctor fix
+□ Fix any issues:          npx openclaw security audit --deep --fix && npx openclaw doctor --fix
 □ Review API spending:     Visit console.anthropic.com (or your provider)
 □ Workspace backup:        cd ~/.openclaw && git add -A && git commit -m "Weekly backup $(date +%Y-%m-%d)"
 □ Review core files:       Are USER.md and MEMORY.md still accurate?
@@ -297,7 +297,7 @@ Check:    npx openclaw gateway logs (look for error messages)
 Symptom:  Gateway fails to start, error mentions port 18789
 Cause:    Another process is using the port, or a zombie gateway process
 Fix:      lsof -i :18789 to find the process, then kill it
-          OR change port: npx openclaw config gateway port 18790
+          OR change port: npx openclaw config set gateway.port 18790
 ```
 
 **"Gateway refuses to start — config schema rejection"**
@@ -317,7 +317,7 @@ Prevention: Use "npx openclaw config" commands instead of editing JSON directly
 Symptom:  Gateway starts and stops repeatedly
 Cause:    Bad configuration, corrupted state, or a faulty plugin
 Fix:      npx openclaw gateway logs (check for specific errors)
-          npx openclaw doctor fix
+          npx openclaw doctor --fix
           If persistent: stop gateway, restore config from backup, restart
 Note:     Plugins run in-process — a buggy plugin crash is a Gateway crash.
           Try disabling recently installed plugins if crashes started after install.
@@ -343,7 +343,7 @@ Cause:    Token formatting issue, expired key, or billing problem
 Fix:      1. Check key at your provider's console
           2. Regenerate if needed
           3. Use Notepad trick when pasting new key
-          4. npx openclaw config provider key [NEW_KEY]
+          4. npx openclaw config set models.providers.anthropic.apiKey "[NEW_KEY]"
 ```
 
 **"Rate limit exceeded"**
@@ -386,7 +386,7 @@ Symptom:  Bot shows as offline in Discord
 Cause:    Gateway not running, or bot token expired
 Fix:      1. npx openclaw status
           2. Regenerate bot token in Discord Developer Portal
-          3. Update: npx openclaw config channels discord token [NEW_TOKEN]
+          3. Update: npx openclaw config set channels.discord.botToken "[NEW_TOKEN]"
 ```
 
 ### WSL2 Errors
@@ -469,7 +469,7 @@ npx openclaw gateway stop              # Stop the daemon
 npx openclaw gateway restart           # Restart the daemon
 npx openclaw gateway logs              # View daemon logs
 npx openclaw doctor                    # Health check
-npx openclaw doctor fix                # Auto-fix health issues
+npx openclaw doctor --fix              # Auto-fix health issues
 ```
 
 ### Security
@@ -477,21 +477,21 @@ npx openclaw doctor fix                # Auto-fix health issues
 ```bash
 npx openclaw security audit --deep     # Full security audit
 npx openclaw security audit --deep --fix  # Audit and auto-fix
-npx openclaw config gateway auth       # Check auth settings
-npx openclaw config gateway token rotate  # Rotate gateway token
-npx openclaw config sandbox mode [mode]   # Set sandbox mode
-npx openclaw config tools deny [tool]     # Deny a tool
+npx openclaw config get gateway.auth.mode          # Check auth settings
+npx openclaw config set gateway.auth.token "$(openssl rand -hex 32)"  # Rotate gateway token
+npx openclaw config set sandbox.mode "[mode]"      # Set sandbox mode
+npx openclaw config set tools.deny "[tool]"        # Deny a tool
 ```
 
 ### Configuration
 
 ```bash
-npx openclaw config                    # Open configuration
-npx openclaw config gateway bind       # Check/set bind address
-npx openclaw config gateway port       # Check/set port
-npx openclaw config provider key       # Update API key
-npx openclaw config heartbeat interval # Set heartbeat frequency
-npx openclaw config heartbeat model    # Set heartbeat model
+npx openclaw config                    # Open configuration (re-runs wizard)
+npx openclaw config get gateway.bind   # Check bind address
+npx openclaw config get gateway.port   # Check port
+npx openclaw config set models.providers.anthropic.apiKey "[KEY]"  # Update API key
+npx openclaw config set agents.defaults.heartbeat.every "[N]m"     # Set heartbeat frequency
+npx openclaw config set agents.defaults.heartbeat.model "[model]"  # Set heartbeat model
 ```
 
 ### Channels
@@ -499,7 +499,7 @@ npx openclaw config heartbeat model    # Set heartbeat model
 ```bash
 npx openclaw channels add [channel]    # Add a messaging channel
 npx openclaw channels login            # Re-authenticate channels
-npx openclaw config channels [channel] dm-mode  # Check/set DM mode
+npx openclaw config get channels.[channel].dmPolicy  # Check DM mode
 ```
 
 ### Skills
@@ -561,7 +561,7 @@ npx openclaw cron disable [name]       # Disable a job
 ║  SECURITY                                                         ║
 ║  npx openclaw security audit --deep         Full audit            ║
 ║  npx openclaw security audit --deep --fix   Audit + fix           ║
-║  npx openclaw config gateway token rotate   New token             ║
+║  npx openclaw config set gateway.auth.token  Rotate token         ║
 ║                                                                   ║
 ║  INSIDE THE CHAT (TUI)                                            ║
 ║  /compact     Save tokens (compress history)                      ║

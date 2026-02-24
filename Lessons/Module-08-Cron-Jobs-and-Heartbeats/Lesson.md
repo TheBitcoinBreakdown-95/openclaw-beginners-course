@@ -75,8 +75,8 @@ Here's how the costs compound:
 **Our recommended configuration** (combines cheapest model + prompt caching for maximum savings):
 
 ```bash
-npx openclaw config heartbeat interval 55
-npx openclaw config heartbeat model claude-haiku-4-5
+npx openclaw config set agents.defaults.heartbeat.every "55m"
+npx openclaw config set agents.defaults.heartbeat.model "claude-haiku-4-5"
 ```
 
 Why 55 minutes specifically? Anthropic's prompt cache stays warm for about 55 minutes. By setting your heartbeat to 55 minutes, every heartbeat hits the warm cache — meaning your system prompt (3,000-14,000 tokens) is charged at a **90% discount** instead of full price. Combined with routing to Haiku, this drops heartbeat costs from ~$100+/month to ~$0.50/month. That's the single biggest cost optimization in this entire course.
@@ -96,7 +96,7 @@ If 55 minutes feels too infrequent for your needs, here are common settings:
 If you're not ready for proactive behavior, or you want to minimize costs while learning:
 
 ```bash
-npx openclaw config heartbeat interval 0
+npx openclaw config set agents.defaults.heartbeat.every "0m"
 ```
 
 This disables heartbeats entirely. your agent only acts when you talk to it. You can enable them later when you're ready.
@@ -112,13 +112,13 @@ Most heartbeat checks are routine — "any new messages? any tasks due? no? go b
 ### Configure a Heartbeat Model
 
 ```bash
-npx openclaw config heartbeat model claude-haiku-4-5
+npx openclaw config set agents.defaults.heartbeat.model "claude-haiku-4-5"
 ```
 
 Or if you have Google Gemini configured:
 
 ```bash
-npx openclaw config heartbeat model gemini-flash-3
+npx openclaw config set agents.defaults.heartbeat.model "gemini-flash-3"
 ```
 
 ### Cost Comparison
@@ -176,7 +176,7 @@ With those 3,000-14,000 token system prompts being sent with every API call, cac
 Here's the trick: Anthropic's extended cache stays warm for about **55 minutes**. If you set your heartbeat interval to 55 minutes (instead of the default 30), every heartbeat hits warm cache:
 
 ```bash
-npx openclaw config heartbeat interval 55
+npx openclaw config set agents.defaults.heartbeat.every "55m"
 ```
 
 Combined with routing heartbeats to Haiku and enabling prompt caching, your heartbeats drop from **~$100+/month to ~$0.50/month**. That's a 99.5% reduction on heartbeat costs alone.
@@ -188,8 +188,8 @@ We'll cover how to enable prompt caching in your configuration in Module 09.
 Context compaction (summarizing conversation history to free up token space) should be a default configuration, not something you set up when the agent crashes from context overflow. Configure compaction thresholds now:
 
 ```bash
-npx openclaw config compaction threshold 80000
-npx openclaw config compaction flush 80000
+npx openclaw config set agents.defaults.compaction.threshold 80000
+npx openclaw config set agents.defaults.compaction.flush 80000
 ```
 
 This tells the agent to compact (summarize and trim) its context when it reaches 80,000 tokens, keeping sessions lean and preventing runaway token costs. Without this, a long-running session can accumulate 200K+ tokens of context — all of which gets re-sent with every API call.

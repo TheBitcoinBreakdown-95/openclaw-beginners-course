@@ -57,11 +57,11 @@ The Gateway uses strict config validation. If `openclaw.json` contains:
 - An invalid type (string where number expected, etc.)
 - A malformed value
 
-**The Gateway will refuse to boot entirely.** Only diagnostic commands like `openclaw doctor` will work.
+**The Gateway will refuse to boot entirely.** Only diagnostic commands like `npx openclaw doctor` will work.
 
 **Diagnosis:**
 ```bash
-openclaw doctor
+npx openclaw doctor
 ```
 The doctor output will identify the specific invalid key or value. Fix it, then restart.
 
@@ -71,7 +71,7 @@ The doctor output will identify the specific invalid key or value. Fix it, then 
 - Copy-pasting config snippets from tutorials that use a different version
 - Adding experimental fields that were renamed or removed
 
-**Prevention:** Never edit `openclaw.json` directly unless necessary. Use `openclaw config` commands or the TUI `/config` interface, which validate before writing.
+**Prevention:** Never edit `openclaw.json` directly unless necessary. Use `npx openclaw config get/set` commands or the TUI `/config` interface, which validate before writing.
 
 ### Hot-Reload vs Restart
 
@@ -89,17 +89,17 @@ Some configuration changes take effect immediately via hot-reload. Others requir
 - Gateway bind/port changes
 - Structural config changes
 
-**When in doubt:** Restart. `openclaw service restart` is always safe and takes seconds.
+**When in doubt:** Restart. `npx openclaw gateway restart` is always safe and takes seconds.
 
 ### Useful Diagnostic Commands
 
 ```bash
-openclaw doctor              # Health check — catches config, dependency, and service issues
-openclaw doctor fix          # Auto-fix what it can
-openclaw status              # Is the gateway running?
-openclaw status --json       # Machine-readable status output (useful for debugging)
-openclaw --version           # Current OpenClaw version
-openclaw service logs        # Gateway logs (look for errors, warnings)
+npx openclaw doctor              # Health check — catches config, dependency, and service issues
+npx openclaw doctor --fix        # Auto-fix what it can
+npx openclaw status              # Is the gateway running?
+npx openclaw status --json       # Machine-readable status output (useful for debugging)
+npx openclaw --version           # Current OpenClaw version
+npx openclaw gateway logs        # Gateway logs (look for errors, warnings)
 ```
 
 ---
@@ -128,7 +128,7 @@ Tool policies are layered with strict precedence:
 **Critical rule: Deny always wins.** If any layer denies a tool, it is denied regardless of what other layers allow. This is intentional — it prevents accidental over-permissioning.
 
 **Debugging "tool not available" issues:**
-1. Check global policy: `openclaw config tools`
+1. Check global policy: `npx openclaw config get tools`
 2. Check agent-specific policy (if using multi-agent)
 3. Check sandbox policy (if sandbox is enabled)
 4. Check provider-specific policy
@@ -154,7 +154,7 @@ Elevated exec is a deliberate security boundary break. It allows exec tool calls
 - It ONLY applies to the `exec` tool (shell commands), not all tools
 - It is NOT "just convenience" — it pierces the sandbox completely for command execution
 - Never enable it for untrusted senders, external channels, or contexts processing external content
-- OpenClaw surfaces elevated mode status in `openclaw security audit`
+- OpenClaw surfaces elevated mode status in `npx openclaw security audit`
 
 ---
 
@@ -342,13 +342,13 @@ Prompt caching can reduce input token costs by **up to 90%** in long-running ses
 
 **Diagnosis:**
 ```bash
-openclaw status --json    # Check for sessions showing "busy" or "locked"
-openclaw service logs     # Look for "sessionLock" or "compaction" errors
+npx openclaw status --json    # Check for sessions showing "busy" or "locked"
+npx openclaw gateway logs     # Look for "sessionLock" or "compaction" errors
 ```
 
 **Fix:**
 ```bash
-openclaw service restart  # Releases all locks and clears stuck sessions
+npx openclaw gateway restart  # Releases all locks and clears stuck sessions
 ```
 
 **Prevention:**
@@ -419,11 +419,11 @@ Plugins are discovered in this order (first match wins on plugin ID collision):
 ### Version Pinning
 
 ```bash
-# Install a skill with version pinning
-openclaw skills install skill-name --pin
+# Install a skill
+npx clawhub install skill-name
 
 # Check integrity status
-openclaw skills list --integrity
+npx openclaw skills list --integrity
 ```
 
 **Why pin:** Plugin/skill install mechanisms have changed repeatedly across OpenClaw versions (ignore-scripts, pinning, integrity drift warnings). Without pinning:
@@ -442,7 +442,7 @@ Common install failures and their fixes:
 | `npm pack produced no archive` | npm-spec install failure | Try reinstalling npm, or install the plugin manually |
 | Dependency resolution failure | Conflicting versions | Clear npm cache: `npm cache clean --force`, retry |
 | Windows: `.cmd` execution error | Node spawn without shell on Windows | Run inside WSL2, not native Windows |
-| Plugin not discovered after install | Discovery order issue or ID collision | Check `openclaw plugins list`, verify install path |
+| Plugin not discovered after install | Discovery order issue or ID collision | Check `npx openclaw plugins list`, verify install path |
 | Permission denied during install | File ownership issues | Check file permissions in `~/.openclaw/` |
 
 ---
@@ -457,7 +457,7 @@ Even with a local Gateway, OpenClaw makes outbound network calls:
 |-----------|----------------|------------------------|
 | **Model inference** | Every message, heartbeat, cron job | Required — cannot disable (this IS the AI) |
 | **Provider usage tracking** | Periodic — pulls usage/quota from provider endpoints | Disable if not needed (check config) |
-| **ClawHub telemetry** | During `clawhub sync` while logged in | Set `CLAWHUB_DISABLE_TELEMETRY=1` |
+| **ClawHub telemetry** | During `npx clawhub sync` while logged in | Set `CLAWHUB_DISABLE_TELEMETRY=1` |
 | **Remote embeddings** | Memory search with remote providers | Configure local embeddings, or accept as tradeoff |
 | **Plugin/skill acquisition** | During install — npm registry, archive extraction | Only happens during installs, not at runtime |
 | **Web search** | When agent uses web search tools | Disable web search tool if not needed |
@@ -507,13 +507,13 @@ OpenClaw has auth mode downgrades that weaken device identity/pairing checks. Th
 - Token-only flows (no device identity verification)
 - Reduced pairing requirements
 
-**These are surfaced in `openclaw security audit`.** If you see warnings about insecure auth modes, treat them seriously. They exist for emergency access, not as a convenience default.
+**These are surfaced in `npx openclaw security audit`.** If you see warnings about insecure auth modes, treat them seriously. They exist for emergency access, not as a convenience default.
 
 ### Security Audit Reference
 
 ```bash
-openclaw security audit --deep          # Full audit
-openclaw security audit --deep --fix    # Audit and auto-fix
+npx openclaw security audit --deep          # Full audit
+npx openclaw security audit --deep --fix    # Audit and auto-fix
 ```
 
 The audit checks:
@@ -583,19 +583,19 @@ OpenClaw supports three release channels:
 
 ```bash
 # 1. Record current state
-openclaw --version
-openclaw status --json > ~/pre-update-status.json
+npx openclaw --version
+npx openclaw status --json > ~/pre-update-status.json
 
 # 2. Back up
 cd ~/.openclaw && git add -A && git commit -m "Pre-update backup $(date +%Y-%m-%d)"
 
 # 3. Update
-openclaw update
+npx openclaw update
 
 # 4. Verify
-openclaw service restart
-openclaw doctor
-openclaw security audit --deep
+npx openclaw gateway restart
+npx openclaw doctor
+npx openclaw security audit --deep
 ```
 
 ### Version Pinning for Reproducibility
@@ -603,7 +603,7 @@ openclaw security audit --deep
 For reliable setups:
 - Pin the OpenClaw version in your update strategy (don't auto-update)
 - Pin plugin versions with `--pin`
-- Record `openclaw status --json` output for reference
+- Record `npx openclaw status --json` output for reference
 - Store integrity metadata for installed plugins
 
 **Why this matters:** OpenClaw's changelog includes frequent breaking changes and security hardening. Behavior that works on version X may change on version X+1.
@@ -616,9 +616,9 @@ For reliable setups:
    ```bash
    npm install -g @tinybox/openclaw@[previous-version]
    cd ~/.openclaw && git checkout HEAD~1
-   openclaw service restart
+   npx openclaw gateway restart
    ```
-4. Run `openclaw doctor` and `openclaw security audit --deep` after rollback
+4. Run `npx openclaw doctor` and `npx openclaw security audit --deep` after rollback
 
 ---
 
@@ -648,16 +648,16 @@ OpenClaw treats Windows as a special-risk platform. Known issues:
 
 | Error Pattern | Diagnosis | Resolution |
 |--------------|-----------|------------|
-| Gateway refuses to start, no clear error | Config schema validation failure | Run `openclaw doctor`, fix invalid config keys |
+| Gateway refuses to start, no clear error | Config schema validation failure | Run `npx openclaw doctor`, fix invalid config keys |
 | "Port already in use" | Zombie process or conflicting service | `lsof -i :18789`, kill conflicting process, or change port |
-| Gateway starts then immediately stops | Corrupted state, bad plugin, or dependency issue | Check `openclaw service logs`, try `openclaw doctor fix` |
+| Gateway starts then immediately stops | Corrupted state, bad plugin, or dependency issue | Check `npx openclaw gateway logs`, try `npx openclaw doctor --fix` |
 | "Cannot find module" errors | Dependency not installed or version mismatch | `npm install -g @tinybox/openclaw`, or reinstall |
 
 ### Runtime Failures
 
 | Error Pattern | Diagnosis | Resolution |
 |--------------|-----------|------------|
-| Session stuck on "busy" | Lock not released after abort/compaction failure | `openclaw service restart` |
+| Session stuck on "busy" | Lock not released after abort/compaction failure | `npx openclaw gateway restart` |
 | Agent stops responding mid-conversation | Context overflow triggered emergency compaction | Use `/compact` proactively, start new session with `/new` |
 | Silent no-reply from agent | `sessionKey` undefined in message routing path | Check gateway logs, verify channel pairing, restart gateway |
 | Tool calls fail only from Telegram | Sandbox mode `non-main` — Telegram is sandboxed | Check sandbox config, enable network if needed |
@@ -671,7 +671,7 @@ OpenClaw treats Windows as a special-risk platform. Known issues:
 | Unexpected pairing requests | Someone discovered your bot | Verify pairing mode is enabled, check allowlists |
 | Agent runs commands you didn't expect | Policy drift — config not forwarded to cron/sub-agent paths | Test tool availability in all execution contexts |
 | Credentials appear in logs or chat | Sensitive redaction not enabled, or skill leaking data | Enable redaction, audit skill instructions, check AGENTS.md directives |
-| Security audit shows new warnings after update | New security checks added in update, or defaults changed | Run `openclaw security audit --deep --fix`, review each finding |
+| Security audit shows new warnings after update | New security checks added in update, or defaults changed | Run `npx openclaw security audit --deep --fix`, review each finding |
 
 ---
 
@@ -695,7 +695,7 @@ The Gateway centralizes everything. This simplifies the mental model ("one host,
 - Gateway bugs affect all agents, channels, and sessions
 - Gateway restarts clear all active sessions and locks
 
-For production reliability, ensure the daemon auto-restarts on failure (`openclaw service` handles this).
+For production reliability, ensure the daemon auto-restarts on failure (`npx openclaw gateway install` handles this).
 
 ### Loose Coupling Points (What You CAN Swap)
 

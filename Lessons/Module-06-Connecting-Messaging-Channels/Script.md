@@ -243,7 +243,7 @@ Alright crew, the celebration's over. The radio is working. Now we SECURE it. An
 
 DM pairing mode. This is your FIRST line of defense. Your primary hull plating. If this is misconfigured, nothing else matters.
 
-Run this command: npx openclaw config channels telegram dm-mode. It should come back with one word: pairing. If it says ANYTHING else — especially if it says "open" — you fix it RIGHT NOW. Not later. Not tomorrow. Right now. Run: npx openclaw config channels telegram dm-mode pairing.
+Run this command: npx openclaw config get channels.telegram.dmPolicy. It should come back with one word: pairing. If it says ANYTHING else — especially if it says "open" — you fix it RIGHT NOW. Not later. Not tomorrow. Right now. Run: npx openclaw config set channels.telegram.dmPolicy "pairing".
 
 Look at this table. Four modes. One is correct. One is acceptable. One is useless. And one will sink your ship.
 
@@ -269,7 +269,7 @@ Want to go one step further than pairing mode? Set an allowlist. This is the dea
 
 With an allowlist, you specify EXACTLY which Telegram user IDs are permitted to message your bot. Not usernames — user IDs. Numeric IDs that can't be spoofed.
 
-The command is: npx openclaw config channels telegram allowlist add, followed by your Telegram user ID.
+The command is: npx openclaw config set channels.telegram.allowFrom, followed by a JSON array with your Telegram user ID inside quotes.
 
 "But wait," you say, "how do I find my Telegram user ID?" Great question. Search for @userinfobot on Telegram. Start a chat with it. It immediately tells you your numeric ID. Copy that number. Plug it into the allowlist command.
 
@@ -347,7 +347,7 @@ Let that sink in for a second. If the bot is compromised — if someone gains ac
 
 THIS is why I strongly — STRONGLY — recommend using a second phone number for WhatsApp if you go this route. Get a cheap prepaid SIM. Set up Google Voice. Whatever it takes to create a separate WhatsApp account that isn't your personal one. If something goes wrong, the blast radius is contained to the secondary account. Your personal WhatsApp stays untouched.
 
-Set the allowlist immediately after connecting: npx openclaw config channels whatsapp allowlist add, followed by your phone number.
+Set the allowlist immediately after connecting: npx openclaw config set channels.whatsapp.allowFrom, followed by a JSON array with your phone number inside quotes.
 
 [pause]
 
@@ -431,7 +431,7 @@ Quick troubleshooting pass. These are the rocks people hit most often. Let me sa
 
 "Unauthorized error when connecting." Your bot token is wrong. It has a formatting issue. Extra space. Line break. Invisible character. Regenerate the token via BotFather, do the Notepad trick AGAIN, and re-paste. This fixes it almost every time.
 
-"My bot responds to STRANGERS." Red alert. Your DM mode is set to "open." Change it IMMEDIATELY. npx openclaw config channels telegram dm-mode pairing. Do it right now. Do not pass go. Do not collect two hundred dollars.
+"My bot responds to STRANGERS." Red alert. Your DM mode is set to "open." Change it IMMEDIATELY. npx openclaw config set channels.telegram.dmPolicy "pairing". Do it right now. Do not pass go. Do not collect two hundred dollars.
 
 "WhatsApp connection keeps dropping." Session expired or your phone disconnected. Re-scan the QR code with npx openclaw channels login. Keep WhatsApp running on your phone — if you close it, the linked session can drop.
 

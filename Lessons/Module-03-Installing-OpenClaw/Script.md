@@ -611,7 +611,7 @@ Alright — let's talk about what happens when things go sideways. Because they 
 
 "Pairing required" — this is the device pairing security feature we covered in Slide 18b. Run `npx openclaw devices list --json` to find the requestId, then `npx openclaw devices approve [requestId]`. You only have to do this once per device.
 
-"Auth failed" on the dashboard — run `npx openclaw dashboard --no-open` to get a tokenized URL. Copy the FULL URL and paste it into your browser. Make sure it says `http://` not `https://`. If it STILL won't connect, skip it — this is a known bug on WSL. The TUI works and that's what matters.
+"Auth failed" on the dashboard — run `npx openclaw dashboard --no-open` to get a tokenized URL. Copy the FULL URL and paste it into your browser. Make sure it says `http://` not `https://`. If it STILL won't connect, skip it — the dashboard fails on Windows 10 WSL because NAT networking makes the gateway see your browser as a remote device instead of localhost, and there's no fix until Windows 11. The TUI works perfectly because it runs inside WSL itself, so it's truly local.
 
 Daemon doesn't start on boot — systemd probably isn't enabled. Run `systemctl is-system-running`. If that's the problem, go back to Module 02 and enable systemd in your wsl.conf.
 

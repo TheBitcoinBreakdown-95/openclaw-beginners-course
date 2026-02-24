@@ -126,7 +126,7 @@ curl -fsSL https://openclaw.ai/install.sh | bash
 ### 2. Run the onboarding wizard
 
 ```bash
-openclaw onboard --install-daemon
+npx openclaw onboard --install-daemon
 ```
 
 ### 3. Walk through the wizard
@@ -177,7 +177,7 @@ This applies to API keys, bot tokens, and any credential you paste.
 
 After the wizard completes, it displays a gateway token. Save this somewhere secure (password manager, secure note). You need it for the web dashboard.
 
-If you lose it, retrieve it with: `openclaw config gateway token`
+If you lose it, retrieve it with: `npx openclaw config get gateway.auth.token`
 
 ---
 
@@ -198,7 +198,7 @@ This is non-negotiable. Real users have burned $800+ in a single week without a 
 ### 2. Run the security audit
 
 ```bash
-openclaw security audit --deep --fix
+npx openclaw security audit --deep --fix
 ```
 
 This checks file permissions, gateway authentication, and channel security, then auto-fixes what it can.
@@ -214,8 +214,8 @@ chmod 700 ~/.openclaw
 Without QMD, your agent re-reads entire memory files on every interaction, wasting tokens. Install it immediately:
 
 ```bash
-openclaw skills install qmd
-openclaw service restart
+npx clawhub install qmd
+npx openclaw gateway restart
 ```
 
 ### 5. Set heartbeat to a cheap model
@@ -223,8 +223,8 @@ openclaw service restart
 The heartbeat runs periodically in the background. Using your expensive main model for this wastes money:
 
 ```bash
-openclaw config heartbeat model claude-haiku-4-5
-openclaw config heartbeat interval 55
+npx openclaw config set agents.defaults.heartbeat.model "claude-haiku-4-5"
+npx openclaw config set agents.defaults.heartbeat.every "55m"
 ```
 
 ### 6. Use a dedicated browser profile
@@ -238,7 +238,7 @@ Create a separate browser profile (Chrome: Settings > Profiles > Add Person, Fir
 Before something goes wrong, know the five steps: **Stop. Close. Freeze. Investigate. Restore.**
 
 ```
-1. STOP:        openclaw stop  (or: pkill -f openclaw)
+1. STOP:        npx openclaw gateway stop  (or: pkill -f openclaw)
 2. CLOSE:       Set gateway to loopback, disable all channels
 3. FREEZE:      Rotate ALL secrets (API keys, bot tokens, passwords)
 4. INVESTIGATE:  Check gateway logs, session transcripts, API billing
@@ -250,11 +250,11 @@ See Module 01 for the full incident response plan and a fillable card to keep ne
 ### 8. Verify everything is running
 
 ```bash
-openclaw status
-openclaw doctor
+npx openclaw status
+npx openclaw doctor
 ```
 
-You should see `Gateway Status: Running` and all health checks passing. If any checks fail, run `openclaw doctor fix`.
+You should see `Gateway Status: Running` and all health checks passing. If any checks fail, run `npx openclaw doctor --fix`.
 
 ---
 
@@ -263,7 +263,7 @@ You should see `Gateway Status: Running` and all health checks passing. If any c
 ### 1. Open the TUI
 
 ```bash
-openclaw tui
+npx openclaw tui
 ```
 
 The Terminal User Interface is a full-screen chat. Your messages go at the bottom, responses appear above, and a token counter sits in the top bar.
@@ -334,7 +334,7 @@ Download Telegram on your phone (App Store or Google Play). Create an account if
 Use the Notepad trick to clean the token, then in your Ubuntu terminal:
 
 ```bash
-openclaw channels add telegram
+npx openclaw channels add telegram
 ```
 
 Paste the cleaned token when prompted.
@@ -342,7 +342,7 @@ Paste the cleaned token when prompted.
 ### 4. Restart the gateway
 
 ```bash
-openclaw service restart
+npx openclaw gateway restart
 ```
 
 ### 5. Start chatting
@@ -356,13 +356,13 @@ openclaw service restart
 ### 6. Verify DM pairing mode
 
 ```bash
-openclaw config channels telegram dm-mode
+npx openclaw config get channels.telegram.dmPolicy
 ```
 
 This must say `pairing`. If it says `open`, fix it immediately:
 
 ```bash
-openclaw config channels telegram dm-mode pairing
+npx openclaw config set channels.telegram.dmPolicy "pairing"
 ```
 
 **Never set this to "open."** Open mode allows anyone on Telegram to talk to your agent, which is a direct prompt injection risk. Similarly, never add your bot to group chats.
@@ -402,7 +402,7 @@ Save and exit: `Ctrl+O`, `Enter`, `Ctrl+X`.
 ### 2. Schedule it
 
 ```bash
-openclaw cron add "morning-brief" --schedule "0 7 * * *" --task "Send morning brief to Telegram"
+npx openclaw cron add "morning-brief" --schedule "0 7 * * *" --task "Send morning brief to Telegram"
 ```
 
 The schedule `0 7 * * *` means 7:00 AM every day. Adjust the hour to your preference.
@@ -424,7 +424,7 @@ Verify it arrives on Telegram with the format you specified.
 Here is what you now have:
 
 - An AI agent (running Claude or Gemini) operating 24/7 as a background service
-- Accessible from your terminal via `openclaw tui`
+- Accessible from your terminal via `npx openclaw tui`
 - Accessible from your phone via Telegram
 - A web dashboard at `http://127.0.0.1:18789/`
 - API spending limits in place
@@ -460,7 +460,7 @@ Here is what you now have:
 
 | Command | What It Does |
 |---------|-------------|
-| `openclaw tui` | Open the chat interface |
+| `npx openclaw tui` | Open the chat interface |
 | `/compact` | Compress conversation to save tokens (use at 50K+ tokens) |
 | `/new` | Start a fresh conversation session |
 | `/status` | Show current model, tokens used, gateway info |
@@ -471,32 +471,32 @@ Here is what you now have:
 
 | Command | What It Does |
 |---------|-------------|
-| `openclaw status` | Check if gateway is running |
-| `openclaw service start` | Start the gateway daemon |
-| `openclaw service stop` | Stop the gateway daemon |
-| `openclaw service restart` | Restart the gateway daemon |
-| `openclaw service logs` | View gateway logs |
-| `openclaw doctor` | Run health checks |
-| `openclaw doctor fix` | Auto-fix health check issues |
+| `npx openclaw status` | Check if gateway is running |
+| `npx openclaw gateway start` | Start the gateway daemon |
+| `npx openclaw gateway stop` | Stop the gateway daemon |
+| `npx openclaw gateway restart` | Restart the gateway daemon |
+| `npx openclaw gateway logs` | View gateway logs |
+| `npx openclaw doctor` | Run health checks |
+| `npx openclaw doctor --fix` | Auto-fix health check issues |
 
 ### Security
 
 | Command | What It Does |
 |---------|-------------|
-| `openclaw security audit --deep` | Run a full security audit |
-| `openclaw security audit --deep --fix` | Audit and auto-fix issues |
-| `openclaw config channels telegram dm-mode` | Check Telegram DM security mode |
-| `openclaw config gateway token` | Retrieve your gateway token |
+| `npx openclaw security audit --deep` | Run a full security audit |
+| `npx openclaw security audit --deep --fix` | Audit and auto-fix issues |
+| `npx openclaw config get channels.telegram.dmPolicy` | Check Telegram DM security mode |
+| `npx openclaw config get gateway.auth.token` | Retrieve your gateway token |
 
 ### Configuration
 
 | Command | What It Does |
 |---------|-------------|
-| `openclaw config provider model [model]` | Change AI model |
-| `openclaw config heartbeat model [model]` | Set heartbeat model |
-| `openclaw config heartbeat interval [min]` | Set heartbeat interval in minutes |
-| `openclaw channels add [platform]` | Add a messaging channel |
-| `openclaw skills install [skill]` | Install a skill from ClawHub |
+| `npx openclaw config set models.default "[model]"` | Change AI model |
+| `npx openclaw config set agents.defaults.heartbeat.model "[model]"` | Set heartbeat model |
+| `npx openclaw config set agents.defaults.heartbeat.every "[N]m"` | Set heartbeat interval in minutes |
+| `npx openclaw channels add [platform]` | Add a messaging channel |
+| `npx clawhub install [skill]` | Install a skill from ClawHub |
 
 ---
 
@@ -506,9 +506,9 @@ Here is what you now have:
 |---------|-----|
 | `openclaw: command not found` | Run `source ~/.bashrc` or close and reopen Ubuntu |
 | API key invalid / authentication failed | Regenerate key, use the Notepad trick, verify billing is set up |
-| Gateway not running | `openclaw service start` |
+| Gateway not running | `npx openclaw gateway start` |
 | Dashboard won't load in browser | Use `http://127.0.0.1:18789/` (not https), verify gateway is running |
-| Telegram bot not responding | Complete DM pairing, check `openclaw service logs` for errors |
+| Telegram bot not responding | Complete DM pairing, check `npx openclaw gateway logs` for errors |
 | WSL2 error 0x80370102 | Enable virtualization (Intel VT-x or AMD-V) in your BIOS |
 | `node: command not found` | Run `source ~/.bashrc`, or close and reopen Ubuntu |
 | Token counter climbing fast | Use `/compact` frequently, start `/new` sessions for new topics |

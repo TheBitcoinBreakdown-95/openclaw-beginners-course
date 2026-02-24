@@ -500,7 +500,7 @@ A heartbeat is a periodic "wake-up" for your agent. Every X minutes, the ⛵ gat
 ## Configuring Heartbeat Frequency
 
 ```bash
-npx openclaw config heartbeat interval 30
+npx openclaw config set agents.defaults.heartbeat.every "30m"
 ```
 
 | Interval | Use Case | Cost Impact |
@@ -515,7 +515,7 @@ npx openclaw config heartbeat interval 30
 - **To disable heartbeats entirely:**
 
 ```bash
-npx openclaw config heartbeat interval 0
+npx openclaw config set agents.defaults.heartbeat.every "0m"
 ```
 
 ---
@@ -525,13 +525,13 @@ npx openclaw config heartbeat interval 0
 Most heartbeat checks are routine: "Any new messages? Any tasks due? No? Go back to sleep." This does not require Opus 4.6.
 
 ```bash
-npx openclaw config heartbeat model claude-haiku-4-5
+npx openclaw config set agents.defaults.heartbeat.model "claude-haiku-4-5"
 ```
 
 Or with Google Gemini:
 
 ```bash
-npx openclaw config heartbeat model gemini-flash-3
+npx openclaw config set agents.defaults.heartbeat.model "gemini-flash-3"
 ```
 
 <!-- Speaker notes: This single change -- routing heartbeats to a cheap model -- is the fastest way to cut your bill. Five seconds of configuration, $50-190/month saved. -->
@@ -586,7 +586,7 @@ Run heartbeats on **local 3-4B models** for literally zero cost -- no API calls,
 Anthropic's extended cache stays warm for about **55 minutes**. Set your heartbeat to 55 minutes so every heartbeat hits warm cache:
 
 ```bash
-npx openclaw config heartbeat interval 55
+npx openclaw config set agents.defaults.heartbeat.every "55m"
 ```
 
 ### Combined savings: Haiku + prompt caching + 55-min interval

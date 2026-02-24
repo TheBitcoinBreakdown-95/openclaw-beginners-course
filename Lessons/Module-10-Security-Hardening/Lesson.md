@@ -54,7 +54,7 @@ Sandboxing isolates the AI's command execution inside a Docker container. If som
 ### Configuring Sandbox Mode
 
 ```bash
-npx openclaw config sandbox mode non-main
+npx openclaw config set sandbox.mode "non-main"
 ```
 
 **Recommended for most users:** `non-main`
@@ -86,7 +86,7 @@ Scopes control the lifecycle of sandbox containers.
 ### Configuring Sandbox Scope
 
 ```bash
-npx openclaw config sandbox scope agent
+npx openclaw config set sandbox.scope "agent"
 ```
 
 **Recommended for most users:** `agent`
@@ -98,7 +98,7 @@ This gives each agent its own sandbox without the overhead of creating a new con
 You can control how much of your workspace the sandbox can see:
 
 ```bash
-npx openclaw config sandbox workspaceAccess read
+npx openclaw config set sandbox.workspaceAccess "read"
 ```
 
 | Setting | What the Sandbox Can Do |
@@ -177,8 +177,8 @@ This configures Docker containers specifically for OpenClaw sandboxing.
 ### Step 5: Enable Sandboxing
 
 ```bash
-npx openclaw config sandbox mode non-main
-npx openclaw config sandbox scope agent
+npx openclaw config set sandbox.mode "non-main"
+npx openclaw config set sandbox.scope "agent"
 npx openclaw gateway restart
 ```
 
@@ -290,13 +290,13 @@ npx openclaw config tools elevated off
 ### Verify Authentication Is Required
 
 ```bash
-npx openclaw config gateway auth
+npx openclaw config get gateway.auth.mode
 ```
 
 This should show that token authentication is enabled. If not:
 
 ```bash
-npx openclaw config gateway auth token
+npx openclaw config set gateway.auth.mode "token"
 ```
 
 ### Rotate Your Gateway Token
@@ -304,7 +304,7 @@ npx openclaw config gateway auth token
 If you suspect your token was compromised, or as periodic maintenance:
 
 ```bash
-npx openclaw config gateway token rotate
+npx openclaw config set gateway.auth.token "$(openssl rand -hex 32)"
 ```
 
 This generates a new token. You'll need to update it wherever you use it (dashboard access, any remote connections).
@@ -314,7 +314,7 @@ This generates a new token. You'll need to update it wherever you use it (dashbo
 Port 18789 is published in every OpenClaw tutorial, video, and blog post. Anyone scanning for OpenClaw installations will check this port first. Change it:
 
 ```bash
-npx openclaw config gateway port 28391   # Pick any unused port above 1024
+npx openclaw config set gateway.port 28391   # Pick any unused port above 1024
 npx openclaw gateway restart
 ```
 
@@ -350,7 +350,7 @@ Now only SSH and your gateway port are open. Everything else is blocked.
 Verify your gateway is only listening where it should:
 
 ```bash
-npx openclaw config gateway bind
+npx openclaw config get gateway.bind
 ```
 
 **Expected:** `loopback` (unless you intentionally configured LAN or Tailscale access).
@@ -358,7 +358,7 @@ npx openclaw config gateway bind
 If it shows anything unexpected, set it back:
 
 ```bash
-npx openclaw config gateway bind loopback
+npx openclaw config set gateway.bind "loopback"
 ```
 
 ### User Allowlisting
@@ -366,7 +366,7 @@ npx openclaw config gateway bind loopback
 Beyond DM pairing mode, you can configure the gateway to only accept messages from specific user IDs. Everyone else is silently ignored — they don't even get an error message:
 
 ```bash
-npx openclaw config channels telegram allowlist add [YOUR_TELEGRAM_USER_ID]
+npx openclaw config set channels.telegram.allowFrom '["YOUR_TELEGRAM_USER_ID"]'
 ```
 
 To find your Telegram user ID, message the bot `@userinfobot` on Telegram.
@@ -606,7 +606,7 @@ npx openclaw doctor
 If issues are found:
 
 ```bash
-npx openclaw doctor fix
+npx openclaw doctor --fix
 ```
 
 ### Self-Audit: Ask Your Agent to Check Itself
@@ -724,8 +724,8 @@ Set this up as a weekly cron job or do it manually every week:
 2. Run health check:        npx openclaw doctor
 3. Review recent logs:      npx openclaw gateway logs (look for unusual activity)
 4. Check API spending:      Visit your provider dashboard
-5. Verify DM modes:         npx openclaw config channels [channel] dm-mode
-6. Verify sandbox status:   npx openclaw config sandbox mode
+5. Verify DM modes:         npx openclaw config get channels.telegram.dmPolicy
+6. Verify sandbox status:   npx openclaw config get sandbox.mode
 7. Commit workspace backup: cd ~/.openclaw && git add -A && git commit -m "Weekly backup"
 ```
 
@@ -797,19 +797,20 @@ pkill -9 -f openclaw
 
 ```bash
 # Set gateway to loopback only
-npx openclaw config gateway bind loopback
+npx openclaw config set gateway.bind "loopback"
 
 # Disable all DM channels
-npx openclaw config channels telegram dm-mode disabled
-npx openclaw config channels discord dm-mode disabled
-npx openclaw config channels whatsapp dm-mode disabled
+npx openclaw config set channels.telegram.dmPolicy "disabled"
+npx openclaw config set channels.discord.dmPolicy "disabled"
+npx openclaw config set channels.whatsapp.dmPolicy "disabled"
 ```
 
 ### FREEZE: Rotate Secrets (10-30 minutes)
 
 1. **Gateway token:**
    ```bash
-   npx openclaw config gateway token rotate
+   npx openclaw config set gateway.auth.token "$(openssl rand -hex 32)"
+   npx openclaw gateway restart
    ```
 
 2. **AI provider API key:**
@@ -818,7 +819,7 @@ npx openclaw config channels whatsapp dm-mode disabled
    - Create a new key
    - Update in OpenClaw:
    ```bash
-   npx openclaw config provider key [NEW_KEY]
+   npx openclaw config set models.providers.anthropic.apiKey "[NEW_KEY]"
    ```
 
 3. **Telegram bot token:**
@@ -827,7 +828,7 @@ npx openclaw config channels whatsapp dm-mode disabled
    - Copy the new token
    - Update in OpenClaw:
    ```bash
-   npx openclaw config channels telegram token [NEW_TOKEN]
+   npx openclaw config set channels.telegram.botToken "[NEW_TOKEN]"
    ```
 
 4. **Any other exposed secrets:**
@@ -913,8 +914,8 @@ Then manually fix anything the auto-fix missed.
 Follow the Docker installation steps above. Then:
 
 ```bash
-npx openclaw config sandbox mode non-main
-npx openclaw config sandbox scope agent
+npx openclaw config set sandbox.mode "non-main"
+npx openclaw config set sandbox.scope "agent"
 npx openclaw gateway restart
 ```
 

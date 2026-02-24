@@ -606,13 +606,13 @@ If your agent responds with your name (from `USER.md`), everything is connected 
 Verify your DM mode:
 
 ```bash
-npx openclaw config channels telegram dm-mode
+npx openclaw config get channels.telegram.dmPolicy
 ```
 
 If it shows `open`, change it immediately:
 
 ```bash
-npx openclaw config channels telegram dm-mode pairing
+npx openclaw config set channels.telegram.dmPolicy "pairing"
 ```
 
 | Mode | What Happens |
@@ -631,8 +631,8 @@ npx openclaw config channels telegram dm-mode pairing
 For extra security, specify exactly who can message the bot:
 
 ```bash
-npx openclaw config channels telegram allowlist \
-  add YOUR_TELEGRAM_USER_ID
+npx openclaw config set channels.telegram.allowFrom \
+  '["YOUR_TELEGRAM_USER_ID"]'
 ```
 
 **To find your Telegram user ID:**
@@ -710,8 +710,8 @@ npx openclaw channels add whatsapp
 - If compromised, damage is limited to the secondary account
 
 ```bash
-npx openclaw config channels whatsapp allowlist \
-  add +1234567890
+npx openclaw config set channels.whatsapp.allowFrom \
+  '["+1234567890"]'
 ```
 
 <!-- Speaker notes: WhatsApp is the riskiest channel because it links to a real phone number and exposes existing message history. Strongly encourage a second number. Cheap prepaid SIMs work fine. -->

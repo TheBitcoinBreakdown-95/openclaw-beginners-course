@@ -291,9 +291,9 @@ Alright, here we go. The error catalog. These are the most common problems you'l
 
 "Gateway not running." The classic. `npx openclaw status` shows "Stopped." The gateway crashed or wasn't started. Fix: `npx openclaw gateway start`. Then check the logs with `npx openclaw gateway logs` to find out WHY it stopped in the first place. Don't just restart and walk away — find the cause.
 
-"Port already in use." The gateway tries to start but something else is already using port 18789. Find the culprit with `lsof -i :18789`, kill it, or change your port with `npx openclaw config gateway port 18790`. Usually this means a zombie gateway process from a previous crash is still hanging around.
+"Port already in use." The gateway tries to start but something else is already using port 18789. Find the culprit with `lsof -i :18789`, kill it, or change your port with `npx openclaw config set gateway.port 18790`. Usually this means a zombie gateway process from a previous crash is still hanging around.
 
-"Gateway keeps crashing." Starts and stops repeatedly. Check the logs for specific errors. Run `npx openclaw doctor fix`. If you recently installed a plugin, that might be your problem — plugins run IN-PROCESS, so a buggy plugin crash IS a gateway crash. Try disabling recent plugins. If nothing works, restore config from backup and restart.
+"Gateway keeps crashing." Starts and stops repeatedly. Check the logs for specific errors. Run `npx openclaw doctor --fix`. If you recently installed a plugin, that might be your problem — plugins run IN-PROCESS, so a buggy plugin crash IS a gateway crash. Try disabling recent plugins. If nothing works, restore config from backup and restart.
 
 "Session stuck on busy." Your agent shows "busy" and never clears. Messages get no response. This is a stuck session lock, usually from a failed compaction. The fix is simple: `npx openclaw gateway restart`. That releases all locks and clears stuck sessions. Use `npx openclaw status --json` to see the session states if you want to diagnose it.
 
@@ -307,7 +307,7 @@ Gateway errors are the most common category. And the good news? Every single one
 
 API errors. These are about your connection to the AI brain.
 
-"API key invalid." The AI doesn't respond. Authentication error. This usually means one of three things: the key has a formatting issue from when you pasted it, the key expired, or you have a billing problem. Go to your provider's console, check the key, regenerate if needed. Remember the Notepad trick from Module Three — paste the key into Notepad first to strip hidden characters, then copy from Notepad into the terminal. Update with `npx openclaw config provider key` and the new key.
+"API key invalid." The AI doesn't respond. Authentication error. This usually means one of three things: the key has a formatting issue from when you pasted it, the key expired, or you have a billing problem. Go to your provider's console, check the key, regenerate if needed. Remember the Notepad trick from Module Three — paste the key into Notepad first to strip hidden characters, then copy from Notepad into the terminal. Update with `npx openclaw config set models.providers.anthropic.apiKey` and the new key.
 
 "Rate limit exceeded." The AI stops responding temporarily. You sent too many requests too fast. Just wait one to five minutes and try again. If it keeps happening, reduce your heartbeat frequency. You might be hitting the provider's rate ceiling.
 
@@ -373,7 +373,7 @@ Gateway and status commands. The basics. The foundation of everything.
 
 `npx openclaw doctor` — the health check. Catches configuration issues, permission problems, dependency mismatches.
 
-`npx openclaw doctor fix` — same as above but it actually FIXES what it finds instead of just reporting it.
+`npx openclaw doctor --fix` — same as above but it actually FIXES what it finds instead of just reporting it.
 
 `npx openclaw gateway logs` — view the daemon logs. When something goes wrong, this is where the story is written.
 
@@ -391,15 +391,15 @@ Security commands. Module Ten gave you the theory. These are the actual tools.
 
 `npx openclaw security audit --deep --fix` — same audit but with auto-fix. It doesn't just tell you what's wrong, it FIXES what it can. This is the one-two punch.
 
-`npx openclaw config gateway auth` — check your authentication settings. Is auth enabled? What type? Is it configured correctly?
+`npx openclaw config get gateway.auth.mode` — check your authentication settings. Is auth enabled? What type? Is it configured correctly?
 
-`npx openclaw config gateway token rotate` — rotate your gateway token. Do this periodically. Do this immediately if you suspect any kind of compromise.
+`npx openclaw config set gateway.auth.token "$(openssl rand -hex 32)"` — rotate your gateway token. Do this periodically. Do this immediately if you suspect any kind of compromise.
 
-`npx openclaw config gateway bind` — check your bind address. This should be loopback. If it's not loopback and you don't have a VERY good reason, change it back to loopback.
+`npx openclaw config get gateway.bind` — check your bind address. This should be loopback. If it's not loopback and you don't have a VERY good reason, change it back to loopback.
 
-`npx openclaw config sandbox mode` — set your sandboxing mode. Off, non-main, or all. We went deep on this in Module Ten.
+`npx openclaw config set sandbox.mode` — set your sandboxing mode. Off, non-main, or all. We went deep on this in Module Ten.
 
-`npx openclaw config tools deny` — deny a specific tool. If there's a tool your agent should NEVER have access to, this is how you block it.
+`npx openclaw config set tools.deny` — deny a specific tool. If there's a tool your agent should NEVER have access to, this is how you block it.
 
 [pause]
 
@@ -413,13 +413,13 @@ Configuration commands. The knobs and dials of your ship.
 
 `npx openclaw config` — opens the main configuration. The dashboard for everything.
 
-`npx openclaw config gateway port` — check or change your gateway port. Default is 18789 but you can change it if something else is using that port.
+`npx openclaw config get gateway.port` — check or change your gateway port. Default is 18789 but you can change it if something else is using that port.
 
-`npx openclaw config provider key` — update your API key. When you rotate keys at your provider, this is how you tell OpenClaw about the new one.
+`npx openclaw config set models.providers.anthropic.apiKey` — update your API key. When you rotate keys at your provider, this is how you tell OpenClaw about the new one.
 
-`npx openclaw config heartbeat interval` — set how often your agent's heartbeat fires. Remember: fifty-five minutes for optimal caching.
+`npx openclaw config set agents.defaults.heartbeat.every` — set how often your agent's heartbeat fires. Remember: fifty-five minutes for optimal caching.
 
-`npx openclaw config heartbeat model` — set which model runs the heartbeat. Haiku. The answer is Haiku. Or Gemini Flash. Something cheap and fast.
+`npx openclaw config set agents.defaults.heartbeat.model` — set which model runs the heartbeat. Haiku. The answer is Haiku. Or Gemini Flash. Something cheap and fast.
 
 Channel commands. Your messaging connections.
 
@@ -427,7 +427,7 @@ Channel commands. Your messaging connections.
 
 `npx openclaw channels login` — re-authenticate your channels. When WhatsApp disconnects or a token expires, this is your fix.
 
-`npx openclaw config channels dm-mode` — check or set DM pairing mode for a channel. Controls who can talk to your agent.
+`npx openclaw config get channels.[channel].dmPolicy` — check or set DM pairing mode for a channel. Controls who can talk to your agent.
 
 Cron job commands. Your scheduled automation.
 
@@ -473,9 +473,9 @@ Now. The emergency procedure. We covered incident response in Module Ten, but th
 
 Step one: STOP. `npx openclaw gateway stop`. Kill the agent. Whatever it's doing, it stops NOW. Don't negotiate. Don't investigate first. Don't try to figure out what went wrong while it's still running. STOP IT.
 
-Step two: CLOSE. Lock down access. `npx openclaw config gateway bind loopback`. No one gets in. No external connections. The drawbridge goes up.
+Step two: CLOSE. Lock down access. `npx openclaw config set gateway.bind "loopback"`. No one gets in. No external connections. The drawbridge goes up.
 
-Step three: FREEZE. Rotate all tokens and keys. `npx openclaw config gateway token rotate`. Then rotate your API keys at your provider. If something was compromised, the old credentials are now useless.
+Step three: FREEZE. Rotate all tokens and keys. `npx openclaw config set gateway.auth.token "$(openssl rand -hex 32)"`. Then rotate your API keys at your provider. If something was compromised, the old credentials are now useless.
 
 Step four: INVESTIGATE. NOW you read the logs. `npx openclaw gateway logs`. NOW you look at sessions. NOW you figure out what happened. But only AFTER the agent is stopped, access is locked, and secrets are rotated.
 

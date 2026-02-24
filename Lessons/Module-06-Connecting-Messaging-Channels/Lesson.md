@@ -124,7 +124,7 @@ Just like with your API key in Module 03:
 In your Ubuntu terminal (you can have the TUI and a regular terminal open at the same time):
 
 ```bash
-npx openclaw config channels telegram
+npx openclaw channels add telegram
 ```
 
 Or use the onboarding-style channel setup:
@@ -199,7 +199,7 @@ Now that Telegram is connected, let's make sure the security is right. Refer bac
 ### Verify DM Pairing Mode Is Active
 
 ```bash
-npx openclaw config channels telegram dm-mode
+npx openclaw config get channels.telegram.dmPolicy
 ```
 
 **Expected:** `pairing`
@@ -207,7 +207,7 @@ npx openclaw config channels telegram dm-mode
 If it shows `open`, change it immediately:
 
 ```bash
-npx openclaw config channels telegram dm-mode pairing
+npx openclaw config set channels.telegram.dmPolicy "pairing"
 ```
 
 **Never set this to "open"** unless you have a very specific reason and understand the prompt injection risks.
@@ -228,7 +228,7 @@ npx openclaw config channels telegram dm-mode pairing
 If you want to lock it down even further, you can specify exactly who is allowed to message the bot:
 
 ```bash
-npx openclaw config channels telegram allowlist add YOUR_TELEGRAM_USER_ID
+npx openclaw config set channels.telegram.allowFrom '["YOUR_TELEGRAM_USER_ID"]'
 ```
 
 To find your Telegram user ID:
@@ -338,7 +338,7 @@ The terminal will display a QR code. Open WhatsApp on your phone:
 Set which phone numbers can communicate with the bot:
 
 ```bash
-npx openclaw config channels whatsapp allowlist add +1234567890
+npx openclaw config set channels.whatsapp.allowFrom '["+1234567890"]'
 ```
 
 (Replace with your actual phone number.)
@@ -434,7 +434,7 @@ For now (and probably forever for most users): **DMs only.**
 |---------|---------------|-----|
 | Bot doesn't respond on Telegram | DM pairing not completed | Check the dashboard for pending pairing requests |
 | "Unauthorized" error when connecting | Bot token is wrong or has formatting issues | Regenerate the token via BotFather, use Notepad trick |
-| Bot responds to strangers | DM mode is set to "open" | Change to "pairing": `npx openclaw config channels telegram dm-mode pairing` |
+| Bot responds to strangers | DM mode is set to "open" | Change to "pairing": `npx openclaw config set channels.telegram.dmPolicy "pairing"` |
 | WhatsApp connection drops frequently | Session expired or phone disconnected | Re-scan QR code with `npx openclaw channels login` |
 | Discord bot doesn't see messages | Message Content Intent not enabled | Enable it in Discord Developer Portal > Bot settings |
 | Bot is very slow to respond via Telegram | Normal — API call + network latency | AI responses take 2-10 seconds. Longer responses take more time |

@@ -654,8 +654,8 @@ Combine three optimizations for maximum savings:
 2. Get your 🔑 API key
 3. Add to 🦞 OpenClaw:
 ```bash
-openclaw config provider add openrouter --key YOUR_KEY
-openclaw config search model perplexity-pro
+npx openclaw config set models.providers.openrouter.apiKey "YOUR_KEY"
+npx openclaw config set models.search.model "perplexity-pro"
 ```
 
 ### Cost tip:
