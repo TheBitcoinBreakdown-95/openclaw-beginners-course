@@ -135,7 +135,7 @@ This searches ClawHub for skills related to Obsidian. You'll see results like:
 **Do not install skills blindly.** Read the skill's content first:
 
 ```bash
-npx openclaw skills inspect obsidian-notes
+npx openclaw skills info obsidian-notes
 ```
 
 This shows you:
@@ -429,13 +429,13 @@ If you install 50 skills, each with 500 tokens of instructions, that's 25,000 to
 npx openclaw skills list
 
 # Disable a skill (keeps it installed but doesn't load it)
-npx openclaw skills disable obsidian-notes
+npx openclaw config set skills.entries.obsidian-notes.enabled false
 
-# Enable a previously disabled skill
-npx openclaw skills enable obsidian-notes
+# Re-enable a previously disabled skill
+npx openclaw config set skills.entries.obsidian-notes.enabled true
 
 # Remove a skill entirely
-npx openclaw skills remove obsidian-notes
+npx clawhub delete obsidian-notes
 ```
 
 ---
@@ -444,12 +444,12 @@ npx openclaw skills remove obsidian-notes
 
 | Mistake | Why It's a Problem | Fix |
 |---------|-------------------|-----|
-| Installing skills without reading them | Potential security risk | Always use `npx openclaw skills inspect` first |
+| Installing skills without reading them | Potential security risk | Always use `npx openclaw skills info` first |
 | Installing too many skills at once | Context window fills up, costs increase | Start with 2-3, add more as needed |
 | Not restarting after installing a skill | Skill doesn't activate until gateway restarts | Run `npx openclaw gateway restart` |
 | Skill doesn't seem to work | Trigger words might not match what you're saying | Check the skill's triggers in the YAML front matter |
 | Building a custom skill with vague instructions | AI doesn't know what to do | Be specific in your markdown instructions |
-| Leaving unused skills enabled | Wastes context window tokens | Disable or remove skills you're not using |
+| Leaving unused skills enabled | Wastes context window tokens | Disable via config or remove skills you're not using |
 
 ---
 
@@ -459,7 +459,7 @@ npx openclaw skills remove obsidian-notes
 
 1. Browse available skills: `npx openclaw skills browse`
 2. Search for something relevant to your use case
-3. Inspect the skill: `npx openclaw skills inspect [skill-name]`
+3. Inspect the skill: `npx openclaw skills info [skill-name]`
 4. Check for security red flags
 5. Install it: `npx clawhub install [skill-name]`
 6. Restart: `npx openclaw gateway restart`

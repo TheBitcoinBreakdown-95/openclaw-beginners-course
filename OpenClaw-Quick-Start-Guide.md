@@ -254,7 +254,7 @@ npx openclaw status
 npx openclaw doctor
 ```
 
-You should see `Gateway Status: Running` and all health checks passing. If any checks fail, run `npx openclaw doctor --fix`.
+You should see `Gateway Status: Running` and all health checks passing. If any checks fail, run `npx openclaw doctor --repair`.
 
 ---
 
@@ -475,9 +475,9 @@ Here is what you now have:
 | `npx openclaw gateway start` | Start the gateway daemon |
 | `npx openclaw gateway stop` | Stop the gateway daemon |
 | `npx openclaw gateway restart` | Restart the gateway daemon |
-| `npx openclaw gateway logs` | View gateway logs |
+| `npx openclaw logs` | View gateway logs |
 | `npx openclaw doctor` | Run health checks |
-| `npx openclaw doctor --fix` | Auto-fix health check issues |
+| `npx openclaw doctor --repair` | Auto-fix health check issues |
 
 ### Security
 
@@ -508,7 +508,7 @@ Here is what you now have:
 | API key invalid / authentication failed | Regenerate key, use the Notepad trick, verify billing is set up |
 | Gateway not running | `npx openclaw gateway start` |
 | Dashboard won't load in browser | Use `http://127.0.0.1:18789/` (not https), verify gateway is running |
-| Telegram bot not responding | Complete DM pairing, check `npx openclaw gateway logs` for errors |
+| Telegram bot not responding | Complete DM pairing, check `npx openclaw logs` for errors |
 | WSL2 error 0x80370102 | Enable virtualization (Intel VT-x or AMD-V) in your BIOS |
 | `node: command not found` | Run `source ~/.bashrc`, or close and reopen Ubuntu |
 | Token counter climbing fast | Use `/compact` frequently, start `/new` sessions for new topics |

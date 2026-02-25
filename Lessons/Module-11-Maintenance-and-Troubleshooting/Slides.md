@@ -472,7 +472,7 @@ Email automation, trading bots, social media management, code projects, multi-st
 This takes about **2 minutes**. Do it every day during your first month.
 
 - ⛵ Gateway is running: `npx openclaw status`
-- No errors in logs: `npx openclaw gateway logs`
+- No errors in logs: `npx openclaw logs`
 - Token usage reasonable: check your provider dashboard
 - Morning brief was sent: check Telegram
 - No pending pairing requests: check dashboard for unknown senders
@@ -606,7 +606,7 @@ tar -czf ~/openclaw-backup-$(date +%Y%m%d).tar.gz ~/.openclaw/
 
 Before diving into specific errors, adopt this approach:
 
-### Rule 1: Run `npx openclaw doctor --fix` First
+### Rule 1: Run `npx openclaw doctor --repair` First
 Most "my agent is being stupid" issues are actually **configuration problems**, not AI problems. The doctor command catches and fixes the majority of them automatically.
 
 ### Rule 2: One Workflow at a Time
@@ -632,7 +632,7 @@ Get one workflow running **end-to-end** before adding the next. Every new integr
 **"Gateway not running"**
 - Check: `npx openclaw status`
 - Fix: `npx openclaw gateway start`
-- Review: `npx openclaw gateway logs`
+- Review: `npx openclaw logs`
 
 **"Port already in use"**
 - Find the process: `lsof -i :18789`
@@ -640,7 +640,7 @@ Get one workflow running **end-to-end** before adding the next. Every new integr
 
 **"Gateway keeps crashing"**
 - Check logs for specific errors
-- Run: `npx openclaw doctor --fix`
+- Run: `npx openclaw doctor --repair`
 - If a plugin was recently installed, try disabling it (plugins run in-process)
 - If persistent: restore config from backup, restart
 
@@ -725,8 +725,8 @@ npx openclaw tui                   # Open chat interface
 # Check Status
 npx openclaw status                # Is the gateway running?
 npx openclaw doctor                # Health check
-npx openclaw doctor --fix          # Auto-fix health issues
-npx openclaw gateway logs          # View logs
+npx openclaw doctor --repair          # Auto-fix health issues
+npx openclaw logs          # View logs
 ```
 
 ---
@@ -791,8 +791,8 @@ npx clawhub browse        # Browse ClawHub
 npx clawhub search [q]    # Search skills
 npx clawhub install [n]   # Install a skill
 npx openclaw skills list           # List installed
-npx openclaw skills enable [n]    # Enable a skill
-npx openclaw skills disable [n]   # Disable a skill
+npx openclaw config set skills.entries.[name].enabled true   # Enable
+npx openclaw config set skills.entries.[name].enabled false  # Disable
 ```
 
 ### Inside the Chat (TUI):
@@ -818,7 +818,7 @@ npx openclaw skills disable [n]   # Disable a skill
 | **1. STOP** | Kill the agent | `npx openclaw gateway stop` |
 | **2. CLOSE** | Lock down access | `npx openclaw config set gateway.bind "loopback"` |
 | **3. FREEZE** | Rotate all tokens/keys | `npx openclaw config set gateway.auth.token "$(openssl rand -hex 32)"` |
-| **4. INVESTIGATE** | Review logs and sessions | `npx openclaw gateway logs` |
+| **4. INVESTIGATE** | Review logs and sessions | `npx openclaw logs` |
 | **5. RESTORE** | Fix, audit, restart | `npx openclaw security audit --deep --fix` |
 
 > Print this table and keep it next to your computer.

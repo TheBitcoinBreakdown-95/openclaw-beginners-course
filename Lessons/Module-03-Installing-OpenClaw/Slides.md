@@ -795,7 +795,7 @@ npx openclaw doctor                      # All critical checks should pass
 npx openclaw security audit --deep --fix # Fixes file permissions
 ```
 
-- If `doctor` reports failures, run `npx openclaw doctor --fix`
+- If `doctor` reports failures, run `npx openclaw doctor --repair`
 - Security audit sets dirs to 700 and files to 600
 
 ---
@@ -868,7 +868,7 @@ npx openclaw gateway status    # Look for: Active: active (running)
 npx openclaw gateway start     # Start the daemon
 npx openclaw gateway stop      # Stop the daemon
 npx openclaw gateway restart   # Restart the daemon
-npx openclaw gateway logs      # View daemon logs
+npx openclaw logs      # View daemon logs
 ```
 
 Use `restart` after any config change. Use `logs` to debug startup issues.
@@ -920,7 +920,7 @@ Complete this checklist before proceeding to Module 04:
 - [ ] Gateway token saved somewhere secure
 - [ ] `~/.openclaw/` directory is mode 700
 
-**Bonus:** Run `npx openclaw gateway logs` and read the last few lines.
+**Bonus:** Run `npx openclaw logs` and read the last few lines.
 
 ---
 

@@ -95,11 +95,11 @@ Some configuration changes take effect immediately via hot-reload. Others requir
 
 ```bash
 npx openclaw doctor              # Health check — catches config, dependency, and service issues
-npx openclaw doctor --fix        # Auto-fix what it can
+npx openclaw doctor --repair        # Auto-fix what it can
 npx openclaw status              # Is the gateway running?
 npx openclaw status --json       # Machine-readable status output (useful for debugging)
 npx openclaw --version           # Current OpenClaw version
-npx openclaw gateway logs        # Gateway logs (look for errors, warnings)
+npx openclaw logs        # Gateway logs (look for errors, warnings)
 ```
 
 ---
@@ -343,7 +343,7 @@ Prompt caching can reduce input token costs by **up to 90%** in long-running ses
 **Diagnosis:**
 ```bash
 npx openclaw status --json    # Check for sessions showing "busy" or "locked"
-npx openclaw gateway logs     # Look for "sessionLock" or "compaction" errors
+npx openclaw logs     # Look for "sessionLock" or "compaction" errors
 ```
 
 **Fix:**
@@ -650,7 +650,7 @@ OpenClaw treats Windows as a special-risk platform. Known issues:
 |--------------|-----------|------------|
 | Gateway refuses to start, no clear error | Config schema validation failure | Run `npx openclaw doctor`, fix invalid config keys |
 | "Port already in use" | Zombie process or conflicting service | `lsof -i :18789`, kill conflicting process, or change port |
-| Gateway starts then immediately stops | Corrupted state, bad plugin, or dependency issue | Check `npx openclaw gateway logs`, try `npx openclaw doctor --fix` |
+| Gateway starts then immediately stops | Corrupted state, bad plugin, or dependency issue | Check `npx openclaw logs`, try `npx openclaw doctor --repair` |
 | "Cannot find module" errors | Dependency not installed or version mismatch | `npm install -g @tinybox/openclaw`, or reinstall |
 
 ### Runtime Failures

@@ -169,7 +169,7 @@ Alright, everybody. Eyes up here. This is the slide I need you to BURN into your
 
 DO. NOT. INSTALL. SKILLS. BLINDLY.
 
-I do not care how many stars it has. I do not care if it has ten thousand installs. I do not care if your best friend recommended it. Before you install ANY skill, you RUN this command: `npx openclaw skills inspect` followed by the skill name.
+I do not care how many stars it has. I do not care if it has ten thousand installs. I do not care if your best friend recommended it. Before you install ANY skill, you RUN this command: `npx openclaw skills info` followed by the skill name.
 
 This shows you EVERYTHING. The full YAML front matter, so you can see what tools it uses and what triggers it has. The full markdown instructions, so you can see EXACTLY what it tells the AI to do. The author, the version, community reviews.
 
@@ -397,11 +397,11 @@ Here are the commands you need to manage your skill inventory. These are your do
 
 `npx openclaw skills list` shows you everything you have installed. Run this regularly. Know what is on your ship.
 
-`npx openclaw skills disable obsidian-notes` turns a skill off without removing it. It stays installed but does not load into context. ZERO token cost when disabled. This is perfect for skills you use sometimes but not every day.
+`npx openclaw config set skills.entries.obsidian-notes.enabled false` turns a skill off without removing it. It stays installed but does not load into context. ZERO token cost when disabled. This is perfect for skills you use sometimes but not every day.
 
-`npx openclaw skills enable obsidian-notes` turns it back on when you need it.
+`npx openclaw config set skills.entries.obsidian-notes.enabled true` turns it back on when you need it.
 
-And `npx openclaw skills remove obsidian-notes` deletes it entirely. Gone. Off the ship.
+And `npx clawhub delete obsidian-notes` deletes it entirely. Gone. Off the ship.
 
 [pause]
 
@@ -417,7 +417,7 @@ Think of disable like putting a crate in the hold below deck. Out of the way, no
 
 Let me save you some pain. Here are the rocks other sailors have crashed into so you do not have to.
 
-Mistake number one: installing skills without reading them. You know this by now. I have hammered it. Always use `npx openclaw skills inspect` first. No exceptions.
+Mistake number one: installing skills without reading them. You know this by now. I have hammered it. Always use `npx openclaw skills info` first. No exceptions.
 
 Mistake number two: installing too many skills at once. You get excited, you install twenty skills in one sitting, and suddenly your agent is slow and your bill is higher. Start with two or three. Add more as needed. Build up gradually.
 
@@ -443,7 +443,7 @@ Step one, browse. `npx openclaw skills browse`. Look around. See what is out the
 
 Step two, search. Find something relevant to YOUR use case. Something you would actually want your agent to do.
 
-Step three, and this is the one I KNOW some of you are going to be tempted to skip: INSPECT. `npx openclaw skills inspect` followed by the skill name. Read the full content. Check for red flags. Is the author reputable? Does it request weird permissions? Does the markdown body look clean?
+Step three, and this is the one I KNOW some of you are going to be tempted to skip: INSPECT. `npx openclaw skills info` followed by the skill name. Read the full content. Check for red flags. Is the author reputable? Does it request weird permissions? Does the markdown body look clean?
 
 Step four, check for security red flags. Take thirty seconds and actually LOOK.
 

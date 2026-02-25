@@ -268,7 +268,7 @@ class RouterSkill(Skill):
 
 Enable it with:
 ```bash
-npx openclaw skills enable router --path skills/router.py
+npx openclaw config set skills.entries.router.enabled true
 ```
 
 Don't let the code scare you — ask your agent to help you build and customize it. The main point is giving the system rules so it doesn't treat all tokens as equal.

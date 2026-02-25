@@ -485,7 +485,7 @@ Trust but verify, crew. We're going to run three checks. Think of this as the po
 
 Check one: Gateway status. Run `npx openclaw status`. What you're looking for is one phrase: "Gateway Status: Running." If it says Running, your engine is alive. You should also see your version number, the port (18789), the bind (loopback), and your provider (Anthropic, Claude Opus 4.6). Everything should match what we configured.
 
-Check two: Gateway health. Run `npx openclaw doctor`. This is your ship's doctor — it runs a full diagnostic. API key valid? Model reachable? Workspace accessible? Daemon active? You want all green checkmarks. If anything fails, the doctor will tell you what's wrong AND suggest fixes. You can even run `npx openclaw doctor --fix` and it'll try to patch things up automatically.
+Check two: Gateway health. Run `npx openclaw doctor`. This is your ship's doctor — it runs a full diagnostic. API key valid? Model reachable? Workspace accessible? Daemon active? You want all green checkmarks. If anything fails, the doctor will tell you what's wrong AND suggest fixes. You can even run `npx openclaw doctor --repair` and it'll try to patch things up automatically.
 
 Check three: Security audit. Run `npx openclaw security audit --deep --fix`. This checks your file permissions, your gateway authentication, your bind settings — the whole security posture. The `--fix` flag means it automatically corrects anything it finds. It'll set proper permissions — 700 for directories, 600 for files — so only YOUR user account can read or write OpenClaw's configuration.
 
@@ -590,7 +590,7 @@ Keep these service commands handy — write them on a sticky note, save them in 
 `npx openclaw gateway start` — starts the daemon.
 `npx openclaw gateway stop` — stops it.
 `npx openclaw gateway restart` — bounces it.
-`npx openclaw gateway logs` — shows you what it's been up to.
+`npx openclaw logs` — shows you what it's been up to.
 `npx openclaw gateway status` — tells you if it's alive.
 
 Those five commands are your engine room controls. You'll use them often.
@@ -661,7 +661,7 @@ Ten: your gateway token is saved somewhere secure. Not "I'll remember it." SAVED
 
 If you're not there yet, that's okay. Take the next few minutes. Work through the ones that are failing. Ask for help. We'll get everyone across the finish line.
 
-BONUS for the overachievers: run `npx openclaw gateway logs` and read the last few lines. You should see entries showing the gateway starting up and handling your test message. That's your agent's logbook. Its own version of a ship's log.
+BONUS for the overachievers: run `npx openclaw logs` and read the last few lines. You should see entries showing the gateway starting up and handling your test message. That's your agent's logbook. Its own version of a ship's log.
 
 ---
 

@@ -594,16 +594,17 @@ Tool policies are **layered** (global > provider > agent > sandbox) and **deny a
 | **file-write** | Write/modify files | High |
 | **network** | Make network requests | Medium |
 
-### Example: Lock down external channels
+### Example: Lock down dangerous tools
 
 ```bash
-npx openclaw config tools deny exec --context channels
-npx openclaw config tools deny browser --context channels
-npx openclaw config tools deny process --context channels
-npx openclaw config tools allow file-read --context channels
+# Use the "messaging" profile (restricts to safe tools)
+npx openclaw config set tools.profile "messaging"
+
+# Or deny specific tools manually
+npx openclaw config set tools.deny '["exec", "browser", "process"]'
 ```
 
-> **Known issue:** Agent-specific tool configs may not be forwarded to cron agents or CLI paths. Test tool availability in those contexts.
+> **Rule:** Deny always wins. If `tools.deny` lists a tool, nothing can override it. Use `npx openclaw security audit` to verify your policies.
 
 <!-- Speaker notes: Two key points: (1) Deny always wins across all layers. If global denies a tool, agent-level allow won't override it. This prevents accidental over-permissioning but can confuse people. (2) Policy drift -- agent-specific configs don't always get forwarded to cron or sub-agent execution paths. This is a known issue being fixed. Tell students to verify tool access works in cron contexts, not just TUI. -->
 
@@ -778,7 +779,7 @@ npx openclaw security audit --deep --fix
 
 ```bash
 npx openclaw doctor
-npx openclaw doctor --fix
+npx openclaw doctor --repair
 ```
 
 <!-- Speaker notes: The security audit is the single best tool for catching misconfigurations. The --deep flag checks everything including file permissions, gateway config, sandbox status, and tool policies. Run it weekly. -->
@@ -794,14 +795,14 @@ If you have enabled browser control for your agent:
 - **Restrict browser access** to your main session only:
 
 ```bash
-npx openclaw config tools deny browser --context sandbox
-npx openclaw config tools allow browser --context main
+# Deny browser in sandbox contexts (heartbeats, cron, channels)
+npx openclaw config set tools.sandbox.tools.deny '["browser"]'
 ```
 
 ### If you do not need browser control:
 
 ```bash
-npx openclaw config tools deny browser
+npx openclaw config set tools.deny '["browser"]'
 ```
 
 Most users do not need browser control, especially when starting out.
@@ -882,7 +883,7 @@ npx openclaw config set channels.telegram.botToken "[NEW_TOKEN]"
 
 ### INVESTIGATE
 ```bash
-npx openclaw gateway logs
+npx openclaw logs
 ls -lt ~/.openclaw/sessions/ | head -20
 ```
 

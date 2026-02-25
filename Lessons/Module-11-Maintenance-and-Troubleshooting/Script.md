@@ -103,7 +103,7 @@ Five things. Five quick checks.
 
 One: Is the gateway running? `npx openclaw status`. Takes two seconds. Green means go. Stopped means something crashed overnight and you need to restart it.
 
-Two: Any errors in the logs? `npx openclaw gateway logs`. Scan the last few entries. You're not reading every line — you're looking for anything red, anything scary, anything that says ERROR in big capital letters. If it's all clean, move on.
+Two: Any errors in the logs? `npx openclaw logs`. Scan the last few entries. You're not reading every line — you're looking for anything red, anything scary, anything that says ERROR in big capital letters. If it's all clean, move on.
 
 Three: Token usage reasonable? Pop open your provider dashboard — Anthropic, OpenAI, whatever you're using. Is the number where you expected it? Or did something go haywire overnight and burn through forty bucks while you slept? You want to catch that EARLY, not at the end of the month.
 
@@ -265,7 +265,7 @@ Before we dive into the error catalog, I need to install two rules in your brain
 
 Rule one: Run the doctor first.
 
-When something feels broken — your agent is acting weird, messages aren't going through, things are slow, something just feels OFF — your first instinct is going to be to start poking around. Reading logs. Googling error messages. Asking on Discord. NO. Stop. Before any of that, run ONE command: `npx openclaw doctor --fix`.
+When something feels broken — your agent is acting weird, messages aren't going through, things are slow, something just feels OFF — your first instinct is going to be to start poking around. Reading logs. Googling error messages. Asking on Discord. NO. Stop. Before any of that, run ONE command: `npx openclaw doctor --repair`.
 
 The doctor checks configuration integrity, file permissions, service health, dependency versions — and it auto-fixes what it can. A surprising number of "my agent is stupid" complaints are actually "my config is broken" problems. The doctor catches them. The doctor fixes them. Let the doctor do its job FIRST.
 
@@ -289,11 +289,11 @@ Alright, here we go. The error catalog. These are the most common problems you'l
 
 "Gateway refuses to start — config schema rejection." This is a nasty one because it's a COMPLETE block. One invalid key in your `openclaw.json` file and the gateway won't boot AT ALL. OpenClaw uses strict schema validation. One typo — like spelling "heartbeat" as "hearbeat" — and the whole thing refuses to start. The fix? Run `npx openclaw doctor`. It'll identify exactly which key is bad. Fix it. Restart. And going forward, use `npx openclaw config` commands instead of editing the JSON directly. Let the tool validate for you.
 
-"Gateway not running." The classic. `npx openclaw status` shows "Stopped." The gateway crashed or wasn't started. Fix: `npx openclaw gateway start`. Then check the logs with `npx openclaw gateway logs` to find out WHY it stopped in the first place. Don't just restart and walk away — find the cause.
+"Gateway not running." The classic. `npx openclaw status` shows "Stopped." The gateway crashed or wasn't started. Fix: `npx openclaw gateway start`. Then check the logs with `npx openclaw logs` to find out WHY it stopped in the first place. Don't just restart and walk away — find the cause.
 
 "Port already in use." The gateway tries to start but something else is already using port 18789. Find the culprit with `lsof -i :18789`, kill it, or change your port with `npx openclaw config set gateway.port 18790`. Usually this means a zombie gateway process from a previous crash is still hanging around.
 
-"Gateway keeps crashing." Starts and stops repeatedly. Check the logs for specific errors. Run `npx openclaw doctor --fix`. If you recently installed a plugin, that might be your problem — plugins run IN-PROCESS, so a buggy plugin crash IS a gateway crash. Try disabling recent plugins. If nothing works, restore config from backup and restart.
+"Gateway keeps crashing." Starts and stops repeatedly. Check the logs for specific errors. Run `npx openclaw doctor --repair`. If you recently installed a plugin, that might be your problem — plugins run IN-PROCESS, so a buggy plugin crash IS a gateway crash. Try disabling recent plugins. If nothing works, restore config from backup and restart.
 
 "Session stuck on busy." Your agent shows "busy" and never clears. Messages get no response. This is a stuck session lock, usually from a failed compaction. The fix is simple: `npx openclaw gateway restart`. That releases all locks and clears stuck sessions. Use `npx openclaw status --json` to see the session states if you want to diagnose it.
 
@@ -373,9 +373,9 @@ Gateway and status commands. The basics. The foundation of everything.
 
 `npx openclaw doctor` — the health check. Catches configuration issues, permission problems, dependency mismatches.
 
-`npx openclaw doctor --fix` — same as above but it actually FIXES what it finds instead of just reporting it.
+`npx openclaw doctor --repair` — same as above but it actually FIXES what it finds instead of just reporting it.
 
-`npx openclaw gateway logs` — view the daemon logs. When something goes wrong, this is where the story is written.
+`npx openclaw logs` — view the daemon logs. When something goes wrong, this is where the story is written.
 
 [pause]
 
@@ -443,7 +443,7 @@ Configuration, channels, and cron jobs. The three C's that keep your ship runnin
 
 Last category. Skills and TUI commands.
 
-Skills management. `npx clawhub browse` — browse ClawHub. Window shopping for new capabilities. `npx clawhub search` — search for something specific. `npx clawhub install` — install a skill. `npx openclaw skills list` — see what you've got installed. `npx openclaw skills enable` and `npx openclaw skills disable` — toggle skills on and off without uninstalling them. This is KEY for cost management. Disable what you're not using. Re-enable when you need it.
+Skills management. `npx clawhub browse` — browse ClawHub. Window shopping for new capabilities. `npx clawhub search` — search for something specific. `npx clawhub install` — install a skill. `npx openclaw skills list` — see what you've got installed. `npx openclaw config set skills.entries.[name].enabled true` and `false` — toggle skills on and off without uninstalling them. This is KEY for cost management. Disable what you're not using. Re-enable when you need it.
 
 And then the TUI commands — the ones you type INSIDE the chat with your agent.
 
@@ -477,7 +477,7 @@ Step two: CLOSE. Lock down access. `npx openclaw config set gateway.bind "loopba
 
 Step three: FREEZE. Rotate all tokens and keys. `npx openclaw config set gateway.auth.token "$(openssl rand -hex 32)"`. Then rotate your API keys at your provider. If something was compromised, the old credentials are now useless.
 
-Step four: INVESTIGATE. NOW you read the logs. `npx openclaw gateway logs`. NOW you look at sessions. NOW you figure out what happened. But only AFTER the agent is stopped, access is locked, and secrets are rotated.
+Step four: INVESTIGATE. NOW you read the logs. `npx openclaw logs`. NOW you look at sessions. NOW you figure out what happened. But only AFTER the agent is stopped, access is locked, and secrets are rotated.
 
 Step five: RESTORE. Fix whatever went wrong. Run the security audit. Restart when you're confident everything is clean.
 

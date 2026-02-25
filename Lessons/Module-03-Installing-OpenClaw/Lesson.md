@@ -517,7 +517,7 @@ After answering all questions, the wizard finishes with output that looks someth
 
   To open the TUI:  openclaw tui
   To check status:  openclaw status
-  To view logs:     openclaw gateway logs
+  To view logs:     openclaw logs
 
 ════════════════════════════════════════════════════
 ```
@@ -618,7 +618,7 @@ Running health checks...
 All checks passed.
 ```
 
-If any checks fail, the doctor will suggest fixes. Run `npx openclaw doctor --fix` to apply automatic fixes.
+If any checks fail, the doctor will suggest fixes. Run `npx openclaw doctor --repair` to apply automatic fixes.
 
 ### 4.3 Run Your First Security Audit
 
@@ -771,7 +771,7 @@ Keep these handy:
 npx openclaw gateway start       # Start the daemon
 npx openclaw gateway stop        # Stop the daemon
 npx openclaw gateway restart     # Restart the daemon
-npx openclaw gateway logs        # View daemon logs
+npx openclaw logs        # View daemon logs
 npx openclaw gateway status      # Check if daemon is running
 ```
 
@@ -975,7 +975,7 @@ Complete this checklist. Every item should pass before you proceed to Module 04.
 - [ ] **Daemon works:** Gateway stays running after closing the terminal
 - [ ] **Gateway token:** Saved somewhere secure
 
-**Bonus:** Run `npx openclaw gateway logs` and read the last few lines. You should see entries showing the gateway starting up and handling your test message.
+**Bonus:** Run `npx openclaw logs` and read the last few lines. You should see entries showing the gateway starting up and handling your test message.
 
 ---
 

@@ -33,7 +33,7 @@ This takes about 2 minutes. Do it every day during your first month, then as nee
 DAILY CHECK (2 minutes)
 ========================
 □ Gateway is running:      npx openclaw status
-□ No errors in logs:       npx openclaw gateway logs (scan last few entries)
+□ No errors in logs:       npx openclaw logs (scan last few entries)
 □ Token usage reasonable:  Check your provider dashboard
 □ Morning brief was sent:  Check Telegram
 □ No pending pairing reqs: Check dashboard for unknown senders
@@ -52,7 +52,7 @@ WEEKLY CHECK (10 minutes)
 ==========================
 □ Security audit:          npx openclaw security audit --deep
 □ Health check:            npx openclaw doctor
-□ Fix any issues:          npx openclaw security audit --deep --fix && npx openclaw doctor --fix
+□ Fix any issues:          npx openclaw security audit --deep --fix && npx openclaw doctor --repair
 □ Review API spending:     Visit console.anthropic.com (or your provider)
 □ Workspace backup:        cd ~/.openclaw && git add -A && git commit -m "Weekly backup $(date +%Y-%m-%d)"
 □ Review core files:       Are USER.md and MEMORY.md still accurate?
@@ -267,7 +267,7 @@ npx openclaw gateway start
 When something feels broken, run the built-in diagnostics before investigating manually:
 
 ```bash
-npx openclaw doctor --fix
+npx openclaw doctor --repair
 ```
 
 This catches a surprising number of issues. As one community member put it: *"Half the 'my agent is stupid' complaints are actually 'my config is borked' problems."* The doctor command checks configuration integrity, file permissions, service health, and dependency versions — and auto-fixes what it can.
@@ -289,7 +289,7 @@ If you set up email, calendar, Telegram, web scraping, and reporting all at once
 Symptom:  npx openclaw status shows "Stopped"
 Cause:    Gateway crashed or wasn't started
 Fix:      npx openclaw gateway start
-Check:    npx openclaw gateway logs (look for error messages)
+Check:    npx openclaw logs (look for error messages)
 ```
 
 **"Port already in use"**
@@ -316,8 +316,8 @@ Prevention: Use "npx openclaw config" commands instead of editing JSON directly
 ```
 Symptom:  Gateway starts and stops repeatedly
 Cause:    Bad configuration, corrupted state, or a faulty plugin
-Fix:      npx openclaw gateway logs (check for specific errors)
-          npx openclaw doctor --fix
+Fix:      npx openclaw logs (check for specific errors)
+          npx openclaw doctor --repair
           If persistent: stop gateway, restore config from backup, restart
 Note:     Plugins run in-process — a buggy plugin crash is a Gateway crash.
           Try disabling recently installed plugins if crashes started after install.
@@ -467,9 +467,9 @@ npx openclaw status --json             # Machine-readable status (useful for deb
 npx openclaw gateway start             # Start the daemon
 npx openclaw gateway stop              # Stop the daemon
 npx openclaw gateway restart           # Restart the daemon
-npx openclaw gateway logs              # View daemon logs
+npx openclaw logs              # View daemon logs
 npx openclaw doctor                    # Health check
-npx openclaw doctor --fix              # Auto-fix health issues
+npx openclaw doctor --repair              # Auto-fix health issues
 ```
 
 ### Security
@@ -507,12 +507,12 @@ npx openclaw config get channels.[channel].dmPolicy  # Check DM mode
 ```bash
 npx clawhub browse             # Browse ClawHub
 npx clawhub search [query]     # Search skills
-npx openclaw skills inspect [name]     # View skill details
+npx openclaw skills info [name]        # View skill details
 npx clawhub install [name]     # Install a skill
 npx openclaw skills list               # List installed skills
-npx openclaw skills enable [name]      # Enable a skill
-npx openclaw skills disable [name]     # Disable a skill
-npx openclaw skills remove [name]      # Uninstall a skill
+npx openclaw config set skills.entries.[name].enabled true   # Enable a skill
+npx openclaw config set skills.entries.[name].enabled false  # Disable a skill
+npx clawhub delete [name]              # Uninstall a skill
 ```
 
 ### Cron Jobs
@@ -556,7 +556,7 @@ npx openclaw cron disable [name]       # Disable a job
 ║  CHECK STATUS                                                     ║
 ║  npx openclaw status              Is the gateway running?         ║
 ║  npx openclaw doctor              Health check                    ║
-║  npx openclaw gateway logs        View logs                       ║
+║  npx openclaw logs        View logs                       ║
 ║                                                                   ║
 ║  SECURITY                                                         ║
 ║  npx openclaw security audit --deep         Full audit            ║

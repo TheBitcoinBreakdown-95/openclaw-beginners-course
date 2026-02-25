@@ -245,23 +245,23 @@ Tool policies are layered — multiple levels can apply at once:
 
 ### Setting Tool Policies
 
-**Deny shell execution for messages from channels:**
+**Use a restrictive preset:**
 ```bash
-npx openclaw config tools deny exec --context channels
+npx openclaw config set tools.profile "messaging"
+```
+Available profiles: `minimal`, `coding`, `messaging`, `full`. The "messaging" profile restricts tools to safe defaults for channel use.
+
+**Or deny specific dangerous tools globally:**
+```bash
+npx openclaw config set tools.deny '["exec", "browser", "process"]'
 ```
 
-**Deny browser for all sandboxed contexts:**
+**Deny tools only in sandbox contexts** (heartbeats, cron, channels):
 ```bash
-npx openclaw config tools deny browser --context sandbox
+npx openclaw config set tools.sandbox.tools.deny '["exec", "browser"]'
 ```
 
-**Allow only specific tools for external input:**
-```bash
-npx openclaw config tools allow file-read --context channels
-npx openclaw config tools deny exec --context channels
-npx openclaw config tools deny browser --context channels
-npx openclaw config tools deny process --context channels
-```
+**Rule:** Deny always wins. If a tool is in `tools.deny`, no other setting can override it.
 
 ### The Elevated Mode Warning
 
@@ -606,7 +606,7 @@ npx openclaw doctor
 If issues are found:
 
 ```bash
-npx openclaw doctor --fix
+npx openclaw doctor --repair
 ```
 
 ### Self-Audit: Ask Your Agent to Check Itself
@@ -638,11 +638,11 @@ If you've enabled browser control for your agent, these rules are critical:
 ### Restrict Browser Access
 
 ```bash
-# Deny browser control for sandboxed contexts
-npx openclaw config tools deny browser --context sandbox
+# Deny browser in sandbox contexts (cron, heartbeats, channels)
+npx openclaw config set tools.sandbox.tools.deny '["browser"]'
 
-# Only allow browser from your main session
-npx openclaw config tools allow browser --context main
+# Or deny browser entirely if you don't need it
+npx openclaw config set tools.deny '["browser"]'
 ```
 
 ### Prompt Inoculation for Credential Protection
@@ -664,7 +664,7 @@ This won't stop every attack, but it adds a layer of resistance against the most
 Disable it entirely:
 
 ```bash
-npx openclaw config tools deny browser
+npx openclaw config set tools.deny '["browser"]'
 ```
 
 Most users don't need browser control, especially when starting out.
@@ -722,7 +722,7 @@ Set this up as a weekly cron job or do it manually every week:
 ```
 1. Run security audit:     npx openclaw security audit --deep
 2. Run health check:        npx openclaw doctor
-3. Review recent logs:      npx openclaw gateway logs (look for unusual activity)
+3. Review recent logs:      npx openclaw logs (look for unusual activity)
 4. Check API spending:      Visit your provider dashboard
 5. Verify DM modes:         npx openclaw config get channels.telegram.dmPolicy
 6. Verify sandbox status:   npx openclaw config get sandbox.mode
@@ -840,7 +840,7 @@ npx openclaw config set channels.whatsapp.dmPolicy "disabled"
 
 ```bash
 # Check gateway logs
-npx openclaw gateway logs
+npx openclaw logs
 
 # Check session transcripts
 ls -lt ~/.openclaw/sessions/ | head -20

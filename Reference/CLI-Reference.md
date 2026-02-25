@@ -1,6 +1,6 @@
 # OpenClaw CLI Reference
 
-**Source:** [docs.openclaw.ai/cli](https://docs.openclaw.ai/cli) — verified 2026-02-24
+**Source:** [docs.openclaw.ai/cli](https://docs.openclaw.ai/cli) — verified 2026-02-24 (updated Session 25)
 
 This file lists the correct CLI commands and config paths used in this course. Always check here before writing commands in course materials.
 
@@ -51,6 +51,32 @@ Replace `<ch>` with: `telegram`, `discord`, `whatsapp`, `slack`, etc.
 | `agents.defaults.heartbeat.every` | `"55m"`, `"30m"`, `"2h"`, `"0m"` | Interval (0m = disabled) |
 | `agents.defaults.heartbeat.model` | `"claude-haiku-4-5"`, `"gemini-flash-3"` | Model for heartbeat (use cheap model) |
 | `agents.defaults.heartbeat.target` | `"last"`, `"telegram"`, `"none"` | Where heartbeat sends |
+| `agents.defaults.heartbeat.activeHours.start` | `"HH:MM"` (e.g., `"07:00"`) | Only run heartbeats after this time |
+| `agents.defaults.heartbeat.activeHours.end` | `"HH:MM"` (e.g., `"23:00"`) | Only run heartbeats before this time |
+| `agents.defaults.heartbeat.activeHours.timezone` | IANA tz / `"local"` | Timezone for active hours |
+
+### Tool Policies
+
+| Path | Values | Description |
+|------|--------|-------------|
+| `tools.profile` | `"minimal"`, `"coding"`, `"messaging"`, `"full"` | Base tool preset |
+| `tools.deny` | JSON array of tool names | Globally deny tools (deny wins) |
+| `tools.allow` | JSON array of tool names | Allowlist (if set, everything else blocked) |
+| `tools.sandbox.tools.deny` | JSON array | Deny tools in sandbox contexts |
+| `tools.sandbox.tools.allow` | JSON array | Allow tools in sandbox contexts |
+
+### Skills
+
+| Path | Values | Description |
+|------|--------|-------------|
+| `skills.entries.<name>.enabled` | `true` / `false` | Enable/disable a skill without removing it |
+
+### Workspace Limits
+
+| Path | Values | Description |
+|------|--------|-------------|
+| `agents.defaults.bootstrapMaxChars` | integer (default: 20000) | Max chars per workspace file |
+| `agents.defaults.bootstrapTotalMaxChars` | integer (default: 150000) | Max total chars for all workspace files |
 
 ### Models & Providers
 
@@ -73,7 +99,7 @@ npx openclaw gateway restart     # Restart gateway service
 npx openclaw gateway status      # Check status
 npx openclaw gateway install     # Install as background service
 npx openclaw gateway uninstall   # Remove background service
-npx openclaw gateway logs        # Not a real command — use `npx openclaw logs`
+npx openclaw logs [--follow]     # Tail gateway logs (--json, --limit N, --local-time)
 ```
 
 Note: `openclaw service` does NOT exist. Always use `openclaw gateway`.
@@ -115,7 +141,19 @@ npx clawhub update <slug>         # Update a skill
 npx clawhub update --all          # Update all skills
 ```
 
-Note: `npx openclaw skills list` works for listing, but install/search must use `clawhub`.
+Other `openclaw skills` subcommands:
+```bash
+npx openclaw skills list                  # List installed skills
+npx openclaw skills info <name>           # View skill details
+npx openclaw skills check                 # Verify skill eligibility
+npx clawhub delete <name>                 # Remove a skill
+```
+
+Enable/disable via config (NOT `skills enable/disable`):
+```bash
+npx openclaw config set skills.entries.<name>.enabled false  # Disable
+npx openclaw config set skills.entries.<name>.enabled true   # Enable
+```
 
 ---
 
@@ -133,12 +171,17 @@ npx openclaw models auth add              # Interactive provider auth setup
 ## Diagnostics
 
 ```bash
-npx openclaw doctor [--fix]               # Health checks (--fix auto-repairs)
+npx openclaw doctor [--repair]             # Health checks (--repair auto-repairs)
+npx openclaw doctor --repair --force       # Aggressive repair (overwrites custom configs)
+npx openclaw doctor --deep                 # Scan for extra gateway installs
 npx openclaw security audit [--deep] [--fix]  # Security audit
 npx openclaw status [--all] [--deep]      # Session/gateway status
 npx openclaw health                       # Gateway health check
 npx openclaw logs [--follow]              # Tail gateway logs
+npx openclaw logs --json --limit 500      # JSON output, limited entries
 ```
+
+Note: `doctor` uses `--repair`. `security audit` uses `--fix`. Different flags!
 
 ---
 
@@ -152,6 +195,12 @@ npx openclaw cron add --name "..." --cron "..." --system-event "..."  # Schedule
 npx openclaw cron list                    # List scheduled jobs
 npx openclaw system event --text "..."    # Trigger immediate heartbeat
 npx openclaw stop                         # Stop everything (alias)
+npx openclaw update                       # Update OpenClaw
+npx openclaw update --dry-run             # Preview what update will change
+npx openclaw reset --dry-run              # Preview what reset would clear
+npx openclaw reset --scope config         # Nuclear reset (config/creds/sessions)
+npx openclaw uninstall                    # Clean uninstall
+npx openclaw message send --channel telegram --target <id> --message "text"
 ```
 
 ---
@@ -165,3 +214,6 @@ npx openclaw stop                         # Stop everything (alias)
 | `OPENCLAW_GATEWAY_PASSWORD` | Gateway password auth |
 | `OPENCLAW_GATEWAY_PORT` | Override default port |
 | `OPENCLAW_STATE_DIR` | State directory (default: ~/.openclaw) |
+| `OPENCLAW_HOME` | Override home directory for path resolution |
+| `OPENCLAW_CONFIG_PATH` | Override config file path |
+| `OPENCLAW_LOG_LEVEL` | Override log level (`debug`, `trace` — useful for troubleshooting) |

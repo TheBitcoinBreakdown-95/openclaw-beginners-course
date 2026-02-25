@@ -579,7 +579,7 @@ Look at **star rating** and **install count** as initial trust signals.
 **Do not install skills blindly.** Read the content first:
 
 ```bash
-npx openclaw skills inspect obsidian-notes
+npx openclaw skills info obsidian-notes
 ```
 
 **What to look for:**
@@ -848,13 +848,13 @@ Every active skill takes up context window space.
 npx openclaw skills list
 
 # Disable (keeps installed, doesn't load)
-npx openclaw skills disable obsidian-notes
+npx openclaw config set skills.entries.obsidian-notes.enabled false
 
-# Enable a previously disabled skill
-npx openclaw skills enable obsidian-notes
+# Re-enable a previously disabled skill
+npx openclaw config set skills.entries.obsidian-notes.enabled true
 
 # Remove entirely
-npx openclaw skills remove obsidian-notes
+npx clawhub delete obsidian-notes
 ```
 
 > **Disable vs. Remove:** Disable keeps the skill for later. Remove deletes it. Prefer disabling unless you are sure you will never need it again.
@@ -867,12 +867,12 @@ npx openclaw skills remove obsidian-notes
 
 | Mistake | Fix |
 |---------|-----|
-| Installing skills without reading them | Always use `npx openclaw skills inspect` first |
+| Installing skills without reading them | Always use `npx openclaw skills info` first |
 | Installing too many skills at once | Start with 2-3, add more as needed |
 | Not restarting after installing | Run `npx openclaw gateway restart` |
 | Skill does not seem to work | Check trigger words in the YAML front matter |
 | Custom skill has vague instructions | Be specific in your markdown body |
-| Leaving unused skills enabled | Disable or remove to save tokens |
+| Leaving unused skills enabled | Disable via config or remove to save tokens |
 
 ---
 
@@ -882,7 +882,7 @@ npx openclaw skills remove obsidian-notes
 
 ### Part 1: Install from 🦀 ClawHub (10 min)
 1. Browse and search: `npx openclaw skills browse`
-2. Inspect for red flags: `npx openclaw skills inspect [skill-name]`
+2. Inspect for red flags: `npx openclaw skills info [skill-name]`
 3. Install with pinning: `npx clawhub install [skill-name] --pin`
 4. Restart: `npx openclaw gateway restart`
 5. Test it in the TUI

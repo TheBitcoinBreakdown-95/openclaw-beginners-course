@@ -423,7 +423,7 @@ npx openclaw gateway start       # Start the daemon
 npx openclaw gateway stop        # Stop the daemon
 npx openclaw gateway restart     # Restart after config changes
 npx openclaw gateway status      # Check if daemon is running
-npx openclaw gateway logs        # View daemon logs
+npx openclaw logs        # View daemon logs
 npx openclaw gateway install     # Reinstall the daemon service
 
 
