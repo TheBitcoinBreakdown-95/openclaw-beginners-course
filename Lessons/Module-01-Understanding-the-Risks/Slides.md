@@ -683,7 +683,7 @@ If the AI does not recognize this as injection, it executes a **malicious script
 
 > **Keep the AI's world as small as possible.**
 
-- Run 🦞 OpenClaw inside **WSL2** (already somewhat isolated from Windows)
+- Run 🦞 OpenClaw on a **dedicated Ubuntu laptop** (physically isolated from personal files)
 - Consider **Docker sandboxing** for stronger isolation (Module 10)
 - Use a **dedicated browser profile** -- never your personal one
 - Do not be logged into services you do not want the AI to access
@@ -885,6 +885,6 @@ Print it out. Pin it next to your computer.
 
 ## Module 02: Preparing Your Laptop
 
-> We will install WSL2, Node.js, and everything your laptop needs before 🦞 OpenClaw touches it.
+> We will install Ubuntu, Node.js, and everything your laptop needs before 🦞 OpenClaw touches it.
 
 <!-- Speaker notes: You now understand the dragons. Next module, we prepare the environment. Security first, installation second. See you in Module 02. -->

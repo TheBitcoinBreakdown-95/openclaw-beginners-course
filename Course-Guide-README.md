@@ -38,7 +38,7 @@ This guide was designed for **complete beginners**. Every step is explained. Eve
 
 Before starting this course, you need:
 
-- [ ] A computer running **Windows 10** (version 22H2 or later) or **macOS** or **Linux**
+- [ ] A computer running **Windows 10** or later, **macOS**, or **Linux** (we install Ubuntu on a dedicated laptop in Module 02)
 - [ ] At least **8 GB RAM** (16 GB recommended)
 - [ ] At least **20 GB free disk space** (more is better)
 - [ ] A stable **internet connection**
@@ -63,7 +63,7 @@ Before starting this course, you need:
 |---|--------|-------------------|------|
 | 00 | [What Is OpenClaw](Lessons/Module-00-What-Is-OpenClaw/Lesson.md) | What OpenClaw is, how it works, why it matters | 30 min |
 | 01 | [Understanding the Risks](Lessons/Module-01-Understanding-the-Risks/Lesson.md) | Security threats, the danger model, how to stay safe | 45 min |
-| 02 | [Preparing Your Laptop](Lessons/Module-02-Preparing-Your-Old-Laptop/Lesson.md) | WSL2 setup, Node.js, getting your machine ready | 60 min |
+| 02 | [Preparing Your Laptop](Lessons/Module-02-Preparing-Your-Old-Laptop/Lesson.md) | Ubuntu installation, Node.js, getting your machine ready | 60 min |
 | 03 | [Installing OpenClaw](Lessons/Module-03-Installing-OpenClaw/Lesson.md) | Installation, onboarding wizard, API keys, gateway | 60 min |
 | 04 | [Your First Conversation](Lessons/Module-04-Your-First-Conversation/Lesson.md) | Meeting your agent, brain-dumping, essential commands | 45 min |
 | 05 | [Workspace and Memory](Lessons/Module-05-Workspace-and-Memory/Lesson.md) | The 9 core files, context engineering, living files | 60 min |
@@ -81,10 +81,10 @@ Before starting this course, you need:
 ## Hardware Used in This Guide
 
 This course was written and tested on:
-- **Windows 10 Home**, Version 22H2 (Build 19045.2006)
+- A dedicated laptop running **Ubuntu 24.04 LTS** (native installation)
 - **16 GB RAM**
 - **465 GB storage** (438 GB free)
-- Running OpenClaw inside **WSL2** (Ubuntu)
+- Running OpenClaw directly on Ubuntu
 
 If your specs are different, don't worry — the minimum requirements are 8 GB RAM and 20 GB free space. The guide notes where your experience might differ based on hardware.
 

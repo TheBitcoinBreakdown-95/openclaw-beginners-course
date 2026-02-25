@@ -9,7 +9,7 @@
 
 Alright, crew. GATHER ROUND.
 
-We have been through a LOT together already. We learned what OpenClaw IS. We faced the risks head-on, looked the kraken square in the eye. We wrestled with WSL2 and turned a dusty old laptop into a proper vessel. We installed the whole engine room, bolted every rivet, sealed every hull plate.
+We have been through a LOT together already. We learned what OpenClaw IS. We faced the risks head-on, looked the kraken square in the eye. We installed Ubuntu and turned a dusty old laptop into a proper vessel. We installed the whole engine room, bolted every rivet, sealed every hull plate.
 
 And then last module we launched the ship. The gateway is humming. The engine is running. The sails are up.
 

@@ -37,7 +37,7 @@ Nine ports on today's chart. Nine. This is the densest module in the entire cour
 
 Port one: you'll explain the three sandbox modes and the three sandbox scopes. Modes and scopes — two dimensions of isolation. We're going to nail both.
 
-Port two: you'll set up Docker for sandboxing on WSL2. Actual installation. Actual commands. Actual containers running on your machine.
+Port two: you'll set up Docker for sandboxing on Ubuntu. Actual installation. Actual commands. Actual containers running on your machine.
 
 Port three: tool policies. You're going to control EXACTLY what your agent can and cannot do, and you're going to control it differently depending on where the input comes from.
 
@@ -173,7 +173,7 @@ Alright, here's where theory meets practice. Docker installation. Hands-on.
 
 Without Docker installed, sandbox mode settings are just words in a config file. They do NOTHING. Docker is what makes the containers real. Docker is the shipyard that builds the isolation boxes.
 
-Step one — install Docker inside WSL2. Your Ubuntu terminal. `sudo apt update`, then install the Docker packages. The slide shows the commands. During the activity portion, we're going to do this together, so don't panic about memorizing the exact syntax. Just understand what's happening: you're adding Docker's package repository to your system and then installing the Docker engine.
+Step one — install Docker on your Ubuntu system. Open your terminal. `sudo apt update`, then install the Docker packages. The slide shows the commands. During the activity portion, we're going to do this together, so don't panic about memorizing the exact syntax. Just understand what's happening: you're adding Docker's package repository to your system and then installing the Docker engine.
 
 Step two — add your user to the Docker group. `sudo usermod -aG docker $USER`. This lets you run Docker commands without typing `sudo` every time. IMPORTANT: you have to log out and log back in for this to take effect. Close your terminal, reopen it. If you skip this step, you'll get permission errors and wonder why Docker hates you. It doesn't hate you. You just forgot to log out.
 
@@ -558,7 +558,7 @@ Part two — fix all issues. Ten minutes. `npx openclaw security audit --deep --
 
 Part three — set up Docker and enable sandboxing. Fifteen minutes. This is the big one. Follow the installation steps from the slide. Install Docker. Add yourself to the Docker group. Log out. Log back in. Run `docker run hello-world`. If that works — proceed. `npx openclaw sandbox setup`. `npx openclaw config set sandbox.mode "non-main"`. `npx openclaw config set sandbox.scope "agent"`. `npx openclaw gateway restart`.
 
-If Docker installation gives you trouble — and it WILL give some of you trouble, that's completely normal — raise your hand. Docker on WSL2 has known quirks. We'll sort it out.
+If Docker installation gives you trouble — and it WILL give some of you trouble, that's completely normal — raise your hand. Docker installation has quirks on some systems. We'll sort it out.
 
 Part four — test the sandbox. Ten minutes. Grab your phone. Open Telegram. Send your agent: "What files are in your current directory? Can you read /etc/passwd?" If it shows your real filesystem, sandboxing is not working. Debug. Common fixes: restart the service, re-run sandbox setup, verify Docker is running with `docker ps`.
 

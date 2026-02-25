@@ -5,7 +5,7 @@
 By the end of this module, you will be able to:
 
 1. Explain the three sandbox modes and three sandbox scopes
-2. Set up Docker for sandboxing on WSL2
+2. Set up Docker for sandboxing on Ubuntu
 3. Configure tool policies to restrict what your agent can do
 4. Harden your gateway authentication
 5. Isolate your agent on a separate home network
@@ -113,7 +113,7 @@ For maximum security with channels processing untrusted input, `read` or `none` 
 
 ## Setting Up Docker for Sandboxing
 
-Docker is required for sandboxing. Here's how to set it up inside WSL2.
+Docker is required for sandboxing. Here's how to set it up on your Ubuntu system.
 
 ### Step 1: Install Docker
 

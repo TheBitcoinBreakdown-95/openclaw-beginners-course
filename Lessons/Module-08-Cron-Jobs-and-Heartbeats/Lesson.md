@@ -101,6 +101,18 @@ npx openclaw config set agents.defaults.heartbeat.every "0m"
 
 This disables heartbeats entirely. your agent only acts when you talk to it. You can enable them later when you're ready.
 
+### Restricting Heartbeats to Active Hours
+
+Don't want your agent pinging you at 3 AM? You can restrict heartbeats to a specific time window:
+
+```bash
+npx openclaw config set agents.defaults.heartbeat.activeHours.start "07:00"
+npx openclaw config set agents.defaults.heartbeat.activeHours.end "23:00"
+npx openclaw config set agents.defaults.heartbeat.activeHours.timezone "local"
+```
+
+With this configuration, heartbeats only fire between 7 AM and 11 PM in your local timezone. Outside that window, the agent sleeps — no API calls, no token costs, no 3 AM notifications. You can also set a specific IANA timezone like `"America/New_York"` instead of `"local"`.
+
 ---
 
 ## Using Cheap Models for Heartbeats
@@ -552,7 +564,7 @@ When you close the TUI or disconnect, the session ends. When you reopen, you may
 | Vague cron job instructions | AI doesn't know what you want | Be specific about format, content, and delivery channel |
 | Too many alerts | Notification fatigue — you start ignoring them | Only alert for genuinely important things |
 | Setting heartbeat to 0 and forgetting | Agent becomes completely passive | If you want proactive behavior, enable heartbeats |
-| Cron jobs in wrong timezone | Tasks trigger at the wrong time | Verify your WSL2 timezone: `timedatectl` |
+| Cron jobs in wrong timezone | Tasks trigger at the wrong time | Verify your timezone: `timedatectl` |
 
 ### Fix Your Timezone
 

@@ -73,7 +73,7 @@ Discord — medium difficulty, moderate security through server isolation. Solid
 
 WhatsApp — medium difficulty, but here's the catch: it needs a phone number, and ideally a SECOND phone number, not your personal one. We'll talk about why that matters. Third option.
 
-iMessage — macOS only. We're running Windows and WSL2 in this course. Not available to us. Moving on.
+iMessage — macOS only. We're running Ubuntu in this course. Not available to us. Moving on.
 
 Slack — medium difficulty, good workspace isolation. Makes sense if you're using this for work contexts. But for personal use? Telegram.
 
@@ -159,11 +159,11 @@ This token CONTROLS your bot. I need you to hear that. Anyone — ANYONE — who
 
 Do NOT screenshot it. Do NOT paste it in a group chat. Do NOT post it on GitHub. Do NOT text it to your friend "just to show them." Every one of those things has been done by someone, somewhere, and it ended badly every single time.
 
-NOW — remember the Notepad trick from Module 03? Same drill. Open Notepad on your computer. Paste the token. Verify it's on a single clean line with no extra spaces, no line breaks, no invisible characters that snuck in during copy-paste. Then copy it FROM Notepad. Clean copy. Verified copy. That's what goes into OpenClaw.
+NOW — remember the text editor trick from Module 03? Same drill. Open a text editor — type `gedit` in your terminal to open one. Paste the token. Verify it's on a single clean line with no extra spaces, no line breaks, no invisible characters that snuck in during copy-paste. Then copy it FROM the text editor. Clean copy. Verified copy. That's what goes into OpenClaw.
 
 [pause]
 
-Got your token? Stored safely? Notepad trick done? Good. Let's connect this thing.
+Got your token? Stored safely? Text editor trick done? Good. Let's connect this thing.
 
 ---
 
@@ -173,7 +173,7 @@ Open your Ubuntu terminal. You can have the TUI running in one terminal and a fr
 
 Type: npx openclaw channels add telegram. Hit enter.
 
-The wizard fires up and asks for your bot token. Paste it in — the CLEAN copy from Notepad. Not the raw copy from Telegram. The Notepad copy. Hit enter.
+The wizard fires up and asks for your bot token. Paste it in — the CLEAN copy from the text editor. Not the raw copy from Telegram. The text editor copy. Hit enter.
 
 [pause]
 
@@ -185,7 +185,7 @@ That second line? CRITICAL. DM pairing mode enabled by default. OpenClaw is doin
 
 [wait for responses]
 
-Nine times out of ten, if you got an error here, it's the token. Extra space. Line break. Invisible character. Go back to BotFather, regenerate the token if you need to, do the Notepad trick again, and re-paste. That fixes it almost every time.
+Nine times out of ten, if you got an error here, it's the token. Extra space. Line break. Invisible character. Go back to BotFather, regenerate the token if you need to, do the text editor trick again, and re-paste. That fixes it almost every time.
 
 ---
 
@@ -200,6 +200,8 @@ Second — grab your phone. Open Telegram. Search for your bot's username — th
 Now here's where it gets interesting. Because DM pairing mode is active — and it SHOULD be — your bot is NOT going to just start chatting with you. It doesn't know who you are yet. You haven't been verified. And your agent doesn't talk to STRANGERS.
 
 Instead, the bot sends you a pairing code. Something like "Pairing required. Your code: ABC123." Then you hop over to your OpenClaw TUI or dashboard on your laptop, and you'll see a notification about a pending pairing request. You approve it. Enter the code or click confirm — depends on your OpenClaw version.
+
+Quick note — pairing codes expire after one hour, and there can only be three pending at a time. If yours expires, just send another message to the bot and it'll generate a fresh code. No big deal.
 
 Once you approve the pairing, the handshake is complete. The bot now recognizes your Telegram account as authorized. The communication line is OPEN. And it's open ONLY to you.
 
@@ -307,6 +309,8 @@ Social engineering is ESPECIALLY easy in groups because bad actors can build tru
 
 The rule is simple. DMs only. Always. The ONLY exception requires sandboxing from Module 10, require-mention enabled, AND tool policies restricting what the bot can do from that channel. If you don't know what all three of those things are? Then you're not ready for the exception. Stick to the rule.
 
+And one more thing about Telegram specifically — bots have a feature called Privacy Mode. It's ON by default. That means in group chats, the bot can ONLY see messages that @mention it directly or are replies to its own messages. It can't see regular conversation. That's a safety net. Some people discover this setting in BotFather and think "oh, I'll turn it off so my bot can see everything in the group." NO. Leave it ON. Disabling Privacy Mode turns your bot into a passive listener for every single message in the group. That's a massive prompt injection attack surface. Leave it ON.
+
 DMs only. Tattoo it on your forearm.
 
 ---
@@ -317,7 +321,7 @@ Alright — lighter waters ahead. This slide is for those of you who want a SECO
 
 Discord setup has more steps than Telegram, but it's still doable. Here's the compressed version.
 
-Go to discord.com/developers/applications in your browser. Create a new application. Name it whatever you want. Then click Bot in the sidebar, reset the token — and YES, use the Notepad trick with this token too, same rules apply — and enable Message Content Intent under Privileged Gateway Intents. Without that intent, your bot literally CANNOT read messages. It's deaf.
+Go to discord.com/developers/applications in your browser. Create a new application. Name it whatever you want. Then click Bot in the sidebar, reset the token — and YES, use the text editor trick with this token too, same rules apply — and enable Message Content Intent under Privileged Gateway Intents. Without that intent, your bot literally CANNOT read messages. It's deaf.
 
 Then you need an invite link. OAuth2 section, check the "bot" scope, set permissions for reading and sending messages and reading history. Copy the generated URL. Open it in your browser. Invite the bot to a server.
 
@@ -429,7 +433,7 @@ Quick troubleshooting pass. These are the rocks people hit most often. Let me sa
 
 "My bot doesn't respond on Telegram." First thing to check — did you complete DM pairing? Check your OpenClaw dashboard for pending pairing requests. Nine times out of ten, the pairing request is just sitting there waiting for you to approve it.
 
-"Unauthorized error when connecting." Your bot token is wrong. It has a formatting issue. Extra space. Line break. Invisible character. Regenerate the token via BotFather, do the Notepad trick AGAIN, and re-paste. This fixes it almost every time.
+"Unauthorized error when connecting." Your bot token is wrong. It has a formatting issue. Extra space. Line break. Invisible character. Regenerate the token via BotFather, do the text editor trick AGAIN, and re-paste. This fixes it almost every time.
 
 "My bot responds to STRANGERS." Red alert. Your DM mode is set to "open." Change it IMMEDIATELY. npx openclaw config set channels.telegram.dmPolicy "pairing". Do it right now. Do not pass go. Do not collect two hundred dollars.
 
@@ -507,7 +511,7 @@ Two — DM pairing mode is your FIRST line of defense. It's the challenge at the
 
 Three — NEVER put your bot in group chats. DMs only. Always. This is the single most dangerous mistake new users make, and it's the easiest to prevent. Just... don't do it.
 
-Four — bot tokens are SECRETS. Treat them like passwords. Notepad trick. Don't share. Don't screenshot. Regenerate immediately if exposed.
+Four — bot tokens are SECRETS. Treat them like passwords. Text editor trick. Don't share. Don't screenshot. Regenerate immediately if exposed.
 
 Five — WhatsApp ideally needs a second phone number. Otherwise your bot has access to your personal messages, your contacts, your entire chat history. The convenience is real. The risk is also real.
 

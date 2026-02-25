@@ -36,7 +36,7 @@ Everything about your OpenClaw agent lives in one directory:
 ~/.openclaw/
 ```
 
-On your system (inside WSL2), that translates to:
+On your system, that translates to:
 
 ```
 /home/openclaw/.openclaw/
@@ -254,7 +254,7 @@ Traits are vague. Behaviors are catchable. Every ambiguity you resolve in the so
 ## Important Decisions
 - 2026-02-16: Chose Anthropic Claude as primary AI provider
 - 2026-02-16: Named agent "[Your Agent's Name]"
-- 2026-02-16: Set up on Windows 10 laptop with WSL2
+- 2026-02-16: Set up on dedicated Ubuntu laptop
 
 ## Project Status
 - Portfolio website: In progress, using Next.js + Tailwind
@@ -269,7 +269,7 @@ Traits are vague. Behaviors are catchable. Every ambiguity you resolve in the so
 - (Add as relevant)
 
 ## Technical Environment
-- Windows 10 22H2, WSL2 Ubuntu
+- Ubuntu 24.04 LTS
 - Node.js 22, VS Code
 - GitHub for version control
 - Vercel for deployments
@@ -657,7 +657,7 @@ Your agent can reference these files during conversations, creating a rich knowl
 
 ## Hands-On: Customizing Your Core Files
 
-Let's actually edit the files now. We'll use `nano` (the simple terminal text editor) from inside WSL2.
+Let's actually edit the files now. We'll use `nano` (the simple terminal text editor) in your terminal.
 
 ### Editing IDENTITY.md
 
@@ -764,8 +764,9 @@ git push -u origin main
 | Writing vague instructions | "Be good" tells the AI nothing useful | Be specific: "Respond in 2-3 sentences for simple questions" |
 | Putting everything in one file | Hard to maintain, hard for the AI to parse | Use each file for its intended purpose |
 | Editing JSON config files directly | Can break your installation | Use `npx openclaw config` or the TUI `/config` command instead |
-| Forgetting to restart after changes | The gateway loads files on startup; changes won't take effect until restart | Run `npx openclaw gateway restart` after editing core files |
+| Expecting instant changes | Workspace `.md` files are picked up on the **next message** (hot-reload), but config changes (JSON) require a gateway restart | Edit `.md` files freely — just send a new message. For config changes: `npx openclaw gateway restart` |
 | Never updating the files | Your agent's knowledge becomes stale | Schedule a monthly review of all core files |
+| Writing files that are too large | Files over **20,000 characters** are silently truncated; total workspace is capped at **150,000 characters** | Keep files focused and concise. Split large files into smaller ones. |
 | Making the workspace repo public | Exposes personal information and API configurations | Always use a **private** repository |
 | Not backing up at all | A corrupted file or failed update could lose everything | Set up Git and commit regularly |
 

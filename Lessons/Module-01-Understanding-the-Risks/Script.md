@@ -363,7 +363,7 @@ Think of it like this. You're running OpenClaw on your computer. That computer h
 
 So how do you shrink its world?
 
-Run OpenClaw inside WSL2 — Windows Subsystem for Linux. It's already somewhat isolated from your Windows files. That's a good start.
+Run OpenClaw on a dedicated Ubuntu laptop. That gives you physical isolation from your personal files. Your agent's computer and your personal computer are two completely separate machines. That's the strongest isolation you can get without virtualization.
 
 Later, consider Docker sandboxing for even stronger isolation — we'll do that in Module 10.
 
@@ -645,7 +645,7 @@ You made it. That was the hardest module in the course. The heaviest. The most s
 
 You now understand the risks. You have a threat model — written in YOUR hand, for YOUR use cases. You have an incident response plan — specific to YOUR setup. You're going in with eyes wide open. Not blind. Not naive. Not overconfident. PREPARED.
 
-In Module 02, we're going to prepare your laptop. WSL2, Node.js, and everything your machine needs before OpenClaw touches it. We're building the dock before we launch the ship.
+In Module 02, we're going to prepare your laptop. Ubuntu, Node.js, and everything your machine needs before OpenClaw touches it. We're building the dock before we launch the ship.
 
 [pause]
 

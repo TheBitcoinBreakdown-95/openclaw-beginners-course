@@ -592,7 +592,7 @@ writing, organization, and anything else needed.
 ```markdown
 ## Important Decisions
 - 2026-02-16: Named agent "[Your Agent's Name]"
-- 2026-02-16: Set up on Windows 10 with WSL2
+- 2026-02-16: Set up on dedicated Ubuntu laptop
 
 ## Project Status
 - Portfolio website: In progress (Next.js + Tailwind)
@@ -800,7 +800,7 @@ Your agent's response
 
 ## Editing the Core Files
 
-Use `nano` (or any text editor) inside WSL2:
+Use `nano` (or any text editor) in your terminal:
 
 ```bash
 nano ~/.openclaw/workspace/IDENTITY.md
@@ -809,13 +809,13 @@ nano ~/.openclaw/workspace/IDENTITY.md
 - **Save:** `Ctrl + O`, then Enter
 - **Exit:** `Ctrl + X`
 
-**After editing, restart the ⛵ gateway to load changes:**
+**After editing workspace files:**
 
-```bash
-npx openclaw gateway restart
-```
+Workspace `.md` files are **hot-reloaded** — your agent picks up changes on the next message you send. No restart needed!
 
-Changes do NOT take effect until you restart. This is the most common mistake students make.
+Config changes (JSON) still require: `npx openclaw gateway restart`
+
+> **File size limits:** Max **20,000 characters** per file, **150,000 characters** total. Files over the limit are silently truncated.
 
 ---
 
@@ -847,7 +847,8 @@ git commit -m "Workspace update: $(date +%Y-%m-%d)"
 | Writing vague instructions | Be specific: "Respond in 2-3 sentences for simple questions" |
 | Putting everything in one file | Use each file for its intended purpose |
 | Editing JSON config files directly | Use `npx openclaw config` or `/config` instead |
-| Forgetting to restart after changes | Run `npx openclaw gateway restart` |
+| Expecting instant config changes | Workspace `.md` files hot-reload; config changes need `gateway restart` |
+| Writing files that are too large | Max 20K chars/file, 150K total — split large files |
 | Never updating the files | Schedule a monthly review |
 | Making the workspace repo public | Always use a **private** repository |
 

@@ -355,7 +355,7 @@ Security professionals use frameworks to organize their thinking. For OpenClaw, 
 Isolation means limiting what the AI can access. The less it can touch, the less damage it can do if something goes wrong.
 
 **How to apply it:**
-- Run OpenClaw inside WSL2 (which is already somewhat isolated from your Windows files)
+- Run OpenClaw on a dedicated laptop with Ubuntu (physically isolated from your personal files)
 - Later, consider Docker sandboxing for even more isolation (Module 10)
 - Don't be logged into services you don't want the AI to access on the same machine
 - Use a dedicated browser profile for the agent — never your personal one
@@ -549,7 +549,7 @@ Here is your step-by-step plan for when things go wrong. Read it now. Bookmark i
 The single fastest thing you can do is stop the OpenClaw gateway process. This immediately halts all AI activity.
 
 ```bash
-# From your WSL terminal:
+# From your terminal:
 npx openclaw gateway stop
 
 # If that doesn't work, force kill:
@@ -837,6 +837,6 @@ Emergency contacts:
 
 You now understand the risks. You have a threat model. You have an incident response plan. You're going in with eyes wide open.
 
-In **[Module 02: Preparing Your Laptop](Module-02-Preparing-Your-Old-Laptop.md)**, we'll get your Windows 10 machine ready for OpenClaw by installing WSL2, Node.js, and everything else you'll need.
+In **[Module 02: Preparing Your Laptop](Module-02-Preparing-Your-Old-Laptop.md)**, we'll get your dedicated laptop ready for OpenClaw by installing Ubuntu, Node.js, and everything else you'll need.
 
 The dragons are still there. But now you can see them.

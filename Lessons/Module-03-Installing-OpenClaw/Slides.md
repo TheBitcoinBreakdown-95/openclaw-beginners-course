@@ -427,7 +427,7 @@ style: |
 
 By the end of this module, you will be able to:
 
-1. **Run** the 🦞 OpenClaw installer inside WSL2
+1. **Run** the 🦞 OpenClaw installer in your Ubuntu terminal
 2. **Walk through** every step of the onboarding wizard
 3. **Choose** an AI provider and configure your 🔑 API key
 4. **Avoid** the token formatting gotcha that breaks most first installs
@@ -459,12 +459,12 @@ By the end of this module, you will be able to:
 
 Make sure you have completed Module 02:
 
-- [ ] WSL2 with Ubuntu running
-- [ ] systemd enabled
+- [ ] Ubuntu installed and running
+- [ ] systemd running (out of the box on native Ubuntu)
 - [ ] Node.js 22+ installed
 - [ ] Your 🐚 Ubuntu terminal open
 
-**Everything in this module happens inside WSL2.**
+**Everything in this module happens in the Ubuntu terminal.**
 
 Also decide which AI provider you want to use...
 
@@ -609,7 +609,7 @@ We will walk through the Anthropic setup. Other providers follow the same patter
 This is where **most beginners get tripped up**.
 
 ### Getting your Anthropic API key:
-1. Go to **console.anthropic.com** in your Windows browser
+1. Go to **console.anthropic.com** in your browser
 2. Create an account if needed, verify email
 3. **Settings > Billing** -- add a payment method
 4. **Set a spending limit** ($20-50/month to start)
@@ -628,17 +628,17 @@ The key starts with `sk-ant-...` and is very long.
 ### The Problem (the #1 install error)
 Browsers add hidden characters (line breaks, spaces) when copying. Pasting directly into the terminal **corrupts the key**.
 
-### The Solution -- The Notepad Trick
+### The Solution -- The Text Editor Trick
 1. Copy the 🔑 API key from the Anthropic console
-2. Paste into **Notepad** on Windows -- verify it is **one single line** starting with `sk-ant-`
+2. Paste into a **text editor** (Text Editor app or `gedit`) -- verify it is **one single line** starting with `sk-ant-`
 3. Select all (`Ctrl + A`), copy (`Ctrl + C`)
-4. Paste into the terminal (`right-click` or `Ctrl + Shift + V`)
+4. Paste into the terminal (`Ctrl + Shift + V`)
 
 ```
 ? Enter your Anthropic API key: sk-ant-api03-xxxx...
 ```
 
-<!-- Speaker notes: This will save at least one student in every class. The Notepad trick is not optional -- make everyone do it. -->
+<!-- Speaker notes: This will save at least one student in every class. The text editor trick is not optional -- make everyone do it. -->
 
 ---
 
@@ -800,13 +800,13 @@ npx openclaw security audit --deep --fix # Fixes file permissions
 
 ---
 
-## Step 5: Access the Dashboard (optional on WSL)
+## Step 5: Access the Dashboard
 
-1. In Ubuntu, run: `npx openclaw dashboard --no-open`
+1. In your terminal, run: `npx openclaw dashboard --no-open`
 2. Copy the **full URL** it prints (includes your token)
-3. Paste it into your **Windows** browser
+3. Paste it into your browser
 
-> The dashboard has a known auth bug on WSL. If it won't connect, skip it — the **TUI is the primary interface**.
+> If the dashboard won't connect, skip it — the **TUI is the primary interface**.
 
 ### Dashboard vs. TUI
 
@@ -882,7 +882,7 @@ Use `restart` after any config change. Use `logs` to debug startup issues.
 | Problem | Fix |
 |---------|-----|
 | `openclaw: command not found` | Use `npx openclaw` instead -- the install does not add it to PATH |
-| "API key invalid" | Use the **Notepad trick** -- hidden line breaks are the cause |
+| "API key invalid" | Use the **text editor trick** -- hidden line breaks are the cause |
 | "Port already in use" | `npx openclaw config` (re-run wizard, change port), then restart |
 | "Connection refused" in browser | Check `npx openclaw gateway status`; use `http://` not `https://` |
 | Daemon does not start on boot | Verify systemd: `systemctl is-system-running` |
@@ -900,7 +900,7 @@ Use `restart` after any config change. Use `logs` to debug startup issues.
 | Token counter climbs fast | Use `/compact` to compress history; start new chats with `/new` |
 | "pairing required" | Run `npx openclaw devices list --json`, find requestId, approve with `npx openclaw devices approve ID` |
 | "auth failed" on dashboard | Run `npx openclaw dashboard --no-open` to get a tokenized URL. Paste the full URL into your browser. |
-| Dashboard still won't connect | Known WSL issue. Skip it — the TUI is the primary interface. |
+| Dashboard still won't connect | Skip it — the TUI is the primary interface |
 | `http` vs `https` | Use `http://` not `https://` for the dashboard URL |
 
 ---
@@ -929,7 +929,7 @@ Complete this checklist before proceeding to Module 04:
 ## 💎 Treasure Chest
 
 1. **Installation is one command** -- but the onboarding wizard is where the real setup happens
-2. **The token formatting gotcha is real** -- always paste API keys into Notepad first
+2. **The token formatting gotcha is real** -- always paste API keys into a text editor first
 3. **Start with loopback binding** -- most secure, only this machine can connect
 4. **Set API spending limits** before chatting -- tokens burn faster than you expect
 5. **The daemon keeps the gateway running 24/7** -- even after closing the terminal

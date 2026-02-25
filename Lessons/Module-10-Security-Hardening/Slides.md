@@ -428,7 +428,7 @@ style: |
 By the end of this module, you will be able to:
 
 1. **Explain** the three sandbox modes and three sandbox scopes
-2. **Set up Docker** for sandboxing on WSL2
+2. **Set up Docker** for sandboxing on Ubuntu
 3. **Configure tool policies** to restrict what your agent can do
 4. **Harden** your ⛵ gateway authentication
 5. **Isolate** your agent on a separate home network
@@ -524,7 +524,7 @@ npx openclaw config set sandbox.scope "agent"
 
 ## Setting Up Docker for Sandboxing
 
-### Step 1: Install Docker in WSL2
+### Step 1: Install Docker on Ubuntu
 
 ```bash
 sudo apt update

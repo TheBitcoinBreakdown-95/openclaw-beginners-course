@@ -87,7 +87,7 @@ Everything — and I mean EVERYTHING — about your OpenClaw agent lives in one 
 
 `~/.openclaw/`
 
-That's it. One directory. On your WSL2 system, that translates to `/home/openclaw/.openclaw/`. One folder. The entire ship. Every plank, every sail, every cannon, every map in the captain's quarters — all of it lives right here.
+That's it. One directory. On your Ubuntu system, that translates to `/home/openclaw/.openclaw/`. One folder. The entire ship. Every plank, every sail, every cannon, every map in the captain's quarters — all of it lives right here.
 
 Let me walk you through the compartments. Think of this like a tour of the ship's interior.
 
@@ -395,7 +395,7 @@ And there's a BONUS file. The course includes an OPERATIONS.md template. Copy it
 
 Alright, enough theory. Let's talk about actually DOING this.
 
-You're going to use `nano` inside WSL2. `nano` is the simplest terminal text editor on the planet. If you can type, you can use `nano`. No learning curve. No arcane key commands. Well — two key commands.
+You're going to use `nano` in your terminal. `nano` is the simplest terminal text editor on the planet. If you can type, you can use `nano`. No learning curve. No arcane key commands. Well — two key commands.
 
 `nano ~/.openclaw/workspace/IDENTITY.md`
 
@@ -504,13 +504,15 @@ Step three: ask your agent this exact question — "What is your name, and what 
 
 The response should reflect EVERYTHING you just wrote. If you named your agent and wrote it in IDENTITY.md, it should introduce itself by that name. If you wrote your goals in USER.md, it should mention them. If you defined the communication style in SOUL.md, the TONE of the response should match what you wrote.
 
-If it doesn't? Check three things. Did you save the files? Control-O, Enter. Did you restart the gateway? Did you edit the right files in the right directory — `~/.openclaw/workspace/`?
+If it doesn't? Check two things. Did you save the files? Control-O, Enter. Did you edit the right files in the right directory — `~/.openclaw/workspace/`? Here's the good news — workspace `.md` files are hot-reloaded. Your agent picks up changes on the NEXT message you send. No restart needed for identity, soul, memory — any of the `.md` files. JSON config changes are different — those still need a gateway restart. But your workspace files? Just save and send a message.
+
+One more thing while we're here — file size limits. Each workspace file can be at most 20,000 characters. The total across ALL workspace files is capped at 150,000 characters. Go over that limit and your files get silently truncated — the agent just doesn't see the rest. So keep your files focused and concise. If something is getting huge, split it into smaller files.
 
 [ask the audience] Who got a response that actually reflected their files? Hands up.
 
 [wait for responses]
 
-Beautiful. For anyone who didn't — don't panic. We'll troubleshoot together. Nine times out of ten it's the restart.
+Beautiful. For anyone who didn't — don't panic. We'll troubleshoot together. Check that you saved and that you're in the right directory.
 
 Part five: back it up. Five minutes. Initialize Git if you haven't already, add everything, commit with the message "Initial workspace: agent configured." Your first official backup. The first snapshot of your agent's identity. Treasure that commit.
 
@@ -532,7 +534,7 @@ Number five: back up your workspace with Git. It is IRREPLACEABLE. Not "inconven
 
 Number six: update regularly. Your agent should evolve as you do. Monthly review. Keep it current. Trim what's outdated.
 
-Number seven: restart the gateway after editing. Changes only take effect on restart. I cannot say this enough. I will keep saying it until it's burned into your memory like a brand on a barrel.
+Number seven: workspace files hot-reload — just send a new message after saving. Config changes still need a gateway restart. And watch those file size limits — 20,000 characters per file, 150,000 total.
 
 [pause]
 
@@ -544,7 +546,7 @@ You walked in here today with an agent that forgot you after every session. You'
 
 So your agent knows who it is. It knows who YOU are. It remembers things. It has rules. It has personality. Beautiful.
 
-But right now, the only way to talk to your agent is through the terminal. You have to sit down at the computer, open WSL2, fire up the TUI, and type. Which is fine for deep work sessions, but what about when you're on the bus? What about when you're lying in bed at 11 PM and you remember something you need your agent to handle? What about when you're walking the dog and an idea hits you?
+But right now, the only way to talk to your agent is through the terminal. You have to sit down at the computer, open a terminal, fire up the TUI, and type. Which is fine for deep work sessions, but what about when you're on the bus? What about when you're lying in bed at 11 PM and you remember something you need your agent to handle? What about when you're walking the dog and an idea hits you?
 
 Module 06: Connecting Messaging Channels. We're connecting your agent to Telegram. Your phone. Your tablet. Any device with Telegram installed. You'll be able to text your agent like you text a friend. Send it a message from the grocery store. Get a response while you're making dinner.
 

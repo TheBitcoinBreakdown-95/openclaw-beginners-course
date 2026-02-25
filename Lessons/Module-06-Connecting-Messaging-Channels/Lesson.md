@@ -111,13 +111,13 @@ to control your bot.
 
 > **Security warning:** This token controls your bot. Anyone with this token can send messages as your bot. Treat it like a password. Don't share it, don't post it in screenshots, don't commit it to public repositories.
 
-### Step 3: Use the Notepad Trick
+### Step 3: Use the Text Editor Trick
 
 Just like with your API key in Module 03:
 
-1. Paste the bot token into **Notepad** first
+1. Paste the bot token into a **text editor** first (type `gedit` in the terminal to open one)
 2. Verify it's on a single line with no extra spaces or line breaks
-3. Copy it from Notepad
+3. Copy it from the text editor
 
 ### Step 4: Connect Telegram to OpenClaw
 
@@ -133,7 +133,7 @@ Or use the onboarding-style channel setup:
 npx openclaw channels add telegram
 ```
 
-The wizard will ask for your bot token. Paste it (using the clean copy from Notepad).
+The wizard will ask for your bot token. Paste it (using the clean copy from the text editor).
 
 ```
 ? Enter your Telegram bot token: 7123456789:AAHdqTcvCH1vGWJxfSeofSAs0K5PALDsaw
@@ -170,6 +170,8 @@ The exact pairing process depends on the OpenClaw version, but typically:
 2. In your OpenClaw TUI or dashboard, you'll see a notification about a new pairing request
 3. Approve the pairing by entering the code or confirming in the dashboard
 4. Once paired, the bot responds to your messages
+
+> **Pairing codes expire after 1 hour**, and there's a maximum of 3 pending pairing requests at a time. If your code expires, just send another message to the bot and it will generate a new one.
 
 **After pairing is complete,** try sending a message:
 
@@ -252,7 +254,7 @@ Discord is a solid second channel, especially if you already use it. The setup i
 
 1. In your application settings, click **Bot** in the left sidebar
 2. Click **Reset Token** to generate a bot token
-3. **Copy the token** (use the Notepad trick!)
+3. **Copy the token** (use the text editor trick!)
 4. Under **Privileged Gateway Intents**, enable:
    - **Message Content Intent** (required for the bot to read messages)
 
@@ -424,6 +426,8 @@ The only exception is if you have:
 - Tool policies that restrict what the bot can do from that channel
 - A very specific, controlled use case
 
+> **Telegram Privacy Mode:** By default, Telegram bots have "Privacy Mode" enabled, which means they can only see messages that directly @mention them or are replies to the bot's own messages. They **cannot** see regular group messages. If you disable Privacy Mode (via BotFather > /setprivacy), the bot sees everything — massively increasing the prompt injection attack surface. **Leave Privacy Mode ON** unless you have a very specific reason.
+
 For now (and probably forever for most users): **DMs only.**
 
 ---
@@ -433,7 +437,7 @@ For now (and probably forever for most users): **DMs only.**
 | Mistake | Why It's Wrong | Fix |
 |---------|---------------|-----|
 | Bot doesn't respond on Telegram | DM pairing not completed | Check the dashboard for pending pairing requests |
-| "Unauthorized" error when connecting | Bot token is wrong or has formatting issues | Regenerate the token via BotFather, use Notepad trick |
+| "Unauthorized" error when connecting | Bot token is wrong or has formatting issues | Regenerate the token via BotFather, use text editor trick |
 | Bot responds to strangers | DM mode is set to "open" | Change to "pairing": `npx openclaw config set channels.telegram.dmPolicy "pairing"` |
 | WhatsApp connection drops frequently | Session expired or phone disconnected | Re-scan QR code with `npx openclaw channels login` |
 | Discord bot doesn't see messages | Message Content Intent not enabled | Enable it in Discord Developer Portal > Bot settings |
@@ -482,7 +486,7 @@ If you have a second Telegram account or a friend willing to help:
 1. **Telegram is the recommended first channel** — easy setup, good security, available everywhere
 2. **DM pairing mode is your first line of defense** — never set it to "open"
 3. **Never put your bot in group chats** — DMs only, always
-4. **Bot tokens are secrets** — treat them like passwords (Notepad trick, don't share, regenerate if exposed)
+4. **Bot tokens are secrets** — treat them like passwords (text editor trick, don't share, regenerate if exposed)
 5. **WhatsApp ideally needs a second phone number** — otherwise the bot has access to your personal messages
 6. **Discord needs a private server** — don't add the bot to public servers
 7. **Test security after setup** — verify the bot only responds to you

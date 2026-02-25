@@ -383,7 +383,7 @@ OpenClaw's built-in web search is functional, but Perplexity Pro is significantl
 2. **Get your Open Router API key:**
    - Go to Keys in the dashboard
    - Create a new key
-   - Copy it (Notepad trick!)
+   - Copy it (text editor trick!)
 
 3. **Add to OpenClaw:**
    ```bash
@@ -760,7 +760,7 @@ Unless you're willing to shell out ~$14,000 for a decked-out Mac Studio, you won
 ### Getting Started (If Interested)
 
 ```bash
-# Install Ollama (inside WSL2)
+# Install Ollama
 curl -fsSL https://ollama.com/install.sh | sh
 
 # Download Qwen 3 32B (if you have the hardware)

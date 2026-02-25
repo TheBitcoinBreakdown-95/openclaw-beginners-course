@@ -522,7 +522,7 @@ Use this token to access the HTTP API:
 
 > **Security warning:** This 🔑 token controls your bot. Anyone with it can send messages as your bot. Treat it like a password. Never share it, screenshot it, or commit it to public repos.
 
-**Use the Notepad trick:** Paste into Notepad first, verify it is one clean line, then copy from there.
+**Use the text editor trick:** Paste into a text editor first (`gedit`), verify it is one clean line, then copy from there.
 
 <!-- Speaker notes: Stress the security warning. Bot tokens are the single most common credential students accidentally leak. -->
 
@@ -550,7 +550,7 @@ The wizard asks for your bot 🔑 token:
 - DM pairing mode: enabled (default)
 ```
 
-<!-- Speaker notes: If students get errors here, the most common cause is a malformed token — extra spaces or line breaks from copy-paste. The Notepad trick prevents this. -->
+<!-- Speaker notes: If students get errors here, the most common cause is a malformed token — extra spaces or line breaks from copy-paste. The text editor trick prevents this. -->
 
 ---
 
@@ -574,7 +574,9 @@ npx openclaw gateway restart
 2. Approve the pairing in the 🦞 OpenClaw TUI or dashboard
 3. Once paired, the bot responds to your messages
 
-<!-- Speaker notes: This is the moment of truth. Walk around the room and help anyone who gets stuck at pairing. The approval step happens in the OpenClaw interface, not in Telegram. -->
+> Pairing codes expire after **1 hour** (max 3 pending). If it expires, just message the bot again.
+
+<!-- Speaker notes: This is the moment of truth. Walk around the room and help anyone who gets stuck at pairing. The approval step happens in the OpenClaw interface, not in Telegram. Codes expire after one hour and there can only be 3 pending at once. -->
 
 ---
 
@@ -665,7 +667,9 @@ Not "be careful." Not "use with caution." **Do not do it.**
 
 The only exception requires sandboxing (Module 10), require-mention, and tool policies.
 
-<!-- Speaker notes: Be firm here. Group chats are one of the biggest attack surfaces for personal AI agents. Even well-meaning friends can accidentally trigger dangerous behavior through prompt injection. -->
+> **Telegram Privacy Mode** (on by default) means bots only see @mentions in groups. Disabling it lets the bot see ALL messages — never do this.
+
+<!-- Speaker notes: Be firm here. Group chats are one of the biggest attack surfaces for personal AI agents. Even well-meaning friends can accidentally trigger dangerous behavior through prompt injection. Telegram's Privacy Mode is a safeguard — bots only see messages that @mention them. If someone disables it via BotFather, the bot sees everything in the group. -->
 
 ---
 
@@ -766,7 +770,7 @@ Store bot 🔑 credentials in a **dedicated password manager vault** (e.g., "Sha
 | Mistake | Fix |
 |---------|-----|
 | Bot does not respond on Telegram | Check dashboard for pending pairing requests |
-| "Unauthorized" error | Regenerate 🔑 token via BotFather, use Notepad trick |
+| "Unauthorized" error | Regenerate 🔑 token via BotFather, use text editor trick |
 | Bot responds to strangers | Change DM mode to "pairing" immediately |
 | WhatsApp connection drops | Re-scan QR code: `npx openclaw channels login` |
 | Discord bot can't see messages | Enable Message Content Intent in Developer Portal |

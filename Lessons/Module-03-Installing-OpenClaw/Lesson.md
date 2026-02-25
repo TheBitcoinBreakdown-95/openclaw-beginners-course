@@ -4,7 +4,7 @@
 
 By the end of this module, you will be able to:
 
-1. Run the OpenClaw installer inside WSL2
+1. Run the OpenClaw installer in your Ubuntu terminal
 2. Walk through every step of the onboarding wizard with confidence
 3. Choose an AI provider and configure your API key correctly
 4. Avoid the token formatting gotcha that breaks most first installations
@@ -34,12 +34,12 @@ By the end of this module, you will be able to:
 
 Make sure you've completed Module 02 and have:
 
-- [ ] WSL2 with Ubuntu running
-- [ ] systemd enabled
+- [ ] Ubuntu installed and running
+- [ ] systemd running (runs out of the box on native Ubuntu)
 - [ ] Node.js 22+ installed
 - [ ] Your Ubuntu terminal open
 
-**Open your Ubuntu terminal now.** Everything in this module happens inside WSL2.
+**Open your terminal now** (click Terminal in the dock or press `Ctrl+Alt+T`). Everything in this module happens in the Ubuntu terminal.
 
 Also decide which AI provider you want to use. Here's the comparison:
 
@@ -115,7 +115,7 @@ Run 'openclaw onboard' to get started.
 
 > **If you see an error about Node.js version:** Go back to Module 02 Step 3 and make sure you installed Node.js 22+ with nvm.
 
-> **If you see a network error:** Check your internet connection. WSL2 uses your Windows network, so if your Windows internet is working, WSL2 should too. If not, try `wsl --shutdown` from PowerShell and reopen Ubuntu.
+> **If you see a network error:** Check your internet connection. If your browser works, the terminal should too. Try closing and reopening the terminal.
 
 ---
 
@@ -161,7 +161,7 @@ Press Enter to select **Local Gateway**.
 
 The workspace is where OpenClaw stores everything — your agent's memory, configuration, session transcripts, skills, and more. The default `~/.openclaw/` is perfect.
 
-> **Remember from Module 02:** This creates the directory in your Linux file system (`/home/openclaw/.openclaw/`), not on your Windows C: drive. This is correct and important for performance.
+> **Note:** This creates the directory in your home directory (`/home/openclaw/.openclaw/`).
 
 ---
 
@@ -193,7 +193,7 @@ After selecting Anthropic, the wizard will guide you through getting your API ke
 
 **Step 4a: Create an Anthropic Account (if you don't have one)**
 
-1. Open your **Windows** web browser (not inside WSL)
+1. Open your web browser (Firefox, Chrome, etc.)
 2. Go to: https://console.anthropic.com/
 3. Click **Sign Up** if you don't have an account
 4. Create your account with email and password
@@ -228,21 +228,21 @@ This is the number one installation error. It's mentioned in multiple community 
 **The Problem:**
 When you copy an API key from your browser, your clipboard sometimes includes hidden characters — line breaks, extra spaces, or formatting. If you paste this directly into the OpenClaw wizard, the key is corrupted and authentication fails. You'll get errors like "Invalid API key" or "Authentication failed" even though the key is correct.
 
-**The Solution — The Notepad Trick:**
+**The Solution — The Text Editor Trick:**
 
 1. After copying the API key from the Anthropic console, **do NOT paste it into the terminal yet**
-2. Open **Notepad** on Windows (Start > type "Notepad" > open it)
-3. Paste the key into Notepad (`Ctrl + V`)
+2. Open a text editor — Ubuntu's **Text Editor** app (search "Text Editor" in Activities), or type `gedit` in a second terminal
+3. Paste the key into the text editor (`Ctrl + V`)
 4. **Look at the key carefully:**
    - It should be **one single line** of text
    - No line breaks in the middle
    - No extra spaces at the beginning or end
    - It should start with `sk-ant-` and be a continuous string
 5. If you see line breaks, delete them so the entire key is on one line
-6. Select the entire key in Notepad (`Ctrl + A`)
+6. Select the entire key (`Ctrl + A`)
 7. Copy it (`Ctrl + C`)
 8. Go back to your Ubuntu terminal
-9. Paste it into the wizard (`right-click` to paste in most terminals, or `Ctrl + Shift + V`)
+9. Paste it into the wizard (`Ctrl + Shift + V`)
 
 ```
 ? Enter your Anthropic API key: sk-ant-api03-xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
@@ -257,7 +257,7 @@ Press Enter.
 ```
 
 **If you see an error:**
-- Double-check you used the Notepad trick
+- Double-check you used the text editor trick
 - Make sure you're pasting the API key, not the API key name
 - Try generating a new key at console.anthropic.com
 - Make sure billing is set up (keys don't work without billing)
@@ -272,7 +272,7 @@ If you chose Google instead of Anthropic:
 2. Sign in with your Google account
 3. Click **Get API key** or go to Google AI Studio
 4. Create a new API key
-5. Copy it and use the **same Notepad trick** before pasting
+5. Copy it and use the **same text editor trick** before pasting
 
 Gemini Flash 3 gives you 20 free requests per day — enough to try everything in this course without spending money.
 
@@ -284,7 +284,7 @@ If you chose OpenAI:
 2. Sign in or create an account
 3. Go to **API Keys** in settings
 4. Click **Create new secret key**
-5. Copy it and use the **Notepad trick**
+5. Copy it and use the **text editor trick**
 6. Add billing at **Settings > Billing**
 
 ---
@@ -664,15 +664,15 @@ This ensures only your user account can read or write OpenClaw's configuration f
 
 ---
 
-## Step 5: Access the Dashboard (Control UI) — Optional on WSL
+## Step 5: Access the Dashboard (Control UI)
 
-The Control UI is a web-based dashboard for managing OpenClaw. You can access it from your Windows browser. However, the dashboard has a known authentication bug on WSL — if it won't connect, skip it. The TUI is the primary interface and does everything you need.
+The Control UI is a web-based dashboard for managing OpenClaw. You access it from your browser. If the dashboard won't connect, don't worry — the TUI is the primary interface and does everything you need.
 
 ### 5.1 Open the Dashboard
 
 1. In Ubuntu, run: `npx openclaw dashboard --no-open`
 2. It prints a URL with your token already included — copy the **full URL**
-3. Paste it into your Windows browser (Chrome, Edge, Firefox)
+3. Paste it into your browser (Firefox, Chrome, etc.)
 4. If it loads, you're in!
 
 **What you'll see:**
@@ -757,7 +757,7 @@ The key is **Active: active (running)**.
 
 1. Close your Ubuntu terminal window completely (click the X)
 2. Wait 10 seconds
-3. Reopen Ubuntu from the Start Menu (type "Ubuntu" and click it)
+3. Reopen the terminal (click Terminal in the dock, or press `Ctrl+Alt+T`)
 4. Run: `npx openclaw tui`
 5. The TUI should connect — if it does, the daemon is working
 
@@ -782,33 +782,29 @@ npx openclaw gateway status      # Check if daemon is running
 Let's take a step back and understand the architecture of what's now running on your machine:
 
 ```
-┌─────────────── Your Windows 10 Laptop ───────────────┐
+┌─────────────── Your Ubuntu Laptop ────────────────────┐
 │                                                        │
-│  ┌──────────── WSL2 (Ubuntu) ─────────────────────┐   │
-│  │                                                 │   │
-│  │  ┌─────────────────────────────────────────┐   │   │
-│  │  │        OpenClaw Gateway (daemon)         │   │   │
-│  │  │                                          │   │   │
-│  │  │  Port: 18789 (loopback only)            │   │   │
-│  │  │  Provider: Anthropic Claude Opus 4.6    │   │   │
-│  │  │                                          │   │   │
-│  │  │  ┌────────┐  ┌──────────┐  ┌────────┐  │   │   │
-│  │  │  │ Memory │  │ Sessions │  │ Config │  │   │   │
-│  │  │  └────────┘  └──────────┘  └────────┘  │   │   │
-│  │  │                                          │   │   │
-│  │  └──────────────────┬──────────────────────┘   │   │
-│  │                     │                           │   │
-│  │            ┌────────┴────────┐                  │   │
-│  │            │ ~/.openclaw/    │                  │   │
-│  │            │ (workspace)     │                  │   │
-│  │            └─────────────────┘                  │   │
-│  │                                                 │   │
-│  └─────────────────────────────────────────────────┘   │
+│  ┌─────────────────────────────────────────────┐      │
+│  │        OpenClaw Gateway (daemon)             │      │
+│  │                                              │      │
+│  │  Port: 18789 (loopback only)                │      │
+│  │  Provider: Anthropic Claude Opus 4.6        │      │
+│  │                                              │      │
+│  │  ┌────────┐  ┌──────────┐  ┌────────┐      │      │
+│  │  │ Memory │  │ Sessions │  │ Config │      │      │
+│  │  └────────┘  └──────────┘  └────────┘      │      │
+│  │                                              │      │
+│  └──────────────────┬───────────────────────────┘      │
+│                     │                                   │
+│            ┌────────┴────────┐                          │
+│            │ ~/.openclaw/    │                          │
+│            │ (workspace)     │                          │
+│            └─────────────────┘                          │
 │                                                        │
-│  ┌─────── Windows Browser ────────┐                    │
-│  │ http://127.0.0.1:18789/       │                    │
-│  │ (Dashboard / Control UI)       │                    │
-│  └────────────────────────────────┘                    │
+│  ┌─────── Browser ─────────────────┐                   │
+│  │ http://127.0.0.1:18789/        │                   │
+│  │ (Dashboard / Control UI)        │                   │
+│  └─────────────────────────────────┘                   │
 │                                                        │
 └────────────────────────────────────────────────────────┘
                          │
@@ -822,7 +818,7 @@ Let's take a step back and understand the architecture of what's now running on 
 ```
 
 Here's what's happening:
-1. The **OpenClaw gateway** runs as a daemon inside WSL2
+1. The **OpenClaw gateway** runs as a daemon on your Ubuntu laptop
 2. It stores everything in `~/.openclaw/` (the Linux file system)
 3. When you chat (via TUI or dashboard), your messages go to the gateway
 4. The gateway sends them to **Anthropic's API** and gets a response
@@ -840,7 +836,7 @@ Here's what's happening:
 
 **Fix:** Use `npx openclaw` instead of `openclaw` for all commands. This works every time. If npx says "Need to install the following packages," type `y` and press Enter.
 
-If you want to try getting the bare `openclaw` command to work, try closing and reopening your Ubuntu terminal (Start Menu > Ubuntu), or run:
+If you want to try getting the bare `openclaw` command to work, try closing and reopening your terminal (`Ctrl+Alt+T`), or run:
 
 ```bash
 source ~/.bashrc
@@ -856,8 +852,8 @@ But `npx openclaw` is the most reliable approach and is what we recommend throug
 1. Go back to the Anthropic console (console.anthropic.com)
 2. Create a new API key
 3. Copy it
-4. Paste into Notepad — verify it's one single line, no line breaks
-5. Copy from Notepad
+4. Paste into a text editor — verify it's one single line, no line breaks
+5. Copy from the text editor
 6. Run: `npx openclaw config` to re-run the wizard and paste the clean key when prompted
 
 ### Gateway Won't Start — "Port already in use"
@@ -878,14 +874,14 @@ npx openclaw gateway restart
 
 ### "Connection refused" When Opening Dashboard
 
-**What happened:** The gateway isn't running, or WSL2 networking isn't forwarding correctly.
+**What happened:** The gateway isn't running.
 
 **Fix:**
 1. Make sure the gateway is running: `npx openclaw gateway status`
 2. If it's not running: `npx openclaw gateway start`
 3. Make sure you're using `http://` not `https://` in the browser URL
 4. Try: `http://localhost:18789/` instead of `http://127.0.0.1:18789/`
-5. If WSL2 networking is the issue, try from inside WSL: `curl http://127.0.0.1:18789/`
+5. Test from the terminal: `curl http://127.0.0.1:18789/`
 
 ### Daemon Doesn't Start on Boot
 
@@ -893,7 +889,7 @@ npx openclaw gateway restart
 
 **Fix:**
 1. Verify systemd is running: `systemctl is-system-running`
-2. If not: go back to Module 02 Step 2 (enable systemd in wsl.conf)
+2. If not: systemd should already be running on native Ubuntu — try rebooting
 3. If systemd is running, reinstall the service:
 ```bash
 npx openclaw gateway install
@@ -948,13 +944,13 @@ Replace `<id>` with the actual requestId from the previous command's output.
 
 ### "Auth failed" or "Connect failed" on Dashboard
 
-**What happened:** The dashboard can't authenticate with the gateway. This is a known issue on WSL.
+**What happened:** The dashboard can't authenticate with the gateway.
 
 **Fix:**
 1. Run `npx openclaw dashboard --no-open` to get a tokenized URL
-2. Copy the **full URL** and paste it into your Windows browser
+2. Copy the **full URL** and paste it into your browser
 3. Make sure you're using `http://` not `https://`
-4. If it still won't connect, skip it — use the TUI instead (`npx openclaw tui`). The dashboard has a known auth bug on WSL that may be fixed in a future update.
+4. If it still won't connect, skip it — use the TUI instead (`npx openclaw tui`).
 
 Also try restarting the service with `npx openclaw gateway restart` and refreshing the browser.
 
@@ -982,7 +978,7 @@ Complete this checklist. Every item should pass before you proceed to Module 04.
 ## Key Takeaways
 
 1. **Installation is one command** — `curl -fsSL https://openclaw.ai/install.sh | bash` — but the onboarding wizard is where the real setup happens
-2. **The token formatting gotcha is real** — always paste API keys into Notepad first to check for hidden line breaks
+2. **The token formatting gotcha is real** — always paste API keys into a text editor first to check for hidden line breaks
 3. **Start with loopback binding** — only this machine can connect, which is the most secure option
 4. **Set API spending limits** before you start chatting — the AI burns through tokens faster than you expect
 5. **The daemon keeps the gateway running 24/7** — even when you close the terminal or restart your computer
@@ -996,7 +992,7 @@ Complete this checklist. Every item should pass before you proceed to Module 04.
 ## Further Reading
 
 - [OpenClaw Getting Started Guide](https://docs.openclaw.ai/start/getting-started) — Official installation docs
-- [OpenClaw Windows Guide](https://docs.openclaw.ai/platforms/windows) — Windows-specific instructions
+- [OpenClaw Linux Guide](https://docs.openclaw.ai/platforms/linux) — Linux-specific instructions
 - [Anthropic Console](https://console.anthropic.com/) — API key management and billing
 - Source material in the `../Research/` folder:
   - `100 hours of OpenClaw lessons in 35 minutes.md` — ghostdoc007's installation walkthrough

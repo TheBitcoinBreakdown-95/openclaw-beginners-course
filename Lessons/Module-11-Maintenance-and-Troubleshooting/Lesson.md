@@ -57,7 +57,7 @@ WEEKLY CHECK (10 minutes)
 □ Workspace backup:        cd ~/.openclaw && git add -A && git commit -m "Weekly backup $(date +%Y-%m-%d)"
 □ Review core files:       Are USER.md and MEMORY.md still accurate?
 □ Disable unused skills:   npx openclaw skills list (disable what you don't use)
-□ Check disk space:        df -h (inside WSL2)
+□ Check disk space:        df -h
 ```
 
 ---
@@ -342,7 +342,7 @@ Symptom:  AI doesn't respond, error about invalid key
 Cause:    Token formatting issue, expired key, or billing problem
 Fix:      1. Check key at your provider's console
           2. Regenerate if needed
-          3. Use Notepad trick when pasting new key
+          3. Use text editor trick when pasting new key
           4. npx openclaw config set models.providers.anthropic.apiKey "[NEW_KEY]"
 ```
 
@@ -389,32 +389,25 @@ Fix:      1. npx openclaw status
           3. Update: npx openclaw config set channels.discord.botToken "[NEW_TOKEN]"
 ```
 
-### WSL2 Errors
-
-**"WSL2 not running after reboot"**
-```
-Symptom:  Can't open Ubuntu terminal after Windows restart
-Cause:    WSL2 didn't start automatically
-Fix:      Open PowerShell: wsl --list --running
-          If empty: open Ubuntu from Start menu (it auto-starts)
-```
-
-**"WSL2 very slow"**
-```
-Symptom:  Commands take forever inside WSL2
-Cause:    Windows Defender scanning, RAM limits, or disk I/O
-Fix:      1. Exclude WSL2 directory from Windows Defender
-          2. Create/edit %USERPROFILE%\.wslconfig with memory limits
-          3. Run: wsl --shutdown, then reopen Ubuntu
-```
+### Ubuntu System Errors
 
 **"systemd not running"**
 ```
 Symptom:  systemctl commands fail, daemon won't start
-Cause:    systemd not enabled in wsl.conf
-Fix:      sudo nano /etc/wsl.conf
-          Add: [boot] on one line, systemd=true on next line
-          Save, then: wsl --shutdown from PowerShell, reopen Ubuntu
+Cause:    systemd issue (rare on native Ubuntu)
+Fix:      sudo systemctl daemon-reload
+          npx openclaw gateway install
+          npx openclaw gateway start
+```
+
+**"System very slow"**
+```
+Symptom:  Commands take forever, high CPU usage
+Cause:    Background updates, low disk space, or swap exhaustion
+Fix:      1. Check disk space: df -h (ensure >2 GB free)
+          2. Check memory: free -h
+          3. Stop background updates: sudo apt-mark hold unattended-upgrades
+          4. Reboot: sudo reboot
 ```
 
 ### Performance Issues
@@ -524,6 +517,26 @@ npx openclaw cron remove [name]        # Remove a job
 npx openclaw cron disable [name]       # Disable a job
 ```
 
+### Nuclear Options (Last Resort)
+
+```bash
+npx openclaw reset --dry-run              # Preview what reset would clear
+npx openclaw reset --scope config         # Reset config/creds/sessions (DESTRUCTIVE)
+npx openclaw uninstall                    # Complete clean uninstall (DESTRUCTIVE)
+```
+
+> **Warning:** These are irreversible. `reset` wipes configuration, credentials, and sessions. `uninstall` removes everything. Always run `--dry-run` first, and make sure you have a Git backup of your workspace before touching either command.
+
+### Verbose Logging for Troubleshooting
+
+When standard logs aren't enough, enable debug-level logging:
+
+```bash
+OPENCLAW_LOG_LEVEL=debug npx openclaw gateway start
+```
+
+This shows detailed internal state — API calls, message routing, config loading, etc. Useful for diagnosing issues that don't show up in normal logs. Set it back to normal by restarting without the variable.
+
 ### TUI Commands (Inside the Chat)
 
 ```
@@ -571,6 +584,17 @@ npx openclaw cron disable [name]       # Disable a job
 ║  /status      Session info                                        ║
 ║  /help        All commands                                        ║
 ║  /exit        Leave chat                                          ║
+║                                                                   ║
+║  TROUBLESHOOTING                                                   ║
+║  OPENCLAW_LOG_LEVEL=debug npx openclaw gateway start               ║
+║                               Verbose logging for diagnosis        ║
+║  npx openclaw update           Update OpenClaw                     ║
+║  npx openclaw update --dry-run Preview what update will change     ║
+║                                                                   ║
+║  NUCLEAR OPTIONS (LAST RESORT -- DESTRUCTIVE)                      ║
+║  npx openclaw reset --dry-run  Preview what reset clears           ║
+║  npx openclaw reset --scope config  Wipe config/creds/sessions    ║
+║  npx openclaw uninstall        Complete clean removal              ║
 ║                                                                   ║
 ║  EMERGENCY (INCIDENT RESPONSE)                                    ║
 ║  1. npx openclaw gateway stop     STOP the agent                  ║
@@ -631,7 +655,7 @@ When asking for help, include:
 1. What you were trying to do
 2. The exact error message
 3. Your OpenClaw version (`npx openclaw --version`)
-4. Your OS (Windows 10 WSL2 in our case)
+4. Your OS (Ubuntu 24.04 LTS in our case)
 5. What you've already tried
 
 ---
@@ -643,7 +667,7 @@ If you've followed this course from Module 00 to Module 11, verify you've accomp
 ### Foundation
 - [ ] Understand what OpenClaw is and how it works (Module 00)
 - [ ] Understand the security risks and have a threat model (Module 01)
-- [ ] WSL2 installed with Ubuntu, systemd enabled, Node.js 22+ (Module 02)
+- [ ] Ubuntu installed, Node.js 22+ (Module 02)
 
 ### Installation
 - [ ] OpenClaw installed and running as a daemon (Module 03)

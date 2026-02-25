@@ -157,6 +157,8 @@ For right now, here's the bottom line: set your heartbeat to 55 minutes, route i
 
 And if you're not ready for any proactive behavior yet — if you're still learning the ropes and you want to keep costs at zero while you figure things out — that's totally fine. Set it to zero. Turn it on later when you're ready.
 
+Oh, and one more thing on this slide — see that last option about restricting heartbeats to daytime only? This is the active hours feature. You set a start time, an end time, and a timezone — and heartbeats ONLY fire within that window. So if you set it to 7 AM to 11 PM, your agent sleeps through the night. No 3 AM pings. No wasted tokens while you're asleep. No notification buzzing on your phone at midnight because your agent decided to check in. Set it and forget it.
+
 ---
 
 ## Slide 8 — Use Cheap Models for Heartbeats
@@ -399,7 +401,7 @@ Price alerts, hourly: check the Bitcoin price, or any stock, or any metric you c
 
 News monitoring every four hours: same principle. Only alert for genuinely important stories. Save the routine stuff for the morning brief.
 
-Best practices — be SPECIFIC about format, content, and where the message goes. Set alerts for important things ONLY. Notification fatigue is real — if your agent messages you forty times a day, you'll start ignoring it, and then you'll miss the one message that actually mattered. And always verify your WSL2 timezone with `timedatectl`. Nothing more frustrating than a morning brief arriving at 2 AM because your system thinks you're in UTC.
+Best practices — be SPECIFIC about format, content, and where the message goes. Set alerts for important things ONLY. Notification fatigue is real — if your agent messages you forty times a day, you'll start ignoring it, and then you'll miss the one message that actually mattered. And always verify your system timezone with `timedatectl`. Nothing more frustrating than a morning brief arriving at 2 AM because your system thinks you're in UTC.
 
 ---
 
@@ -519,7 +521,7 @@ Vague cron job instructions. "Do my weekly review" — your agent doesn't know w
 
 Too many alerts. If your phone is buzzing every ten minutes with updates from your agent, you will start ignoring ALL of them. Then the one that says "URGENT: your server is down" gets lost in the noise. Only alert for things that genuinely need your attention.
 
-And timezone issues. This one is sneaky. Your cron jobs use your system timezone. If your WSL2 instance thinks it's in UTC and you're in Central time, your "7 AM" morning brief arrives at 1 AM. Check it with `timedatectl`. Fix it once. Never think about it again.
+And timezone issues. This one is sneaky. Your cron jobs use your system timezone. If your system thinks it's in UTC and you're in Central time, your "7 AM" morning brief arrives at 1 AM. Check it with `timedatectl`. Fix it once. Never think about it again.
 
 ---
 

@@ -25,7 +25,7 @@ One more thing before we shove off. There IS a gotcha in this module that trips 
 
 Here's our chart for today — eight ports of call, and every single one of them ends with something WORKING on your machine.
 
-Port one: you'll run the OpenClaw installer inside WSL2. One command. That's it. One command and the software is on your ship.
+Port one: you'll run the OpenClaw installer in your Ubuntu terminal. One command. That's it. One command and the software is on your ship.
 
 Port two: the onboarding wizard. Fourteen questions, and we're walking through EVERY one of them together. No guessing. No "I think this is right?" We KNOW what's right because I'm going to tell you.
 
@@ -75,11 +75,7 @@ Logbook stowed. Now let's check our gear.
 
 Before we touch a single command, let's do a gear check. I need a show of hands for each one of these.
 
-WSL2 with Ubuntu running — who's got that?
-
-[wait for responses]
-
-Systemd enabled — who confirmed that back in Module 02?
+Ubuntu installed and running — who's got that?
 
 [wait for responses]
 
@@ -91,7 +87,7 @@ And who has their Ubuntu terminal OPEN right now, ready to go?
 
 [wait for responses]
 
-Good. If you're missing ANY of those, you need to hop back to Module 02 and get squared away. Everything — and I mean EVERYTHING — in this module happens inside WSL2. Not PowerShell. Not Command Prompt. Not your Windows desktop. Inside. Ubuntu. That's your ship. That's where we work.
+Good. If you're missing ANY of those, you need to hop back to Module 02 and get squared away. Everything — and I mean EVERYTHING — in this module happens in your Ubuntu terminal. That's your ship. That's where we work.
 
 Now — one more thing. Before we install, you need to know which AI provider you want to use. So let's talk about your options.
 
@@ -191,7 +187,7 @@ If you see that? Congratulations. OpenClaw is on your ship. The software is inst
 
 If you see an error about Node.js version — go back to Module 02 Step 3. Your Node isn't new enough.
 
-If you see a network error — check your internet. WSL2 uses your Windows network, so if your browser works, WSL should too. If it's being weird, try running `wsl --shutdown` from PowerShell, reopen Ubuntu, and try again.
+If you see a network error — check your internet. Try opening a browser and loading any website. If that works but the terminal can't connect, try `sudo systemctl restart NetworkManager` and run the install command again.
 
 [ask the audience] Everyone good? Anyone stuck? Raise a hand if you need a minute.
 
@@ -233,7 +229,7 @@ Question one: Gateway type. You'll see two options — Local Gateway and Remote 
 
 Question two: Workspace directory. It'll show you a default path — `~/.openclaw` — and ask if that's cool. YES, that's cool. Press enter. Accept the default.
 
-This creates the workspace directory in your Linux file system — inside WSL2 — at `/home/yourusername/.openclaw/`. NOT on your Windows C: drive. This is correct. This is important. Linux filesystem is faster for Linux processes. Don't fight it. Don't move it. Don't get creative. Default is perfect.
+This creates the workspace directory at `/home/yourusername/.openclaw/`. That tilde — `~` — is shorthand for your home directory. Default is perfect. Don't move it. Don't get creative.
 
 [pause]
 
@@ -247,7 +243,7 @@ Question three: Select your AI provider. You'll see a list — Anthropic, OpenAI
 
 Pick whichever provider you decided on back when we looked at the comparison table. If you're following our recommendation, that's ANTHROPIC. Arrow key down to it if it's not already highlighted, and press enter.
 
-I'm going to walk through the Anthropic setup from here because that's what most of you are using. If you chose Google or OpenAI, the process is nearly identical — you'll be asked for an API key, and the same rules apply. The Notepad trick we're about to cover? Works for ALL providers. The spending limit advice? Applies to everyone with a paid API.
+I'm going to walk through the Anthropic setup from here because that's what most of you are using. If you chose Google or OpenAI, the process is nearly identical — you'll be asked for an API key, and the same rules apply. The text editor trick we're about to cover? Works for ALL providers. The spending limit advice? Applies to everyone with a paid API.
 
 [pause]
 
@@ -259,7 +255,7 @@ Alright. The next step is the big one. The one where first-time installers get s
 
 Here's where we get your agent its fuel. Your API key. This is the secret credential that lets OpenClaw talk to Anthropic's servers and use Claude's brain. Without it, your agent is a ship with no engine. So let's do this right.
 
-Step one: open your WINDOWS web browser. Not inside WSL. Your normal browser — Chrome, Edge, Firefox, whatever. Go to console.anthropic.com. This is Anthropic's developer console.
+Step one: open your web browser. Chrome, Firefox, whatever you have installed. Go to console.anthropic.com. This is Anthropic's developer console.
 
 If you don't have an account, click Sign Up. Create one. Email and password. Verify your email. Standard stuff.
 
@@ -273,7 +269,7 @@ Step four: create the actual API key. Settings, API Keys, click Create Key. Name
 
 COPY IT. Right now. But — and here's the critical part — do NOT paste it into your terminal yet. There's one more step. And this step is the difference between your installation working on the first try and you spending forty-five minutes wondering why your perfectly valid API key is "invalid."
 
-Quick tip — if you created your API key on your phone or another computer and need to get it to this laptop, the easiest way is just email it to yourself and open the email in Edge on this machine. Copy it from the email, then do the Notepad trick we're about to cover. If you've got Tailscale set up from Module 02, you can also right-click a file on your other device and choose "Send with Tailscale" to beam it over. Either way works. Just get the key onto THIS machine's clipboard.
+Quick tip — if you created your API key on your phone or another computer and need to get it to this laptop, the easiest way is just email it to yourself and open the email on this machine's browser. Copy it from the email, then do the text editor trick we're about to cover. If you've got Tailscale set up from Module 02, you can also use Taildrop to beam it over. Either way works. Just get the key onto THIS machine's clipboard.
 
 ---
 
@@ -285,25 +281,25 @@ Here's what happens. You copy your API key from the Anthropic console in your br
 
 The problem is invisible. Literally invisible. When you copy text from a web browser, your clipboard sometimes picks up hidden hitchhikers — line breaks, extra spaces, weird formatting characters. You can't see them. But the terminal can. And to the terminal, `sk-ant-[invisible garbage]api03-xxxxx` is NOT a valid key. Your key is corrupted and you don't even know it.
 
-The solution is dead simple. I call it the Notepad Trick. And I need EVERY person in this room to do this. Not "I think my clipboard is fine." Not "I'll skip it this time." EVERY. PERSON.
+The solution is dead simple. I call it the Text Editor Trick. And I need EVERY person in this room to do this. Not "I think my clipboard is fine." Not "I'll skip it this time." EVERY. PERSON.
 
 Step one: you've copied the key from the Anthropic console. Good.
 
-Step two: open Notepad on Windows. Start menu, type Notepad, open it.
+Step two: open a text editor. In your Ubuntu terminal, type `gedit` and press Enter. A simple text editor window opens up.
 
-Step three: paste the key into Notepad. Ctrl + V.
+Step three: paste the key into the text editor. Ctrl + V.
 
 Step four: LOOK at it. Really look. It should be ONE single line of text. No line breaks in the middle. No extra spaces at the beginning or end. It should start with `sk-ant-` and be one continuous unbroken string of characters.
 
 Step five: if you see line breaks — delete them. Squash it all onto one line.
 
-Step six: select the entire key in Notepad. Ctrl + A. Copy it. Ctrl + C.
+Step six: select the entire key. Ctrl + A. Copy it. Ctrl + C.
 
-Step seven: NOW go to your Ubuntu terminal and paste it. Right-click to paste, or Ctrl + Shift + V.
+Step seven: NOW go to your Ubuntu terminal and paste it. Ctrl + Shift + V.
 
 The wizard will validate the key. If you see a checkmark and "API key validated, Connected to Anthropic" — you're GOLDEN. Your engine just roared to life.
 
-If it still fails, try generating a brand new key and running the Notepad trick again. Make sure your billing is set up — keys don't work without billing activated.
+If it still fails, try generating a brand new key and running the text editor trick again. Make sure your billing is set up — keys don't work without billing activated.
 
 [ask the audience] Everyone through? Anyone stuck on the API key? This is the one spot I expect trouble, so speak up now.
 
@@ -497,21 +493,19 @@ Three checks passed. Your ship is seaworthy. Now let's look around the bridge.
 
 ---
 
-## Slide 21 — Step 5: Access the Dashboard (Optional on WSL)
+## Slide 21 — Step 5: Access the Dashboard
 
-Time to see the pretty side of your operation. Fair warning though — the dashboard has a known authentication bug on WSL. It might not work. If it doesn't, that's fine — the TUI is the primary interface and does everything you need.
-
-Let's try it anyway. In your Ubuntu terminal, run:
+Time to see the pretty side of your operation. In your Ubuntu terminal, run:
 
 `npx openclaw dashboard --no-open`
 
-This prints a URL with your token already baked in. Copy the FULL URL — the whole thing — and paste it into your Windows browser. That's HTTP — not HTTPS. Important distinction.
+This prints a URL with your token already baked in. Copy the FULL URL — the whole thing — and paste it into your browser. That's HTTP — not HTTPS. Important distinction.
 
 If it loads — you're in. Welcome to the Control UI. The dashboard. The bridge of your ship, rendered in a web browser.
 
 What you'll see: your gateway status front and center. Connected channels — none yet, that's Module 06. Agent information. Conversation history — empty for now, but not for long. Configuration options. It's clean, it's functional, and it's running entirely on YOUR machine.
 
-If it says "connect failed" or "auth failed" — don't panic, don't troubleshoot, just skip it. This is a known WSL bug. The TUI works perfectly and that's what matters.
+If it says "connect failed" or "auth failed" — try running `npx openclaw dashboard --no-open` again to get a fresh tokenized URL. Make sure you're using `http://` not `https://`. If it still won't connect, skip it — the TUI is the primary interface and does everything you need.
 
 [pause]
 
@@ -575,7 +569,7 @@ Second: the REAL test. Close your Ubuntu terminal. Completely. Click the X. Kill
 
 Wait ten seconds. Let the silence sit. Your terminal is gone. No command line. No shell. Nothing.
 
-Now reopen Ubuntu from the Start Menu. Type "Ubuntu," click it. Run `npx openclaw tui`.
+Now reopen the terminal. Press Ctrl+Alt+T. Run `npx openclaw tui`.
 
 Does it connect?
 
@@ -603,7 +597,7 @@ Alright — let's talk about what happens when things go sideways. Because they 
 
 "openclaw: command not found" — this is the NUMBER ONE question I get. The install doesn't always add `openclaw` to your PATH. The fix is simple: use `npx openclaw` instead. Every command in this course uses `npx openclaw` for exactly this reason. If `npx` itself doesn't work, check that Node.js is installed with `node --version`. If you want to try fixing the PATH, run `source ~/.bashrc` or close and reopen your terminal — but `npx` is the reliable workaround.
 
-"API key invalid" — the token formatting gotcha. I TOLD you. Nine times out of ten, hidden characters in your clipboard corrupted the key. Go back to the Anthropic console, generate a FRESH key, run the Notepad trick, paste the clean version. Use `npx openclaw config` to update it without re-running the whole wizard.
+"API key invalid" — the token formatting gotcha. I TOLD you. Nine times out of ten, hidden characters in your clipboard corrupted the key. Go back to the Anthropic console, generate a FRESH key, run the text editor trick, paste the clean version. Use `npx openclaw config` to update it without re-running the whole wizard.
 
 "Port already in use" — something else claimed port 18789 before you did. Run `npx openclaw config` to change the port, then `npx openclaw gateway restart`.
 
@@ -611,9 +605,9 @@ Alright — let's talk about what happens when things go sideways. Because they 
 
 "Pairing required" — this is the device pairing security feature we covered in Slide 18b. Run `npx openclaw devices list --json` to find the requestId, then `npx openclaw devices approve [requestId]`. You only have to do this once per device.
 
-"Auth failed" on the dashboard — run `npx openclaw dashboard --no-open` to get a tokenized URL. Copy the FULL URL and paste it into your browser. Make sure it says `http://` not `https://`. If it STILL won't connect, skip it — the dashboard fails on Windows 10 WSL because NAT networking makes the gateway see your browser as a remote device instead of localhost, and there's no fix until Windows 11. The TUI works perfectly because it runs inside WSL itself, so it's truly local.
+"Auth failed" on the dashboard — run `npx openclaw dashboard --no-open` to get a tokenized URL. Copy the FULL URL and paste it into your browser. Make sure it says `http://` not `https://`. If it STILL won't connect, skip it — the TUI is the primary interface and it works perfectly.
 
-Daemon doesn't start on boot — systemd probably isn't enabled. Run `systemctl is-system-running`. If that's the problem, go back to Module 02 and enable systemd in your wsl.conf.
+Daemon doesn't start on boot — check systemd. Run `systemctl is-system-running`. It should say "running." If it doesn't, something went wrong with your Ubuntu installation. Try `sudo systemctl daemon-reload` and then `npx openclaw gateway install` to reinstall the service.
 
 AI responses are very slow — like thirty seconds or more — check the Anthropic status page at status.anthropic.com. Opus IS slower than lighter models. One to ten seconds is normal. If it's consistently glacial, try switching to Sonnet temporarily with `npx openclaw config`.
 
@@ -671,7 +665,7 @@ Alright, crew — let's haul the treasure chest out of the hold and count our lo
 
 One: installation is ONE COMMAND. `curl -fsSL https://openclaw.ai/install.sh | bash`. But the onboarding wizard is where the real setup happens. One command to install. Fourteen questions to configure. That's the whole process.
 
-Two: the token formatting gotcha is REAL. Always paste API keys into Notepad first. Check for hidden line breaks. Copy clean. Paste clean. This will save you every time.
+Two: the token formatting gotcha is REAL. Always paste API keys into a text editor first. Check for hidden line breaks. Copy clean. Paste clean. This will save you every time.
 
 Three: start with loopback binding. Only this machine can connect to your gateway. Most secure option. Loosen later if you need to, but start tight.
 

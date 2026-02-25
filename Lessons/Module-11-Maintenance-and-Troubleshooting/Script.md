@@ -13,7 +13,7 @@ Module Eleven. The LAST module. The final port of call.
 
 [pause]
 
-Look around the room. Every single person here started this journey not knowing what a gateway was. Not knowing what a daemon was. Some of you couldn't spell WSL2 let alone install it. And now? Now you've got a fully configured, security-hardened, skill-loaded, heartbeat-running AI personal assistant living on your laptop. You BUILT that. From scratch. From nothing.
+Look around the room. Every single person here started this journey not knowing what a gateway was. Not knowing what a daemon was. Some of you had never opened a terminal in your life. And now? Now you've got a fully configured, security-hardened, skill-loaded, heartbeat-running AI personal assistant living on your laptop. You BUILT that. From scratch. From nothing.
 
 But here's the thing — and I need you to hear this — building the ship is only half the job. The other half? KEEPING it afloat. Maintaining it. Knowing what to do when the engine sputters at 3 AM. Knowing what to do when the hull springs a leak and water starts pouring in. Because it WILL happen. Not if. WHEN.
 
@@ -39,7 +39,7 @@ Port three: updating OpenClaw safely. Not just running a command and praying. SA
 
 Port four: backup and restore. Because the day you need a backup and don't have one? That's the worst day. And it's completely preventable.
 
-Port five: diagnosing and fixing the most common errors. We're going through a whole catalog. Gateway won't start? Got it. API key invalid? Got it. Telegram bot silent? Got it. WSL2 acting possessed? Yeah, got that too.
+Port five: diagnosing and fixing the most common errors. We're going through a whole catalog. Gateway won't start? Got it. API key invalid? Got it. Telegram bot silent? Got it. System acting sluggish? Yeah, got that too.
 
 Port six: the command cheat sheet. Your quick reference card. Every command you'll ever need, organized and ready to go.
 
@@ -133,7 +133,7 @@ Review your core files. Are USER.md and MEMORY.md still accurate? Your life chan
 
 Disable unused skills. Every skill loaded into context costs tokens on EVERY message. Three thousand to fourteen thousand tokens per call. If you installed a skill three weeks ago and haven't used it since? Disable it. You can re-enable it anytime.
 
-Check disk space. `df -h` inside WSL2. Logs accumulate. Sessions accumulate. Make sure you're not running out of room on the boat.
+Check disk space. `df -h`. Logs accumulate. Sessions accumulate. Make sure you're not running out of room on the boat.
 
 [pause]
 
@@ -307,7 +307,7 @@ Gateway errors are the most common category. And the good news? Every single one
 
 API errors. These are about your connection to the AI brain.
 
-"API key invalid." The AI doesn't respond. Authentication error. This usually means one of three things: the key has a formatting issue from when you pasted it, the key expired, or you have a billing problem. Go to your provider's console, check the key, regenerate if needed. Remember the Notepad trick from Module Three — paste the key into Notepad first to strip hidden characters, then copy from Notepad into the terminal. Update with `npx openclaw config set models.providers.anthropic.apiKey` and the new key.
+"API key invalid." The AI doesn't respond. Authentication error. This usually means one of three things: the key has a formatting issue from when you pasted it, the key expired, or you have a billing problem. Go to your provider's console, check the key, regenerate if needed. Remember the text editor trick from Module Three — paste the key into a text editor first to strip hidden characters, then copy from there into the terminal. Update with `npx openclaw config set models.providers.anthropic.apiKey` and the new key.
 
 "Rate limit exceeded." The AI stops responding temporarily. You sent too many requests too fast. Just wait one to five minutes and try again. If it keeps happening, reduce your heartbeat frequency. You might be hitting the provider's rate ceiling.
 
@@ -325,19 +325,17 @@ API and channel errors are almost always quick fixes. The trick is KNOWING what 
 
 ---
 
-## Slide 15 — Damage Control: WSL2
+## Slide 15 — Damage Control: Ubuntu System
 
-WSL2 errors. These are Windows-specific and they will get you at least once. Guaranteed.
+Ubuntu system errors. These are about the foundation your ship sits on.
 
-"WSL2 not running after reboot." You restart your Windows machine, try to open Ubuntu, and... nothing. This happens because WSL2 doesn't always auto-start after a Windows reboot. Open PowerShell, run `wsl --list --running`. If the list is empty, just open Ubuntu from the Start menu. It'll start up. Crisis over.
+"systemd not running." You try to run `systemctl` commands and they fail. This is rare on native Ubuntu — systemd runs out of the box. But if it happens, run `sudo systemctl daemon-reload` to refresh the service database. Then reinstall the OpenClaw service with `npx openclaw gateway install` and start it with `npx openclaw gateway start`. That covers ninety-nine percent of systemd issues on a native install.
 
-"WSL2 very slow." Commands taking forever. Everything feels like molasses. Three possible causes, three fixes. First: Windows Defender is scanning your WSL2 directory in real time. Exclude it. Second: RAM limits. Create or edit a file called `.wslconfig` in your Windows user profile directory and set memory limits so WSL2 isn't fighting with Windows for resources. Third: just do a clean restart — `wsl --shutdown` from PowerShell, then reopen Ubuntu. Sometimes WSL2 just needs a fresh start. Like all of us.
-
-"systemd not running." You try to run `systemctl` commands and they fail. This means systemd isn't enabled in your WSL2 configuration. The fix: edit `/etc/wsl.conf`, add `[boot]` on one line and `systemd=true` on the next. Save it. Run `wsl --shutdown` from PowerShell. Reopen Ubuntu. Systemd will be running. We covered this in Module Two, but it's worth repeating because it bites people when they reinstall or update WSL2.
+"System very slow." Commands taking forever. Everything feels like molasses. A few possible causes. First: check disk space with `df -h`. If you're below two gigabytes free, you're in trouble — logs and sessions accumulate. Clean them up. Second: check memory with `free -h`. If swap is maxed out, your system is thrashing. Third: background Ubuntu updates might be running. They sometimes kick off automatically and chew up resources. A simple `sudo reboot` can fix most of these.
 
 [pause]
 
-WSL2 is the foundation your whole ship sits on. When the foundation wobbles, everything wobbles. These three fixes cover ninety percent of WSL2 issues you'll ever see.
+Ubuntu is solid — far more stable than the WSL approach some older tutorials teach. But no system is maintenance-free. These two fixes cover the most common system-level issues you'll see.
 
 ---
 
@@ -467,7 +465,27 @@ That's the complete cheat sheet. Every command you'll ever need for daily operat
 
 ---
 
-## Slide 21 — Rough Waters: Emergency Quick Reference
+## Slide 21 — Troubleshooting and Nuclear Options
+
+Two more categories before we get to the emergency procedure.
+
+First — verbose logging. When something is broken and the normal logs aren't telling you enough, you can crank up the detail. `OPENCLAW_LOG_LEVEL=debug npx openclaw gateway start`. That environment variable tells OpenClaw to log EVERYTHING — API calls, message routing, config loading, the whole internal state. It's noisy, but when you're hunting a bug that doesn't show up in normal logs? This is your magnifying glass. Just restart the gateway normally when you're done — the debug logging only lasts for that one session.
+
+Second — the nuclear options. And I mean NUCLEAR. These are the break-glass, last-resort, "I've tried everything else" commands.
+
+`npx openclaw reset --dry-run` — shows you what a reset WOULD clear, without actually clearing anything. Always, ALWAYS run this first.
+
+`npx openclaw reset --scope config` — this wipes your configuration, credentials, and sessions. Your workspace files survive, but everything else? Gone. API keys, gateway tokens, channel connections, cron jobs — all of it. You're starting over from scratch on the config side. This is for when your config is so broken that doctor can't fix it and manual editing isn't working.
+
+`npx openclaw uninstall` — the total removal. Everything. The whole installation. As if OpenClaw was never there. You would only use this if you're truly done with OpenClaw or if something went catastrophically wrong and you need a completely fresh start.
+
+[pause]
+
+Both of these are IRREVERSIBLE. That's why I said nuclear. You MUST have a Git backup of your workspace before you touch either command. And you MUST run `--dry-run` first so you know exactly what you're about to lose. These are not commands you run casually. These are not commands you run when you're frustrated at 2 AM. These are planned, deliberate, backed-up operations.
+
+---
+
+## Slide 22 — Rough Waters: Emergency Quick Reference
 
 Now. The emergency procedure. We covered incident response in Module Ten, but this is the condensed, print-it-out, tape-it-next-to-your-monitor version. Five steps. In order. No thinking required.
 
@@ -491,7 +509,7 @@ Stop. Close. Freeze. Investigate. Restore. Perfect. Now PRINT THAT TABLE and kee
 
 ---
 
-## Slide 22 — Community Resources
+## Slide 23 — Community Resources
 
 You are not alone out there. I need you to internalize that. When you leave this course, you are NOT sailing solo into empty ocean. There's an entire fleet out there.
 
@@ -511,7 +529,7 @@ And here's the KEY to getting good help when you need it. Five things to include
 
 ---
 
-## Slide 23 — Skills vs. Agents: Know the Difference
+## Slide 24 — Skills vs. Agents: Know the Difference
 
 One more thing before we wrap up the technical content. This is a trap that catches EVERYONE eventually, and I want to inoculate you against it right now.
 
@@ -531,7 +549,7 @@ Default to skills. ALWAYS default to skills. Only create a new agent when you ge
 
 ---
 
-## Slide 24 — Course Completion Checklist
+## Slide 25 — Course Completion Checklist
 
 Let's take inventory. Let's see what you've actually built over these twelve modules.
 
@@ -561,7 +579,7 @@ Join the OpenClaw Discord community. The people there are where you were twelve 
 
 ---
 
-## Slide 25 — Treasure Chest (Key Takeaways)
+## Slide 26 — Treasure Chest (Key Takeaways)
 
 Seven takeaways. The treasure chest for Module Eleven. The FINAL treasure chest of the course.
 
@@ -585,15 +603,15 @@ Seven rules. Follow them and your ship sails smooth. Break them and... well, you
 
 ---
 
-## Slide 26 — Bon Voyage!
+## Slide 27 — Bon Voyage!
 
 [pause]
 
 Alright, crew. This is it.
 
-Twelve modules. From "what is OpenClaw" to a fully configured, security-hardened, automated, skill-loaded, heartbeat-running AI personal assistant on your Windows 10 laptop. You did that. Not me. YOU.
+Twelve modules. From "what is OpenClaw" to a fully configured, security-hardened, automated, skill-loaded, heartbeat-running AI personal assistant on your Ubuntu laptop. You did that. Not me. YOU.
 
-I gave you the charts. I pointed at the reefs. I yelled about backups until I was hoarse. But YOU did the work. You installed WSL2. You configured the gateway. You set up the security. You wrote the brain dump. You crafted those core files word by word. You connected Telegram. You installed skills. You built custom skills. You set up heartbeats and cron jobs. You hardened your system with sandboxing and tool policies and incident response plans. And today, you learned how to keep all of it running for the long haul.
+I gave you the charts. I pointed at the reefs. I yelled about backups until I was hoarse. But YOU did the work. You installed Ubuntu. You configured the gateway. You set up the security. You wrote the brain dump. You crafted those core files word by word. You connected Telegram. You installed skills. You built custom skills. You set up heartbeats and cron jobs. You hardened your system with sandboxing and tool policies and incident response plans. And today, you learned how to keep all of it running for the long haul.
 
 [pause]
 

@@ -518,6 +518,16 @@ npx openclaw config set agents.defaults.heartbeat.every "30m"
 npx openclaw config set agents.defaults.heartbeat.every "0m"
 ```
 
+- **To restrict heartbeats to daytime only:**
+
+```bash
+npx openclaw config set agents.defaults.heartbeat.activeHours.start "07:00"
+npx openclaw config set agents.defaults.heartbeat.activeHours.end "23:00"
+npx openclaw config set agents.defaults.heartbeat.activeHours.timezone "local"
+```
+
+> No 3 AM pings. No wasted tokens overnight. Heartbeats only fire within the window you set.
+
 ---
 
 ## Use Cheap Models for Heartbeats
@@ -737,7 +747,7 @@ npx openclaw cron disable "weekly-review"
 ### Best practices:
 - Be **specific** about format, content, and delivery channel
 - Set alerts for **important things only** -- avoid notification fatigue
-- Verify your WSL2 timezone: `timedatectl`
+- Verify your timezone: `timedatectl`
 
 ---
 

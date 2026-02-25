@@ -13,12 +13,12 @@ This guide is the streamlined version. For deep explanations and theory, see the
 | Requirement | Details |
 |-------------|---------|
 | **Hardware** | 8 GB RAM minimum (16 GB recommended), 20 GB free disk space |
-| **Operating System** | Windows 10 version 1903+ (Build 18362+), macOS, or Linux |
+| **Operating System** | A dedicated laptop (we install Ubuntu), macOS, or Linux |
 | **API Key** | Anthropic (paid, recommended) or Google Gemini (free tier available) |
 | **Telegram** | Free account on your phone for mobile access |
 | **Time** | 30-60 minutes of uninterrupted setup |
 
-**Mac/Linux users:** You can skip Phase 1 entirely. Install Node.js 22+ using nvm, then jump straight to Phase 2.
+**Already running Ubuntu/macOS/Linux?** You can skip Phase 1. Install Node.js 22+ using nvm, then jump straight to Phase 2.
 
 ### Before You Connect: Prep Checklist
 
@@ -29,87 +29,70 @@ Create these accounts from any computer **before** your setup session. Everythin
 - [ ] **Set your API spending limit NOW** — While you are in the Anthropic console, go to Settings > Plans & Billing > Usage Limits and set a monthly limit of $20-50. Do this before installation, not after.
 - [ ] **Read Module 01** — Understand the security risks before you install anything. See `Lessons/Module-01-Understanding-the-Risks/Lesson.md`.
 
-That is it for the minimum viable setup. The dedicated laptop does not need anything pre-installed — WSL2, Node.js, and OpenClaw all install from the terminal during Phase 1 and 2.
+That is it for the minimum viable setup. The dedicated laptop does not need anything pre-installed — Ubuntu, Node.js, and OpenClaw all install during Phase 1 and 2.
 
 ---
 
-## Phase 1: Prepare Your Environment (10 minutes)
+## Phase 1: Prepare Your Environment (60 minutes)
 
-*Windows users only. This installs a Linux environment inside Windows, which OpenClaw requires.*
+*This installs Ubuntu on a dedicated laptop. If you already have Ubuntu, macOS, or Linux running, skip to step 5.*
 
-### 1. Install WSL2
+For the full walkthrough with screenshots and troubleshooting, see Module 02 in the `Lessons/` folder.
 
-Open **PowerShell as Administrator** (right-click PowerShell > Run as administrator) and run:
+### 1. Download Ubuntu and Rufus (on your main computer)
 
-```powershell
-wsl --install
-```
+- Download **Ubuntu 24.04 LTS** from https://ubuntu.com/download/desktop (~5.9 GB ISO)
+- Download **Rufus portable** from https://rufus.ie (Windows) — or use Etcher on macOS
 
-This installs WSL2 and Ubuntu. When it finishes, **restart your computer**.
+### 2. Create a bootable USB
 
-### 2. Set Up Ubuntu
+- Insert a USB stick (12 GB or larger — **all data will be erased**)
+- Open Rufus, select the Ubuntu ISO, select your USB drive, click Start
+- Wait for it to finish (5-10 minutes)
 
-After restarting, Ubuntu should open automatically. If it does not, open the Start menu, type `Ubuntu`, and click it.
+### 3. Boot the laptop from USB
 
-Create a username and password when prompted. The password will not display as you type -- this is normal Linux behavior. Remember these credentials.
+- Plug the USB into your dedicated laptop and power it on
+- Press the BIOS/boot menu key repeatedly during startup (F12, F2, Esc, or Del — varies by manufacturer)
+- Select the USB drive from the boot menu
+- Choose **"Try Ubuntu"** first — test that WiFi works before installing
 
-```
-Enter new UNIX username: openclaw
-New password:
-Retype new password:
-```
+### 4. Install Ubuntu
 
-### 3. Enable systemd
+- Once WiFi is confirmed working, double-click **"Install Ubuntu"** on the desktop
+- Key choices: check **"Install third-party drivers"** (critical for WiFi), choose **"Erase disk and install Ubuntu"**
+- Set username to `openclaw`, choose a password you will remember
+- Wait for installation to complete, then restart when prompted and remove the USB
 
-OpenClaw's daemon requires systemd. In your Ubuntu terminal, run:
+### 5. Update Ubuntu and install essentials
 
-```bash
-sudo nano /etc/wsl.conf
-```
-
-Enter your Linux password. In the editor, type exactly:
-
-```
-[boot]
-systemd=true
-```
-
-Save and exit: `Ctrl+O`, `Enter`, `Ctrl+X`.
-
-### 4. Restart WSL2
-
-Open a **PowerShell** window (not Ubuntu) and run:
-
-```powershell
-wsl --shutdown
-```
-
-Wait 5 seconds, then reopen Ubuntu from the Start menu.
-
-### 5. Install Node.js 22
-
-Back in your Ubuntu terminal, run these three commands:
-
-```bash
-curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.40.1/install.sh | bash
-source ~/.bashrc
-nvm install 22
-```
-
-### 6. Verify
-
-```bash
-node --version
-```
-
-You should see `v22.x.x`. If you see `command not found`, close and reopen Ubuntu, then try again.
-
-### 7. Update packages and install essentials
+Open a terminal (`Ctrl+Alt+T`) and run:
 
 ```bash
 sudo apt update && sudo apt upgrade -y
 sudo apt install -y git curl wget build-essential
 ```
+
+### 6. Install Node.js 22
+
+```bash
+curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.40.4/install.sh | bash
+```
+
+Close and reopen the terminal, then:
+
+```bash
+nvm install 22
+nvm alias default 22
+```
+
+### 7. Verify
+
+```bash
+node --version
+```
+
+You should see `v22.x.x`. If you see `command not found`, close and reopen the terminal, then try again.
 
 ---
 
@@ -136,7 +119,7 @@ The wizard asks a series of questions. Here are the recommended answers:
 | Question | Answer | Why |
 |----------|--------|-----|
 | Gateway type | **Local Gateway** | Running on this machine |
-| Workspace directory | **Accept default** (`~/.openclaw`) | Standard location in Linux filesystem |
+| Workspace directory | **Accept default** (`~/.openclaw`) | Standard location |
 | AI provider | **Anthropic** (or Google for free) | Best capability and prompt injection resistance |
 | API key | Paste your key (see below) | Authentication for the AI model |
 | Model | **claude-opus-4-6** | Most capable; use Gemini 2.5 Flash for free |
@@ -150,26 +133,26 @@ The wizard asks a series of questions. Here are the recommended answers:
 | Service runtime | **Node.js** | Only option |
 | Install as service | **Yes** | Runs 24/7 as a background daemon |
 
-### The Notepad Trick (Critical for API Keys)
+### The Text Editor Trick (Critical for API Keys)
 
 When you copy an API key from your browser, hidden characters (line breaks, extra spaces) can corrupt it. Before pasting any key into the wizard:
 
-1. Open **Notepad** on Windows
+1. Open a text editor — type `gedit` in the terminal, or use any plain text editor
 2. Paste the key there first (`Ctrl+V`)
 3. Verify it is a single unbroken line with no extra spaces
 4. Select all (`Ctrl+A`), copy (`Ctrl+C`)
-5. Paste into the Ubuntu terminal (`right-click` or `Ctrl+Shift+V`)
+5. Paste into the terminal (`Ctrl+Shift+V`)
 
 This applies to API keys, bot tokens, and any credential you paste.
 
 ### Getting Your Anthropic API Key
 
-1. Go to https://console.anthropic.com/ in your Windows browser
+1. Go to https://console.anthropic.com/ in your browser
 2. Sign up or sign in
 3. Go to **Settings > Billing** and add a payment method
 4. Go to **Settings > API Keys** and click **Create Key**
 5. Copy the key immediately (it starts with `sk-ant-` and is shown only once)
-6. Use the Notepad trick before pasting
+6. Use the text editor trick before pasting
 
 **Free alternative:** Go to https://ai.google.dev/, sign in with Google, and create a Gemini API key. Gemini 2.5 Flash gives you 20 free requests per day.
 
@@ -331,7 +314,7 @@ Download Telegram on your phone (App Store or Google Play). Create an account if
 
 ### 3. Connect to OpenClaw
 
-Use the Notepad trick to clean the token, then in your Ubuntu terminal:
+Use the text editor trick to clean the token, then in your terminal:
 
 ```bash
 npx openclaw channels add telegram
@@ -504,13 +487,12 @@ Here is what you now have:
 
 | Problem | Fix |
 |---------|-----|
-| `openclaw: command not found` | Run `source ~/.bashrc` or close and reopen Ubuntu |
-| API key invalid / authentication failed | Regenerate key, use the Notepad trick, verify billing is set up |
+| `openclaw: command not found` | Use `npx openclaw` instead, or run `source ~/.bashrc` and try again |
+| API key invalid / authentication failed | Regenerate key, use the text editor trick, verify billing is set up |
 | Gateway not running | `npx openclaw gateway start` |
-| Dashboard won't load in browser | Use `http://127.0.0.1:18789/` (not https), verify gateway is running |
+| Dashboard won't load in browser | Use `http://127.0.0.1:18789/` (not `https`), run `npx openclaw dashboard --no-open` for a tokenized URL |
 | Telegram bot not responding | Complete DM pairing, check `npx openclaw logs` for errors |
-| WSL2 error 0x80370102 | Enable virtualization (Intel VT-x or AMD-V) in your BIOS |
-| `node: command not found` | Run `source ~/.bashrc`, or close and reopen Ubuntu |
+| `node: command not found` | Close and reopen the terminal, or run `source ~/.bashrc` |
 | Token counter climbing fast | Use `/compact` frequently, start `/new` sessions for new topics |
 | Spending higher than expected | Set model routing (Haiku for heartbeats, Sonnet for simple tasks), check `console.anthropic.com/usage` daily |
 

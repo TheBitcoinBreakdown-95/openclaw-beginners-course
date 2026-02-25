@@ -492,7 +492,7 @@ This takes about **10 minutes**. Do it every weekend.
 - 🪸 Workspace backup: `git add -A && git commit -m "Weekly backup"`
 - Review core files: are `USER.md` and `MEMORY.md` still accurate?
 - Disable unused 🐠 skills: `npx openclaw skills list`
-- Check disk space: `df -h` (inside WSL2)
+- Check disk space: `df -h`
 
 ---
 
@@ -657,7 +657,7 @@ Get one workflow running **end-to-end** before adding the next. Every new integr
 
 **"API key invalid"**
 - Check 🔑 key at your provider's console
-- Regenerate if needed (use the Notepad trick when pasting)
+- Regenerate if needed (use the text editor trick when pasting)
 - Update: `npx openclaw config set models.providers.anthropic.apiKey "[NEW_KEY]"`
 
 **"Rate limit exceeded"**
@@ -676,22 +676,18 @@ Get one workflow running **end-to-end** before adding the next. Every new integr
 
 <!-- _class: warning -->
 
-## 🚩 Damage Control: WSL2
-
-**"WSL2 not running after reboot"**
-- Open PowerShell: `wsl --list --running`
-- If empty: open Ubuntu from Start menu
-
-**"WSL2 very slow"**
-- Exclude WSL2 directory from Windows Defender
-- Edit `%USERPROFILE%\.wslconfig` with memory limits
-- Run: `wsl --shutdown`, then reopen Ubuntu
+## 🚩 Damage Control: Ubuntu System
 
 **"systemd not running"**
-- Edit `/etc/wsl.conf`:
-  - Add `[boot]` on one line
-  - Add `systemd=true` on next line
-- Run `wsl --shutdown` from PowerShell, reopen Ubuntu
+- Run: `sudo systemctl daemon-reload`
+- Reinstall service: `npx openclaw gateway install`
+- Start: `npx openclaw gateway start`
+
+**"System very slow"**
+- Check disk space: `df -h` (ensure >2 GB free)
+- Check memory: `free -h`
+- Stop background updates if needed
+- Reboot: `sudo reboot`
 
 ---
 
@@ -809,6 +805,28 @@ npx openclaw config set skills.entries.[name].enabled false  # Disable
 
 ---
 
+## Command Cheat Sheet: Troubleshooting and Nuclear Options
+
+```bash
+# Verbose Logging
+OPENCLAW_LOG_LEVEL=debug npx openclaw gateway start  # Debug-level logs
+
+# Updates
+npx openclaw update              # Update OpenClaw
+npx openclaw update --dry-run    # Preview what changes
+
+# Nuclear Options (LAST RESORT -- DESTRUCTIVE)
+npx openclaw reset --dry-run     # Preview what reset clears
+npx openclaw reset --scope config  # Wipe config/creds/sessions
+npx openclaw uninstall           # Complete clean removal
+```
+
+> `reset` and `uninstall` are irreversible. Always `--dry-run` first. Always back up with Git first.
+
+<!-- Speaker notes: These are the break-glass commands. reset wipes configuration, credentials, and sessions. uninstall removes everything. Students should never need these if they follow maintenance routines, but they should know they exist. OPENCLAW_LOG_LEVEL=debug is the go-to when standard logs don't show enough detail. -->
+
+---
+
 <!-- _class: warning -->
 
 ## 🚩 Rough Waters: Emergency Quick Reference
@@ -839,7 +857,7 @@ npx openclaw config set skills.entries.[name].enabled false  # Disable
 1. What you were trying to do
 2. The exact error message
 3. Your 🦞 OpenClaw version (`npx openclaw --version`)
-4. Your OS (Windows 10 WSL2)
+4. Your OS (Ubuntu 24.04 LTS)
 5. What you have already tried
 
 ---
