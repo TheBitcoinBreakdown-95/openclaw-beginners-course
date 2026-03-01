@@ -1,7 +1,7 @@
 # Module 03 Teaching Script: Installing OpenClaw
 
 **Total speaking time:** ~30 minutes
-**Slides:** 27
+**Slides:** 33
 
 ---
 
@@ -115,7 +115,7 @@ Beautiful. BOTH paths work. I'm going to walk through BOTH on the next slides. I
 
 ---
 
-## Slide 5b — Choose Your Path
+## Slide 6 — Choose Your Path
 
 Alright, so here's the fork in the road.
 
@@ -131,7 +131,7 @@ Let's move on. Eyes on the next slide.
 
 ---
 
-## Slide 6 — Rough Waters: Claude Max/Pro Subscriptions
+## Slide 7 — Rough Waters: Claude Max/Pro Subscriptions
 
 Now — Gemini users, these next two warning slides are about paid providers. They don't apply to you TODAY. But listen anyway, because when you upgrade later, you'll need to know this stuff.
 
@@ -149,7 +149,7 @@ Set a spending limit of twenty to fifty bucks a month to start. We'll handle tha
 
 ---
 
-## Slide 7 — Rough Waters: No Spending Limits
+## Slide 8 — Rough Waters: No Spending Limits
 
 Okay, second red flag, and this one has TEETH. I'm going to tell you a horror story. A TRUE horror story from the OpenClaw community.
 
@@ -177,7 +177,7 @@ Protect your wallet, crew. The ocean doesn't care how much money you brought.
 
 ---
 
-## Slide 8 — Step 1: Install OpenClaw
+## Slide 9 — Step 1: Install OpenClaw
 
 ALRIGHT! Gear checked. Warnings received. Engine chosen. Wallet protected. It's time to BUILD THIS THING.
 
@@ -211,7 +211,7 @@ If you see a network error — check your internet. Try opening a browser and lo
 
 ---
 
-## Slide 9 — Step 1 (continued): The Onboarding Wizard
+## Slide 10 — Step 1 (continued): The Onboarding Wizard
 
 Beautiful. OpenClaw is installed and the wizard is on screen. First thing it tells you is that this is personal by default — shared or multi-user setups require lockdown. Good. That's what we want.
 
@@ -225,7 +225,7 @@ Fourteen questions. Fourteen answers. By the end, your agent is alive. Let's sta
 
 ---
 
-## Slide 10 — Wizard Q1-Q2: Gateway Type and Workspace
+## Slide 11 — Wizard Q1-Q2: Gateway Type and Workspace
 
 First two questions. These are the easy ones. Warm-up pitches.
 
@@ -241,7 +241,7 @@ Two down, twelve to go. Still easy. Enjoy it while it lasts.
 
 ---
 
-## Slide 11 — Wizard Q3: AI Model Provider
+## Slide 12 — Wizard Q3: AI Model Provider
 
 Question three: Select your AI provider. You'll see a list — Anthropic, OpenAI, Google, MiniMax, Open Router, Custom.
 
@@ -256,7 +256,7 @@ Alright. The next step is the big one. The one where first-time installers get s
 
 ---
 
-## Slide 12 — Wizard Q4: API Key Setup
+## Slide 13 — Wizard Q4: API Key Setup
 
 Here's where we get your agent its fuel. Your API key. This is the secret credential that lets OpenClaw talk to your AI provider. Without it, your agent is a ship with no engine. So let's do this right.
 
@@ -286,7 +286,7 @@ Quick tip — if you created your key on your phone, email it to yourself and op
 
 ---
 
-## Slide 13 — Rough Waters: The Token Formatting Gotcha
+## Slide 14 — Rough Waters: The Token Formatting Gotcha
 
 THIS. This right here is the single most common installation failure across every community guide, every tutorial, every "help me my install is broken" forum post. The Token Formatting Gotcha. Capitalize all of those words because they deserve it.
 
@@ -320,7 +320,7 @@ If it still fails, try generating a brand new key and running the text editor tr
 
 ---
 
-## Slide 14 — Wizard Q5-Q6: Model and Port
+## Slide 15 — Wizard Q5-Q6: Model and Port
 
 Good news — the hardest part is behind you. The API key is in. The engine is fueled. The rest of these wizard questions are quick and painless.
 
@@ -340,7 +340,7 @@ Two more quick ones. Moving right along.
 
 ---
 
-## Slide 15 — Wizard Q7: Gateway Bind
+## Slide 16 — Wizard Q7: Gateway Bind
 
 Question seven: Gateway bind. Now THIS one is a security decision, so ears up.
 
@@ -362,23 +362,27 @@ Choose Loopback. Press enter. We can always change it later with `npx openclaw c
 
 ---
 
-## Slide 16 — Wizard Q8-Q10: Tailscale, Token, Channels
+## Slide 17 — Wizard Q8-Q9: Tailscale and Token
 
-Three quick questions in a row. Rapid fire.
+Two quick questions. Rapid fire.
 
 Question eight: Tailscale exposure. Default is Off. KEEP IT OFF. Even if you installed Tailscale in Module 02, leave this disabled for now. We'll enable it later when you're confident your security posture is solid. No reason to open another door before the house is finished.
 
 Question nine: Gateway token. It says "leave blank to auto-generate." DO leave it blank. Press enter. The wizard will generate a secure random token for you — a long, random password that protects access to your dashboard. You'll see it at the end of the wizard. SAVE IT when it appears. I cannot stress this enough. Write it down. Put it in a password manager. Text it to yourself. Whatever you need to do. You'll need this token to log into the dashboard.
 
+---
+
+## Slide 18 — Wizard Q10: Chat Channels
+
 Question ten: Configure chat channels? You'll see options for WhatsApp, Telegram, Discord, Slack, or Skip for now. Choose SKIP FOR NOW. We are setting up Telegram in Module 06. Right now our mission is to get the BASE gateway running and verified. Adding messaging channels before we've confirmed the foundation works is like hanging curtains before the walls are up. Foundation first. Decoration later.
 
 [pause]
 
-Three down. Four more to go and we're through the wizard.
+Five more to go and we're through the wizard.
 
 ---
 
-## Slide 17 — Wizard Q11-Q14: Skills, Hooks, Service
+## Slide 19 — Wizard Q11-Q14: Skills, Hooks, Service
 
 Home stretch, crew! Four more questions and the wizard is DONE.
 
@@ -412,7 +416,7 @@ And THAT... is the last question. For real this time.
 
 ---
 
-## Slide 18 — Step 2: Onboarding Complete
+## Slide 20 — Step 2: Onboarding Complete
 
 The wizard is done. And if everything went right — and it DID go right, because we did it together — you should see something BEAUTIFUL on your screen right now.
 
@@ -438,7 +442,7 @@ Second thing — and this is important enough to get its own slide.
 
 ---
 
-## Slide 18b — Step 2b: Approve Device Pairing
+## Slide 21 — Troubleshooting: Device Pairing
 
 Alright, before we test anything, there's one more step that might pop up. OpenClaw has a security feature called device pairing. Think of it like your gateway asking for ID before letting anyone through the door. First time a new device tries to connect — whether that's the TUI, the dashboard, or anything else — the gateway says "Hold on. Who ARE you? I need to check the manifest."
 
@@ -466,7 +470,7 @@ If you DON'T see the pairing prompt, that's fine too. Some installations handle 
 
 ---
 
-## Slide 19 — Immediately After Onboarding: Install QMD
+## Slide 22 — Immediately After Onboarding: Install QMD
 
 Before you do ANYTHING else. Before you open the dashboard. Before you chat with your agent. Before you celebrate. Run these two commands:
 
@@ -494,7 +498,7 @@ Done? Good. Now let's make sure everything is shipshape.
 
 ---
 
-## Slide 20 — Step 3: Verify the Installation
+## Slide 23 — Step 3: Verify the Installation
 
 Trust but verify, crew. We're going to run three checks. Think of this as the post-launch inspection — checking the hull, testing the engines, scanning for leaks.
 
@@ -512,7 +516,7 @@ Three checks passed. Your ship is seaworthy. Now let's look around the bridge.
 
 ---
 
-## Slide 21 — Step 4: Access the Dashboard
+## Slide 24 — Step 4: Access the Dashboard
 
 Time to see the pretty side of your operation. In your Ubuntu terminal, run:
 
@@ -538,7 +542,7 @@ Most of your day-to-day interaction will happen in the TUI. The dashboard is for
 
 ---
 
-## Slide 22 — Step 5: Your First Chat
+## Slide 25 — Step 5: Your First Chat
 
 Alright crew. This is the MOMENT. The one we've been building toward since Module 00. You're about to speak to your AI agent for the very first time.
 
@@ -568,6 +572,12 @@ If you got a response — and you DID get a response, didn't you? — then OpenC
 
 CONGRATULATIONS, crew. You just launched your ship.
 
+---
+
+## Slide 26 — Step 5: Your First Chat (continued)
+
+What should have happened: your message appears in the chat, after one to five seconds the AI responds, and the token counter increments. If all three of those things happened — you're golden.
+
 [pause]
 
 Now — resist the urge to have a full conversation. I know it's tempting. I KNOW you want to ask it to do things. Hold that energy. Module 04 is where we do the proper introduction — the brain dump, the identity setup, the whole meet-and-greet. For now, just verify it works.
@@ -576,7 +586,7 @@ Type `/exit` or press Ctrl + C to leave the TUI. We've got one more thing to che
 
 ---
 
-## Slide 23 — Step 6: Verify the Daemon
+## Slide 27 — Step 6: Verify the Daemon
 
 Your agent responded. Amazing. But here's the question: will it KEEP running when you walk away? That's what the daemon is for, and that's what we need to verify.
 
@@ -598,19 +608,23 @@ If the TUI connects — and it SHOULD — then your daemon is working perfectly.
 
 That's the whole point. Your agent doesn't need you babysitting it. It runs on its own. Starts on boot. Survives terminal closures. Keeps humming along twenty-four hours a day, seven days a week.
 
+---
+
+## Slide 28 — Step 6: Service Commands Reference
+
 Keep these service commands handy — write them on a sticky note, save them in a file, tattoo them somewhere visible:
 
 `npx openclaw gateway start` — starts the daemon.
 `npx openclaw gateway stop` — stops it.
-`npx openclaw gateway restart` — bounces it.
-`npx openclaw logs` — shows you what it's been up to.
+`npx openclaw gateway restart` — bounces it. Use this after any config change.
+`npx openclaw logs` — shows you what it's been up to. Use this to debug startup issues.
 `npx openclaw gateway status` — tells you if it's alive.
 
 Those five commands are your engine room controls. You'll use them often.
 
 ---
 
-## Slide 24 — Rough Waters: Damage Control (Troubleshooting)
+## Slide 29 — Rough Waters: Damage Control (Troubleshooting)
 
 Alright — let's talk about what happens when things go sideways. Because they WILL go sideways for somebody, and that somebody should not panic. Damage control. Stay calm. Here's your repair manual.
 
@@ -622,11 +636,15 @@ Alright — let's talk about what happens when things go sideways. Because they 
 
 "Connection refused" when opening the dashboard — the gateway isn't running. Check with `npx openclaw gateway status`. If it's down, run `npx openclaw gateway start`. Also make sure you're using HTTP, not HTTPS, in the browser URL. Common mistake.
 
-"Pairing required" — this is the device pairing security feature we covered in Slide 18b. Run `npx openclaw devices list --json` to find the requestId, then `npx openclaw devices approve [requestId]`. You only have to do this once per device.
+"Pairing required" — this is the device pairing security feature we covered on Slide 21. Run `npx openclaw devices list --json` to find the requestId, then `npx openclaw devices approve [requestId]`. You only have to do this once per device.
 
 "Auth failed" on the dashboard — run `npx openclaw dashboard --no-open` to get a tokenized URL. Copy the FULL URL and paste it into your browser. Make sure it says `http://` not `https://`. If it STILL won't connect, skip it — the TUI is the primary interface and it works perfectly.
 
 Daemon doesn't start on boot — check systemd. Run `systemctl is-system-running`. It should say "running." If it doesn't, something went wrong with your Ubuntu installation. Try `sudo systemctl daemon-reload` and then `npx openclaw gateway install` to reinstall the service.
+
+---
+
+## Slide 30 — Damage Control (continued)
 
 AI responses are very slow — like thirty seconds or more — check the Anthropic status page at status.anthropic.com. Opus IS slower than lighter models. One to ten seconds is normal. If it's consistently glacial, try switching to Sonnet temporarily with `npx openclaw config`.
 
@@ -642,7 +660,7 @@ Any of those sound familiar? Anyone hitting something not on this list? Speak up
 
 ---
 
-## Slide 25 — Hands on Deck (Verification Checklist)
+## Slide 31 — Hands on Deck (Verification Checklist)
 
 ALL HANDS ON DECK! This is your launch day inspection. Ten items. Every single one needs to pass before you're cleared to proceed to Module 04. No exceptions. No "I'll check it later." We do this NOW, together, and nobody leaves the harbor with an unchecked box.
 
@@ -678,7 +696,7 @@ BONUS for the overachievers: run `npx openclaw logs` and read the last few lines
 
 ---
 
-## Slide 26 — Treasure Chest (Key Takeaways)
+## Slide 32 — Treasure Chest (Key Takeaways)
 
 Alright, crew — let's haul the treasure chest out of the hold and count our loot. Here's what you're taking away from today.
 
@@ -706,7 +724,7 @@ That's nine pieces of treasure from one module. Not bad for a day's work, crew.
 
 ---
 
-## Slide 27 — Next Port of Call: Module 04 — Your First Conversation
+## Slide 33 — Next Port of Call: Module 04 — Your First Conversation
 
 [tone shifts — warm, excited, forward-looking]
 

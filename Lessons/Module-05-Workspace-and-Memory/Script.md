@@ -1,7 +1,7 @@
 # Module 05 Teaching Script: Workspace and Memory
 
 **Total speaking time:** ~32 minutes (plus 50-minute hands-on activity)
-**Slides:** 26
+**Slides:** 29
 
 ---
 
@@ -229,15 +229,23 @@ This file is different from the other core files because it GROWS. IDENTITY.md i
 
 Look at the example. Important decisions with dates. Project status. Learned preferences. Technical environment details. This is the living record.
 
-Now, here's where it gets interesting for the power users. When MEMORY.md gets big — and it WILL get big — you split it. The four-file memory system. Your main MEMORY.md stays for long-term permanent context. Then you add `memory/active-tasks.md` for in-progress work that changes daily. `memory/lessons.md` for mistakes worth remembering — so your agent never makes the same error twice. And dated files like `memory/YYYY-MM-DD.md` for daily notes.
-
-[pause]
-
-And here's a cautionary tale that should put the FEAR in you. One user — real person, real story — had their agent nearly DROP A PRODUCTION DATABASE TABLE. Why? Because context compaction erased the reasoning behind a schema decision. The agent knew the table existed but forgot WHY it existed. So it proposed deleting it. That's why you want a `memory/decisions.md` file that records not just WHAT you decided but WHY. The reasoning is more important than the decision itself.
+This file is different from the others because it GROWS. And when it grows too large, you'll need a strategy. Let's talk about that on the next slide.
 
 ---
 
-## Slide 12 — Memory Configuration: Three Failure Modes
+## Slide 12 — Advanced: The 4-File Memory System
+
+When MEMORY.md gets big — and it WILL get big — you split it. The four-file memory system. Your main MEMORY.md stays for long-term permanent context. Then you add `memory/active-tasks.md` for in-progress work that changes daily. `memory/lessons.md` for mistakes worth remembering — so your agent never makes the same error twice. And dated files like `memory/YYYY-MM-DD.md` for daily notes.
+
+[pause]
+
+There's also an optional fifth file — `memory/decisions.md`. And here's a cautionary tale that should put the FEAR in you about why it matters. One user — real person, real story — had their agent nearly DROP A PRODUCTION DATABASE TABLE. Why? Because context compaction erased the reasoning behind a schema decision. The agent knew the table existed but forgot WHY it existed. So it proposed deleting it. That's why you want a decisions file that records not just WHAT you decided but WHY. The reasoning is more important than the decision itself.
+
+You don't need to set this up today. But when your MEMORY.md starts getting unwieldy — and you'll know when — come back to this slide.
+
+---
+
+## Slide 13 — Memory Configuration: Three Failure Modes
 
 Alright, rough waters ahead. Memory systems can FAIL, and they fail in three predictable, fixable ways. Knowing these failure modes is like knowing where the reefs are — you can navigate around them.
 
@@ -257,25 +265,35 @@ We'll get deeper into configuration in later modules. For now, just know these t
 
 ---
 
-## Slide 13 — Advanced Memory Tools
+## Slide 14 — Advanced Memory Tools
 
 For the ambitious crew members who want to go BEYOND the built-in memory system, there are some serious tools out there. I'm going to give you the quick tour — we're not installing any of these today, but I want you to know they exist for when you're ready.
 
-QMD. This is your recommended starting point. Built by Shopify's CEO, runs locally on your machine, your data stays with you. It combines three retrieval methods — BM25 keyword search, vector similarity, and reranking — for high-quality search results. The killer feature? You can index EXTERNAL documents. Your Obsidian vault. Your Notion exports. Project folders. Anything. Make it all searchable through your agent.
+Four tools worth knowing: QMD, Mem0, Cognee, and Obsidian integration. Let me give you the highlights, and then we'll zoom in on the two most important ones.
 
-Mem0. This one solves the memory failure modes we just talked about. It auto-captures facts during conversations without depending on the LLM's judgment, and auto-recalls them when they're relevant. Compaction-proof. If you find yourself constantly losing context to compaction, Mem0 is your lifeboat.
-
-Cognee. Knowledge graphs. Entity relationships. "Alice owns the auth module." "This project depends on that library." Enterprise-grade. If you're running a single agent for personal use, this is overkill. But if you're coordinating MULTIPLE agents? Powerful.
+Cognee — knowledge graphs. Entity relationships. Enterprise-grade. If you're running a single agent for personal use, this is overkill. But if you're coordinating MULTIPLE agents? Powerful.
 
 And Obsidian integration — either symlink your memory folder so agent notes appear in Obsidian across all your devices, or index your entire vault via QMD so everything you capture becomes searchable by your agents.
-
-[pause]
 
 The rule of thumb: start with QMD. Add Mem0 if compaction keeps eating your context. Consider Cognee only if you're running a fleet of agents that need to share structured knowledge. Crawl, walk, run.
 
 ---
 
-## Slide 14 — File 5: AGENTS.md
+## Slide 15 — QMD and Mem0 — Closer Look
+
+Let's zoom in on the two you'll actually use.
+
+QMD. This is your recommended starting point. Built by Shopify's CEO, runs locally on your machine, your data stays with you. It combines three retrieval methods — BM25 keyword search, vector similarity, and reranking — for high-quality search results. The killer feature? You can index EXTERNAL documents. Your Obsidian vault. Your Notion exports. Project folders. Anything. Make it all searchable through your agent. We actually installed QMD back in Module 03 right after onboarding — so you've already got it.
+
+[pause]
+
+Mem0. This one solves the memory failure modes we just talked about on the previous slides. It auto-captures facts during conversations without depending on the LLM's judgment, and auto-recalls them when they're relevant. Compaction-proof. If you find yourself constantly losing context to compaction, Mem0 is your lifeboat.
+
+If you're NOT losing context to compaction, you don't need Mem0 yet. QMD is enough for most people. But keep Mem0 in your back pocket for when MEMORY.md starts getting unwieldy.
+
+---
+
+## Slide 16 — File 5: AGENTS.md
 
 Back to the core files. File number five. AGENTS.md. The employee handbook. The rules of engagement.
 
@@ -295,13 +313,17 @@ Write THOSE things down. The rules that matter most to you. Be explicit. Be spec
 
 ---
 
-## Slide 15 — Files 6-9: Supporting Files
+## Slide 17 — Files 6-7: Tools and Heartbeat
 
-Four more files to round out the nine. These are the supporting cast — important, but you won't be spending as much time on them today.
+Four more files to round out the nine. These are the supporting cast — important, but you won't be spending as much time on them today. We'll cover them in two pairs.
 
-TOOLS.md — API tools documentation. Documents the external tools and APIs your agent has access to. Good news: this is often auto-populated by installed skills. You may not need to touch it at all initially.
+TOOLS.md — API tools documentation. Documents the external tools and APIs your agent has access to. Good news: this is often auto-populated by installed skills. You may not need to touch it at all initially. When you install a skill from ClawHub, it registers its tools here automatically.
 
-HEARTBEAT.md — periodic check instructions. What should the agent do during its scheduled heartbeat checks, roughly every thirty minutes? Check messages? Review tasks? Prepare a morning briefing? We're going to go DEEP on heartbeats in Module 08, so don't worry about this one today. Just know it exists.
+HEARTBEAT.md — periodic check instructions. What should the agent do during its scheduled heartbeat checks, roughly every thirty minutes? Check messages? Review tasks? Prepare a morning briefing? We're going to go DEEP on heartbeats in Module 08, so don't worry about this one today. Just know it exists and that it controls what your agent does when you're NOT talking to it.
+
+---
+
+## Slide 18 — Files 8-9: Bootstrap and Boot
 
 BOOTSTRAP.md — first boot ONLY. This runs once, on the very first gateway startup, and then it DELETES ITSELF. Like a message that self-destructs. If your gateway has started at least once, this file is probably already gone. That's normal. That's by design.
 
@@ -313,7 +335,7 @@ So there you have it. All nine. The Big Three — IDENTITY, SOUL, USER — are y
 
 ---
 
-## Slide 16 — How the Files Work Together
+## Slide 19 — How the Files Work Together
 
 Now here's the moment where it all clicks. This is the diagram that should make your eyes go wide. Look at this flow.
 
@@ -333,7 +355,7 @@ This is not configuration. This is PROGRAMMING. In plain English. In markdown. A
 
 ---
 
-## Slide 17 — Context Engineering Principles
+## Slide 20 — Context Engineering Principles
 
 Alright, you know WHERE the files are. You know WHAT they do. Now comes the real skill: WHAT do you actually write in them?
 
@@ -353,7 +375,7 @@ Good: "I'm a freelance web developer specializing in React and Next.js. My typic
 
 ---
 
-## Slide 18 — More Context Engineering Principles
+## Slide 21 — More Context Engineering Principles
 
 Three more principles. These are the ones that separate the crew from the captain.
 
@@ -373,7 +395,7 @@ The community calls verbalization the most valuable skill of 2026. I agree.
 
 ---
 
-## Slide 19 — Living Files vs. Dead Files
+## Slide 22 — Living Files vs. Dead Files
 
 Alright, this concept is going to reframe how you think about EVERY file on your computer. I'm not exaggerating.
 
@@ -391,7 +413,7 @@ And there's a BONUS file. The course includes an OPERATIONS.md template. Copy it
 
 ---
 
-## Slide 20 — Editing the Core Files
+## Slide 23 — Editing the Core Files
 
 Alright, enough theory. Let's talk about actually DOING this.
 
@@ -417,7 +439,7 @@ Write it on a sticky note. Stick it to your monitor. "Did you restart the gatewa
 
 ---
 
-## Slide 21 — Backing Up with Git
+## Slide 24 — Backing Up with Git
 
 Your workspace is now precious. I mean that literally. The files you're about to create? They're irreplaceable. Your agent's identity, your personal profile, your memory, your rules — all of it. If something corrupts those files, or a bad update wipes them, or your cat walks across the keyboard at the worst possible moment — you want a backup.
 
@@ -444,7 +466,7 @@ Because your workspace contains personal information, potentially API keys, and 
 
 ---
 
-## Slide 22 — Shoals and Sandbars
+## Slide 25 — Shoals and Sandbars
 
 Alright, danger zone. Let's talk about the mistakes I see EVERY time. The shoals and sandbars that will run your ship aground if you're not watching for them.
 
@@ -466,7 +488,7 @@ Watch for these. Every single one of them is a real sandbar that real students h
 
 ---
 
-## Slide 23 — Hands on Deck: Customize Your 9 Core Files
+## Slide 26 — Hands on Deck: Customize Your 9 Core Files
 
 This is it, crew. Hands on the keyboard. We're doing this RIGHT NOW.
 
@@ -488,7 +510,7 @@ Go. I'll be walking around if anyone needs help with nano or gets stuck. Twenty 
 
 ---
 
-## Slide 24 — Hands on Deck (continued)
+## Slide 27 — Hands on Deck (continued)
 
 Alright, pens down — or, keyboards down. Fingers off the keys. Let's see if this actually WORKED.
 
@@ -518,7 +540,7 @@ Part five: back it up. Five minutes. Initialize Git if you haven't already, add 
 
 ---
 
-## Slide 25 — Treasure Chest
+## Slide 28 — Treasure Chest
 
 Seven treasures to take home from today's voyage. Seven things to nail to the mast.
 
@@ -542,7 +564,7 @@ You walked in here today with an agent that forgot you after every session. You'
 
 ---
 
-## Slide 26 — Next Port of Call
+## Slide 29 — Next Port of Call
 
 So your agent knows who it is. It knows who YOU are. It remembers things. It has rules. It has personality. Beautiful.
 
