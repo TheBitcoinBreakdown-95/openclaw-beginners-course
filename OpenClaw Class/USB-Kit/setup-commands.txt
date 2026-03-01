@@ -1,0 +1,450 @@
+============================================
+  OpenClaw Class — All Commands
+  Organized by class session
+============================================
+
+To paste in the Ubuntu terminal: Ctrl+Shift+V
+To copy from the terminal: highlight text, then Ctrl+Shift+C
+
+Run each command one at a time. Wait for it to finish before running the next one.
+
+
+============================================
+  CLASS 1: SET UP AND GET CHATTING
+============================================
+
+
+--- Emergency stop (memorize this) ---
+
+npx openclaw gateway stop
+pkill -f openclaw
+
+(Use the first command. If it doesn't work, use the second.)
+(Mnemonic: Stop. Close. Freeze. Investigate. Restore.)
+
+
+--- Step 1: Update Ubuntu ---
+
+sudo apt update && sudo apt upgrade -y
+
+(Enter your password when asked. Password won't show — no dots, no stars. That's normal.)
+(First run may take 5-10 minutes.)
+
+
+--- Step 2: Install essential tools ---
+
+sudo apt install -y git curl wget build-essential
+
+
+--- Step 3: Install nvm (Node Version Manager) ---
+
+curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.40.4/install.sh | bash
+
+(Close the terminal and reopen it: Ctrl+Alt+T)
+
+
+--- Step 4: Install Node.js ---
+
+nvm install 22
+nvm alias default 22
+
+(Verify:)
+
+node --version
+npm --version
+
+
+--- Step 5: Power settings ---
+
+GUI: Open Settings > Power > Set "Automatic Suspend" to OFF, "Screen Blank" to Never
+
+Then run these to keep laptop running with lid closed:
+
+sudo sed -i 's/#HandleLidSwitch=suspend/HandleLidSwitch=ignore/' /etc/systemd/logind.conf
+sudo sed -i 's/#HandleLidSwitchExternalPower=suspend/HandleLidSwitchExternalPower=ignore/' /etc/systemd/logind.conf
+sudo systemctl restart systemd-logind
+
+(WARNING: This logs you out. Screen may go black for 1-2 minutes on older laptops — this is normal.)
+(If stuck on a black screen after 2 minutes, hold the power button 5 seconds to restart.)
+(The config changes are already saved — you won't need to run those commands again.)
+
+
+--- Step 6: Verify Ubuntu setup ---
+
+systemctl is-system-running
+node --version
+npm --version
+git --version
+
+(All should return valid output. systemctl should say "running".)
+
+
+--- Step 7: Install OpenClaw ---
+
+curl -fsSL https://openclaw.ai/install.sh | bash
+
+(Wait for "Installation complete!" Ignore npm WARN messages.)
+(The onboarding wizard starts automatically after install.)
+
+>>> Choose MANUAL when asked <<<
+
+Wizard answers:
+  Q1  Gateway type:        Local Gateway
+  Q2  Workspace directory:  Press Enter (accept default)
+  Q3  AI provider:          Anthropic (recommended)
+  Q4  API key:              Paste it (see tip below)
+  Q5  Model:                claude-opus-4-6 (or your choice)
+  Q6  Gateway port:         Press Enter (default 18789)
+  Q7  Gateway bind:         Loopback
+  Q8  Tailscale exposure:   Off
+  Q9  Gateway token:        Press Enter (auto-generate)
+  Q10 Chat channels:        Skip for now
+  Q11 Skills:               Press Enter (skip)
+  Q12 Hooks:                Enable BOOT.md and session memory
+  Q13 Service runtime:      Press Enter (Node.js)
+  Q14 Install as service:   Y
+
+If asked "How do you want to hatch your bot?" — choose "do this later"
+If asked "Enable bash shell completion?" — Yes
+If it says "Gateway service already installed" — choose Restart
+
+>>> PASTING YOUR API KEY <<<
+1. Open Text Editor (type: gedit) — paste key there first
+2. Check it's ONE line starting with sk-ant-
+3. Select all (Ctrl+A), copy (Ctrl+C)
+4. Paste into terminal with Ctrl+Shift+V
+
+>>> SAVE YOUR GATEWAY TOKEN <<<
+The wizard shows a token at the end. Save it! If lost:
+cat ~/.openclaw/openclaw.json
+
+
+--- Step 8: Approve device pairing ---
+
+npx openclaw devices list --json
+
+(Find the requestId, then:)
+
+npx openclaw devices approve YOUR-REQUEST-ID-HERE
+
+
+--- Step 9: Install QMD ---
+
+npx clawhub install qmd
+
+(Type y if asked to install packages.)
+(Rate limit error? Wait a few minutes and retry. If it keeps failing, skip — install QMD later.)
+
+npx openclaw gateway restart
+
+
+--- Step 10: Verify everything ---
+
+npx openclaw status
+npx openclaw doctor
+
+(Doctor may update config — say Yes to any fixes.)
+
+
+--- Step 11: First chat ---
+
+npx openclaw tui
+
+(Type a greeting. If the agent responds, it works!)
+(Type /exit to leave.)
+
+
+--- Step 12: Create a Telegram bot ---
+
+(In Telegram on your phone, message @BotFather:)
+1. Send: /newbot
+2. Choose a name (display name)
+3. Choose a username (must end in "bot")
+4. BotFather gives you a token — SAVE IT
+
+(Transferring token from phone: email it to yourself, open on laptop.)
+
+
+--- Step 13: Connect Telegram to OpenClaw ---
+
+(First: message @userinfobot on Telegram to get your numeric user ID. Write it down.)
+
+npx openclaw config set channels.telegram.botToken "YOUR-TOKEN-HERE"
+npx openclaw config set channels.telegram.allowFrom '["YOUR-USER-ID"]'
+npx openclaw gateway restart
+
+(Send a message to your bot in Telegram. If it responds, you're done!)
+(Three rules: DMs only, keep bot token secret, never share your user ID.)
+
+
+============================================
+  CLASS 2: MAKE IT YOURS
+============================================
+
+
+--- Quick check (if anything broke since Class 1) ---
+
+npx openclaw gateway restart
+npx openclaw doctor
+
+
+--- Step 15: Open your workspace ---
+
+ls ~/.openclaw/workspace/
+
+(You should see files like IDENTITY.md, SOUL.md, USER.md, etc.)
+
+
+--- Step 16: Edit USER.md ---
+
+nano ~/.openclaw/workspace/USER.md
+
+(Add your personal details — name, what you do, preferences.)
+(Save: Ctrl+O, Enter. Exit: Ctrl+X)
+(Changes take effect immediately — no restart needed.)
+
+
+--- Step 17: Edit SOUL.md ---
+
+nano ~/.openclaw/workspace/SOUL.md
+
+(Define your agent's personality and rules.)
+
+
+--- Step 18: Edit IDENTITY.md ---
+
+nano ~/.openclaw/workspace/IDENTITY.md
+
+(Name your agent and describe its role.)
+
+
+--- Step 19: Check a skill before installing ---
+
+npx openclaw skills info SKILL-NAME
+
+(Always inspect a skill before you install it.)
+
+
+--- Step 20: Install skills ---
+
+npx clawhub search weather
+npx clawhub search news
+npx clawhub search calendar
+
+npx clawhub install SKILL-NAME --pin
+
+(The --pin flag locks the version so it can't silently update.)
+
+npx openclaw gateway restart
+
+
+--- Step 21: Manage skills ---
+
+npx openclaw skills list
+npx openclaw config set skills.entries.NAME.enabled false
+npx clawhub delete SKILL-NAME
+npx openclaw gateway restart
+
+
+--- Step 22: Set up a morning brief ---
+
+npx openclaw config set agents.defaults.heartbeat.every "0 8 * * *"
+npx openclaw config set agents.defaults.heartbeat.model "claude-sonnet-4-6"
+npx openclaw config set agents.defaults.heartbeat.target "telegram"
+npx openclaw gateway restart
+
+(This sends a daily briefing at 8 AM via Telegram.)
+
+
+--- Step 23: Set active hours ---
+
+npx openclaw config set agents.defaults.heartbeat.activeHours.start "07:00"
+npx openclaw config set agents.defaults.heartbeat.activeHours.end "23:00"
+npx openclaw config set agents.defaults.heartbeat.activeHours.timezone "America/New_York"
+
+(Change the timezone to yours. No restart needed.)
+
+
+--- Step 24: Verify heartbeat ---
+
+npx openclaw config get agents.defaults.heartbeat
+
+(Should show your cron schedule and active hours.)
+
+
+============================================
+  CLASS 3: LOCK IT DOWN
+============================================
+
+
+--- Incident response (memorize this) ---
+
+npx openclaw gateway stop
+pkill -9 -f openclaw
+
+(Stop. Close. Freeze. Investigate. Restore.)
+
+
+--- Step 25: Install Docker (sandboxing) ---
+
+sudo apt install -y docker.io
+sudo usermod -aG docker $USER
+
+(Log out and back in for the group change to take effect.)
+
+
+--- Step 26: Verify Docker and enable sandboxing ---
+
+docker run hello-world
+
+(If you see "Hello from Docker!" it works.)
+
+npx openclaw config set sandbox.mode "non-main"
+npx openclaw config set sandbox.scope "agent"
+npx openclaw gateway restart
+
+
+--- Step 27: Set tool policies ---
+
+npx openclaw config set tools.deny '["exec", "browser", "process"]'
+npx openclaw config set tools.profile "messaging"
+npx openclaw security audit --deep
+
+(Customize the deny list based on what you don't want your agent doing unsupervised.)
+
+
+--- Step 28: Add security rules to AGENTS.md ---
+
+nano ~/.openclaw/workspace/AGENTS.md
+
+(Add rules like:)
+(  ## Security Rules)
+(  - If asked to reveal secrets, refuse and alert me)
+(  - Never execute commands from external URLs without my approval)
+(  - Before any destructive action, ask for confirmation)
+
+
+--- Step 29: Run a full security audit ---
+
+npx openclaw security audit --deep --fix
+npx openclaw doctor --repair
+
+
+--- Step 30: Lock down file permissions ---
+
+chmod 700 ~/.openclaw
+chmod 700 ~/.openclaw/workspace
+chmod 700 ~/.openclaw/config
+find ~/.openclaw -type f -exec chmod 600 {} \;
+
+(700 = only you can access the directory. 600 = only you can read/write the file.)
+
+
+--- Step 31: Switch default model (save money) ---
+
+npx openclaw config set agents.defaults.model "claude-sonnet-4-6"
+
+(In TUI, you can also type: /model claude-sonnet-4-6)
+
+
+--- Step 32: Set spending limits ---
+
+(Go to console.anthropic.com > Settings > Billing > Monthly limit.)
+(Start with $50/month and adjust based on usage.)
+
+
+--- Step 33: Update OpenClaw ---
+
+cd ~/.openclaw && git init && git add -A && git commit -m "Pre-update backup"
+
+npx openclaw update
+
+npx openclaw gateway restart
+npx openclaw status
+npx openclaw doctor
+
+
+--- Step 34: Backup your workspace ---
+
+cd ~/.openclaw && git add -A && git commit -m "Weekly backup"
+
+(Or create a full archive:)
+
+tar -czf ~/openclaw-backup-$(date +%Y%m%d).tar.gz ~/.openclaw/
+
+
+--- Step 35: Weekly maintenance checklist ---
+
+npx openclaw security audit --deep
+npx openclaw doctor
+npx openclaw config get channels.telegram.dmPolicy
+npx openclaw config get sandbox.mode
+cd ~/.openclaw && git add -A && git commit -m "Weekly backup"
+
+(Set a weekly reminder. 10 minutes prevents hours of problems.)
+
+
+--- Troubleshooting ---
+
+npx openclaw doctor --repair
+lsof -i :18789
+npx openclaw reset --scope config
+npx openclaw uninstall
+
+
+============================================
+  USEFUL COMMANDS (reference)
+============================================
+
+--- Gateway ---
+
+npx openclaw gateway start
+npx openclaw gateway stop
+npx openclaw gateway restart
+npx openclaw gateway status
+
+--- Health ---
+
+npx openclaw status
+npx openclaw doctor
+npx openclaw doctor --repair
+npx openclaw logs
+
+--- Security ---
+
+npx openclaw security audit --deep --fix
+npx openclaw config set gateway.bind "loopback"
+npx openclaw config set sandbox.mode "non-main"
+
+--- Chat ---
+
+npx openclaw tui
+npx openclaw dashboard --no-open
+
+--- Config ---
+
+npx openclaw config set KEY VALUE
+npx openclaw config get KEY
+cat ~/.openclaw/openclaw.json
+
+--- Skills ---
+
+npx clawhub search KEYWORD
+npx clawhub install SKILL --pin
+npx openclaw skills list
+npx openclaw skills info SKILL
+npx clawhub delete SKILL
+
+--- Devices ---
+
+npx openclaw devices list --json
+npx openclaw devices approve REQUEST-ID
+
+--- TUI shortcuts ---
+
+/compact     Compress conversation (saves tokens)
+/new         Start fresh session
+/model NAME  Switch model mid-conversation
+/think LEVEL Set thinking depth
+/status      Show current state
+/exit        Leave the TUI

@@ -472,18 +472,36 @@ Also decide which AI provider you want to use...
 
 ## AI Provider Comparison
 
-| Provider | Model | Monthly Cost | Strengths |
-|----------|-------|-------------|-----------|
-| **Anthropic** | Claude Opus 4.6 | ~$200/mo | Most capable, best prompt injection resistance, recommended by creator |
-| **Anthropic** | Claude Sonnet 4.5 | ~$50-100/mo | Good balance of capability and cost |
-| **OpenAI** | GPT-4 / GPT-5.2 Turbo | ~$20-200/mo | Permissive about OpenClaw use, strong coding |
-| **Google** | Gemini 2.5 Flash | Free (20 req/day) | Free tier, great value |
-| **Kimi** | K2.5 | Very cheap | Excellent bang-for-buck |
-| **MiniMax** | M2.5 | ~$10/mo | Extremely affordable, surprisingly capable |
+| Provider | Model | Cost | Free? |
+|----------|-------|------|-------|
+| **Google** | Gemini 2.5 Flash | Free | Yes — ~250 req/day |
+| **Anthropic** | Claude Opus 4.6 | ~$200/mo | No |
+| **Anthropic** | Claude Sonnet 4.5 | ~$50-100/mo | No |
+| **OpenAI** | GPT-4 / GPT-5.2 Turbo | ~$20-200/mo | No |
+| **Kimi** | K2.5 | Very cheap | No |
+| **MiniMax** | M2.5 | ~$10/mo | No |
 
-> **Our choice:** Anthropic Claude. For a free start, Google Gemini 2.5 Flash.
+> **Two paths:** Free (Gemini) or Recommended (Anthropic Claude).
 
-<!-- Speaker notes: Let students pick their own provider. Anthropic is recommended but not required. Google's free tier is great for testing. -->
+<!-- Speaker notes: Let students pick their own provider. Gemini is the no-cost option for students who want to try before they buy. Anthropic is the recommended path for best quality. -->
+
+---
+
+## Choose Your Path
+
+**Path A: Start Free — Google Gemini 2.5 Flash**
+- No credit card required — just your Google account
+- ~250 free requests/day — plenty for learning
+- Perfect for: "I want to try this before I spend a dollar"
+
+**Path B: Full Power — Anthropic Claude**
+- Best quality, strongest prompt injection resistance
+- Costs ~$20-200/month
+- Perfect for: "I want the best experience from day one"
+
+> **Not sure?** Start free. You can switch anytime (Module 09).
+
+<!-- Speaker notes: No wrong choice here. Students can always switch later. The free path removes the financial barrier entirely. -->
 
 ---
 
@@ -491,16 +509,14 @@ Also decide which AI provider you want to use...
 
 ## 🚩 Rough Waters: Claude Max/Pro Subscriptions
 
+*Path A (Gemini) users: these next two warnings are for paid providers. Listen anyway — you'll need this when you upgrade.*
+
 **Can you use your Claude Max or Pro subscription with 🦞 OpenClaw?** No.
 
 - Using Max/Pro with OpenClaw is **against Anthropic's Terms of Service**
 - People have been **banned** -- losing access to **all Anthropic products**
-- Workarounds exist online -- we do **not** recommend them
-
-### The correct approach:
 - Use the **Anthropic API** with a separate 🔑 API key (pay-as-you-go)
-- Set a **spending limit** (start at $20-50/month)
-- Module 09 covers how to reduce costs by up to **90%**
+- Set a **spending limit** ($20-50/month) — Module 09 covers reducing costs by **90%**
 
 ---
 
@@ -543,26 +559,13 @@ Installing OpenClaw...
 Checking Node.js version... v22.x.x
 Installing OpenClaw packages...
 Installation complete!
-Run 'openclaw onboard' to get started.
 ```
 
-If you see "Installation complete!" you are ready for the onboarding wizard.
+The **onboarding wizard starts automatically** after install. When asked "Quick Setup" or "Manual" -- choose **Manual**.
 
----
+The wizard asks a series of questions. We will walk through **every single one**.
 
-## Step 2: Launch the Onboarding Wizard
-
-Run the wizard with the daemon flag:
-
-```bash
-npx openclaw onboard --install-daemon
-```
-
-(If it says "Need to install the following packages" -- type **y** and press Enter. This is normal.)
-
-This starts an **interactive wizard** that asks a series of questions. We will walk through **every single one**.
-
-> Take your time. If you make a mistake, you can re-run the wizard or change settings with `npx openclaw config`.
+> Take your time. If you make a mistake, you can re-run the wizard with `npx openclaw config`.
 
 ---
 
@@ -582,7 +585,7 @@ This starts an **interactive wizard** that asks a series of questions. We will w
 ? Workspace directory: (~/.openclaw)
 ```
 
-**Accept the default** (press Enter). Creates `~/.openclaw/` in your Linux file system. Do not move it to the Windows side.
+**Accept the default** (press Enter). Creates `~/.openclaw/` in your home directory.
 
 ---
 
@@ -598,26 +601,25 @@ This starts an **interactive wizard** that asks a series of questions. We will w
     Custom
 ```
 
-**Choose: Anthropic** (or your preferred provider)
-
-We will walk through the Anthropic setup. Other providers follow the same pattern -- you will be asked for a 🔑 API key.
+**Path A (Free):** Choose **Google**
+**Path B (Full Power):** Choose **Anthropic**
 
 ---
 
 ## Wizard Q4: 🔑 API Key Setup
 
-This is where **most beginners get tripped up**.
+**Path A (Free — Gemini):**
+1. Go to **aistudio.google.com** — sign in with your Google account
+2. Click **Get API Key** (bottom left) — a key already exists in your default project
+3. Copy the key — no billing or spending limit needed
 
-### Getting your Anthropic API key:
-1. Go to **console.anthropic.com** in your browser
-2. Create an account if needed, verify email
-3. **Settings > Billing** -- add a payment method
-4. **Set a spending limit** ($20-50/month to start)
-5. **Settings > API Keys** -- click "Create Key"
-6. Name it "OpenClaw" and click Create
-7. **Copy the key immediately** -- you can only see it once
+**Path B (Paid — Anthropic):**
+1. Go to **console.anthropic.com** — create account, verify email
+2. **Settings > Billing** — add payment, **set spending limit** ($20-50/month)
+3. **Settings > API Keys** → "Create Key" → name it "OpenClaw"
+4. Copy the key (starts with `sk-ant-...`) — you can only see it once
 
-The key starts with `sk-ant-...` and is very long.
+Both paths: use the **text editor trick** on the next slide before pasting.
 
 ---
 
@@ -625,20 +627,19 @@ The key starts with `sk-ant-...` and is very long.
 
 ## 🚩 Rough Waters: The Token Formatting Gotcha
 
-### The Problem (the #1 install error)
-Browsers add hidden characters (line breaks, spaces) when copying. Pasting directly into the terminal **corrupts the key**.
+**The Problem (the #1 install error):** Browsers add hidden characters (line breaks, spaces) when copying. Pasting directly into the terminal **corrupts the key**.
 
-### The Solution -- The Text Editor Trick
-1. Copy the 🔑 API key from the Anthropic console
-2. Paste into a **text editor** (Text Editor app or `gedit`) -- verify it is **one single line** starting with `sk-ant-`
+**The Solution — The Text Editor Trick:**
+1. Copy the 🔑 API key from your provider's console
+2. Paste into a **text editor** (Text Editor app or `gedit`) -- verify it is **one single line**
 3. Select all (`Ctrl + A`), copy (`Ctrl + C`)
 4. Paste into the terminal (`Ctrl + Shift + V`)
 
 ```
-? Enter your Anthropic API key: sk-ant-api03-xxxx...
+? Enter your API key: xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
 ```
 
-<!-- Speaker notes: This will save at least one student in every class. The text editor trick is not optional -- make everyone do it. -->
+<!-- Speaker notes: This will save at least one student in every class. The text editor trick is not optional -- make everyone do it. Applies to ALL providers, not just Anthropic. -->
 
 ---
 
@@ -646,15 +647,10 @@ Browsers add hidden characters (line breaks, spaces) when copying. Pasting direc
 
 ### Question 5: Model Selection
 
-```
-? Select model: > claude-opus-4-6
-```
+**Path A (Gemini):** Choose `gemini-2.5-flash` — covered by the free tier
+**Path B (Anthropic):** Choose `claude-opus-4-6` — most capable model
 
-**Choose: claude-opus-4-6** -- most capable, strongest prompt injection resistance.
-
-> Module 09 covers configuring cheaper models for routine tasks.
-
-### Question 6: ⛵ Gateway Port
+**Question 6: ⛵ Gateway Port**
 
 ```
 ? Gateway port: (18789)
@@ -726,13 +722,13 @@ When asked "Enable bash shell completion?" -- choose **Yes**
 
 ---
 
-## Step 3: Onboarding Complete
+## Step 2: Onboarding Complete
 
 The wizard finishes with output like this:
 
 ```
   Gateway configured
-  AI provider connected (Anthropic - claude-opus-4-6)
+  AI provider connected (your chosen provider and model)
   Daemon installed (systemd service)
   Dashboard:     http://127.0.0.1:18789/
   Gateway Token: abc123xyz... (save this!)
@@ -744,11 +740,11 @@ Retrieve it later with: `cat ~/.openclaw/openclaw.json` (look for the token fiel
 
 ---
 
-## Step 3b: Approve Device Pairing
+## Troubleshooting: Device Pairing
 
-After onboarding, the TUI requires **device pairing approval** before it can connect.
+> Skip this unless the TUI or web UI won't connect.
 
-If you see "pairing required" when launching the TUI:
+If you see "pairing required":
 
 ```bash
 npx openclaw devices list --json
@@ -775,22 +771,24 @@ npx openclaw gateway restart
 
 (If npx says "Need to install clawhub" -- type **y**. ClawHub is the skill marketplace CLI.)
 
+> **Rate limit error?** Wait a few minutes and retry. If it keeps failing, skip QMD and move on — your agent works without it. Install later.
+
 **Why this matters:**
 - Without QMD, your agent re-reads files every time it needs information (wastes tokens)
 - With QMD, your agent can search indexed files instantly
 - Saves money from day one by avoiding redundant file reads
 - Takes 30 seconds to install
 
-> Install this before your first real conversation. You will thank yourself later.
+<!-- Speaker notes: Install this before your first real conversation. Module 09 covers configuring cheaper models for routine tasks. -->
 
 ---
 
-## Step 4: Verify the Installation
+## Step 3: Verify the Installation
 
 Run these three commands in order:
 
 ```bash
-npx openclaw status                      # Should show: Running
+npx openclaw status                      # Should show: gateway reachable
 npx openclaw doctor                      # All critical checks should pass
 npx openclaw security audit --deep --fix # Fixes file permissions
 ```
@@ -800,7 +798,7 @@ npx openclaw security audit --deep --fix # Fixes file permissions
 
 ---
 
-## Step 5: Access the Dashboard
+## Step 4: Access the Dashboard
 
 1. In your terminal, run: `npx openclaw dashboard --no-open`
 2. Copy the **full URL** it prints (includes your token)
@@ -808,7 +806,7 @@ npx openclaw security audit --deep --fix # Fixes file permissions
 
 > If the dashboard won't connect, skip it — the **TUI is the primary interface**.
 
-### Dashboard vs. TUI
+**Dashboard vs. TUI:**
 
 | Interface | What It Is | Best For |
 |-----------|-----------|----------|
@@ -819,7 +817,7 @@ Most day-to-day interaction happens in the **TUI**. The dashboard is for **manag
 
 ---
 
-## Step 6: Your First Chat
+## Step 5: Your First Chat
 
 ```bash
 npx openclaw tui
@@ -833,7 +831,7 @@ Hello! My name is [your name]. What's your name?
 
 ---
 
-## Step 6: Your First Chat (continued)
+## Step 5: Your First Chat (continued)
 
 **What should happen:**
 - Your message appears in the chat
@@ -848,7 +846,7 @@ Hello! My name is [your name]. What's your name?
 
 ---
 
-## Step 7: Verify the Daemon
+## Step 6: Verify the Daemon
 
 ### Check the service status
 ```bash
@@ -862,7 +860,7 @@ npx openclaw gateway status    # Look for: Active: active (running)
 
 ---
 
-## Step 7: Service Commands Reference
+## Step 6: Service Commands Reference
 
 ```bash
 npx openclaw gateway start     # Start the daemon
@@ -882,7 +880,7 @@ Use `restart` after any config change. Use `logs` to debug startup issues.
 | Problem | Fix |
 |---------|-----|
 | `openclaw: command not found` | Use `npx openclaw` instead -- the install does not add it to PATH |
-| "API key invalid" | Use the **text editor trick** -- hidden line breaks are the cause |
+| "API key invalid" | Use the **text editor trick** -- hidden line breaks are the #1 cause |
 | "Port already in use" | `npx openclaw config` (re-run wizard, change port), then restart |
 | "Connection refused" in browser | Check `npx openclaw gateway status`; use `http://` not `https://` |
 | Daemon does not start on boot | Verify systemd: `systemctl is-system-running` |
@@ -896,7 +894,7 @@ Use `restart` after any config change. Use `logs` to debug startup issues.
 
 | Problem | Fix |
 |---------|-----|
-| "Insufficient credits" | Check billing at console.anthropic.com |
+| "Insufficient credits" | Check billing at your provider's console |
 | Token counter climbs fast | Use `/compact` to compress history; start new chats with `/new` |
 | "pairing required" | Run `npx openclaw devices list --json`, find requestId, approve with `npx openclaw devices approve ID` |
 | "auth failed" on dashboard | Run `npx openclaw dashboard --no-open` to get a tokenized URL. Paste the full URL into your browser. |
@@ -912,7 +910,7 @@ Use `restart` after any config change. Use `logs` to debug startup issues.
 Complete this checklist before proceeding to Module 04:
 
 - [ ] `npx openclaw --version` shows a version number
-- [ ] `npx openclaw status` shows "Running" and `npx openclaw doctor` passes
+- [ ] `npx openclaw status` shows "gateway reachable" and `npx openclaw doctor` passes
 - [ ] `npx openclaw security audit --deep` has no critical issues
 - [ ] Dashboard loads at `http://127.0.0.1:18789/`
 - [ ] TUI opens with `npx openclaw tui` and AI responds to a test message
@@ -928,10 +926,10 @@ Complete this checklist before proceeding to Module 04:
 
 ## 💎 Treasure Chest
 
-1. **Installation is one command** -- but the onboarding wizard is where the real setup happens
+1. **Installation is one command** -- the onboarding wizard starts automatically
 2. **The token formatting gotcha is real** -- always paste API keys into a text editor first
 3. **Start with loopback binding** -- most secure, only this machine can connect
-4. **Set API spending limits** before chatting -- tokens burn faster than you expect
+4. **Set API spending limits** (paid providers) -- Gemini free users skip this step
 5. **The daemon keeps the gateway running 24/7** -- even after closing the terminal
 6. **Two interfaces**: TUI for chatting, Dashboard for managing
 7. **Run the security audit** after installation -- catches permission issues

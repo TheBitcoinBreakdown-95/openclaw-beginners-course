@@ -14,7 +14,7 @@ This guide is the streamlined version. For deep explanations and theory, see the
 |-------------|---------|
 | **Hardware** | 8 GB RAM minimum (16 GB recommended), 20 GB free disk space |
 | **Operating System** | A dedicated laptop (we install Ubuntu), macOS, or Linux |
-| **API Key** | Anthropic (paid, recommended) or Google Gemini (free tier available) |
+| **API Key** | Google Gemini (free, no credit card) or Anthropic (paid, recommended) |
 | **Telegram** | Free account on your phone for mobile access |
 | **Time** | 30-60 minutes of uninterrupted setup |
 
@@ -24,9 +24,10 @@ This guide is the streamlined version. For deep explanations and theory, see the
 
 Create these accounts from any computer **before** your setup session. Everything else installs from the terminal once you are online.
 
-- [ ] **Anthropic API account** — Go to https://console.anthropic.com/, sign up, add billing, and generate an API key. Save the key securely (password manager or secure note). It starts with `sk-ant-` and is shown only once.
+- [ ] **AI provider account** — Choose one:
+  - **Free path:** Go to https://aistudio.google.com/, sign in with your Google account, click **Get API Key** — a key already exists in your default project. No credit card needed.
+  - **Recommended path:** Go to https://console.anthropic.com/, sign up, add billing, generate an API key (starts with `sk-ant-`, shown only once), and **set a spending limit** ($20-50/month) at Settings > Plans & Billing > Usage Limits.
 - [ ] **Telegram account** — Install Telegram on your phone (App Store or Google Play) and create an account if you do not have one.
-- [ ] **Set your API spending limit NOW** — While you are in the Anthropic console, go to Settings > Plans & Billing > Usage Limits and set a monthly limit of $20-50. Do this before installation, not after.
 - [ ] **Read Module 01** — Understand the security risks before you install anything. See `Lessons/Module-01-Understanding-the-Risks/Lesson.md`.
 
 That is it for the minimum viable setup. The dedicated laptop does not need anything pre-installed — Ubuntu, Node.js, and OpenClaw all install during Phase 1 and 2.
@@ -106,13 +107,9 @@ All commands from here forward happen in your **Ubuntu terminal** (or native ter
 curl -fsSL https://openclaw.ai/install.sh | bash
 ```
 
-### 2. Run the onboarding wizard
+The onboarding wizard starts automatically after install. Choose **Manual** (not Quick Setup).
 
-```bash
-npx openclaw onboard --install-daemon
-```
-
-### 3. Walk through the wizard
+### 2. Walk through the wizard
 
 The wizard asks a series of questions. Here are the recommended answers:
 
@@ -120,9 +117,9 @@ The wizard asks a series of questions. Here are the recommended answers:
 |----------|--------|-----|
 | Gateway type | **Local Gateway** | Running on this machine |
 | Workspace directory | **Accept default** (`~/.openclaw`) | Standard location |
-| AI provider | **Anthropic** (or Google for free) | Best capability and prompt injection resistance |
+| AI provider | **Google** (free) or **Anthropic** (recommended) | Free path needs no credit card; Anthropic has best quality |
 | API key | Paste your key (see below) | Authentication for the AI model |
-| Model | **claude-opus-4-6** | Most capable; use Gemini 2.5 Flash for free |
+| Model | **gemini-2.5-flash** (free) or **claude-opus-4-6** (paid) | Free path: ~250 req/day; Paid path: most capable |
 | Gateway port | **Accept default** (18789) | Standard port |
 | Gateway bind | **Loopback** | Most secure -- only this machine can connect |
 | Tailscale exposure | **Off** | Can enable later if needed |
@@ -154,9 +151,9 @@ This applies to API keys, bot tokens, and any credential you paste.
 5. Copy the key immediately (it starts with `sk-ant-` and is shown only once)
 6. Use the text editor trick before pasting
 
-**Free alternative:** Go to https://ai.google.dev/, sign in with Google, and create a Gemini API key. Gemini 2.5 Flash gives you 20 free requests per day.
+**Free path:** Go to https://aistudio.google.com/, sign in with Google, and click **Get API Key** — a key already exists in your default project. Gemini 2.5 Flash gives you ~250 free requests per day — no credit card, no billing, no spending limit needed. Select **Google** as your provider in the wizard and choose **gemini-2.5-flash** as your model.
 
-### 4. Save your gateway token
+### 3. Save your gateway token
 
 After the wizard completes, it displays a gateway token. Save this somewhere secure (password manager, secure note). You need it for the web dashboard.
 
@@ -237,7 +234,7 @@ npx openclaw status
 npx openclaw doctor
 ```
 
-You should see `Gateway Status: Running` and all health checks passing. If any checks fail, run `npx openclaw doctor --repair`.
+You should see `gateway reachable` with a response time (e.g., 63ms) and all health checks passing. If any checks fail, run `npx openclaw doctor --repair`.
 
 ---
 

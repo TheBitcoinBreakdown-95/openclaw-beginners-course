@@ -25,23 +25,21 @@ One more thing before we shove off. There IS a gotcha in this module that trips 
 
 Here's our chart for today — eight ports of call, and every single one of them ends with something WORKING on your machine.
 
-Port one: you'll run the OpenClaw installer in your Ubuntu terminal. One command. That's it. One command and the software is on your ship.
+Port one: you'll run the OpenClaw installer in your Ubuntu terminal. One command. That's it. One command and the software is on your ship — and the onboarding wizard starts right away. Fourteen questions, and we're walking through EVERY one of them together. No guessing. No "I think this is right?" We KNOW what's right because I'm going to tell you.
 
-Port two: the onboarding wizard. Fourteen questions, and we're walking through EVERY one of them together. No guessing. No "I think this is right?" We KNOW what's right because I'm going to tell you.
+Port two: choosing your AI provider and getting that API key configured. This is where you pick your engine — the brain that powers your agent.
 
-Port three: choosing your AI provider and getting that API key configured. This is where you pick your engine — the brain that powers your agent.
+Port three: dodging the token formatting gotcha. The number one installation killer. The reef that sinks more ships than any other obstacle in this entire course. We're going to sail right around it.
 
-Port four: dodging the token formatting gotcha. The number one installation killer. The reef that sinks more ships than any other obstacle in this entire course. We're going to sail right around it.
+Port four: configuring the gateway for secure local operation. Locking the hatches. Making sure only YOU can talk to your agent.
 
-Port five: configuring the gateway for secure local operation. Locking the hatches. Making sure only YOU can talk to your agent.
+Port five: installing the daemon so your agent runs around the clock. No babysitting required.
 
-Port six: installing the daemon so your agent runs around the clock. No babysitting required.
+Port six: verifying EVERYTHING works. Status checks. Health checks. Security audits. The full inspection.
 
-Port seven: verifying EVERYTHING works. Status checks. Health checks. Security audits. The full inspection.
+Port seven: opening the dashboard and the TUI — your two interfaces into this whole operation.
 
-Port eight: opening the dashboard and the TUI — your two interfaces into this whole operation.
-
-Eight ports. By the time we dock tonight, you will have a living, breathing, responding AI agent running on your laptop. Let's make it happen.
+Seven ports. By the time we dock tonight, you will have a living, breathing, responding AI agent running on your laptop. Let's make it happen.
 
 ---
 
@@ -97,27 +95,45 @@ Now — one more thing. Before we install, you need to know which AI provider yo
 
 Alright, crew — choosing an AI provider is like choosing the engine for your ship. Different engines, different horsepower, different fuel costs. Let me walk you through the fleet.
 
+Google Gemini 2.5 Flash — let me start with this one because it's your FREE option. No credit card. No billing. No spending surprises. About two hundred fifty requests per day. It's like a supply ship already docked in your harbor — you've got a Google account, right? That's all you need. Solid performance, good conversation quality, and you cannot accidentally run up a bill. Perfect for "I want to try this before I spend a single dollar."
+
 Anthropic Claude Opus 4.6 — the BATTLESHIP. Most capable model on the market. Warmest personality. Best prompt injection resistance, which means it's the hardest to trick into doing something it shouldn't. The OpenClaw creator himself recommends it. Downside? About two hundred dollars a month if you let it run wild. That's premium fuel for a premium engine.
 
-Claude Sonnet 4.5 — the FRIGATE. Lighter, cheaper, fifty to a hundred bucks a month. Not as sharp as Opus but still very capable. Solid choice if you want Anthropic quality on a tighter budget.
+Claude Sonnet 4.5 — the FRIGATE. Lighter, cheaper, fifty to a hundred bucks a month. Not as sharp as Opus but still very capable.
 
-OpenAI GPT-4 and GPT-5.2 Turbo — the MERCHANT VESSEL. Strong, reliable, permissive about OpenClaw use. Twenty to two hundred a month depending on the model. Less personality warmth, but powerful workhorses.
+OpenAI GPT-4 and GPT-5.2 Turbo — the MERCHANT VESSEL. Strong, reliable. Twenty to two hundred a month.
 
-Google Gemini 2.5 Flash — and HERE is your free option, crew. Free tier. Twenty requests per day. No credit card. No billing. It's like a dinghy with a surprisingly powerful motor. Great for testing. Great for learning. Great for "I want to try this before I spend a single dollar."
+Kimi K2.5 and MiniMax M2.5 — the budget fleet. Very cheap. Surprisingly capable. Community is still kicking the tires.
 
-Kimi K2.5 and MiniMax M2.5 — the budget fleet. Very cheap. Surprisingly capable for the price. The community is still kicking the tires on these, but early reports are strong.
+Now — here's the key. You have TWO PATHS today.
 
-Our recommendation for this course? Anthropic Claude. That's what we'll demo. That's what we'll show. But if you want to start free and upgrade later? Google Gemini 2.5 Flash is a perfectly fine choice. No judgment. Pick the engine that matches your wallet and your comfort level.
-
-[ask the audience] Quick poll — who's going Anthropic? Who's going Google free tier? Anyone else?
+[ask the audience] Quick poll — who wants to start free with Gemini? Raise your hand. And who's going Anthropic? Anyone else?
 
 [wait for responses]
 
-Beautiful. Whatever you picked, the wizard handles it the same way. Let's keep moving.
+Beautiful. BOTH paths work. I'm going to walk through BOTH on the next slides. If you're not sure? Start free. You can always switch to Anthropic later — Module 09 covers that. There is NO wrong choice here.
+
+---
+
+## Slide 5b — Choose Your Path
+
+Alright, so here's the fork in the road.
+
+Path A: Start Free with Google Gemini. No credit card required. Just your Google account. About two hundred fifty free requests per day — which is PLENTY for chatting and learning. Set up in three minutes. This is your "I want to try before I buy" path.
+
+Path B: Full Power with Anthropic Claude. Best model quality. Warmest personality. Strongest prompt injection resistance. Costs twenty to two hundred a month depending on usage. This is your "I want the Rolls-Royce from day one" path.
+
+Both paths converge after we get past the API key step. Same wizard. Same gateway. Same TUI. Same everything — just different engines.
+
+And here's the thing I want you to hear: you can switch ANYTIME. Run `npx openclaw config` and change your provider. It takes sixty seconds. So don't agonize. Pick one. Get your agent running. You can always upgrade — or downgrade — later.
+
+Let's move on. Eyes on the next slide.
 
 ---
 
 ## Slide 6 — Rough Waters: Claude Max/Pro Subscriptions
+
+Now — Gemini users, these next two warning slides are about paid providers. They don't apply to you TODAY. But listen anyway, because when you upgrade later, you'll need to know this stuff.
 
 HOLD. Before we go any further, I need to throw up a red flag. A BIG red flag. Because someone in this room is thinking it and I need to nip it in the bud RIGHT NOW.
 
@@ -179,13 +195,13 @@ That's it. Type it in. Hit enter.
 
 Let me tell you what this does while it runs. `curl` is a download tool — it grabs the install script from openclaw.ai. Those flags — `-fsSL` — mean fail silently on errors, show no progress bar, and follow redirects. Then the pipe symbol — that vertical bar — takes the downloaded script and feeds it directly into bash to run.
 
-What you should see on screen: the OpenClaw ASCII art — that beautiful lobster outline — followed by "Installing OpenClaw..." then a Node.js version check, some packages installing, and finally the magic words: "Installation complete! Run `openclaw onboard` to get started."
+What you should see on screen: the OpenClaw ASCII art — that beautiful lobster outline — followed by "Installing OpenClaw..." then a Node.js version check, some packages installing, and finally "Installation complete!"
+
+And then — the onboarding wizard starts automatically. Right away. No separate command needed. The install script hands you straight into the wizard.
 
 [pause]
 
-If you see that? Congratulations. OpenClaw is on your ship. The software is installed. That was the easy part.
-
-If you see an error about Node.js version — go back to Module 02 Step 3. Your Node isn't new enough.
+If you see an error about Node.js version instead — go back to Module 02 Step 3. Your Node isn't new enough.
 
 If you see a network error — check your internet. Try opening a browser and loading any website. If that works but the terminal can't connect, try `sudo systemctl restart NetworkManager` and run the install command again.
 
@@ -195,25 +211,13 @@ If you see a network error — check your internet. Try opening a browser and lo
 
 ---
 
-## Slide 9 — Step 2: Launch the Onboarding Wizard
+## Slide 9 — Step 1 (continued): The Onboarding Wizard
 
-Beautiful. OpenClaw is installed. Now we wake it up and teach it who it's working for.
+Beautiful. OpenClaw is installed and the wizard is on screen. First thing it tells you is that this is personal by default — shared or multi-user setups require lockdown. Good. That's what we want.
 
-Type this command — and pay attention because there's a flag at the end that matters:
+Then it asks: Quick Setup or Manual? Choose **MANUAL**. Quick Setup skips questions we need to configure. Manual gives you every option.
 
-`npx openclaw onboard --install-daemon`
-
-Notice we're using `npx` at the front. That's important. The OpenClaw installer doesn't always add itself to your PATH — which means if you just type `openclaw` by itself, the terminal might say "command not found." That's NOT an error with your install. It just means the shortcut isn't set up. `npx` is the workaround — it finds and runs the package directly. We'll use `npx openclaw` for EVERY command in this module.
-
-That `--install-daemon` flag is important. It tells the wizard to also set up the background service so your agent keeps running even when you close the terminal. Without it, you'd have to do that manually later. With it, everything gets configured in one pass.
-
-Hit enter.
-
-[pause]
-
-Now — if the terminal says "Need to install the following packages" and asks you to confirm — type `y` and press Enter. That's completely normal. It's downloading the OpenClaw package to your machine. Give it one to three minutes. It's downloading, not stuck. You'll see a progress bar or some output scrolling by. Let it work.
-
-What you should see next is an interactive wizard. It's going to ask you a series of questions — fourteen of them — one at a time. It waits for YOUR answer before moving on. There's no timer. There's no rush. If you need to think, think. If you need to ask me, ask.
+Now — the wizard is going to ask you a series of questions — fourteen of them — one at a time. It waits for YOUR answer before moving on. There's no timer. There's no rush. If you need to think, think. If you need to ask me, ask.
 
 And here's the beautiful part — if you mess something up? You can almost always fix it later by running `npx openclaw config` and changing individual settings. The wizard isn't a one-shot deal. So breathe. Relax. We're going to walk through EVERY question together.
 
@@ -241,9 +245,10 @@ Two down, twelve to go. Still easy. Enjoy it while it lasts.
 
 Question three: Select your AI provider. You'll see a list — Anthropic, OpenAI, Google, MiniMax, Open Router, Custom.
 
-Pick whichever provider you decided on back when we looked at the comparison table. If you're following our recommendation, that's ANTHROPIC. Arrow key down to it if it's not already highlighted, and press enter.
+Path A folks — arrow down to GOOGLE and press enter.
+Path B folks — choose ANTHROPIC and press enter.
 
-I'm going to walk through the Anthropic setup from here because that's what most of you are using. If you chose Google or OpenAI, the process is nearly identical — you'll be asked for an API key, and the same rules apply. The text editor trick we're about to cover? Works for ALL providers. The spending limit advice? Applies to everyone with a paid API.
+Both paths get walked through on the next slide. The text editor trick we're about to cover? Works for ALL providers. Same process. Different consoles.
 
 [pause]
 
@@ -253,23 +258,31 @@ Alright. The next step is the big one. The one where first-time installers get s
 
 ## Slide 12 — Wizard Q4: API Key Setup
 
-Here's where we get your agent its fuel. Your API key. This is the secret credential that lets OpenClaw talk to Anthropic's servers and use Claude's brain. Without it, your agent is a ship with no engine. So let's do this right.
+Here's where we get your agent its fuel. Your API key. This is the secret credential that lets OpenClaw talk to your AI provider. Without it, your agent is a ship with no engine. So let's do this right.
 
-Step one: open your web browser. Chrome, Firefox, whatever you have installed. Go to console.anthropic.com. This is Anthropic's developer console.
+I'm going to give BOTH paths their instructions. Listen for yours.
 
-If you don't have an account, click Sign Up. Create one. Email and password. Verify your email. Standard stuff.
+**Path A — Gemini users.** Your setup is the EASY one. Open your browser. Go to aistudio.google.com. Sign in with your Google account — the one you already have. Click "Get API Key" in the bottom left. And look at that — a key already EXISTS. Google creates one for you automatically in your default project. Copy it. DONE. No billing. No spending limits. No credit card. You literally cannot run up a bill. Your free tier gives you about two hundred fifty requests per day, which is plenty for learning.
 
-Step two: billing. In the console, go to Settings, then Billing. Add a payment method. Credit card, debit card, whatever works.
-
-Step three — and DO NOT skip this — set your spending limit. In the sidebar: Settings, Plans and Billing, Usage Limits. Set the monthly spending limit to twenty to fifty dollars a month. Set a notification threshold at fifty percent so you get an email when you're halfway there. This is your emergency brake. This is the thing that prevents the eight-hundred-dollar disaster I told you about five minutes ago. DO IT NOW before you touch anything else.
+Copy that key — but do NOT paste it into the terminal yet. We have one more step that applies to EVERYONE. Hold tight.
 
 [pause]
 
-Step four: create the actual API key. Settings, API Keys, click Create Key. Name it "OpenClaw" or whatever you want. Click Create. And now — LISTEN CAREFULLY — your API key appears. It starts with `sk-ant-` and it's long. Very long. And you can only see it ONCE. After you leave this page, it's gone forever. You'd have to make a new one.
+**Path B — Anthropic users.** Your setup has more steps, but each one is important.
 
-COPY IT. Right now. But — and here's the critical part — do NOT paste it into your terminal yet. There's one more step. And this step is the difference between your installation working on the first try and you spending forty-five minutes wondering why your perfectly valid API key is "invalid."
+Step one: open your browser. Go to console.anthropic.com. Create an account if you don't have one. Email, password, verify email.
 
-Quick tip — if you created your API key on your phone or another computer and need to get it to this laptop, the easiest way is just email it to yourself and open the email on this machine's browser. Copy it from the email, then do the text editor trick we're about to cover. If you've got Tailscale set up from Module 02, you can also use Taildrop to beam it over. Either way works. Just get the key onto THIS machine's clipboard.
+Step two: billing. Settings, then Billing. Add a payment method.
+
+Step three — DO NOT skip this — set your spending limit. Settings, Plans and Billing, Usage Limits. Twenty to fifty dollars a month. Notification threshold at fifty percent. This is your emergency brake. The thing that prevents the eight-hundred-dollar disaster I told you about five minutes ago.
+
+[pause]
+
+Step four: create the key. Settings, API Keys, Create Key. Name it "OpenClaw." Click Create. Your key appears — starts with `sk-ant-` — and you can only see it ONCE. COPY IT immediately.
+
+But do NOT paste it into the terminal yet. Same as Gemini users — one more critical step for EVERYONE.
+
+Quick tip — if you created your key on your phone, email it to yourself and open the email on this machine. Or use Tailscale Taildrop if you set it up in Module 02.
 
 ---
 
@@ -277,7 +290,7 @@ Quick tip — if you created your API key on your phone or another computer and 
 
 THIS. This right here is the single most common installation failure across every community guide, every tutorial, every "help me my install is broken" forum post. The Token Formatting Gotcha. Capitalize all of those words because they deserve it.
 
-Here's what happens. You copy your API key from the Anthropic console in your browser. Seems fine. Looks fine. You paste it into the terminal. The wizard says "Invalid API key." You stare at the screen. You copied it right there. You can SEE it's correct. What the HECK?
+Here's what happens. You copy your API key from your provider's console — Anthropic, Google, whoever. Seems fine. Looks fine. You paste it into the terminal. The wizard says "Invalid API key." You stare at the screen. You copied it right there. You can SEE it's correct. What the HECK?
 
 The problem is invisible. Literally invisible. When you copy text from a web browser, your clipboard sometimes picks up hidden hitchhikers — line breaks, extra spaces, weird formatting characters. You can't see them. But the terminal can. And to the terminal, `sk-ant-[invisible garbage]api03-xxxxx` is NOT a valid key. Your key is corrupted and you don't even know it.
 
@@ -289,7 +302,7 @@ Step two: open a text editor. In your Ubuntu terminal, type `gedit` and press En
 
 Step three: paste the key into the text editor. Ctrl + V.
 
-Step four: LOOK at it. Really look. It should be ONE single line of text. No line breaks in the middle. No extra spaces at the beginning or end. It should start with `sk-ant-` and be one continuous unbroken string of characters.
+Step four: LOOK at it. Really look. It should be ONE single line of text. No line breaks in the middle. No extra spaces at the beginning or end. Anthropic keys start with `sk-ant-`. Gemini keys start with `AI`. Either way, one continuous unbroken string of characters.
 
 Step five: if you see line breaks — delete them. Squash it all onto one line.
 
@@ -297,9 +310,9 @@ Step six: select the entire key. Ctrl + A. Copy it. Ctrl + C.
 
 Step seven: NOW go to your Ubuntu terminal and paste it. Ctrl + Shift + V.
 
-The wizard will validate the key. If you see a checkmark and "API key validated, Connected to Anthropic" — you're GOLDEN. Your engine just roared to life.
+The wizard will validate the key. If you see a checkmark and "API key validated, Connected to [your provider]" — you're GOLDEN. Your engine just roared to life.
 
-If it still fails, try generating a brand new key and running the text editor trick again. Make sure your billing is set up — keys don't work without billing activated.
+If it still fails, try generating a brand new key and running the text editor trick again. Anthropic users — make sure your billing is set up; keys don't work without billing activated. Gemini users — make sure you're signed into the right Google account.
 
 [ask the audience] Everyone through? Anyone stuck on the API key? This is the one spot I expect trouble, so speak up now.
 
@@ -311,9 +324,13 @@ If it still fails, try generating a brand new key and running the text editor tr
 
 Good news — the hardest part is behind you. The API key is in. The engine is fueled. The rest of these wizard questions are quick and painless.
 
-Question five: Model selection. You'll see a list — claude-opus-4-6, claude-sonnet-4-5, claude-haiku-4-5. Choose CLAUDE-OPUS-4-6. Most capable model. Strongest prompt injection resistance. Yes, it's the most expensive option, but remember what we said in Module 01 — security is not the place to cut corners. Your agent's brain is the one component you want to be SHARP.
+Question five: Model selection.
 
-Cost-saving tip for the anxious: in Module 09, we'll configure cheaper models for routine tasks like heartbeats and simple commands, and keep Opus reserved for the important stuff. You're not locked in at Opus-for-everything forever.
+Path A — Gemini users: you'll see a list of Gemini models. Choose GEMINI-2.5-FLASH. That's the one covered by your free tier. Simple.
+
+Path B — Anthropic users: you'll see claude-opus-4-6, claude-sonnet-4-5, claude-haiku-4-5. Choose CLAUDE-OPUS-4-6. Most capable. Strongest prompt injection resistance.
+
+Cost-saving tip for EVERYONE: in Module 09, we'll show you how to configure cheaper models for routine tasks and keep your best model for the important stuff. You're not locked in forever.
 
 Question six: Gateway port. Default is 18789. Unless you have some OTHER service running on port 18789 — which, let's be honest, you almost certainly do not — accept the default. Press enter.
 
@@ -395,11 +412,11 @@ And THAT... is the last question. For real this time.
 
 ---
 
-## Slide 18 — Step 3: Onboarding Complete
+## Slide 18 — Step 2: Onboarding Complete
 
 The wizard is done. And if everything went right — and it DID go right, because we did it together — you should see something BEAUTIFUL on your screen right now.
 
-Checkmarks. Green checkmarks. Gateway configured. AI provider connected — Anthropic, Claude Opus 4.6. Daemon installed as a systemd service. Gateway started.
+Checkmarks. Green checkmarks. Gateway configured. AI provider connected — whatever you chose, Gemini or Anthropic or something else. Daemon installed as a systemd service. Gateway started.
 
 And then the big box. The announcement. The output that says:
 
@@ -421,7 +438,7 @@ Second thing — and this is important enough to get its own slide.
 
 ---
 
-## Slide 18b — Step 3b: Approve Device Pairing
+## Slide 18b — Step 2b: Approve Device Pairing
 
 Alright, before we test anything, there's one more step that might pop up. OpenClaw has a security feature called device pairing. Think of it like your gateway asking for ID before letting anyone through the door. First time a new device tries to connect — whether that's the TUI, the dashboard, or anything else — the gateway says "Hold on. Who ARE you? I need to check the manifest."
 
@@ -471,15 +488,17 @@ It takes thirty seconds to install. It saves you money on literally every conver
 
 [pause]
 
+Now, if anyone got a "rate limit exceeded" error — don't panic. That's ClawHub's servers being busy, not anything wrong with your setup. Wait a couple of minutes and try again. If it keeps failing, skip it for now and move on. Your agent works perfectly fine without QMD — it's just less efficient with tokens. You can always install it later with the same command.
+
 Done? Good. Now let's make sure everything is shipshape.
 
 ---
 
-## Slide 20 — Step 4: Verify the Installation
+## Slide 20 — Step 3: Verify the Installation
 
 Trust but verify, crew. We're going to run three checks. Think of this as the post-launch inspection — checking the hull, testing the engines, scanning for leaks.
 
-Check one: Gateway status. Run `npx openclaw status`. What you're looking for is one phrase: "Gateway Status: Running." If it says Running, your engine is alive. You should also see your version number, the port (18789), the bind (loopback), and your provider (Anthropic, Claude Opus 4.6). Everything should match what we configured.
+Check one: Gateway status. Run `npx openclaw status`. You'll see an overview of your system. What you're looking for is "gateway reachable" with a response time — something like 63ms. That means your engine is alive and responding. If the gateway isn't reachable or shows an error, we'll troubleshoot.
 
 Check two: Gateway health. Run `npx openclaw doctor`. This is your ship's doctor — it runs a full diagnostic. API key valid? Model reachable? Workspace accessible? Daemon active? You want all green checkmarks. If anything fails, the doctor will tell you what's wrong AND suggest fixes. You can even run `npx openclaw doctor --repair` and it'll try to patch things up automatically.
 
@@ -493,7 +512,7 @@ Three checks passed. Your ship is seaworthy. Now let's look around the bridge.
 
 ---
 
-## Slide 21 — Step 5: Access the Dashboard
+## Slide 21 — Step 4: Access the Dashboard
 
 Time to see the pretty side of your operation. In your Ubuntu terminal, run:
 
@@ -519,7 +538,7 @@ Most of your day-to-day interaction will happen in the TUI. The dashboard is for
 
 ---
 
-## Slide 22 — Step 6: Your First Chat
+## Slide 22 — Step 5: Your First Chat
 
 Alright crew. This is the MOMENT. The one we've been building toward since Module 00. You're about to speak to your AI agent for the very first time.
 
@@ -529,7 +548,7 @@ Go back to your Ubuntu terminal. Type:
 
 [pause]
 
-What you should see: a full-screen terminal interface. Message area at the top. Text input at the bottom. Your agent's name and model info. A token counter. It might look bare. It might look simple. Don't let that fool you. Behind that humble interface is a Claude Opus brain connected to your local machine with full shell access and permanent memory. That's a LOT of power behind a blinking cursor.
+What you should see: a full-screen terminal interface. Message area at the top. Text input at the bottom. Your agent's name and model info. A token counter. It might look bare. It might look simple. Don't let that fool you. Behind that humble interface is an AI brain — whether that's Claude Opus or Gemini Flash — connected to your local machine with full shell access and permanent memory. That's a LOT of power behind a blinking cursor.
 
 Type a simple greeting. Something like:
 
@@ -557,7 +576,7 @@ Type `/exit` or press Ctrl + C to leave the TUI. We've got one more thing to che
 
 ---
 
-## Slide 23 — Step 7: Verify the Daemon
+## Slide 23 — Step 6: Verify the Daemon
 
 Your agent responded. Amazing. But here's the question: will it KEEP running when you walk away? That's what the daemon is for, and that's what we need to verify.
 
@@ -631,7 +650,7 @@ Run through the list with me:
 
 One: `npx openclaw --version` shows a version number. Not an error. A number.
 
-Two: `npx openclaw status` shows "Running."
+Two: `npx openclaw status` shows "gateway reachable."
 
 Three: `npx openclaw doctor` passes all critical checks.
 
@@ -663,7 +682,7 @@ BONUS for the overachievers: run `npx openclaw logs` and read the last few lines
 
 Alright, crew — let's haul the treasure chest out of the hold and count our loot. Here's what you're taking away from today.
 
-One: installation is ONE COMMAND. `curl -fsSL https://openclaw.ai/install.sh | bash`. But the onboarding wizard is where the real setup happens. One command to install. Fourteen questions to configure. That's the whole process.
+One: installation is ONE COMMAND. `curl -fsSL https://openclaw.ai/install.sh | bash`. The onboarding wizard starts automatically right after. One command to install. Fourteen questions to configure. That's the whole process.
 
 Two: the token formatting gotcha is REAL. Always paste API keys into a text editor first. Check for hidden line breaks. Copy clean. Paste clean. This will save you every time.
 

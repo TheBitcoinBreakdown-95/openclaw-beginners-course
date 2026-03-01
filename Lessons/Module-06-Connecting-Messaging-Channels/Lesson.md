@@ -119,67 +119,34 @@ Just like with your API key in Module 03:
 2. Verify it's on a single line with no extra spaces or line breaks
 3. Copy it from the text editor
 
-### Step 4: Connect Telegram to OpenClaw
+### Step 4: Get Your Telegram User ID
 
-In your Ubuntu terminal (you can have the TUI and a regular terminal open at the same time):
+Before connecting, you need your Telegram user ID so you can lock down the bot immediately:
 
-```bash
-npx openclaw channels add telegram
-```
+1. In Telegram, search for **@userinfobot**
+2. Start a chat with it
+3. It replies with your numeric user ID — write it down
 
-Or use the onboarding-style channel setup:
+### Step 5: Connect Telegram to OpenClaw
 
-```bash
-npx openclaw channels add telegram
-```
-
-The wizard will ask for your bot token. Paste it (using the clean copy from the text editor).
-
-```
-? Enter your Telegram bot token: 7123456789:AAHdqTcvCH1vGWJxfSeofSAs0K5PALDsaw
-```
-
-Press Enter.
-
-**Expected output:**
-```
-✓ Telegram bot connected: @MyAssistantBot
-✓ DM pairing mode: enabled (default)
-```
-
-### Step 5: Restart the Gateway
+In your Ubuntu terminal, run these three commands. Replace the values with your actual bot token and user ID:
 
 ```bash
+npx openclaw config set channels.telegram.botToken "YOUR-BOT-TOKEN"
+npx openclaw config set channels.telegram.allowFrom '["YOUR-USER-ID"]'
 npx openclaw gateway restart
 ```
 
-### Step 6: Start a Chat with Your Bot
+> **Important:** Set `allowFrom` before restarting. If you try to set `dmPolicy` without `allowFrom`, you'll get a "config validation failed" error.
+
+### Step 6: Test It
 
 1. Open Telegram on your phone
 2. Search for your bot's username (e.g., `@MyAssistantBot`)
-3. Click on it
-4. Click **Start** or type `/start`
+3. Tap **Start** or type `/start`
+4. Send a test message
 
-### Step 7: Complete DM Pairing
-
-Because DM pairing mode is enabled (as it should be), the bot won't respond to you yet. Instead, it will send you a pairing code or ask you to verify through the gateway.
-
-The exact pairing process depends on the OpenClaw version, but typically:
-
-1. The bot sends you a message like: *"Pairing required. Your code: ABC123"*
-2. In your OpenClaw TUI or dashboard, you'll see a notification about a new pairing request
-3. Approve the pairing by entering the code or confirming in the dashboard
-4. Once paired, the bot responds to your messages
-
-> **Pairing codes expire after 1 hour**, and there's a maximum of 3 pending pairing requests at a time. If your code expires, just send another message to the bot and it will generate a new one.
-
-**After pairing is complete,** try sending a message:
-
-```
-Hi there! This is a test from Telegram. Do you remember my name?
-```
-
-If your agent responds with your name (from the USER.md file you configured in Module 05), congratulations — everything is connected and working!
+If your agent responds — everything is connected and working!
 
 ### Step 8: Optional — Set a Profile Picture
 

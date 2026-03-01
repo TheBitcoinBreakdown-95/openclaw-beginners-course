@@ -420,7 +420,7 @@ style: |
 
 ### OpenClaw Course
 
-<!-- Speaker notes: This is the hands-on setup module. We install Ubuntu on the old laptop — replacing Windows entirely. The "Try Ubuntu" step before installing catches WiFi issues early. Budget extra time for BIOS boot menu access and the Ubuntu installer. -->
+<!-- Speaker notes: This is the hands-on setup module. We install Ubuntu on the old laptop — replacing Windows entirely. The installer tests WiFi before you commit to installing, catching hardware issues early. Budget extra time for BIOS boot menu access and the Ubuntu installer. -->
 
 ---
 
@@ -579,6 +579,7 @@ In Windows (before we erase it), check your RAM:
 | **Another computer** | To download Ubuntu + create the USB |
 | **WiFi password** | For the network this laptop will use |
 | **Time** | 60–90 minutes for the full process |
+| **Pen and paper** | Or phone Notes app — you'll create passwords and tokens to track |
 
 You'll also need an **Anthropic API key** for Module 03 — not yet.
 
@@ -630,39 +631,30 @@ You'll also need an **Anthropic API key** for Module 03 — not yet.
 
 *Now move to the old laptop.*
 
-1. Plug in the bootable USB
-2. Restart (or power on) the laptop
-3. Press the **boot menu key** repeatedly during startup:
+1. Plug in the bootable USB and restart the laptop
+2. Press the **boot menu key** repeatedly during startup:
 
 | Manufacturer | Key |
 |-------------|-----|
 | Dell | F12 |
 | HP | F9 or Esc |
 | Lenovo | F12 |
-| Acer | F12 |
 | ASUS | Esc or F8 |
-| Toshiba | F12 |
-| Samsung | F2 |
-| MSI | F11 |
 
-4. Select the **USB drive** from the boot menu
+3. Select the **USB drive** from the boot menu
 
 <!-- Speaker notes: Timing is everything. Start pressing the key the moment you see the manufacturer's logo. Miss it? Just restart and try again. If the boot menu key doesn't work, try F2 or Delete to enter BIOS and change the boot order there. -->
 
 ---
 
-## 🔭 Step 4: Try Ubuntu — Test WiFi First
+## 🔭 Step 4: The Ubuntu Installer
 
-After booting from USB, you'll see a welcome screen.
+After booting from USB, the installer launches. It walks you through setup screens before you commit to anything:
 
-### Choose "Try Ubuntu" *(not Install — not yet!)*
-
-This loads Ubuntu from the USB without changing anything on the hard drive.
-
-### Test WiFi immediately:
-1. Click the **system menu** (top-right corner)
-2. Click **Wi-Fi** → your networks should appear
-3. Connect to any network
+1. **Language** — choose yours, click Continue
+2. **Accessibility** — skip unless needed
+3. **Keyboard layout** — default is usually correct
+4. **Connect to WiFi** — this is your WiFi test! Select your network and connect.
 
 | Chipset | Ubuntu Support |
 |---------|---------------|
@@ -671,33 +663,38 @@ This loads Ubuntu from the USB without changing anything on the hard drive.
 | Realtek | Hit or miss |
 | Broadcom | Worst — often needs drivers |
 
-### If WiFi doesn't work — three backup plans:
+<!-- Speaker notes: The WiFi connection screen is your compatibility test. If your networks appear and you can connect, your hardware works with Ubuntu. If not, click "Do not connect" and use a backup plan. Most Intel chips work perfectly. Broadcom is the troublemaker. -->
+
+---
+
+## 🔭 Step 4 *(Continued)*: Try or Install
+
+After WiFi, you'll see the choice: **"Try Ubuntu"** or **"Install Ubuntu."**
+
+- **WiFi worked?** → Choose **"Install Ubuntu"** and continue to Step 5
+- **Want to explore first?** → Choose **"Try Ubuntu"** to load a full desktop from the USB without changing anything. Install later from the desktop icon.
+
+### If WiFi didn't work — three backup plans:
 - **USB WiFi adapter** (~$15, Linux-compatible)
 - **Phone USB tethering** — plug phone in, enable tethering
 - **Ethernet cable** — plug directly into router
-
-<!-- Speaker notes: This is the whole reason we do "Try Ubuntu" first. If WiFi doesn't work here, it won't work after installing either. Test it NOW before you erase anything. Most Intel chips work perfectly. Broadcom is the troublemaker. -->
 
 ---
 
 ## 🖥️ Step 5: Install Ubuntu *(Key Screens)*
 
-From the "Try Ubuntu" desktop, double-click **"Install Ubuntu"**.
+The installer continues with the installation options:
 
-The installer walks you through several screens:
-
-- **Language + Keyboard** — choose yours, click Continue
 - **Installation type** — choose **Interactive installation**
 - **Software selection** — choose **Default selection**
 
-### 🔑 Critical checkbox:
-> **"Install third-party software for graphics and Wi-Fi hardware"** — **CHECK THIS BOX.** This is the #1 cause of WiFi not working after installation.
+### 🔑 Check BOTH boxes:
+> **"Install third-party software for graphics and Wi-Fi hardware"** — the #1 cause of WiFi not working after installation.
+> **"Download and install support for additional media formats"** — codecs for video and music.
 
 - **Installation type (disk)** — choose **"Erase disk and install Ubuntu"**
 
-> ⚠️ *This permanently deletes all Windows files, programs, and data. Make sure you've backed up anything you need.*
-
-<!-- Speaker notes: That third-party drivers checkbox is the single most important click in this entire installation. Without it, half the WiFi chips in the world won't work. Check that box. -->
+<!-- Speaker notes: That third-party drivers checkbox is the single most important click in this entire installation. Without it, half the WiFi chips in the world won't work. Check that box. Remind students: this permanently deletes all Windows files, programs, and data — make sure they've backed up anything they need. -->
 
 ---
 
@@ -711,32 +708,26 @@ The installer walks you through several screens:
 
 > 🔑 *Remember this password! There's no "forgot password" link.*
 
-### Finish:
+**Finish:**
 - Select your **timezone**
-- Click **Install** → wait **15–40 minutes**
-- When done: click **Restart Now**, remove the USB when prompted
-
-**Your laptop is now running Ubuntu.**
+- Click **Install** → wait **15–40 minutes** → click **Restart Now**, remove USB when prompted
 
 <!-- Speaker notes: Username openclaw keeps things consistent with the commands in setup-commands.txt. But you can use any name you want — just remember to adjust paths in your head when following along. -->
 
 ---
 
-## 📡 Step 6: Connect to Guest WiFi
+## 📡 Step 6: Switch to Guest WiFi
 
-### Why a guest network?
+Your laptop auto-reconnected to the WiFi from the installer. Now let's put it on an **isolated** network.
 
-Home WiFi is "flat" — all devices see each other. If the OpenClaw laptop is compromised, an attacker could reach your phone, personal laptop, etc.
-
-A **guest network** provides internet but **isolates** this laptop from your personal devices.
+A **guest network** provides internet but **isolates** this laptop from your other devices. Home WiFi is "flat" — all devices see each other. A compromise could spread.
 
 ### Set up a guest network *(from your phone or main computer):*
 1. Open your router's admin page (Default Gateway address in browser)
 2. Find **Guest Network** settings → enable it, set a password
 3. Ensure **"Allow guests to access local network"** is **OFF**
 
-### Connect the laptop:
-- Top-right system menu → **Wi-Fi** → connect to the **guest** network
+**Connect the laptop:** Top-right system menu → **Wi-Fi** → connect to the **guest** network
 
 <!-- Speaker notes: If your router doesn't support guest networks, you can still proceed on your main network and revisit network isolation in Module 10. It's not a blocker. -->
 
@@ -781,27 +772,25 @@ nvm install 22
 nvm alias default 22
 ```
 
-### Verify:
+**Verify:**
 
 ```bash
 node --version    # Should show: v22.x.x
 npm --version     # Should show: 10.x.x or 11.x.x
 ```
 
-> 🐠 *nvm lets you switch Node.js versions easily — useful if OpenClaw ever needs a different version.*
-
-<!-- Speaker notes: Close and reopen the terminal after installing nvm — this loads it into your session. If you skip this step, you'll get "nvm: command not found." -->
+<!-- Speaker notes: Close and reopen the terminal after installing nvm — this loads it into your session. If you skip this step, you'll get "nvm: command not found." nvm lets you switch Node.js versions easily — useful if OpenClaw ever needs a different version. -->
 
 ---
 
 ## 🔋 Step 9: Power Settings for 24/7 Operation
 
-### GUI: Disable auto-suspend
+**GUI: Disable auto-suspend**
 1. Open **Settings** > **Power**
 2. Set **Automatic Suspend** → **OFF** (both battery and plugged in)
 3. Set **Screen Blank** → **Never**
 
-### Terminal: Lid close behavior
+**Terminal: Lid close behavior**
 
 ```bash
 sudo sed -i 's/#HandleLidSwitch=suspend/HandleLidSwitch=ignore/' /etc/systemd/logind.conf
@@ -809,11 +798,11 @@ sudo sed -i 's/#HandleLidSwitchExternalPower=suspend/HandleLidSwitchExternalPowe
 sudo systemctl restart systemd-logind
 ```
 
-> ⚠️ *The restart command logs you out. Save work first! Log back in after.*
+> ⚠️ *The restart command logs you out. Screen may go black for 1–2 minutes on older laptops — this is normal. If stuck, hold the power button 5 seconds to restart.*
 
 **Test:** Close lid, wait 30 seconds, open lid. If it didn't sleep — you're good.
 
-<!-- Speaker notes: Two separate settings that both need changing. The GUI handles idle timeout. The config file handles what happens when you close the lid. Miss either one and the laptop goes to sleep. -->
+<!-- Speaker notes: Two separate settings that both need changing. The GUI handles idle timeout. The config file handles what happens when you close the lid. Miss either one and the laptop goes to sleep. The logind restart can cause a prolonged black screen on older hardware — the display manager (GDM) takes time to reinitialize. Students should wait up to 2 minutes. If the screen stays black, a hard power-off and normal reboot is safe — the config changes are already saved to disk. Ctrl+Alt+F1 may bring up the login screen on some laptops. -->
 
 ---
 
@@ -870,9 +859,6 @@ Complete this checklist before moving to Module 03:
 - [ ] `git --version` → version number
 - [ ] Power: auto-suspend OFF, lid close = ignore
 - [ ] `pwd` → `/home/openclaw`
-- [ ] Optional: Tailscale installed
-
-> 🐚 *Write down your RAM, disk size, and Ubuntu version for your records.*
 
 <!-- Speaker notes: If every box is checked, you're done. Your laptop is a dedicated Ubuntu machine ready for OpenClaw. If something failed, check the troubleshooting section before moving on. -->
 
@@ -885,7 +871,7 @@ Complete this checklist before moving to Module 03:
 1. **An old laptop is the best OpenClaw host** — $0 cost, full privacy, full control
 2. **Ubuntu replaces Windows** — native Linux is simpler than running Linux inside Windows
 3. **You can always get Windows back** — license is tied to the motherboard
-4. **Test WiFi before installing** — "Try Ubuntu" catches problems early
+4. **The installer tests WiFi before you commit** — connect during setup, before choosing Install
 5. **Third-party drivers checkbox is critical** — determines if WiFi works after install
 6. **systemd works out of the box** — no configuration needed on native Ubuntu
 7. **Node.js 22+ via nvm** — easy version management

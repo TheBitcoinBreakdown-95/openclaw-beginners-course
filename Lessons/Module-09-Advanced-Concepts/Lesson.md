@@ -120,15 +120,27 @@ The community has a named strategy for the optimal model split:
 
 Don't overlook these — they can handle significant workloads at minimal or zero cost:
 
+> **Already on the free path?** If you started with Google Gemini in Module 03, you're already using one of these. This section shows you the full landscape and how to upgrade when you're ready.
+
 | Model | Cost | Capability | Best For |
 |-------|------|-----------|----------|
+| **Google Gemini 2.5 Flash** | **Free** (~250 req/day) | Solid conversational quality, native OpenClaw provider | Starting free, casual conversation, learning |
 | **Kimi K2.5** (via NVIDIA build.nvidia.com) | **Free** | Comparable to Opus 4.5 on many tasks | Complex reasoning without cost |
 | **MiniMax M2.5** | ~$10-50/month | Surprisingly powerful for its price; Max plan gives 1,000 prompts per 5 hours | Budget primary model |
 | **Google Cloud free credits** | **$300 free** | Sign-up credits for Gemini 2/2.5/3 Flash/Pro | Getting started at zero cost (rate limits apply) |
-| **Gemini Flash** | Free (20 req/day) | Good for quick tasks | Heartbeats, simple queries |
 | **DeepSeek** | Very cheap | Strong coding and reasoning | Code generation, analysis |
 
 Kimi K2.5 is the community's current favorite free option — it's accessed through NVIDIA's API and delivers quality that rivals much more expensive models.
+
+### Upgrading from the Free Path
+
+If you started with Gemini free in Module 03 and want to upgrade to Anthropic Claude:
+
+1. Get an Anthropic API key at console.anthropic.com (set a spending limit!)
+2. Run: `npx openclaw config` — select Anthropic, paste your key, choose claude-opus-4-6
+3. Restart the gateway: `npx openclaw gateway restart`
+
+That's it. Your agent keeps all its memory, personality, and configuration. Only the brain changes.
 
 ### Chat Quality ≠ Agent Quality
 

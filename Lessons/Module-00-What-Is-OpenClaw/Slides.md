@@ -493,7 +493,7 @@ Let's break that down, piece by piece...
 ### "Open-source" 🦞
 - Code is **free and public** on GitHub — created by **Peter Steinberger**
 - You're not locked into anyone's platform — you can see exactly what it does
-- Only cost = the AI model API you choose
+- Only cost = the AI model API you choose (free options available)
 
 ### "Runs on your own computer"
 - Your laptop, desktop, Mac Mini — whatever you have
@@ -584,19 +584,17 @@ The **Gateway** is the central brain:
 2. **Sends them to an AI model** for processing
 3. **Sends the response back** to the originating app
 
-That's it. Message in → AI processes → Response out.
-
-<!-- Speaker notes: Draw this on a whiteboard if possible. The arrow diagram really helps people understand. -->
+<!-- Speaker notes: That's it: message in → AI processes → response out. Draw this on a whiteboard if possible. The arrow diagram really helps people understand. -->
 
 ---
 
 ## What Stays Local vs. What Leaves
 
-### Stays on your computer (never leaves)
+**Stays on your computer (never leaves):**
 - All your files, data, conversation history, and memory
 - Configuration, preferences, and tool execution
 
-### Leaves your computer 🌊
+**Leaves your computer 🌊:**
 - Message text sent to AI provider API for processing
 - Web searches and platform messages (Telegram/WhatsApp traffic)
 - Provider usage tracking and ClawHub telemetry during skill sync
@@ -687,7 +685,7 @@ If you see "Clawdbot" or "MoltBot" online — they mean OpenClaw.
 | "I should use a VPS" | Local is better for beginners |
 | "It's complicated to install" | One command + setup wizard |
 | "I need to code" | You talk in plain English |
-| "It's free" | OpenClaw is free. AI API costs $20-200/month |
+| "It's free" | OpenClaw is free. AI can be free (Gemini) or paid ($20-200/mo) |
 | "It's totally safe" | It has shell access. Read Module 01. |
 
 ---

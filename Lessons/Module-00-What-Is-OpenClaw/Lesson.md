@@ -70,7 +70,7 @@ This matters because:
 - You're not locked into anyone's platform
 - You can see exactly what the software does (no hidden data collection)
 - If it does something you don't like, you (or the community) can change it
-- It's free — the only cost is the AI model you choose to power it
+- It's free — the only cost is the AI model you choose to power it (and there are free options to get started)
 
 ### "Runs on your own computer"
 
@@ -404,7 +404,7 @@ With great power comes great responsibility. Your agent has admin-level access t
 | "I should put this on a VPS" | For beginners, local is better. Easier to set up, more secure by default, better integration with your life. |
 | "Installation is complicated" | It's literally one command and a setup wizard. |
 | "I need coding experience" | You don't. You talk to your agent in plain English. |
-| "It's free to run" | OpenClaw itself is free. But you'll pay for the AI model's API usage (like Anthropic or OpenAI). Budget $20-200/month depending on your usage and model choice. |
+| "It's free to run" | OpenClaw itself is free. You can start with a free AI model (like Google Gemini) or use a paid one (like Anthropic Claude). Paid models cost $20-200/month depending on usage. Module 03 covers both paths. |
 | "It's totally safe" | It is NOT totally safe. It has shell access to your computer. Read Module 01. |
 
 ---

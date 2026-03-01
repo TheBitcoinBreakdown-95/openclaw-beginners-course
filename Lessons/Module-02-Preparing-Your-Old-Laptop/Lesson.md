@@ -174,6 +174,7 @@ Before starting, gather everything:
 | **Another computer** | To download Ubuntu and create the USB — can be Windows, Mac, or Linux |
 | **WiFi password** | For the network this laptop will connect to (ideally a guest network) |
 | **Time** | 60–90 minutes for the full process |
+| **Pen and paper** | Or your phone's Notes app — you'll create passwords and receive tokens during setup that you need to keep track of |
 
 You'll also need an **Anthropic API key** for Module 03, but not yet. We'll cover that when we get there.
 
@@ -230,10 +231,11 @@ Rufus opens with a simple window. Set these options:
 ### 2.4 Start Writing
 
 1. Click **START**
-2. If Rufus asks about the write mode, accept the recommended option (usually "Write in ISO image mode")
-3. Rufus will warn you that all data on the USB will be destroyed — click **OK**
-4. Wait for it to finish (usually 5–15 minutes depending on USB speed)
-5. When the progress bar says "READY," click **CLOSE**
+2. If Rufus shows a "Download required" popup about a GRUB version mismatch — click **Yes** to let it download the matching version. This is normal.
+3. If Rufus asks about the write mode, accept the recommended option (usually "Write in ISO image mode")
+4. Rufus will warn you that all data on the USB will be destroyed — click **OK**
+5. Wait for it to finish (usually 5–15 minutes depending on USB speed)
+6. When the progress bar says "READY," click **CLOSE**
 
 Your USB stick is now a bootable Ubuntu installer. You can safely eject it.
 
@@ -269,32 +271,38 @@ During startup, you need to press a key to access the boot menu. The key depends
 
 ### 3.3 Select the USB Drive
 
-The boot menu shows a list of devices. Select the one that says **USB**, **UEFI USB**, or shows your USB stick's brand name. Press Enter.
+The boot menu shows a list of devices. The wording varies — you might see **"USB Flash Drive,"** **"UEFI Generic Mass Storage,"** **"UEFI: USB Device,"** or your USB stick's brand name (like "SanDisk" or "Kingston"). Pick the one that **isn't** your hard drive or "Windows Boot Manager." Press Enter.
 
 > **Secure Boot:** If the laptop won't boot from USB, you may need to disable Secure Boot in BIOS. Enter BIOS (usually F2 or Delete during startup), find the Secure Boot setting, disable it, save, and try again.
 
 ---
 
-## Step 4: "Try Ubuntu" — Test WiFi First
+## Step 4: The Ubuntu Installer
 
-After booting from USB, the Ubuntu installer loads. You'll see a welcome screen.
+After booting from USB, the Ubuntu installer launches. It walks you through several setup screens before you commit to anything.
 
-### 4.1 Choose "Try Ubuntu"
+### 4.1 Language
 
-Click **"Try Ubuntu"** (NOT "Install Ubuntu" — not yet). This loads Ubuntu from the USB without making any changes to your hard drive. You can explore, test things, and make sure everything works before committing.
+Choose your language and click **Continue**.
 
-### 4.2 Test Your WiFi
+### 4.2 Accessibility
 
-This is the most important test. If WiFi doesn't work in "Try Ubuntu" mode, it won't work after installation either.
+Choose any accessibility settings you need, or skip through this screen.
 
-1. Look at the **top-right corner** of the screen — you'll see a system menu with WiFi, battery, and power icons
-2. Click the **WiFi icon**
-3. Your available WiFi networks should appear
-4. Connect to any network to test
+### 4.3 Keyboard Layout
 
-**If your WiFi networks appear and you can connect — you're good.** Skip to Step 5.
+The default is usually correct. Click **Continue**.
 
-### WiFi Compatibility
+### 4.4 Connect to WiFi
+
+The installer asks you to connect to the internet. **Do it.** This is your WiFi test — if your laptop's WiFi works with Ubuntu, your networks will appear here.
+
+1. Select your WiFi network from the list
+2. Enter the password and connect
+
+**If your WiFi networks appear and you can connect — you're good.** Continue to the next screen.
+
+#### WiFi Compatibility
 
 Most laptop WiFi chips work with Ubuntu out of the box. Here's a rough guide:
 
@@ -307,9 +315,9 @@ Most laptop WiFi chips work with Ubuntu out of the box. Here's a rough guide:
 
 > **How to check your chipset (while still in Windows):** Open Device Manager > Network adapters. Your WiFi adapter's name tells you the brand.
 
-### If WiFi Doesn't Work
+#### If WiFi Doesn't Work
 
-Don't panic. You have three backup options:
+Don't panic. You can click **"Do not connect to the internet"** for now. You have three backup options:
 
 1. **USB WiFi adapter** (~$15) — a small USB dongle with better Linux support. Buy one with an Atheros or Ralink chipset, or search "Linux compatible USB WiFi adapter"
 2. **Phone tethering** — connect your phone via USB cable, enable USB tethering in your phone's settings. Ubuntu recognizes it as a wired connection
@@ -317,30 +325,27 @@ Don't panic. You have three backup options:
 
 Any of these will get you online. WiFi through the built-in chip is ideal, but not the only way.
 
+### 4.5 Try or Install
+
+After the WiFi screen, you'll see the choice: **"Try Ubuntu"** or **"Install Ubuntu."**
+
+- If WiFi worked (or you have a backup plan), choose **"Install Ubuntu"** and continue to Step 5.
+- If you want to explore Ubuntu before committing, choose **"Try Ubuntu."** This loads a full Ubuntu desktop from the USB without changing anything on your hard drive. When you're ready to install, double-click the **"Install Ubuntu"** icon on the desktop.
+
 ---
 
 ## Step 5: Install Ubuntu
 
-If WiFi works (or you have a backup plan), you're ready to install.
+### 5.1 Installation Screens
 
-### 5.1 Launch the Installer
-
-From the "Try Ubuntu" desktop, double-click the **"Install Ubuntu"** icon (it's on the desktop).
-
-### 5.2 Walk Through the Installer
-
-The Ubuntu installer is a graphical wizard. Here are the key screens:
-
-**Language:** Choose your language and click **Continue**.
-
-**Keyboard layout:** The default is usually correct. Click **Continue**.
+If you came from "Install Ubuntu" in the previous step, the installer continues. If you came from "Try Ubuntu," you'll walk through the language/keyboard/WiFi screens again.
 
 **Installation type:** Choose **"Interactive installation"** (not Automated).
 
 **Software selection:** Choose **"Default selection"** — this includes the basic desktop, browser, and utilities. You don't need the extended selection.
 
 **Install third-party software:**
-> **CRITICAL:** Check the box for **"Install third-party software for graphics and Wi-Fi hardware"**. This installs proprietary drivers that many WiFi chips need. Skipping this is the #1 cause of WiFi not working after installation.
+> **CRITICAL:** Check **both** boxes: **"Install third-party software for graphics and Wi-Fi hardware"** and **"Download and install support for additional media formats."** The first installs proprietary drivers that many WiFi chips need — skipping it is the #1 cause of WiFi not working after installation. The second installs codecs for playing videos and music.
 
 **Installation type (disk):** Choose **"Erase disk and install Ubuntu"**
 
@@ -358,17 +363,21 @@ The Ubuntu installer is a graphical wizard. Here are the key screens:
 
 **Review and Install:** Click **Install** and wait. The installation takes 15–40 minutes depending on your hardware.
 
-### 5.3 Restart
+### 5.2 Restart
 
-When the installer says "Installation Complete," click **Restart Now**. Remove the USB stick when prompted (or when the screen goes black during restart).
+When the installer says "Installation Complete," click **Restart Now**. You'll see a message: **"Please remove the installation medium, then press ENTER."** It may still show a spinning wheel — that's normal, it's just waiting for you. Pull out the USB stick and press Enter.
 
 The laptop boots into Ubuntu. Log in with the username and password you created.
+
+> **First-login prompts:** You'll see three welcome screens — **Ubuntu Pro** (skip — paid enterprise support), **Share system data** (skip), and **App Center** (close it). None of these are needed.
 
 **Congratulations — your laptop is now running Ubuntu.**
 
 ---
 
-## Step 6: Connect to Guest WiFi
+## Step 6: Switch to Guest WiFi
+
+Your laptop automatically reconnected to the WiFi you used during the installer. That got you online, but now we want to put the OpenClaw laptop on a **separate, isolated network**.
 
 ### 6.1 Why a Guest Network?
 
@@ -545,7 +554,7 @@ sudo systemctl restart systemd-logind
 
 **What this does:** Changes the lid close action from "suspend" to "ignore" (do nothing) in the system configuration, then restarts the login manager to apply the change.
 
-> **Warning:** The `systemctl restart systemd-logind` command will log you out of your current session. Save any open work first. After running it, log back in at the login screen.
+> **Warning:** The `systemctl restart systemd-logind` command will log you out of your current session. Save any open work first. After running it, log back in at the login screen. **On older laptops, the screen may go black for 1–2 minutes** — this is normal. The display manager (GDM) is restarting and older GPUs take time to reinitialize. Wait it out. If the screen stays black after 2 minutes, hold the power button for 5 seconds to force a shutdown, then power back on normally. The config changes are already saved to disk — you won't need to run the commands again.
 
 ### 9.3 Verify Lid Close Behavior
 

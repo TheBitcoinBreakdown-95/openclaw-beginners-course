@@ -167,47 +167,41 @@ Got your token? Stored safely? Text editor trick done? Good. Let's connect this 
 
 ---
 
-## Slide 9 — Telegram Step 4: Connect to OpenClaw
+## Slide 9 — Telegram Step 4: Get Your User ID
 
-Open your Ubuntu terminal. You can have the TUI running in one terminal and a fresh terminal window open alongside it — they play nicely together.
+Before we connect anything, we're going to do something important FIRST. We're going to get your Telegram user ID. Because we're going to lock this bot down the MOMENT we connect it. Not after. Not "in a few slides." Right now. Security first. Always.
 
-Type: npx openclaw channels add telegram. Hit enter.
-
-The wizard fires up and asks for your bot token. Paste it in — the CLEAN copy from the text editor. Not the raw copy from Telegram. The text editor copy. Hit enter.
+Open Telegram on your phone. Search for @userinfobot. Start a chat with it. It immediately tells you your numeric user ID — a string of numbers. Write it down on your paper next to your bot token.
 
 [pause]
 
-If everything went right, you should see two beautiful green checkmarks. First: "Telegram bot connected" followed by your bot's username. Second: "DM pairing mode: enabled (default)."
+[ask the audience] Everyone got their user ID? It's just a number — should take ten seconds.
 
-That second line? CRITICAL. DM pairing mode enabled by default. OpenClaw is doing the right thing out of the box — it's locking down your communication channel before anyone can eavesdrop. We'll dig into what that means in a few slides.
+[wait for responses]
+
+Good. Here's why this matters. That number is your VIP pass. When we plug it into OpenClaw, we're telling your bot: "This is my owner. ONLY respond to this person. Everyone else gets nothing." No pairing codes. No approval flows. Just a hard lock. Your user ID, nobody else's.
+
+---
+
+## Slide 10 — Telegram Step 5: Connect to OpenClaw
+
+Open your Ubuntu terminal. Three commands. That's all it takes.
+
+First: `npx openclaw config set channels.telegram.botToken "YOUR-TOKEN"`. Replace YOUR-TOKEN with the clean copy from your text editor. This tells OpenClaw which bot to connect to.
+
+Second: `npx openclaw config set channels.telegram.allowFrom '["YOUR-USER-ID"]'`. Replace YOUR-USER-ID with the numeric ID you just got from @userinfobot. This tells OpenClaw who's allowed to talk to the bot. Just you.
+
+Third: `npx openclaw gateway restart`. This tells OpenClaw to pick up the new configuration and start listening on Telegram.
+
+[pause]
+
+Important — you MUST set allowFrom before restarting the gateway. If you skip it or try to set dmPolicy without it, you'll get a "config validation failed" error. The order matters. Token, allowFrom, restart. In that order.
 
 [ask the audience] Anyone get an error? Raise your hand.
 
 [wait for responses]
 
-Nine times out of ten, if you got an error here, it's the token. Extra space. Line break. Invisible character. Go back to BotFather, regenerate the token if you need to, do the text editor trick again, and re-paste. That fixes it almost every time.
-
----
-
-## Slide 10 — Telegram Step 5: Restart and Pair
-
-Two more steps and your agent goes MOBILE. We're so close I can taste the salt air.
-
-First — restart the gateway. In your terminal: npx openclaw gateway restart. This tells OpenClaw to pick up the new Telegram configuration and start listening on that channel.
-
-Second — grab your phone. Open Telegram. Search for your bot's username — the one you created with BotFather. Tap on it. Hit Start.
-
-Now here's where it gets interesting. Because DM pairing mode is active — and it SHOULD be — your bot is NOT going to just start chatting with you. It doesn't know who you are yet. You haven't been verified. And your agent doesn't talk to STRANGERS.
-
-Instead, the bot sends you a pairing code. Something like "Pairing required. Your code: ABC123." Then you hop over to your OpenClaw TUI or dashboard on your laptop, and you'll see a notification about a pending pairing request. You approve it. Enter the code or click confirm — depends on your OpenClaw version.
-
-Quick note — pairing codes expire after one hour, and there can only be three pending at a time. If yours expires, just send another message to the bot and it'll generate a fresh code. No big deal.
-
-Once you approve the pairing, the handshake is complete. The bot now recognizes your Telegram account as authorized. The communication line is OPEN. And it's open ONLY to you.
-
-[pause]
-
-This is the DM pairing flow in action. This is your agent checking credentials before letting anyone on board. Think of it like this: the bot heard someone knocking on the hull. Instead of throwing the door open, it asked for the password. You gave it. Door opens. That's exactly how a ship's radio SHOULD work.
+If you got a config validation error — you probably ran the commands out of order. Run the allowFrom command, then restart again. If the token was rejected, it's almost always a copy-paste issue. Extra space. Line break. Invisible character. Do the text editor trick again.
 
 ---
 
@@ -215,11 +209,7 @@ This is the DM pairing flow in action. This is your agent checking credentials b
 
 This is it. The moment. The whole reason you dragged yourself through five modules of setup and configuration and security lectures.
 
-Pull out your phone. Open Telegram. Open the chat with your bot.
-
-Type: "Hi there! This is a test from Telegram. Do you remember my name?"
-
-Send it.
+Pull out your phone. Open Telegram. Search for your bot's username — the one you created with BotFather. Tap on it. Hit Start. Send a message.
 
 [pause]
 
@@ -227,7 +217,7 @@ Send it.
 
 [pause]
 
-If your agent responds with your name — the name you put in USER.md back in Module 05 — then EVERYTHING is working. The Telegram channel is live. The gateway is routing. Your agent's memory is intact across platforms. You just texted an AI assistant from your phone and it responded with personal context about YOU. From a chat app. On your phone. While your laptop sat quietly at home doing all the work.
+If your agent responds — EVERYTHING is working. The Telegram channel is live. The gateway is routing. And your bot is locked down to ONLY you from the very first message. No window where strangers could have messaged it. No "open" mode we need to clean up later. Secure from the start.
 
 [pause]
 
@@ -239,21 +229,15 @@ Now — optional but fun — go back to BotFather. Type /setuserpic, select your
 
 ---
 
-## Slide 12 — Security: DM Pairing Mode
+## Slide 12 — Security: DM Modes
 
-Alright crew, the celebration's over. The radio is working. Now we SECURE it. And if the last few slides were the thrill of getting the system online, the next few slides are the part where I make sure nobody accidentally broadcasts their private conversations to the entire ocean.
+Alright crew, let's talk about what we just did and why it matters. We set `allowFrom` with your user ID. That's the strongest protection for a single-user setup. But OpenClaw has other modes too, and you should know what they are.
 
-DM pairing mode. This is your FIRST line of defense. Your primary hull plating. If this is misconfigured, nothing else matters.
+Look at this table. Three modes worth knowing about.
 
-Run this command: npx openclaw config get channels.telegram.dmPolicy. It should come back with one word: pairing. If it says ANYTHING else — especially if it says "open" — you fix it RIGHT NOW. Not later. Not tomorrow. Right now. Run: npx openclaw config set channels.telegram.dmPolicy "pairing".
+AllowFrom — only your user ID can message the bot. That's what we set. Nobody else gets through. Period. This is the gold standard for a single-user setup.
 
-Look at this table. Four modes. One is correct. One is acceptable. One is useless. And one will sink your ship.
-
-Pairing mode — unknown senders get a code, you must approve them. This is where you should be. This is the default. This is CORRECT.
-
-Allowlist mode — only pre-approved user IDs can message the bot. Even stricter. Very secure. Great if you want maximum lockdown and you know you're the only user.
-
-Disabled mode — the bot doesn't respond to ANY DMs. Maximum security. Also maximum uselessness. What's the point of a radio that doesn't transmit?
+Pairing mode — unknown senders get a code, and you must approve them before the bot responds. More flexible if you want to let a trusted friend or family member in later. Still secure.
 
 And then there's OPEN mode. Open means ANYONE on Telegram — any of Telegram's hundreds of millions of users — can message your bot and your agent will RESPOND. Your agent will respond to total strangers. With full access to its memory. With full access to its tools. With full knowledge of who you are, what you do, and everything you've ever told it.
 
@@ -262,26 +246,6 @@ And then there's OPEN mode. Open means ANYONE on Telegram — any of Telegram's 
 Never. Set. It. To. Open. Not for testing. Not "just to try it." Not because you're curious. Never.
 
 And here's a pro tip — after connecting any new channel, run npx openclaw doctor. It scans your configuration and flags anything risky. Think of it as a hull inspection. Do it every time.
-
----
-
-## Slide 13 — Security: Setting an Allowlist
-
-Want to go one step further than pairing mode? Set an allowlist. This is the deadbolt on top of the lock.
-
-With an allowlist, you specify EXACTLY which Telegram user IDs are permitted to message your bot. Not usernames — user IDs. Numeric IDs that can't be spoofed.
-
-The command is: npx openclaw config set channels.telegram.allowFrom, followed by a JSON array with your Telegram user ID inside quotes.
-
-"But wait," you say, "how do I find my Telegram user ID?" Great question. Search for @userinfobot on Telegram. Start a chat with it. It immediately tells you your numeric ID. Copy that number. Plug it into the allowlist command.
-
-Now your bot has a VIP list. And you're the only name on it. Everyone else who tries to message your bot gets absolutely nothing. Radio silence. The void. Like shouting into the ocean and getting no echo back.
-
-[pause]
-
-For those of you running this at home where you're the ONLY user — which is most of you — allowlist mode is honestly the ideal setup. Pairing mode is the minimum. Allowlist is the gold standard. Either one is acceptable. Open mode is neither.
-
-And I'll say it one more time because it bears repeating — NEVER set DM mode to "open" unless you have a very specific, well-thought-out reason AND you fully understand prompt injection risks. If those words don't mean anything to you yet, that's fine — it means you should definitely NOT be running open mode.
 
 ---
 

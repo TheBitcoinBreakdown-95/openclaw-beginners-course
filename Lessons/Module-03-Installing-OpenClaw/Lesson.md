@@ -45,16 +45,32 @@ Also decide which AI provider you want to use. Here's the comparison:
 
 ### AI Provider Comparison
 
-| Provider | Model | Monthly Cost | Strengths | Weaknesses |
-|----------|-------|-------------|-----------|------------|
-| **Anthropic** | Claude Opus 4.6 | ~$200/month | Most capable, warmest personality, best prompt injection resistance, recommended by OpenClaw creator | Most expensive, TOS gray area (see warning below) |
-| **Anthropic** | Claude Sonnet 4.5 | ~$50-100/month | Good balance of capability and cost | Less capable than Opus |
-| **OpenAI** | GPT-4 / GPT-5.2 Turbo | ~$20-200/month | Permissive about OpenClaw use, strong coding models | Less "warm" personality |
-| **Google** | Gemini 2.5 Flash | Free (20 req/day) | Free tier available, great value without sacrificing quality | Limited free requests, personality varies |
-| **Kimi** | K2.5 | Very cheap | Excellent bang-for-buck, latest open model generation | Newer, less community testing |
-| **MiniMax** | M2.5 | ~$10/month | Extremely affordable, recently released, surprisingly powerful | Less capable for complex reasoning, weaker prompt injection resistance |
+| Provider | Model | Monthly Cost | Free? | Strengths | Weaknesses |
+|----------|-------|-------------|-------|-----------|------------|
+| **Google** | Gemini 2.5 Flash | Free | Yes — ~250 req/day | No credit card needed, solid quality, just use your Google account | Free tier limits can change, personality varies |
+| **Anthropic** | Claude Opus 4.6 | ~$200/month | No | Most capable, warmest personality, best prompt injection resistance, recommended by OpenClaw creator | Most expensive, TOS gray area (see warning below) |
+| **Anthropic** | Claude Sonnet 4.5 | ~$50-100/month | No | Good balance of capability and cost | Less capable than Opus |
+| **OpenAI** | GPT-4 / GPT-5.2 Turbo | ~$20-200/month | No | Permissive about OpenClaw use, strong coding models | Less "warm" personality |
+| **Kimi** | K2.5 | Very cheap | No | Excellent bang-for-buck, latest open model generation | Newer, less community testing |
+| **MiniMax** | M2.5 | ~$10/month | No | Extremely affordable, recently released, surprisingly powerful | Less capable for complex reasoning, weaker prompt injection resistance |
 
-> **Our choice for this course:** Anthropic Claude. It's what we'll demonstrate, and it's what the OpenClaw creator recommends. If you want to save money or start free, Google Gemini 2.5 Flash is a solid alternative. For the absolute cheapest option with good quality, Kimi K2.5 and MiniMax M2.5 are the current community favorites.
+### Choose Your Path
+
+You have two options for getting started:
+
+**Path A: Start Free — Google Gemini 2.5 Flash**
+- No credit card required — just your Google account
+- ~250 free requests per day — plenty for learning and casual conversation
+- Set up in 3 minutes
+- Perfect for: "I want to try this before I spend a dollar"
+
+**Path B: Full Power — Anthropic Claude**
+- Best model quality, warmest personality, strongest prompt injection resistance
+- Recommended by the OpenClaw creator
+- Costs ~$20-200/month depending on usage
+- Perfect for: "I want the best experience from day one"
+
+> **Not sure which to pick?** Start free with Gemini. You can switch to Anthropic anytime — Module 09 covers upgrading and switching providers. There's no wrong choice here.
 
 ### Important: Can You Use Your Claude Max/Pro Subscription?
 
@@ -77,7 +93,7 @@ This is the most expensive mistake new users make, and it happens because pay-pe
 | **Monitor daily for the first week** | Check console.anthropic.com/usage every day | High |
 | **Use cheap models for routine tasks** | Haiku for heartbeats, Sonnet for simple tasks (covered in Module 09) | High |
 
-We'll walk through setting the spending limit in Step 4b below.
+We'll walk through setting the spending limit below (see Question 4, Step 4b).
 
 ---
 
@@ -109,29 +125,17 @@ Checking Node.js version... ✓ v22.x.x
 Installing OpenClaw packages...
 ...
 Installation complete!
-
-Run 'openclaw onboard' to get started.
 ```
 
 > **If you see an error about Node.js version:** Go back to Module 02 Step 3 and make sure you installed Node.js 22+ with nvm.
 
 > **If you see a network error:** Check your internet connection. If your browser works, the terminal should too. Try closing and reopening the terminal.
 
----
+The onboarding wizard starts automatically after installation. It will ask you a series of questions — we'll walk through **every single one**.
 
-## Step 2: Run the Onboarding Wizard
+> **Important:** When asked "Quick Setup" or "Manual" — **choose Manual**. Quick Setup skips questions we need to configure.
 
-Now run the onboarding wizard with the daemon flag (so the gateway installs as a background service):
-
-```bash
-npx openclaw onboard --install-daemon
-```
-
-> **If `openclaw` gives "command not found":** The installer does not always add `openclaw` to your PATH. Use `npx openclaw` instead — this works every time. If npx says "Need to install the following packages," type `y` and press Enter. Expect 1-3 minutes of downloading before the wizard appears.
-
-This starts an interactive wizard that will ask you a series of questions. We'll walk through **every single one**.
-
-> **Important:** The wizard is interactive — it waits for your answer before proceeding. Take your time. If you make a mistake, you can usually re-run the wizard later with `npx openclaw config` (note: this re-runs the full wizard).
+> The wizard is interactive — it waits for your answer before proceeding. Take your time. If you make a mistake, you can re-run the wizard later with `npx openclaw config`.
 
 ---
 
@@ -177,9 +181,10 @@ The workspace is where OpenClaw stores everything — your agent's memory, confi
     Custom
 ```
 
-**Choose: Anthropic** (or your preferred provider)
+**Path A (Free):** Choose **Google**
+**Path B (Full Power):** Choose **Anthropic**
 
-We'll walk through the Anthropic setup since that's our recommendation. If you chose a different provider, the process is similar — you'll be asked for an API key.
+Both paths are walked through below. Follow the one that matches your choice.
 
 ---
 
@@ -187,7 +192,29 @@ We'll walk through the Anthropic setup since that's our recommendation. If you c
 
 This is where most beginners get tripped up. Pay very close attention.
 
-#### Getting Your Anthropic API Key
+Follow the path you chose above — **Path A** for free (Gemini) or **Path B** for full power (Anthropic).
+
+---
+
+#### Path A: Getting a Google Gemini API Key (Free)
+
+This is the simplest setup. No credit card, no billing, no spending limits.
+
+1. Open your web browser (Firefox, Chrome, etc.)
+2. Go to: https://aistudio.google.com/
+3. Sign in with your Google account (the one you already have)
+4. Click **Get API Key** (bottom left of the homepage)
+5. A key already exists in your "default Gemini project" — **copy it immediately**
+
+Now use the **text editor trick** (see below) to clean the key before pasting it into the wizard.
+
+> **That's it.** No billing setup, no spending limits, no credit card. Google's free tier gives you ~250 requests per day — plenty for learning and casual conversation. You cannot accidentally run up a bill.
+
+After pasting the clean key into the wizard, skip ahead to **Question 5** below.
+
+---
+
+#### Path B: Getting an Anthropic API Key (Paid)
 
 After selecting Anthropic, the wizard will guide you through getting your API key. Here's exactly what to do:
 
@@ -221,7 +248,9 @@ After selecting Anthropic, the wizard will guide you through getting your API ke
 
 > **Transferring your API key from another device:** If you created your API key on your phone or another computer, you can transfer it to your OpenClaw laptop by pasting it in an email to yourself (then open the email on the laptop), or by using Tailscale Taildrop if you set up Tailscale in Module 02 (right-click the file > "Send with Tailscale..." > pick this laptop).
 
-#### The Token Formatting Gotcha (CRITICAL)
+---
+
+#### The Token Formatting Gotcha (CRITICAL — Both Paths)
 
 This is the number one installation error. It's mentioned in multiple community guides. Here's what happens and how to avoid it:
 
@@ -230,14 +259,14 @@ When you copy an API key from your browser, your clipboard sometimes includes hi
 
 **The Solution — The Text Editor Trick:**
 
-1. After copying the API key from the Anthropic console, **do NOT paste it into the terminal yet**
+1. After copying your API key, **do NOT paste it into the terminal yet**
 2. Open a text editor — Ubuntu's **Text Editor** app (search "Text Editor" in Activities), or type `gedit` in a second terminal
 3. Paste the key into the text editor (`Ctrl + V`)
 4. **Look at the key carefully:**
    - It should be **one single line** of text
    - No line breaks in the middle
    - No extra spaces at the beginning or end
-   - It should start with `sk-ant-` and be a continuous string
+   - Anthropic keys start with `sk-ant-`; Gemini keys start with `AI`
 5. If you see line breaks, delete them so the entire key is on one line
 6. Select the entire key (`Ctrl + A`)
 7. Copy it (`Ctrl + C`)
@@ -245,7 +274,7 @@ When you copy an API key from your browser, your clipboard sometimes includes hi
 9. Paste it into the wizard (`Ctrl + Shift + V`)
 
 ```
-? Enter your Anthropic API key: sk-ant-api03-xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+? Enter your API key: xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
 ```
 
 Press Enter.
@@ -253,32 +282,21 @@ Press Enter.
 **If the key is accepted,** the wizard moves to the next question. You might see a message like:
 
 ```
-✓ API key validated. Connected to Anthropic.
+✓ API key validated. Connected to [your provider].
 ```
 
 **If you see an error:**
 - Double-check you used the text editor trick
 - Make sure you're pasting the API key, not the API key name
-- Try generating a new key at console.anthropic.com
-- Make sure billing is set up (keys don't work without billing)
+- Try generating a new key from your provider's console
+- Anthropic users: make sure billing is set up (keys don't work without billing)
+- Gemini users: make sure you're signed into the right Google account
 
 ---
 
-#### Alternative: Getting a Google Gemini API Key (Free Option)
-
-If you chose Google instead of Anthropic:
-
-1. Go to: https://ai.google.dev/
-2. Sign in with your Google account
-3. Click **Get API key** or go to Google AI Studio
-4. Create a new API key
-5. Copy it and use the **same text editor trick** before pasting
-
-Gemini Flash 3 gives you 20 free requests per day — enough to try everything in this course without spending money.
-
 #### Alternative: Getting an OpenAI API Key
 
-If you chose OpenAI:
+If you chose OpenAI instead:
 
 1. Go to: https://platform.openai.com/
 2. Sign in or create an account
@@ -291,7 +309,19 @@ If you chose OpenAI:
 
 ### Question 5: Model Selection
 
-After entering your API key, you may be asked which specific model to use:
+After entering your API key, you may be asked which specific model to use.
+
+**Path A (Gemini):**
+
+```
+? Select model:
+  ❯ gemini-2.5-flash
+    gemini-2.5-pro
+```
+
+**Choose: gemini-2.5-flash** — this is the model covered by the free tier.
+
+**Path B (Anthropic):**
 
 ```
 ? Select model:
@@ -300,11 +330,19 @@ After entering your API key, you may be asked which specific model to use:
     claude-haiku-4-5
 ```
 
-**Choose: claude-opus-4-6** (recommended)
+**Choose: claude-opus-4-6** — the most capable model with the strongest prompt injection resistance.
 
-This is the most capable model and has the strongest prompt injection resistance. Yes, it's the most expensive — but as we discussed in Module 01, security is not the place to cut corners.
+> **Cost-saving tip:** After you're comfortable with OpenClaw, you can configure cheaper models for routine tasks (like heartbeats) and keep your best model for important interactions. We'll cover this in Module 09.
 
-> **Cost-saving tip:** After you're comfortable with OpenClaw, you can configure cheaper models for routine tasks (like heartbeats) and keep Opus for important interactions. We'll cover this in Module 09.
+### What to Know About the Free Path
+
+If you chose Gemini (Path A), here's what to expect:
+
+- **~250 requests/day** is plenty for chatting. A 20-message conversation uses about 20-40 requests. You'd need to chat heavily all day to hit the limit.
+- **Free tiers can change.** Google cut Gemini free tier limits in late 2025 without notice. If the free tier shrinks or disappears, Module 09 covers switching providers.
+- **Privacy:** On the free tier, Google may use your queries to improve their products. If that matters to you, consider the paid Anthropic path.
+- **Quality:** Gemini 2.5 Flash handles conversation, questions, and learning tasks well. For tasks that need stronger reasoning or prompt injection resistance, Module 09 covers upgrading to more capable models.
+- **You can switch anytime.** Run `npx openclaw config` to change your provider and model whenever you want.
 
 ---
 
@@ -451,7 +489,7 @@ Press Enter.
 
 **Choose: Y (press Enter)**
 
-Since we used `--install-daemon`, this should already be selected. This makes the OpenClaw gateway start automatically when your computer boots and run continuously in the background.
+This makes the OpenClaw gateway start automatically when your computer boots and run continuously in the background.
 
 ---
 
@@ -482,7 +520,7 @@ This just restarts the background service with your new configuration. No data i
 
 **Choose: Do this later**
 
-We'll test the TUI manually in Step 6 below. Hatching now can add confusion before you've verified the basic installation works.
+We'll test the TUI manually in Step 5 below. Hatching now can add confusion before you've verified the basic installation works.
 
 ---
 
@@ -498,13 +536,13 @@ This lets you press Tab to auto-complete OpenClaw commands in the terminal — h
 
 ---
 
-## Step 3: Onboarding Complete
+## Step 2: Onboarding Complete
 
 After answering all questions, the wizard finishes with output that looks something like this:
 
 ```
 ✓ Gateway configured
-✓ AI provider connected (Anthropic - claude-opus-4-6)
+✓ AI provider connected (your chosen provider and model)
 ✓ Daemon installed (systemd service)
 ✓ Gateway started
 
@@ -522,7 +560,7 @@ After answering all questions, the wizard finishes with output that looks someth
 ════════════════════════════════════════════════════
 ```
 
-### Step 3b: Device Pairing (If Required)
+### Step 2b: Device Pairing (If Required)
 
 After onboarding, the TUI or dashboard may require device pairing before it can connect. If you see "pairing required" when trying to use the TUI or dashboard:
 
@@ -555,6 +593,8 @@ npx openclaw gateway restart
 
 > **Note:** `clawhub` is a separate CLI for installing skills from ClawHub (the skill marketplace). If npx says "Need to install the following packages: clawhub," type `y` and press Enter. If the slug `qmd` isn't found, try `npx clawhub search qmd` first to find the correct slug.
 
+> **Rate limit error?** ClawHub's servers sometimes return "rate limit exceeded" during downloads. This is temporary — wait a few minutes and try again. If it keeps failing, skip QMD for now and move on. Your agent works fine without it (just less efficiently). You can install QMD anytime later by running the same command.
+
 QMD lets the agent search its own memory files efficiently. Community consensus: **install QMD from day one.** Users who installed it later reported significant token waste during the gap — every conversation without QMD costs more tokens than it needs to because the agent can't search, only read.
 
 ### Save Your Gateway Token
@@ -577,30 +617,19 @@ Look for the token field in the JSON output.
 
 ---
 
-## Step 4: Verify the Installation
+## Step 3: Verify the Installation
 
 Let's make sure everything is working. Run each of these commands:
 
-### 4.1 Check Gateway Status
+### 3.1 Check Gateway Status
 
 ```bash
 npx openclaw status
 ```
 
-**Expected output:**
-```
-Gateway Status: Running
-Version: x.x.x
-Uptime: 0h 2m
-Port: 18789
-Bind: loopback
-Provider: anthropic (claude-opus-4-6)
-Channels: none configured
-```
+You'll see an overview of your system. The key thing to look for is **"gateway reachable"** with a response time (e.g., `63ms`). If the gateway isn't reachable or shows an error, see troubleshooting below.
 
-The key thing is **Gateway Status: Running**. If it says "Stopped" or "Error," see troubleshooting below.
-
-### 4.2 Check Gateway Health
+### 3.2 Check Gateway Health
 
 ```bash
 npx openclaw doctor
@@ -620,7 +649,7 @@ All checks passed.
 
 If any checks fail, the doctor will suggest fixes. Run `npx openclaw doctor --repair` to apply automatic fixes.
 
-### 4.3 Run Your First Security Audit
+### 3.3 Run Your First Security Audit
 
 Remember the 9-Point Checklist from Module 01? Let's run the built-in security audit:
 
@@ -651,7 +680,7 @@ npx openclaw security audit --deep --fix
 
 This automatically sets proper file permissions (700 for directories, 600 for files) on your OpenClaw workspace.
 
-### 4.4 Set File Permissions Manually (If Needed)
+### 3.4 Set File Permissions Manually (If Needed)
 
 If the audit didn't fix permissions automatically, or you want to do it yourself:
 
@@ -664,11 +693,11 @@ This ensures only your user account can read or write OpenClaw's configuration f
 
 ---
 
-## Step 5: Access the Dashboard (Control UI)
+## Step 4: Access the Dashboard (Control UI)
 
 The Control UI is a web-based dashboard for managing OpenClaw. You access it from your browser. If the dashboard won't connect, don't worry — the TUI is the primary interface and does everything you need.
 
-### 5.1 Open the Dashboard
+### 4.1 Open the Dashboard
 
 1. In Ubuntu, run: `npx openclaw dashboard --no-open`
 2. It prints a URL with your token already included — copy the **full URL**
@@ -682,7 +711,7 @@ The Control UI is a web-based dashboard for managing OpenClaw. You access it fro
 - Conversation history (empty for now)
 - Configuration options
 
-### 5.2 The Dashboard vs. The TUI
+### 4.2 The Dashboard vs. The TUI
 
 You have two ways to interact with OpenClaw:
 
@@ -695,7 +724,7 @@ Most day-to-day interaction happens in the TUI. The dashboard is for management.
 
 ---
 
-## Step 6: Open the TUI (Your First Chat)
+## Step 5: Open the TUI (Your First Chat)
 
 This is the moment — you're about to talk to your AI agent for the first time.
 
@@ -724,7 +753,7 @@ Hello! My name is [your name]. What's your name?
 **What should happen:**
 - Your message appears in the chat
 - After a moment (usually 1-5 seconds), the AI responds
-- The response comes from your chosen model (Claude Opus 4.6 if you followed our recommendation)
+- The response comes from your chosen model (Gemini 2.5 Flash or Claude Opus 4.6, depending on your path)
 - The token counter increments
 
 If you get a response, **congratulations — OpenClaw is working!**
@@ -733,11 +762,11 @@ If you get a response, **congratulations — OpenClaw is working!**
 
 ---
 
-## Step 7: Verify the Daemon
+## Step 6: Verify the Daemon
 
 Let's make sure the gateway runs as a background service (daemon) and will survive terminal closures and reboots.
 
-### 7.1 Check the Service Status
+### 6.1 Check the Service Status
 
 ```bash
 npx openclaw gateway status
@@ -753,7 +782,7 @@ npx openclaw gateway status
 
 The key is **Active: active (running)**.
 
-### 7.2 Test Terminal Independence
+### 6.2 Test Terminal Independence
 
 1. Close your Ubuntu terminal window completely (click the X)
 2. Wait 10 seconds
@@ -763,7 +792,7 @@ The key is **Active: active (running)**.
 
 The daemon keeps the gateway running even with no terminal open. That's the whole point.
 
-### 7.3 Useful Service Commands
+### 6.3 Useful Service Commands
 
 Keep these handy:
 
@@ -788,7 +817,7 @@ Let's take a step back and understand the architecture of what's now running on 
 │  │        OpenClaw Gateway (daemon)             │      │
 │  │                                              │      │
 │  │  Port: 18789 (loopback only)                │      │
-│  │  Provider: Anthropic Claude Opus 4.6        │      │
+│  │  Provider: Your chosen AI model             │      │
 │  │                                              │      │
 │  │  ┌────────┐  ┌──────────┐  ┌────────┐      │      │
 │  │  │ Memory │  │ Sessions │  │ Config │      │      │
@@ -811,9 +840,11 @@ Let's take a step back and understand the architecture of what's now running on 
                          │ API calls (encrypted)
                          ▼
                 ┌────────────────┐
-                │   Anthropic    │
-                │   API Server   │
-                │ (Claude Opus)  │
+                │  AI Provider   │
+                │  API Server    │
+                │ (Google/       │
+                │  Anthropic/    │
+                │  OpenAI/etc.)  │
                 └────────────────┘
 ```
 
@@ -849,12 +880,13 @@ But `npx openclaw` is the most reliable approach and is what we recommend throug
 **What happened:** Almost always the token formatting gotcha.
 
 **Fix:**
-1. Go back to the Anthropic console (console.anthropic.com)
+1. Go back to your provider's console (console.anthropic.com for Anthropic, aistudio.google.com for Gemini)
 2. Create a new API key
 3. Copy it
 4. Paste into a text editor — verify it's one single line, no line breaks
 5. Copy from the text editor
 6. Run: `npx openclaw config` to re-run the wizard and paste the clean key when prompted
+7. Anthropic users: make sure billing is set up (keys don't work without billing)
 
 ### Gateway Won't Start — "Port already in use"
 
@@ -961,7 +993,7 @@ Also try restarting the service with `npx openclaw gateway restart` and refreshi
 Complete this checklist. Every item should pass before you proceed to Module 04.
 
 - [ ] **Installation:** `npx openclaw --version` shows a version number
-- [ ] **Gateway running:** `npx openclaw status` shows "Running"
+- [ ] **Gateway running:** `npx openclaw status` shows "gateway reachable"
 - [ ] **Health check:** `npx openclaw doctor` passes all critical checks
 - [ ] **Security audit:** `npx openclaw security audit --deep` has no critical issues
 - [ ] **File permissions:** `~/.openclaw/` is mode 700
@@ -977,10 +1009,10 @@ Complete this checklist. Every item should pass before you proceed to Module 04.
 
 ## Key Takeaways
 
-1. **Installation is one command** — `curl -fsSL https://openclaw.ai/install.sh | bash` — but the onboarding wizard is where the real setup happens
+1. **Installation is one command** — `curl -fsSL https://openclaw.ai/install.sh | bash` — the onboarding wizard starts automatically and walks you through configuration
 2. **The token formatting gotcha is real** — always paste API keys into a text editor first to check for hidden line breaks
 3. **Start with loopback binding** — only this machine can connect, which is the most secure option
-4. **Set API spending limits** before you start chatting — the AI burns through tokens faster than you expect
+4. **Set API spending limits** (Anthropic users) before you start chatting — the AI burns through tokens faster than you expect. Gemini free tier users don't need this step
 5. **The daemon keeps the gateway running 24/7** — even when you close the terminal or restart your computer
 6. **Two interfaces: TUI for chatting, Dashboard for managing** — you'll use both
 7. **Run the security audit after installation** — `npx openclaw security audit --deep --fix` catches permission issues and misconfigurations

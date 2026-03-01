@@ -367,7 +367,7 @@ Gateway and status commands. The basics. The foundation of everything.
 
 `npx openclaw tui` — opens the chat interface. This is how you talk to your agent from the terminal.
 
-`npx openclaw status` — is the gateway running? One-word answer. Running or stopped.
+`npx openclaw status` — is the gateway running? Look for "gateway reachable" with a response time. If it's reachable, you're good.
 
 `npx openclaw doctor` — the health check. Catches configuration issues, permission problems, dependency mismatches.
 

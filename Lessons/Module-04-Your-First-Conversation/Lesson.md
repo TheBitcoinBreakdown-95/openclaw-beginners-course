@@ -36,13 +36,13 @@ Open your Ubuntu terminal and run:
 npx openclaw tui
 ```
 
-> **Paste tip:** Ctrl+V does not work in the Ubuntu terminal. Whenever you need to paste text into the TUI, use **right-click** instead. If paste stops working, close the Ubuntu window and reopen it from the Start Menu.
+> **Paste tip:** Ctrl+V does not work in the Ubuntu terminal. Whenever you need to paste text into the TUI, use **right-click** instead. If paste stops working, close the terminal and reopen it.
 
 The TUI takes over your terminal and becomes a full-screen chat interface. Here's what you see:
 
 ```
 ┌──────────────────────────────────────────────────────┐
-│  OpenClaw · claude-opus-4-6 · Tokens: 0              │
+│  OpenClaw · [your model] · Tokens: 0                 │
 ├──────────────────────────────────────────────────────┤
 │                                                       │
 │                                                       │
@@ -362,10 +362,12 @@ Tokens are the units AI models use to process text. They're roughly:
 
 Tokens matter for two reasons:
 
-**1. Cost:** You pay per token. With Claude Opus 4.6:
+**1. Cost:** With paid models, you pay per token. For example, Claude Opus 4.6:
 - Input tokens (your messages): ~$15 per million tokens
 - Output tokens (AI responses): ~$75 per million tokens
 - A typical back-and-forth conversation might cost $0.05-0.50
+
+> **Free tier users (Gemini):** You won't see charges — your ~250 free requests/day cover casual conversation easily. The pricing above applies if you upgrade to a paid model later.
 
 **2. Context window:** The model can only hold a certain number of tokens at once. When you hit the limit, old messages are dropped and the AI "forgets" earlier parts of the conversation.
 

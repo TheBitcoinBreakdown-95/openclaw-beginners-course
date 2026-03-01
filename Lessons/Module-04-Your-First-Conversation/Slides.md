@@ -505,17 +505,13 @@ Copy, fill in, and paste as your first message:
 ```
 Hi! I'd like to introduce myself and set you up
 as my personal AI assistant.
-
 **Who I am:**
-- Name: [Your name]
-- Location: [City/Country]
+- Name: [Your name] | Location: [City/Country]
 - Occupation: [What you do]
 - Background: [Brief career/life history]
 - Expertise: [What you're good at]
-
-**My personality and communication style:**
+**Communication style:**
 - I prefer [direct/detailed/casual/formal] communication
-- I like [short answers / thorough explanations / both]
 - I value [honesty/efficiency/creativity/precision]
 ```
 
@@ -535,7 +531,6 @@ as my personal AI assistant.
 **Rules for you:**
 - [E.g., "Don't sugarcoat things"]
 - [E.g., "Always ask before taking any action"]
-Please remember all of this.
 ```
 
 <!-- Speaker notes: The template continues here. Make sure students fill in every section — vague goals are useless. The alternative interview approach on the next slide is often easier for people who struggle with self-description. -->
@@ -561,20 +556,14 @@ my SOUL.md and USER.md files. One question at a time.
 
 ```
 **Who I am:**
-- Name: Alex
-- Location: Austin, Texas
-- Occupation: Freelance web developer
-- Background: Self-taught, 3 years JS/React
-- Expertise: Frontend dev, sales psychology
-
+- Name: Alex | Location: Austin, Texas
+- Occupation: Freelance web developer (3 yrs JS/React)
 **My goals:**
 - Short-term: Launch portfolio website this month
 - Long-term: One-person business making $10K/month
-
 **Rules:**
 - Don't sugarcoat things. Tell me the truth.
 - Always ask before executing destructive commands.
-- When I say "quick answer," give 1-2 sentences max.
 ```
 
 <!-- Speaker notes: This is a shortened example. Encourage students to write MORE than this, not less. The full template has sections for daily life, challenges, and detailed preferences. -->
@@ -588,17 +577,13 @@ After you paste and send, your agent responds with a confirmation:
 ```
 Thank you for the thorough introduction! I've noted
 all of this. A few highlights I want to confirm:
-
 - I'll keep communication direct and honest
 - I'll help you stay focused on priorities
 - I'll check before any destructive actions
-
 Is there anything else you'd like me to know?
 ```
 
-- Review the response — does your agent understand your key points?
-- Correct anything it misunderstood
-- The brain dump is not permanent yet (that comes in Module 05)
+<!-- Speaker notes: Review the response — does your agent understand your key points? Correct anything it misunderstood. The brain dump is not permanent yet (that comes in Module 05). -->
 
 ---
 
@@ -667,7 +652,7 @@ patience, directness, and quiet confidence.
 
 ## Your First Real Conversations
 
-### Conversation 1: Test the Waters
+**Conversation 1: Test the Waters**
 
 Ask something you already know the answer to:
 
@@ -677,7 +662,7 @@ What are the three most important principles of personal finance?
 
 Evaluate: Is it accurate? Does the tone match your brain dump preferences?
 
-### Conversation 2: Ask for a Plan
+**Conversation 2: Ask for a Plan**
 
 ```
 I want to learn Bitcoin in 30 days. Create a study plan —
@@ -739,11 +724,11 @@ This creates a safety loop: agent explains the plan, you approve or modify, then
 
 Typing long messages is slow. **Telegram supports voice messages natively.**
 
-### Setup:
+**Setup:**
 - Install **Groq** (free) for transcription: `npx clawhub install groq-transcription`
 - Talk naturally into Telegram — your agent transcribes and processes
 
-### Best for:
+**Best for:**
 - Brain dumps (talk about your life for 5 minutes instead of typing)
 - Complex instructions (easier to explain by voice)
 - Thinking out loud (let the agent capture your stream of consciousness)
@@ -772,14 +757,14 @@ Typing long messages is slow. **Telegram supports voice messages natively.**
 
 ## ⚙️ Hands on Deck: Write Your Brain Dump
 
-### Part 1: Write It (15 min)
+**Part 1: Write It (15 min)**
 - At least **5 facts** about yourself
 - At least **3 communication preferences**
 - At least **2 short-term and 2 long-term goals**
 - At least **3 specific use cases** for help
 - At least **2 rules** for the agent
 
-### Part 2: Send It (5 min)
+**Part 2: Send It (5 min)**
 1. Open the TUI: `npx openclaw tui`
 2. Paste your brain dump (remember: **right-click** to paste, not Ctrl+V)
 3. Read your agent's response — does it show understanding?
@@ -790,13 +775,13 @@ Typing long messages is slow. **Telegram supports voice messages natively.**
 
 ## ⚙️ Hands on Deck (continued)
 
-### Part 3: Test (10 min)
+**Part 3: Test (10 min)**
 
 1. Ask your agent to **summarize** what it knows about you
 2. Ask your agent to **suggest** one thing to focus on this week
 3. Ask your agent to **explain its plan** before checking your Downloads folder
 
-### Part 4: Evaluate (5 min)
+**Part 4: Evaluate (5 min)**
 
 - Did your agent remember key details from your brain dump?
 - Did the communication style match your preferences?

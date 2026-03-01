@@ -640,39 +640,40 @@ npx openclaw config tools elevated off
 
 ## ⛵ Gateway Authentication Hardening
 
-### Verify authentication is required:
+### Verify and rotate:
 
 ```bash
 npx openclaw config get gateway.auth.mode
+npx openclaw config get gateway.bind
 ```
 
-### Rotate your ⛵ gateway token (periodic maintenance or after incident):
+**Expected bind:** `loopback` (unless you intentionally configured LAN or Tailscale).
+
+### Rotate your ⛵ gateway token (periodic or after incident):
 
 ```bash
 npx openclaw config set gateway.auth.token "$(openssl rand -hex 32)"
 npx openclaw gateway restart
 ```
 
-### Verify bind configuration:
+<!-- Speaker notes: The gateway is the front door to your agent. Default port, no auth, and binding to all interfaces is a recipe for unauthorized access. Loopback binding is the safest default -- only local connections. -->
+
+---
+
+## ⛵ Gateway Hardening: Additional Steps
+
+- **Set spending caps** on your AI provider dashboard -- your financial kill switch if a key is stolen
+- **Enable unattended-upgrades** -- automatic security patches for a 24/7 machine
+- **Change the default port** -- port 18789 is public knowledge
+- **Add Fail2ban + UFW** -- ban brute-force attempts, close unused ports
+- **User allowlisting** -- only specific user IDs can message your agent
 
 ```bash
-npx openclaw config get gateway.bind
-```
-
-**Expected:** `loopback` (unless you intentionally configured LAN or Tailscale).
-
-```bash
-# Reset to loopback if unexpected
+# Reset bind to loopback if unexpected
 npx openclaw config set gateway.bind "loopback"
 ```
 
-### Additional Hardening
-- **Change the default port** -- port 18789 is public knowledge (in every tutorial). Change it.
-- **Add Fail2ban** -- 3 failed auth attempts = 24-hour ban
-- **Configure UFW firewall** -- close every port you don't need
-- **User allowlisting** -- configure the ⛵ gateway to only accept connections from specific user IDs
-
-<!-- Speaker notes: The gateway is the front door to your agent. Default port, no auth, and binding to all interfaces is a recipe for unauthorized access. Loopback binding is the safest default -- only local connections. -->
+<!-- Speaker notes: Spending caps are the single most impactful financial protection -- without one, a stolen API key is a blank check. Unattended-upgrades ensures the machine patches itself since it runs 24/7. The bind reset command is here as a quick reference in case students find an unexpected bind setting. -->
 
 ---
 
@@ -687,18 +688,24 @@ The fix: **put your agent on a separate network** (same principle as IoT devices
 | **Guest network** | Free | Easy | Good -- devices can't see each other |
 | **VLAN / separate SSID** | Free (if router supports it) | Medium | Best -- full network separation |
 | **Second cheap router** | $15-30 | Easy | Good -- physical subnet separation |
-| **Do nothing** | Free | None | None -- all devices share one network |
 
-### Guest Network (Easiest -- 5 minutes):
+<!-- Speaker notes: This is the same advice given for smart home devices. Your agent is an always-on, internet-connected device with shell access -- it deserves at least the same isolation as your smart thermostat. -->
+
+---
+
+## Home Network: Guest Network Setup
+
+### Easiest option -- 5 minutes, free:
 1. Log into your router admin panel (`192.168.1.1`)
 2. Enable **Guest Network** with a strong password
 3. Connect the agent's machine to the guest WiFi
-4. Verify: from the agent's machine, ping your laptop's IP -- it should **fail**
+4. Verify: ping your laptop's IP from the agent -- it should **fail**
 
-### If you need dashboard access across networks:
-Use **Tailscale** (Module 02) to bridge securely without opening up the network.
+### What a guest network does NOT protect against:
 
-<!-- Speaker notes: This is the same advice given for smart home devices. Your agent is an always-on, internet-connected device with shell access -- it deserves at least the same isolation as your smart thermostat. Guest network is free and takes 5 minutes. VLANs are better if your router supports them. -->
+A compromised device on the guest network still has **full internet access**. It can exfiltrate data or abuse API keys -- which is why sandboxing, tool policies, and spending caps matter even with network isolation.
+
+<!-- Speaker notes: Guest network stops east-west traffic (device to device) but not north-south (device to internet). That's why the other layers in this module are essential. VLANs are better if your router supports them. If students need dashboard access across networks, Tailscale (Module 02) bridges securely. -->
 
 ---
 

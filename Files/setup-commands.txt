@@ -80,7 +80,9 @@ sudo sed -i 's/#HandleLidSwitchExternalPower=suspend/HandleLidSwitchExternalPowe
 sudo systemctl restart systemd-logind
 
 (This makes closing the laptop lid do nothing — the laptop stays running.)
-(WARNING: This will log you out of your current session. Save any open work first.)
+(WARNING: This will log you out. Screen may go black for 1-2 minutes on older laptops — this is normal.)
+(If stuck on a black screen after 2 minutes, hold the power button 5 seconds to restart.)
+(The config changes are already saved — you won't need to run those commands again.)
 
 
 STEP 7: Verify everything works
@@ -135,18 +137,7 @@ STEP 9: Install OpenClaw
 curl -fsSL https://openclaw.ai/install.sh | bash
 
 (Wait for "Installation complete!" You will see npm WARN deprecated messages — ignore these, they are harmless.)
-
-
-STEP 10: Run the onboarding wizard
---------------------------------------------
-
-(The install may not add openclaw to your PATH. If "openclaw" gives "command not found", use npx instead:)
-
-npx openclaw onboard --install-daemon
-
-(If it says "Need to install the following packages" — type y and press Enter. This is normal.)
-(Expect 1-3 minutes of downloading before the wizard appears. Be patient — it's not stuck.)
-(If the terminal freezes after download, close the terminal and reopen it, then run the npx command again.)
+(The onboarding wizard starts automatically after install.)
 
 >>> IMPORTANT: When asked "Quick Setup" or "Manual" — choose MANUAL <<<
 (Quick Setup skips questions we need to configure. Choose Manual so you see every option.)
@@ -196,7 +187,7 @@ cat ~/.openclaw/openclaw.json
 (Search for the "token" field in the gateway section.)
 
 
-STEP 11: Approve device pairing (if needed)
+STEP 10: Approve device pairing (if needed)
 --------------------------------------------
 
 (After onboarding, the TUI may require device pairing before it can connect.)
@@ -213,31 +204,32 @@ npx openclaw devices approve YOUR-REQUEST-ID-HERE
 (After approving, try the TUI again — it should connect.)
 
 
-STEP 12: Install QMD (do this immediately)
+STEP 11: Install QMD (do this immediately)
 --------------------------------------------
 
 npx clawhub install qmd
 
 (If it says "Need to install the following packages: clawhub" — type y and press Enter.)
 (If it asks for the slug and "qmd" doesn't work, try: npx clawhub search qmd — then use the slug it shows.)
+(Rate limit error? Wait a few minutes and retry. If it keeps failing, skip and move on — install QMD later.)
 
 npx openclaw gateway restart
 
 (QMD is a search engine for your agent's memory — saves tokens from day one.)
 
 
-STEP 13: Verify the installation
+STEP 12: Verify the installation
 --------------------------------------------
 
 npx openclaw status
 npx openclaw doctor
 npx openclaw security audit --deep --fix
 
-(status should show "Running", doctor should pass, audit fixes file permissions.)
+(status should show "gateway reachable", doctor should pass, audit fixes file permissions.)
 (If doctor asks to update config or restart, say Yes.)
 
 
-STEP 14: Test the dashboard (optional)
+STEP 13: Test the dashboard (optional)
 --------------------------------------------
 
 npx openclaw dashboard --no-open
@@ -247,7 +239,7 @@ npx openclaw dashboard --no-open
 (If it says "auth failed" or "connect failed", skip it — use the TUI instead.)
 
 
-STEP 15: Test the TUI (first chat)
+STEP 14: Test the TUI (first chat)
 --------------------------------------------
 
 npx openclaw tui
@@ -258,7 +250,7 @@ npx openclaw tui
 (Type /exit or press Ctrl+C to leave.)
 
 
-STEP 16: Verify the daemon
+STEP 15: Verify the daemon
 --------------------------------------------
 
 npx openclaw gateway status
@@ -307,7 +299,6 @@ npx openclaw security audit --deep --fix  # Security audit with auto-fix
 
 --- Configuration ---
 
-npx openclaw onboard --install-daemon  # Run the setup wizard again
 npx openclaw config set KEY VALUE      # Change a single setting
 cat ~/.openclaw/openclaw.json          # View all config (find gateway token here)
 

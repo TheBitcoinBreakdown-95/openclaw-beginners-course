@@ -187,6 +187,8 @@ WiFi password — for whatever network this laptop is going to connect to. Ideal
 
 Time — budget 60 to 90 minutes for the full process. Could be faster, could be slower, depending on how your hardware cooperates.
 
+And — pen and paper. Or your phone's Notes app. During this course you're going to create an Ubuntu password, receive an API key, a gateway token, a Telegram bot token. Write them down somewhere. We'll talk about proper password managers in Module 10, but for now, pen and paper works.
+
 You'll also need an Anthropic API key for Module 03, but not today. If you haven't created one yet, go to console.anthropic.com and sign up. We'll use it next module.
 
 [ask the audience] Does everyone have a USB stick? Does everyone have their second computer or phone ready?
@@ -229,7 +231,9 @@ Partition scheme — GPT. This should be the default.
 
 Everything else — leave it alone. The defaults are fine.
 
-Click START. It'll warn you that all data on the USB will be destroyed. Click OK. Then wait. Five to fifteen minutes depending on your USB speed.
+Click START. You might see a popup that says "Download required" — something about a GRUB version mismatch. Don't panic. Click Yes. It just needs to grab a matching bootloader file from the internet. Takes a few seconds.
+
+Then it'll warn you that all data on the USB will be destroyed. Click OK. Then wait. Five to fifteen minutes depending on your USB speed.
 
 When the progress bar says READY — congratulations. You've just created a bootable Ubuntu installer. Click close, safely eject the USB.
 
@@ -251,7 +255,7 @@ Press the key REPEATEDLY as soon as you see the logo. Like you're knocking on a 
 
 [wait for students]
 
-When the boot menu appears, you'll see a list of devices. Look for anything that says USB, UEFI USB, or shows your USB stick's brand name. Select it. Press Enter.
+When the boot menu appears, you'll see a list of devices. Now — the wording is different on every laptop. You might see "USB Flash Drive," "UEFI Generic Mass Storage," "UEFI: USB Device," or your USB stick's brand name like "SanDisk" or "Kingston." The rule is simple: pick the one that ISN'T your hard drive or "Windows Boot Manager." That's the USB. Select it. Press Enter.
 
 If the laptop goes straight to Windows anyway, two things to try. One — you might have missed the timing window. Restart and try again, faster. Two — Secure Boot might be blocking the USB. You'll need to enter the BIOS settings — usually F2 or Delete during startup — find Secure Boot, disable it, save, and try again.
 
@@ -259,19 +263,19 @@ If the laptop goes straight to Windows anyway, two things to try. One — you mi
 
 ---
 
-## Slide 14 — Step 4: Try Ubuntu — Test WiFi First
+## Slide 14 — Step 4: The Ubuntu Installer
 
-You should be looking at a welcome screen now. And I want you to do something that might seem counterintuitive.
+You should be looking at a setup screen now. The installer walks you through several screens before you commit to anything.
 
-Do NOT click "Install Ubuntu." Not yet.
+First — **Language.** Choose yours, click Continue.
 
-Click **"Try Ubuntu."**
+Next — **Accessibility.** Skip through unless you need it.
 
-This is the secret weapon. "Try Ubuntu" loads the entire operating system from the USB stick into RAM. It doesn't touch the hard drive. Doesn't change anything. It's like walking through a house before you buy it. You get to look around, open cupboards, check the plumbing.
+Then — **Keyboard layout.** Default is usually correct. Continue.
 
-And the plumbing we need to check is WiFi.
+Now here's the important one — **Connect to WiFi.** The installer asks you to connect to the internet. DO IT. This is your WiFi test. If your networks appear here, your hardware works with Ubuntu.
 
-Top-right corner of the screen. See the system menu? WiFi icon? Click it. Your available networks should appear.
+Select your network, enter the password, connect.
 
 [wait for students]
 
@@ -279,11 +283,15 @@ Top-right corner of the screen. See the system menu? WiFi icon? Click it. Your a
 
 [wait for responses]
 
-If you see networks and can connect — GREAT. Full speed ahead. You're cleared for installation.
+If you see networks and can connect — GREAT. Full speed ahead.
 
-If you DON'T see any networks — don't panic. This happens sometimes, especially with Realtek and Broadcom chips. You've got three backup plans. One — a USB WiFi adapter, about 15 bucks, plugs right in. Two — phone USB tethering. Plug your phone in with a cable, enable USB tethering in your phone settings, Ubuntu sees it as a wired connection. Three — good old Ethernet cable. Plug directly into the router.
+If you DON'T see any networks — don't panic. Click "Do not connect to the internet" for now. This happens sometimes, especially with Realtek and Broadcom chips. You've got three backup plans. One — a USB WiFi adapter, about 15 bucks, plugs right in. Two — phone USB tethering. Plug your phone in with a cable, enable USB tethering in your phone settings, Ubuntu sees it as a wired connection. Three — good old Ethernet cable. Plug directly into the router.
 
-The point is: we test WiFi NOW, before we erase anything. If it doesn't work from the USB, it won't work after installing either. Better to find out now.
+Next screen — **Try or Install.** You'll see the choice: "Try Ubuntu" or "Install Ubuntu."
+
+If WiFi worked — choose **Install Ubuntu.** Full speed ahead.
+
+If you want to poke around first without committing — choose "Try Ubuntu." It loads a full desktop from the USB without touching the hard drive. Like walking through a house before you buy it. When you're ready, double-click the "Install Ubuntu" icon on the desktop.
 
 ---
 
@@ -291,11 +299,7 @@ The point is: we test WiFi NOW, before we erase anything. If it doesn't work fro
 
 WiFi works? Or you've got a backup plan? Good. Let's commit.
 
-From the "Try Ubuntu" desktop, double-click the **Install Ubuntu** icon. It's right there on the desktop.
-
-The installer is graphical. Point and click. It walks you through several screens.
-
-Language and keyboard — choose yours, click continue. Easy.
+The installer continues with the installation options. If you chose "Try Ubuntu" first and launched the installer from the desktop, you'll walk through language and keyboard again — that's fine.
 
 Installation type — choose **Interactive installation**. Not automated. We want to see what's happening.
 
@@ -303,15 +307,21 @@ Software selection — **Default selection** is fine. It includes a browser, tex
 
 Now — LISTEN TO ME CAREFULLY. The next checkbox is the most important click in this entire installation.
 
+Two checkboxes. Check BOTH of them.
+
 **"Install third-party software for graphics and Wi-Fi hardware."**
 
-CHECK. THAT. BOX.
+And **"Download and install support for additional media formats."**
 
-This single checkbox determines whether half the WiFi chips in the world work after installation. Without it, Ubuntu only installs open-source drivers. Many WiFi chips need proprietary drivers to function. Check. The. Box.
+CHECK. BOTH. BOXES.
+
+The first one determines whether half the WiFi chips in the world work after installation. Without it, Ubuntu only installs open-source drivers. Many WiFi chips need proprietary drivers to function. The second one installs codecs so you can play videos and music. No reason not to check it.
 
 [pause]
 
 Next screen — Installation type for the disk. Choose **"Erase disk and install Ubuntu."**
+
+It might ask about **Advanced Features** — skip it. Leave it at the default. No encryption, no LVM. Just a clean install.
 
 And yes — this PERMANENTLY deletes everything. All of Windows. All programs. All data. Gone. If you have anything you need to save, NOW is the time to back it up. After this point, there is no undo.
 
@@ -327,6 +337,8 @@ Your name — whatever you like. Computer name — something memorable. I sugges
 
 Username — **openclaw**. This keeps things consistent with the commands in setup-commands.txt. You CAN use a different name, but every time the course says "/home/openclaw" you'll need to mentally substitute your own username.
 
+If it asks about **Active Directory** — skip that too. That's for corporate networks. Not us.
+
 Password — choose something you'll remember. You're going to type this A LOT. Every time you use `sudo` — which is the "run as administrator" command — it asks for this password.
 
 And here's the critical thing — REMEMBER THIS PASSWORD. There's no "forgot password" link. There's no email reset. If you forget it, you're booting into recovery mode to reset it manually. Don't lose it.
@@ -337,17 +349,19 @@ Fifteen to forty minutes. Depending on your hardware. Get another coffee. Chat w
 
 [wait]
 
-When it says "Installation Complete" — click Restart Now. Pull out the USB stick when the screen goes dark. The laptop restarts into Ubuntu. Log in with your username and password.
+When it says "Installation Complete" — click Restart Now. You'll see a message that says "Please remove the installation medium, then press ENTER." It might still have a spinning wheel — ignore that. Pull out the USB stick and press Enter. The laptop restarts into Ubuntu. Log in with your username and password.
 
 [pause]
+
+You'll see a few welcome screens — Ubuntu Pro, Share System Data, App Center. Skip all of them. Ubuntu Pro is paid enterprise support you don't need. System data sharing is optional telemetry. App Center is a software store — close it. None of these matter for what we're doing.
 
 Congratulations. Your laptop is now running Ubuntu. Windows is gone. You've got a clean Linux system. Let's keep building.
 
 ---
 
-## Slide 17 — Step 6: Connect to Guest WiFi
+## Slide 17 — Step 6: Switch to Guest WiFi
 
-Okay — before we install anything else, let's get this laptop on the right network.
+Now — your laptop automatically reconnected to whatever WiFi you used during the installer. That's great, you're online. But before we install anything else, we need to get this laptop on the RIGHT network.
 
 Why a GUEST network? Because your regular home WiFi is flat. Every device can see every other device. Your phone, your personal laptop, your smart TV, your kids' tablet — they're all neighbors. And now you're adding an AI agent with shell access to that neighborhood. If this laptop is EVER compromised — through a prompt injection, a malicious skill, anything — an attacker sitting on this machine could potentially reach all those other devices.
 
@@ -439,7 +453,7 @@ For the lid, we use the terminal. Three commands:
 
 These sed commands change the config file to set HandleLidSwitch to "ignore" — meaning closing the lid does nothing. Then we restart the login manager to apply it.
 
-One warning — that restart command will LOG YOU OUT. Save any open work before running it. After it runs, you'll see the login screen. Log back in.
+One warning — that restart command will LOG YOU OUT. Save any open work before running it. After it runs, you should see the login screen. On older laptops, the screen may go BLACK for one to two minutes — this is normal. The display manager is restarting and older GPUs take time to reinitialize. Wait it out. If the screen stays black after two minutes, hold the power button for five seconds to force a shutdown, then power back on normally. The config changes are already saved to disk — you won't need to run those commands again.
 
 Test it. Close the lid. Wait 30 seconds. Open the lid. If the computer didn't sleep — you're configured for 24/7 duty. If it DID sleep, one of the settings didn't take. Check both the GUI and the config file.
 

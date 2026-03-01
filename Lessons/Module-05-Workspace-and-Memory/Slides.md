@@ -468,11 +468,7 @@ By the end of this module, you will be able to:
 
 ## The Workspace Directory
 
-Everything about your 🦞 agent lives in one place:
-
-```
-~/.openclaw/
-```
+Everything about your 🦞 agent lives in `~/.openclaw/`:
 
 | Directory | What It Contains |
 |-----------|-----------------|
@@ -514,10 +510,8 @@ Everything about your 🦞 agent lives in one place:
 Name: [Your Agent's Name]
 Role: Personal AI Assistant
 Creator: [Your name]
-
-You are your agent, a personal AI assistant. You are
-reliable, wise, and direct. You work for [Your name]
-as a dedicated aide, helping with research, planning,
+You are a personal AI assistant — reliable, wise,
+and direct. You help with research, planning,
 writing, organization, and anything else needed.
 ```
 
@@ -538,14 +532,9 @@ writing, organization, and anything else needed.
 - Confident but not arrogant
 - Honest, even when uncomfortable
 - Proactive — suggest things unprompted
-## What You Are Not
-- Not a yes-man — push back on bad ideas
-- Not a search engine — synthesize and advise
 ```
 
-<!-- Speaker notes: SOUL.md is where students define HOW your agent talks to them. The most common complaint about AI assistants is their tone. This file fixes that. -->
-
-> **Key insight:** SOUL.md defines WHO the AI is, not what it does. Personality DNA -- update rarely, with intention.
+<!-- Speaker notes: SOUL.md is where students define HOW your agent talks to them. The most common complaint about AI assistants is their tone. This file fixes that. Key insight: SOUL.md defines WHO the AI is, not what it does. Personality DNA — update rarely, with intention. -->
 
 ---
 
@@ -577,7 +566,6 @@ writing, organization, and anything else needed.
 - Timezone: Central (UTC-6)
 ## Goals
 - Immediate: Launch portfolio website, land 2 freelance clients
-- Long-term: $10K/month from independent business
 ## Challenges
 - Starts too many projects simultaneously
 - Procrastinates on administrative tasks
@@ -593,17 +581,12 @@ writing, organization, and anything else needed.
 ## Important Decisions
 - 2026-02-16: Named agent "[Your Agent's Name]"
 - 2026-02-16: Set up on dedicated Ubuntu laptop
-
-## Project Status
-- Portfolio website: In progress (Next.js + Tailwind)
-
 ## Learned Preferences
 - User prefers bullet points over paragraphs
 - User wants daily morning brief at 7:00 AM
 ```
 
-- Add entries as you go -- your agent may also update this file via session hooks
-- Review monthly to keep it current
+<!-- Speaker notes: Add entries as you go — your agent may also update this file via session hooks. Review monthly to keep it current. -->
 
 ---
 
@@ -630,15 +613,13 @@ Memory systems fail in three predictable ways:
 2. **Memory saved but never retrieved** -- agent uses context, not memory
 3. **Compaction destroys knowledge** -- `/compact` removes unsaved info
 
-### The Fix: Memory Flush with Custom Prompt
+**The Fix: Memory Flush with Custom Prompt**
 - Set a **40K token threshold** for automatic memory flush
 - Force the agent to write facts to `MEMORY.md` before compaction
-- Without this, every `/compact` is a potential data loss event
 
-### Additional Safeguards
+**Additional Safeguards:**
 - **Context pruning:** Set `cache-ttl` to **6 hours** to expire stale context
 - **Hybrid search:** Combine **vector + BM25** for retrieval
-- **Session indexing:** Index completed sessions for search
 
 ---
 
@@ -684,15 +665,10 @@ Memory systems fail in three predictable ways:
 - Ask before destructive commands
 - Plan before multi-step operations
 - Cite sources; be transparent about uncertainty
-
 ## Never
 - Never access email without permission
 - Never send messages without approval
 - Never install software or delete files without asking
-
-## Default Behavior
-- Simple questions: answer directly, no preamble
-- Complex tasks: explain approach, wait for approval
 ```
 
 ---
@@ -858,15 +834,15 @@ git commit -m "Workspace update: $(date +%Y-%m-%d)"
 
 ## ⚙️ Hands on Deck: Customize Your 9 Core Files
 
-### Part 1: Edit the Big Three (20 min)
+**Part 1: Edit the Big Three (20 min)**
 1. **`IDENTITY.md`** — Name, role, purpose (5+ lines)
 2. **`SOUL.md`** — Personality and style (10+ lines)
 3. **`USER.md`** — Brain dump in structured format (20+ lines)
 
-### Part 2: Set Your Rules (10 min)
+**Part 2: Set Your Rules (10 min)**
 - Edit **`AGENTS.md`** with 3 "always" and 3 "never" rules
 
-### Part 3: Start Your 🪸 Memory (5 min)
+**Part 3: Start Your 🪸 Memory (5 min)**
 - Edit **`MEMORY.md`** with today's date and one goal
 
 ---
@@ -875,14 +851,14 @@ git commit -m "Workspace update: $(date +%Y-%m-%d)"
 
 ## ⚙️ Hands on Deck (continued)
 
-### Part 4: Restart and Test (10 min)
+**Part 4: Restart and Test (10 min)**
 
 1. Restart the ⛵ gateway: `npx openclaw gateway restart`
 2. Open the 🐚 TUI: `npx openclaw tui`
 3. Ask: *"What is your name, and what do you know about me?"*
 4. If the response does not reflect your files, check that you saved and restarted
 
-### Part 5: Back Up (5 min)
+**Part 5: Back Up (5 min)**
 
 ```bash
 cd ~/.openclaw && git init && git add -A

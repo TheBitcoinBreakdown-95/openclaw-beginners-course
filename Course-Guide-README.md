@@ -44,9 +44,9 @@ Before starting this course, you need:
 - [ ] A stable **internet connection**
 - [ ] A **Telegram** account (free, download from telegram.org)
 - [ ] An **API key** from an AI provider (we'll walk you through getting one):
-  - Anthropic (Claude) — recommended, ~$20-200/month depending on usage
+  - Google (Gemini) — **free**, no credit card needed, ~250 requests/day
+  - Anthropic (Claude) — recommended for best quality, ~$20-200/month
   - OpenAI (ChatGPT) — good alternative, can use existing subscription
-  - Google (Gemini) — has free tier (20 requests/day)
 - [ ] Basic comfort with typing commands (we'll teach you everything else)
 
 **You do NOT need:**

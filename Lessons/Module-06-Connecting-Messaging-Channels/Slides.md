@@ -528,124 +528,67 @@ Use this token to access the HTTP API:
 
 ---
 
-## Telegram Step 4: Connect to 🦞 OpenClaw
+## Telegram Step 4: Get Your User ID
 
-In your Ubuntu terminal:
+Before connecting, get your Telegram user ID:
 
-```bash
-npx openclaw channels add telegram
-```
+1. In Telegram, search for **@userinfobot**
+2. Start a chat with it
+3. It replies with your numeric user ID — **write it down**
 
-The wizard asks for your bot 🔑 token:
+This locks down your bot so only YOU can message it.
 
-```
-? Enter your Telegram bot token:
-  7123456789:AAHdqTcvCH1vGWJxfSeofSAs0K5PALDsaw
-```
-
-**Expected output:**
-
-```
-- Telegram bot connected: @MyAssistantBot
-- DM pairing mode: enabled (default)
-```
-
-<!-- Speaker notes: If students get errors here, the most common cause is a malformed token — extra spaces or line breaks from copy-paste. The text editor trick prevents this. -->
+<!-- Speaker notes: Have everyone do this now. It takes 10 seconds. They'll need the numeric ID for the next step. -->
 
 ---
 
-## Telegram Step 5: Restart and Pair
+## Telegram Step 5: Connect to 🦞 OpenClaw
 
-**Restart the ⛵ gateway:**
+In your Ubuntu terminal (replace values with yours):
 
 ```bash
+npx openclaw config set channels.telegram.botToken "YOUR-TOKEN"
+npx openclaw config set channels.telegram.allowFrom '["YOUR-USER-ID"]'
 npx openclaw gateway restart
 ```
 
-**Start a chat with your bot:**
+> Set `allowFrom` before restarting — skipping it causes a config validation error.
 
-1. Open Telegram on your phone
-2. Search for your bot's username (e.g., `@MyAssistantBot`)
-3. Click on it and press **Start**
+**Use the text editor trick** if paste gives you trouble: `gedit`, paste, verify, copy.
 
-**Complete DM pairing:**
-
-1. The bot sends a pairing code: *"Pairing required. Your code: ABC123"*
-2. Approve the pairing in the 🦞 OpenClaw TUI or dashboard
-3. Once paired, the bot responds to your messages
-
-> Pairing codes expire after **1 hour** (max 3 pending). If it expires, just message the bot again.
-
-<!-- Speaker notes: This is the moment of truth. Walk around the room and help anyone who gets stuck at pairing. The approval step happens in the OpenClaw interface, not in Telegram. Codes expire after one hour and there can only be 3 pending at once. -->
+<!-- Speaker notes: If students get errors, the most common causes are: (1) malformed token from copy-paste (use text editor trick), (2) missing allowFrom before restart (config validation error — just run the allowFrom command and restart again). -->
 
 ---
 
 ## Telegram Step 6: Test It
 
-Send a message from your phone:
+1. Open Telegram on your phone
+2. Search for your bot's username (e.g., `@MyAssistantBot`)
+3. Tap **Start** and send a message
 
-```
-Hi there! This is a test from Telegram.
-Do you remember my name?
-```
-
-If your agent responds with your name (from `USER.md`), everything is connected and working.
+If your agent responds — everything is connected and working!
 
 **Optional — Set a profile picture:**
+1. Go back to BotFather → `/setuserpic` → select your bot → send a picture
+2. Also try `/setdescription` and `/setabouttext`
 
-1. Go back to BotFather in Telegram
-2. Type `/setuserpic`
-3. Select your bot
-4. Send a profile picture
-5. Also try `/setdescription` and `/setabouttext`
-
-<!-- Speaker notes: The memory test is important — it confirms the agent has access to its workspace files even when responding through Telegram. If the agent doesn't remember the student's name, check that USER.md is properly configured. -->
+<!-- Speaker notes: This is the moment of truth. Walk around the room. If anyone's bot doesn't respond: check the token is correct, check allowFrom has their actual user ID, and make sure they restarted the gateway. -->
 
 ---
 
-## Security: DM Pairing Mode
-
-Verify your DM mode:
-
-```bash
-npx openclaw config get channels.telegram.dmPolicy
-```
-
-If it shows `open`, change it immediately:
-
-```bash
-npx openclaw config set channels.telegram.dmPolicy "pairing"
-```
+## Security: DM Modes
 
 | Mode | What Happens |
 |------|-------------|
-| **pairing** | Unknown senders must enter a code you approve (recommended) |
-| **open** | Anyone can message the bot -- **NEVER use this** |
+| **allowFrom** | Only your user ID can message the bot (what we just set) |
+| **pairing** | Unknown senders must enter a code you approve |
+| **open** | Anyone can message the bot — **NEVER use this** |
 
-> **Tip:** Run `npx openclaw doctor` after connecting any channel. Also consider `allowlist` mode for maximum security.
+We set `allowFrom` during setup — your bot is already locked down.
 
-<!-- Speaker notes: This is the most important security slide in the module. Emphasize that "open" mode is never acceptable for a personal agent. -->
+> **Tip:** Run `npx openclaw doctor` after connecting any channel to check for misconfigurations.
 
----
-
-## Security: Setting an Allowlist
-
-For extra security, specify exactly who can message the bot:
-
-```bash
-npx openclaw config set channels.telegram.allowFrom \
-  '["YOUR_TELEGRAM_USER_ID"]'
-```
-
-**To find your Telegram user ID:**
-
-1. Search for `@userinfobot` on Telegram
-2. Start a chat with it
-3. It tells you your numeric user ID
-
-> **Never set DM mode to "open"** unless you have a very specific reason and understand prompt injection risks.
-
-<!-- Speaker notes: The allowlist is the strongest option short of disabling DMs entirely. For students running this at home with only themselves as users, allowlist mode is ideal. -->
+<!-- Speaker notes: Emphasize that "open" mode is never acceptable for a personal agent. The allowFrom approach is the simplest AND most secure for a single-user setup. -->
 
 ---
 
@@ -653,7 +596,7 @@ npx openclaw config set channels.telegram.allowFrom \
 
 ## 🚩 Rough Waters: Group Chat Danger
 
-### DO NOT put your 🦞 OpenClaw bot in group chats.
+**DO NOT put your 🦞 OpenClaw bot in group chats.**
 
 Not "be careful." Not "use with caution." **Do not do it.**
 
@@ -679,6 +622,13 @@ The only exception requires sandboxing (Module 10), require-mention, and tool po
 2. Click **New Application**, name it "your agent"
 3. Click **Bot** in sidebar, click **Reset Token**, copy 🔑 token
 4. Enable **Message Content Intent** under Privileged Gateway Intents
+
+<!-- Speaker notes: Discord setup has more steps than Telegram but it's still straightforward. Walk through each step carefully. -->
+
+---
+
+## Setting Up Discord (continued)
+
 5. Click **OAuth2**, check `bot` scope, set permissions:
    - Read Messages / View Channels
    - Send Messages
@@ -692,7 +642,7 @@ npx openclaw channels add discord
 
 > **Discord security:** Use a private server. Never add the bot to public servers.
 
-<!-- Speaker notes: Discord setup has more steps than Telegram but it's still straightforward. The key security point is server isolation — the bot should only ever be in a server you fully control. -->
+<!-- Speaker notes: The key security point is server isolation — the bot should only ever be in a server you fully control. -->
 
 ---
 
@@ -705,6 +655,12 @@ npx openclaw channels add whatsapp
 1. A QR code appears in the terminal
 2. On your phone: **Settings > Linked Devices > Link a Device**
 3. Scan the QR code
+
+<!-- Speaker notes: WhatsApp setup is quick but carries more risk than Telegram. Walk through the QR code scan step by step. -->
+
+---
+
+## WhatsApp Security
 
 **Important considerations:**
 
@@ -748,15 +704,15 @@ npx openclaw config set channels.whatsapp.allowFrom \
 
 ## Channel Security: Best Practices from the Community
 
-### Dedicated Accounts
+**Dedicated Accounts:**
 - Create a **fresh Gmail/email** specifically for the bot
 - Share calendar **read-only** from your personal account
 - If compromised, you only lose the bot account — not your personal one
 
-### Email Safety Protocol
+**Email Safety Protocol:**
 If connecting email: check inbox every 2 minutes. **Trusted senders** (whitelist) can trigger actions. All other senders: **read-only summary only**. NEVER auto-reply to unknown senders.
 
-### Password Manager Integration
+**Password Manager Integration:**
 Store bot 🔑 credentials in a **dedicated password manager vault** (e.g., "Shared with OpenClaw" in 1Password). API keys belong in the password manager, not in TOOLS.md or on disk.
 
 <!-- Speaker notes: These best practices come from the OpenClaw community and represent hard-won lessons. The dedicated account strategy is especially important — it limits blast radius if something goes wrong. -->
@@ -785,13 +741,13 @@ Store bot 🔑 credentials in a **dedicated password manager vault** (e.g., "Sha
 
 ## ⚙️ Hands on Deck
 
-### Part 1: Set Up Telegram *(15 min)*
+**Part 1: Set Up Telegram *(15 min)***
 1. Create a bot with BotFather
 2. Connect it to 🦞 OpenClaw
 3. Complete DM pairing
 4. Send a test message from your phone
 
-### Part 2: Verify Security *(5 min)*
+**Part 2: Verify Security *(5 min)***
 1. Confirm DM pairing mode is active
 2. Check that only your user ID is allowed
 3. If possible, test that the bot blocks other accounts
@@ -804,7 +760,7 @@ Store bot 🔑 credentials in a **dedicated password manager vault** (e.g., "Sha
 
 ## ⚙️ Hands on Deck *(continued)*
 
-### Part 3: Have a Mobile Conversation *(10 min)*
+**Part 3: Have a Mobile Conversation *(10 min)***
 
 From your phone via Telegram:
 
@@ -812,15 +768,13 @@ From your phone via Telegram:
 2. Ask your agent to create a to-do list for tomorrow
 3. Ask your agent a question about a topic you are interested in
 
-> Notice how the experience feels different from the TUI. Telegram feels like texting a knowledgeable friend. The TUI feels like working at a terminal.
-
-### Part 4: Security Test *(5 min)*
+**Part 4: Security Test *(5 min)***
 
 - Have a friend (or second account) try to message the bot
 - They should be blocked by DM pairing mode
 - Do NOT approve their pairing request
 
-<!-- Speaker notes: Part 3 is the fun part — let students explore. Part 4 is critical for understanding why DM pairing matters. If students don't have a second account, pair them up to test each other's bots. -->
+<!-- Speaker notes: Notice how the experience feels different from the TUI. Telegram feels like texting a knowledgeable friend. The TUI feels like working at a terminal. Part 3 is the fun part — let students explore. Part 4 is critical for understanding why DM pairing matters. If students don't have a second account, pair them up to test each other's bots. -->
 
 ---
 

@@ -532,7 +532,7 @@ rm -rf ~/Desktop/*          # Delete your entire Desktop
 
 🦞 OpenClaw can run **any** of these commands without asking you first.
 
-### The One-Word Mistake
+**The One-Word Mistake:**
 
 ```bash
 find ~/Downloads -type f -mtime +30 -delete   # Correct
@@ -597,13 +597,12 @@ A directory listing reveals your projects, tools, config details, and hints abou
 
 ## Threat Categories 4 and 5
 
-### 4. Unauthorized Actions
-The AI does things you did not ask for -- from misunderstanding or overzealous helpfulness.
+**4. Unauthorized Actions** — The AI does things you did not ask for, from misunderstanding or overzealous helpfulness.
 
-- "Clean up the project" -- AI deletes files you wanted to keep
+- "Clean up the project" — AI deletes files you wanted to keep
 - Scheduled task sends a message to the wrong person
 
-### 5. Supply Chain Attacks (Malicious 🐠 Skills)
+**5. Supply Chain Attacks (Malicious 🐠 Skills)**
 A skill from **ClawHub** contains hidden malicious instructions.
 
 - Skills are YAML + markdown -- easy to embed hidden prompts
@@ -774,9 +773,7 @@ npx openclaw gateway stop   # Step 1: Kill it immediately
 pkill -f openclaw           # If that does not work
 ```
 
-**Mnemonic: Stop. Close. Freeze. Investigate. Restore.**
-
-<!-- Speaker notes: Have students say this out loud. Muscle memory matters when you are panicking. -->
+<!-- Speaker notes: Mnemonic: Stop. Close. Freeze. Investigate. Restore. Have students say this out loud. Muscle memory matters when you are panicking. -->
 
 ---
 

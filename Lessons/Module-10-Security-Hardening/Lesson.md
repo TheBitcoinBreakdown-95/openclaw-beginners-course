@@ -320,6 +320,15 @@ npx openclaw gateway restart
 
 Remember to update your dashboard bookmark to the new port.
 
+### Set a Spending Cap on Your AI Provider
+
+If your API key is stolen, the attacker can make unlimited calls billed to your account. A monthly spending cap limits the damage.
+
+1. **Anthropic:** Go to console.anthropic.com → Settings → Spending Limits → set a monthly cap just above your expected usage
+2. **OpenAI:** Go to platform.openai.com → Settings → Billing → Usage Limits → set a monthly budget
+
+This takes 5 minutes and is your financial kill switch. Without it, a stolen key is a blank check.
+
 ### Install Fail2ban and UFW (Network Hardening)
 
 If your gateway is exposed beyond loopback (LAN or Tailscale access), add these layers:
@@ -344,6 +353,17 @@ sudo ufw enable
 ```
 
 Now only SSH and your gateway port are open. Everything else is blocked.
+
+### Enable Automatic Security Updates
+
+Your agent's machine runs 24/7. Security patches should install themselves:
+
+```bash
+sudo apt install -y unattended-upgrades
+sudo dpkg-reconfigure -plow unattended-upgrades
+```
+
+Select "Yes" when prompted. Ubuntu will now automatically download and install security updates. One-time setup, runs forever.
 
 ### Bind Configuration Review
 
@@ -406,6 +426,8 @@ Most home routers have a "Guest Network" feature. It creates a separate WiFi SSI
 - Guest network isolation only prevents device-to-device communication. Both networks still share the same internet connection.
 - Some routers' guest networks are poorly implemented and don't actually isolate traffic. Test it.
 - If you need to access the agent's gateway from your personal laptop (e.g., the dashboard), you'll need Tailscale or similar (see Module 02) to bridge the gap securely.
+
+**What a guest network does NOT protect against:** A compromised device on the guest network still has full internet access. It can exfiltrate data, abuse your API keys, or mine cryptocurrency — all through the internet connection. That is why the other layers in this module (sandboxing, tool policies, spending caps, credential management) matter even with network isolation in place.
 
 ### Option 2: Separate SSID / VLAN (More Control)
 

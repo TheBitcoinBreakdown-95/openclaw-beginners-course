@@ -109,7 +109,7 @@ Note: `openclaw service` does NOT exist. Always use `openclaw gateway`.
 ## Channel Management
 
 ```bash
-npx openclaw channels add [--channel <name>]    # Add a channel (wizard)
+npx openclaw channels add [--channel <name>]    # Add a channel (requires token — not an interactive wizard for Telegram; use config set instead)
 npx openclaw channels remove [--channel <name>]  # Remove a channel
 npx openclaw channels list                        # List configured channels
 npx openclaw channels status [--probe]            # Check channel health
