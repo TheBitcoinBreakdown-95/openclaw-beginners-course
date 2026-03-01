@@ -1,7 +1,7 @@
 # Module 02 Teaching Script: Preparing Your Old Laptop
 
 **Total speaking time:** ~25 minutes (plus 10-minute hands-on activity)
-**Slides:** 25
+**Slides:** 26
 
 ---
 
@@ -285,17 +285,27 @@ Select your network, enter the password, connect.
 
 If you see networks and can connect — GREAT. Full speed ahead.
 
-If you DON'T see any networks — don't panic. Click "Do not connect to the internet" for now. This happens sometimes, especially with Realtek and Broadcom chips. You've got three backup plans. One — a USB WiFi adapter, about 15 bucks, plugs right in. Two — phone USB tethering. Plug your phone in with a cable, enable USB tethering in your phone settings, Ubuntu sees it as a wired connection. Three — good old Ethernet cable. Plug directly into the router.
-
-Next screen — **Try or Install.** You'll see the choice: "Try Ubuntu" or "Install Ubuntu."
-
-If WiFi worked — choose **Install Ubuntu.** Full speed ahead.
-
-If you want to poke around first without committing — choose "Try Ubuntu." It loads a full desktop from the USB without touching the hard drive. Like walking through a house before you buy it. When you're ready, double-click the "Install Ubuntu" icon on the desktop.
+If you DON'T see any networks — don't panic. Click "Do not connect to the internet" for now. This happens sometimes, especially with Realtek and Broadcom chips. We'll deal with it on the next slide.
 
 ---
 
-## Slide 15 — Step 5: Install Ubuntu (Key Screens)
+## Slide 15 — Step 4 (Continued): Try or Install
+
+After WiFi, you'll see the choice: **"Try Ubuntu"** or **"Install Ubuntu."**
+
+If WiFi worked — choose **Install Ubuntu.** Full speed ahead to Step 5.
+
+If you want to poke around first without committing — choose "Try Ubuntu." It loads a full desktop from the USB without touching the hard drive. Like walking through a house before you buy it. When you're ready, double-click the "Install Ubuntu" icon on the desktop.
+
+Now, if WiFi DIDN'T work — you've got three backup plans. One — a USB WiFi adapter, about 15 bucks, plugs right in, Linux-compatible. Two — phone USB tethering. Plug your phone in with a cable, enable USB tethering in your phone settings, Ubuntu sees it as a wired connection. Three — good old Ethernet cable. Plug directly into the router.
+
+[pause]
+
+Choose whichever option gets you connected. You WILL need internet for the rest of the setup — updates, Node.js, OpenClaw. But you do NOT need it right this second. The installation can proceed without internet. You just need it by Step 6.
+
+---
+
+## Slide 16 — Step 5: Install Ubuntu (Key Screens)
 
 WiFi works? Or you've got a backup plan? Good. Let's commit.
 
@@ -329,7 +339,7 @@ And yes — this PERMANENTLY deletes everything. All of Windows. All programs. A
 
 ---
 
-## Slide 16 — Step 5: Install Ubuntu (Continued)
+## Slide 17 — Step 5: Install Ubuntu (Continued)
 
 Create your account. This is the user you'll log in with every day.
 
@@ -359,7 +369,7 @@ Congratulations. Your laptop is now running Ubuntu. Windows is gone. You've got 
 
 ---
 
-## Slide 17 — Step 6: Switch to Guest WiFi
+## Slide 18 — Step 6: Switch to Guest WiFi
 
 Now — your laptop automatically reconnected to whatever WiFi you used during the installer. That's great, you're online. But before we install anything else, we need to get this laptop on the RIGHT network.
 
@@ -375,7 +385,7 @@ If your router doesn't support guest networks? Not a deal breaker. Proceed on yo
 
 ---
 
-## Slide 18 — Step 7: Update Ubuntu and Install Tools
+## Slide 19 — Step 7: Update Ubuntu and Install Tools
 
 Time to bring this ship up to date. Open a terminal — click Terminal in the dock on the left, or press Ctrl+Alt+T. Either way.
 
@@ -401,7 +411,7 @@ These are developer tools that OpenClaw and Node.js need. Git for version contro
 
 ---
 
-## Slide 19 — Step 8: Install Node.js 22
+## Slide 20 — Step 8: Install Node.js 22
 
 Node.js is the engine. OpenClaw is built on it. Without it, nothing runs. We need version 22 or newer.
 
@@ -439,7 +449,7 @@ Beautiful. You've got the fuel loaded. The engine is ready.
 
 ---
 
-## Slide 20 — Step 9: Power Settings for 24/7 Operation
+## Slide 21 — Step 9: Power Settings for 24/7 Operation
 
 This is the step that separates a laptop from a SERVER. A laptop is designed to sleep when you walk away. A server is designed to NEVER sleep. We need to convert one into the other.
 
@@ -459,7 +469,7 @@ Test it. Close the lid. Wait 30 seconds. Open the lid. If the computer didn't sl
 
 ---
 
-## Slide 21 — Shoals and Sandbars
+## Slide 22 — Shoals and Sandbars
 
 Troubleshooting time. Here's what can go wrong and how to fix it.
 
@@ -477,7 +487,7 @@ Password not accepted for sudo — nothing shows when you type. That's normal. T
 
 ---
 
-## Slide 22 — Verification Checklist
+## Slide 23 — Verification Checklist
 
 Full systems check. Six commands. Let's run them all.
 
@@ -503,7 +513,7 @@ If all six pass — your environment is READY. Your ship is seaworthy. You are c
 
 ---
 
-## Slide 23 — Hands on Deck
+## Slide 24 — Hands on Deck
 
 Activity time! This is your chance to verify everything and fill in your records.
 
@@ -517,7 +527,7 @@ If anything failed, troubleshoot it now. Check the Shoals and Sandbars slide. As
 
 ---
 
-## Slide 24 — Treasure Chest
+## Slide 25 — Treasure Chest
 
 Eight takeaways. Your treasure from today's voyage.
 
@@ -539,7 +549,7 @@ Eight — disable BOTH auto-suspend AND lid close. Two separate settings. Both r
 
 ---
 
-## Slide 25 — Next Port of Call: Module 03
+## Slide 26 — Next Port of Call: Module 03
 
 Your laptop is ready. Ubuntu is running. Node.js is installed. systemd works out of the box. No compatibility layers. No PATH issues. No paste bugs. Just a clean Linux system ready for OpenClaw.
 

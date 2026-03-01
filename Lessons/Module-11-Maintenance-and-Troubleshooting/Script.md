@@ -1,7 +1,7 @@
 # Module 11 Teaching Script: Maintenance and Troubleshooting
 
 **Total speaking time:** ~30 minutes
-**Slides:** 26
+**Slides:** 28
 
 ---
 
@@ -405,7 +405,7 @@ Security commands aren't exciting. They're not flashy. But they're the differenc
 
 ---
 
-## Slide 19 — Command Cheat Sheet: Configuration and Channels
+## Slide 19 — Command Cheat Sheet: Configuration
 
 Configuration commands. The knobs and dials of your ship.
 
@@ -418,6 +418,14 @@ Configuration commands. The knobs and dials of your ship.
 `npx openclaw config set agents.defaults.heartbeat.every` — set how often your agent's heartbeat fires. Remember: fifty-five minutes for optimal caching.
 
 `npx openclaw config set agents.defaults.heartbeat.model` — set which model runs the heartbeat. Haiku. The answer is Haiku. Or Gemini Flash. Something cheap and fast.
+
+[pause]
+
+These are the commands you will use most often when tweaking your setup. Config get, config set. Get comfortable with the dot-notation paths.
+
+---
+
+## Slide 20 — Command Cheat Sheet: Channels and Cron Jobs
 
 Channel commands. Your messaging connections.
 
@@ -433,11 +441,11 @@ Cron job commands. Your scheduled automation.
 
 [pause]
 
-Configuration, channels, and cron jobs. The three C's that keep your ship running on schedule.
+Channels and cron jobs. The connections and the schedules that keep your ship running without you standing at the helm.
 
 ---
 
-## Slide 20 — Command Cheat Sheet: Skills and TUI
+## Slide 21 — Command Cheat Sheet: Skills and TUI
 
 Last category. Skills and TUI commands.
 
@@ -465,7 +473,7 @@ That's the complete cheat sheet. Every command you'll ever need for daily operat
 
 ---
 
-## Slide 21 — Troubleshooting and Nuclear Options
+## Slide 22 — Troubleshooting and Nuclear Options
 
 Two more categories before we get to the emergency procedure.
 
@@ -485,7 +493,7 @@ Both of these are IRREVERSIBLE. That's why I said nuclear. You MUST have a Git b
 
 ---
 
-## Slide 22 — Rough Waters: Emergency Quick Reference
+## Slide 23 — Rough Waters: Emergency Quick Reference
 
 Now. The emergency procedure. We covered incident response in Module Ten, but this is the condensed, print-it-out, tape-it-next-to-your-monitor version. Five steps. In order. No thinking required.
 
@@ -509,7 +517,7 @@ Stop. Close. Freeze. Investigate. Restore. Perfect. Now PRINT THAT TABLE and kee
 
 ---
 
-## Slide 23 — Community Resources
+## Slide 24 — Community Resources
 
 You are not alone out there. I need you to internalize that. When you leave this course, you are NOT sailing solo into empty ocean. There's an entire fleet out there.
 
@@ -529,7 +537,7 @@ And here's the KEY to getting good help when you need it. Five things to include
 
 ---
 
-## Slide 24 — Skills vs. Agents: Know the Difference
+## Slide 25 — Skills vs. Agents: Know the Difference
 
 One more thing before we wrap up the technical content. This is a trap that catches EVERYONE eventually, and I want to inoculate you against it right now.
 
@@ -549,7 +557,7 @@ Default to skills. ALWAYS default to skills. Only create a new agent when you ge
 
 ---
 
-## Slide 25 — Course Completion Checklist
+## Slide 26 — Course Completion Checklist
 
 Let's take inventory. Let's see what you've actually built over these twelve modules.
 
@@ -579,7 +587,7 @@ Join the OpenClaw Discord community. The people there are where you were twelve 
 
 ---
 
-## Slide 26 — Treasure Chest (Key Takeaways)
+## Slide 27 — Treasure Chest (Key Takeaways)
 
 Seven takeaways. The treasure chest for Module Eleven. The FINAL treasure chest of the course.
 
@@ -603,7 +611,7 @@ Seven rules. Follow them and your ship sails smooth. Break them and... well, you
 
 ---
 
-## Slide 27 — Bon Voyage!
+## Slide 28 — Bon Voyage!
 
 [pause]
 

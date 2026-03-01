@@ -1,7 +1,7 @@
 # Module 01 Teaching Script: Understanding the Risks
 
 **Total speaking time:** ~32 minutes (plus 25-minute activity)
-**Slides:** 28
+**Slides:** 30
 
 ---
 
@@ -399,13 +399,21 @@ Treat your agent the SAME WAY. Start with the absolute minimum. Add permissions 
 
 ---
 
-## Slide 19 — Principles 3, 4, and 5
-
-Three more principles. Moving faster now because we've got a lot of ocean to cover.
+## Slide 19 — Principle 3: Authentication
 
 Principle three: Authentication and Authorization. Make sure only YOU can talk to your AI, and that your AI proves its identity.
 
 Enable gateway authentication — require a token to connect. Use DM pairing mode on Telegram — strangers have to enter a code you approve before the bot will talk to them. NEVER leave your gateway exposed to the network without authentication. And give the AI its OWN accounts for services it needs. Don't share your personal credentials. It gets its own email. Its own GitHub. Its own everything. Your accounts stay yours.
+
+[pause]
+
+This is FOUNDATIONAL. Isolation keeps the agent separate. Least privilege limits what it can do. Authentication ensures only YOU are giving it orders. Without this, someone else could be sailing your ship.
+
+---
+
+## Slide 20 — Principles 4 and 5
+
+Two more principles to complete the set.
 
 Principle four: Monitoring and Auditability. Log everything. Review regularly. Trust but verify.
 
@@ -421,7 +429,7 @@ Medieval castles didn't rely on just a wall. They had a moat, a drawbridge, arch
 
 ---
 
-## Slide 20 — The 9-Point Security Checklist
+## Slide 21 — The 9-Point Security Checklist
 
 Now we turn principles into ACTION. The 9-Point Security Checklist. Nine specific things to understand before you install OpenClaw. You don't need to implement them all TODAY — some happen during installation in Module 03, some in Module 10. But you need to UNDERSTAND them now.
 
@@ -441,7 +449,7 @@ Number five: Run security audits regularly. OpenClaw has a built-in command: `np
 
 ---
 
-## Slide 21 — The 9-Point Security Checklist (continued)
+## Slide 22 — The 9-Point Security Checklist (continued)
 
 Numbers six through nine.
 
@@ -455,7 +463,7 @@ Number nine: Know your incident response plan. BEFORE something goes wrong, know
 
 ---
 
-## Slide 22 — Incident Response Plan
+## Slide 23 — Incident Response Plan
 
 [tone shift — military briefing, clipped and precise]
 
@@ -487,7 +495,7 @@ Good. When you're panicking at 2 AM and your hands are shaking, that rhythm is w
 
 ---
 
-## Slide 23 — The Spider-Man Rule
+## Slide 24 — The Spider-Man Rule
 
 [tone shift — warm, almost fatherly]
 
@@ -515,7 +523,7 @@ Tattoo that prompt on the inside of your eyelids.
 
 ---
 
-## Slide 24 — Shoals and Sandbars (Myths)
+## Slide 25 — Shoals and Sandbars (Myths)
 
 Time to bust some myths. And I'm not going to be gentle about it, because these myths are DANGEROUS. People run aground on these misconceptions and they don't even realize they've hit the rocks until they're taking on water.
 
@@ -547,7 +555,7 @@ Also — and I want to mention this because it's real and active — dedicated i
 
 ---
 
-## Slide 25 — Hands on Deck: Write Your Threat Model
+## Slide 26 — Hands on Deck: Threat Model (Parts 1-2)
 
 [tone shift — drill sergeant energy]
 
@@ -571,9 +579,27 @@ Four: How would you KNOW if it went wrong? Would you see unexpected messages? A 
 
 [pause]
 
-Part three — ten minutes. Based on your threat model, make DECISIONS. What services will you NOT connect initially? What files or directories should be off-limits? Will you use sandboxing from the start? Who besides you can message your agent? — and the answer to that one should be NO ONE. And what's your monthly API spending limit? Pick a NUMBER. Write it down. A real number.
+Good. You have your use cases and your risk analysis. Now let's turn those into DECISIONS.
+
+---
+
+## Slide 27 — Hands on Deck: Threat Model (Part 3)
+
+Part three — ten minutes. Based on your threat model, make DECISIONS. These are your pre-installation security rules.
+
+What services will you NOT connect initially? Write them down.
+
+What files or directories should be off-limits? Write them down.
+
+Will you use sandboxing from the start? Yes or no. Write it down.
+
+Who besides you can message your agent? — and the answer to that one should be NO ONE. Write it down.
+
+And what's your monthly API spending limit? Pick a NUMBER. A real number. Write it down.
 
 [pause]
+
+Start restrictive. Open up gradually. You can ALWAYS add permissions later. You can NEVER undo a data leak.
 
 You have twenty-five minutes total. Clock starts NOW. Go.
 
@@ -581,7 +607,7 @@ You have twenty-five minutes total. Clock starts NOW. Go.
 
 ---
 
-## Slide 26 — Hands on Deck: Incident Response Card
+## Slide 28 — Hands on Deck: Incident Response Card
 
 [after the activity timer]
 
@@ -611,7 +637,7 @@ Print this card. Pin it next to your computer. If you can laminate it, laminate 
 
 ---
 
-## Slide 27 — Treasure Chest (Key Takeaways)
+## Slide 29 — Treasure Chest (Key Takeaways)
 
 [tone shift — bringing it home, slower, letting each point land]
 
@@ -635,7 +661,7 @@ Eight — and this is the one I want you to carry in your bones: The biggest ris
 
 ---
 
-## Slide 28 — Next Port of Call: Module 02 — Preparing Your Laptop
+## Slide 30 — Next Port of Call: Module 02 — Preparing Your Laptop
 
 [pause — long beat]
 

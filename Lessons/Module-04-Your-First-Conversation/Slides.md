@@ -630,7 +630,7 @@ patience, directness, and quiet confidence.
 - A full page of text = ~500-800 tokens
 
 **Why tokens matter:**
-- **Cost** — You pay per token (input ~$15/M, output ~$75/M for Claude Opus 4.6)
+- **Cost** — Paid path: ~$15/M input, ~$75/M output (Claude Opus 4.6). Free path (Gemini): no cost up to ~250 requests/day
 - **Context window** — The model holds a finite number of tokens (~128K-200K); when full, old messages are dropped
 
 ---

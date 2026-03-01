@@ -1,7 +1,7 @@
 # Module 06 Teaching Script: Connecting Messaging Channels
 
 **Total speaking time:** ~30 minutes (plus 35-minute activity)
-**Slides:** 24
+**Slides:** 25
 
 ---
 
@@ -249,7 +249,7 @@ And here's a pro tip — after connecting any new channel, run npx openclaw doct
 
 ---
 
-## Slide 14 — Rough Waters: Group Chat Danger
+## Slide 13 — Rough Waters: Group Chat Danger
 
 [tone shifts — dead serious, no jokes]
 
@@ -279,7 +279,7 @@ DMs only. Tattoo it on your forearm.
 
 ---
 
-## Slide 15 — Setting Up Discord (Optional)
+## Slide 14 — Setting Up Discord (Optional)
 
 Alright — lighter waters ahead. This slide is for those of you who want a SECOND communication channel. Discord. Totally optional. If Telegram is all you need, sit back and relax for a couple minutes while the Discord crew gets their bearings.
 
@@ -287,7 +287,11 @@ Discord setup has more steps than Telegram, but it's still doable. Here's the co
 
 Go to discord.com/developers/applications in your browser. Create a new application. Name it whatever you want. Then click Bot in the sidebar, reset the token — and YES, use the text editor trick with this token too, same rules apply — and enable Message Content Intent under Privileged Gateway Intents. Without that intent, your bot literally CANNOT read messages. It's deaf.
 
-Then you need an invite link. OAuth2 section, check the "bot" scope, set permissions for reading and sending messages and reading history. Copy the generated URL. Open it in your browser. Invite the bot to a server.
+---
+
+## Slide 15 — Setting Up Discord (continued)
+
+Next you need an invite link. OAuth2 section, check the "bot" scope, set permissions for reading and sending messages and reading history. Copy the generated URL. Open it in your browser. Invite the bot to a server.
 
 And HERE is the critical part — invite it to a PRIVATE server. A server where YOU are the only member. Create a brand new server if you have to. Do NOT — and I cannot stress this enough — do NOT add your bot to a public server. Do NOT add it to your friend's gaming server with two hundred people in it. Remember what we JUST said about group chats? A Discord server with multiple people is a group chat. Same rules apply.
 
@@ -313,6 +317,10 @@ With Telegram and Discord, your bot has its OWN account. A separate identity. A 
 
 Let that sink in for a second. If the bot is compromised — if someone gains access to your OpenClaw instance, or if a prompt injection trick works — they don't just control a throwaway bot account. They have access to your PERSONAL WhatsApp. Your real conversations. Your real contacts. Your real life.
 
+---
+
+## Slide 17 — WhatsApp Security
+
 THIS is why I strongly — STRONGLY — recommend using a second phone number for WhatsApp if you go this route. Get a cheap prepaid SIM. Set up Google Voice. Whatever it takes to create a separate WhatsApp account that isn't your personal one. If something goes wrong, the blast radius is contained to the secondary account. Your personal WhatsApp stays untouched.
 
 Set the allowlist immediately after connecting: npx openclaw config set channels.whatsapp.allowFrom, followed by a JSON array with your phone number inside quotes.
@@ -323,7 +331,7 @@ WhatsApp is powerful because everyone already has it. But that same familiarity 
 
 ---
 
-## Slide 17 — Security Checklist for All Channels (Part 1)
+## Slide 18 — Security Checklist for All Channels (Part 1)
 
 We're running a hull inspection. Every channel you've set up today needs to pass these checks before we leave harbor.
 
@@ -349,7 +357,7 @@ Good. Four out of eight. Let's keep going.
 
 ---
 
-## Slide 18 — Security Checklist for All Channels (Part 2)
+## Slide 19 — Security Checklist for All Channels (Part 2)
 
 Four more checks.
 
@@ -375,7 +383,7 @@ Eight checks. All green? Outstanding. Your ship's communication system is locked
 
 ---
 
-## Slide 19 — Channel Security: Best Practices from the Community
+## Slide 20 — Channel Security: Best Practices from the Community
 
 These next tips come from the OpenClaw community — people who learned these lessons the hard way so you don't have to. Pay attention because this is wisdom earned through actual mistakes.
 
@@ -391,7 +399,7 @@ Dedicated accounts. Email safety. Password vault. Three rules from the community
 
 ---
 
-## Slide 20 — Shoals and Sandbars (Troubleshooting)
+## Slide 21 — Shoals and Sandbars (Troubleshooting)
 
 Quick troubleshooting pass. These are the rocks people hit most often. Let me save you the headache.
 
@@ -415,7 +423,7 @@ And the big one — "I accidentally shared my bot token." STOP EVERYTHING. Go to
 
 ---
 
-## Slide 21 — Hands on Deck: Part 1 and Part 2
+## Slide 22 — Hands on Deck: Part 1 and Part 2
 
 ALL HANDS ON DECK! Activity time. This is the real work. Thirty-five minutes. Four parts. Everyone participates.
 
@@ -429,7 +437,7 @@ Go! Clock's running.
 
 ---
 
-## Slide 22 — Hands on Deck: Parts 3 and 4
+## Slide 23 — Hands on Deck: Parts 3 and 4
 
 Welcome back. How'd it go? Everyone's bot talking?
 
@@ -465,7 +473,7 @@ Outstanding work, crew. Every one of you now has a secure, mobile, personally co
 
 ---
 
-## Slide 23 — Treasure Chest (Key Takeaways)
+## Slide 24 — Treasure Chest (Key Takeaways)
 
 Let's bring this ship into harbor and inventory what we've hauled today. Eight pieces of treasure. Every one of them worth its weight in gold.
 
@@ -491,7 +499,7 @@ If you take away ONE thing from today — ONE thing — it's this: your agent is
 
 ---
 
-## Slide 24 — Next Port of Call: Module 07 — Skills and ClawHub
+## Slide 25 — Next Port of Call: Module 07 — Skills and ClawHub
 
 [tone shift — excitement building again]
 

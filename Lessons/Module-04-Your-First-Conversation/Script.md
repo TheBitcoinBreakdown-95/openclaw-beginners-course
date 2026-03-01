@@ -1,7 +1,7 @@
 # Module 04 Teaching Script: Your First Conversation
 
-**Total speaking time:** ~32 minutes
-**Slide count:** 23 slides
+**Total speaking time:** ~34 minutes
+**Slide count:** 25 slides
 
 ---
 
@@ -171,15 +171,29 @@ And finally, RULES. These are your standing orders. The laws of YOUR ship. "Don'
 
 [pause]
 
-Now, I know some of you are staring at this template thinking, "That is a LOT to write." And you are right. It is. But here is a shortcut.
-
-You can let your agent INTERVIEW you instead. Just paste this: "I want you to interview me. Ask me questions to build my profile. One question at a time." And the agent will lead the conversation. It asks the questions. You just answer. Many people find this produces BETTER results because the agent knows exactly what information it needs and asks targeted follow-ups you would never think of.
-
-Either way works. Template or interview. Pick whichever feels right. But DO one of them.
+Now, I know some of you are staring at this template thinking, "That is a LOT to write." And you are right. It is. But there IS another way. Check out the next slide.
 
 ---
 
-## Slide 9 — Brain Dump Example
+## Slide 9 — Alternative: Let Your Agent Interview You
+
+Here is an alternative for those of you who looked at that template and thought, "I do not even know where to START."
+
+Instead of writing the whole brain dump yourself, you can let your agent INTERVIEW you. Just paste this one line:
+
+"I want you to interview me. Ask me questions one at a time to build a complete profile of who I am, what I do, and how I want you to help me."
+
+That is it. Your agent takes the lead. It asks targeted questions -- "What is your occupation?" "What are your main goals right now?" "How do you prefer to communicate?" -- and you just ANSWER. One question at a time. No blank page. No writer's block.
+
+Many people find this approach produces BETTER results than the template, because the agent knows exactly what information it needs and asks follow-ups you would never think of. It draws out details you did not know were important.
+
+[pause]
+
+Either way works. Template or interview. Pick whichever feels right for you. But DO one of them. The brain dump is not optional -- only the METHOD is optional.
+
+---
+
+## Slide 10 — Brain Dump Example
 
 Here is what a filled-in brain dump looks like in the wild. Let me read through the example so you can see the level of specificity I am talking about.
 
@@ -203,7 +217,7 @@ Good. Hold onto that. We are going to write it for real in the exercise.
 
 ---
 
-## Slide 10 — Sending the Brain Dump
+## Slide 11 — Sending the Brain Dump
 
 So you have written your brain dump. You have poured your heart and your goals and your rules into that template. Now what?
 
@@ -221,7 +235,7 @@ Now, one thing I want you to remember: this brain dump is NOT permanent yet. Eve
 
 ---
 
-## Slide 11 — Naming Your Agent
+## Slide 12 — Naming Your Agent
 
 Alright, crew. Your agent knows who you are. It knows your goals. It knows your rules. But right now it does not have a NAME. And that matters more than you might think.
 
@@ -251,7 +265,7 @@ I love it. Those are GREAT names. And here is the good news -- in Module 05, whe
 
 ---
 
-## Slide 12 — Essential Slash Commands
+## Slide 13 — Essential Slash Commands
 
 Now we learn the language of the ship. Slash commands.
 
@@ -259,7 +273,7 @@ These are not messages to your agent. These are orders to the SYSTEM. When you t
 
 Think of it this way: talking to your agent is like talking to your first mate. Slash commands are like pulling levers and turning dials on the ship's console.
 
-Seven commands on this table. Let me hit the essential ones.
+Six commands on this table. Let me hit the essential ones.
 
 `/help` -- your chart of all available commands. There are over forty-six of them. You do not need to memorize them all. But when you are lost, `/help` is your compass.
 
@@ -273,15 +287,13 @@ Seven commands on this table. Let me hit the essential ones.
 
 `/exit` -- when you are done, you leave the TUI. Control-C works too. The gateway keeps running in the background, so your agent is still reachable through other channels.
 
-And `/config` -- opens the settings. Model choice, gateway settings, channels. We will use this more in later modules.
-
 [pause]
 
-Five of these cover ninety percent of your daily use: help, status, compact, new, exit. The rest is gravy.
+Those six cover ninety percent of your daily use. The rest is gravy.
 
 ---
 
-## Slide 13 — Understanding Tokens
+## Slide 14 — Understanding Tokens
 
 Let us talk about fuel. Because that is essentially what tokens are.
 
@@ -291,7 +303,9 @@ The math is simple. One token equals roughly three-quarters of a word in English
 
 Why do tokens matter? Two reasons, crew. Two reasons that will follow you for the rest of this course.
 
-REASON ONE: Cost. You pay per token. With Claude Opus, input tokens -- that is YOUR messages -- cost about fifteen dollars per million tokens. Output tokens -- the AI's responses -- cost about seventy-five dollars per million. Now, a million tokens is a LOT. A typical back-and-forth conversation might cost five cents to fifty cents. But it adds up if you are not paying attention.
+REASON ONE: Cost. If you are on the paid path with Claude, input tokens -- that is YOUR messages -- cost about fifteen dollars per million tokens. Output tokens -- the AI's responses -- cost about seventy-five dollars per million. Now, a million tokens is a LOT. A typical back-and-forth conversation might cost five cents to fifty cents. But it adds up if you are not paying attention.
+
+Now, if you chose the free path with Google Gemini in Module 03, your tokens are free up to a daily limit of about two hundred fifty requests. You are not paying per token, but you ARE still filling the context window. So reason two still applies to EVERYONE.
 
 REASON TWO: The context window. The model can only hold a finite number of tokens at once. We are talking one hundred twenty-eight thousand to two hundred thousand tokens for modern models. That sounds like a lot, and it IS a lot. But here is the thing -- every message, every response, every piece of context takes up space. When you hit the limit, OLD messages start falling off. Your agent literally FORGETS the beginning of your conversation.
 
@@ -301,7 +315,7 @@ That is why `/compact` exists. And that is why the token counter in your TUI mat
 
 ---
 
-## Slide 14 — Managing Token Usage
+## Slide 15 — Managing Token Usage
 
 So how do you keep token usage under control? Here is your strategy chart.
 
@@ -327,7 +341,7 @@ Fifty thousand tokens. That is right. When you see that counter creeping past fi
 
 ---
 
-## Slide 15 — Your First Real Conversations
+## Slide 16 — Your First Real Conversations
 
 Alright, crew. You have done the brain dump. You have named your agent. You know the slash commands. Now it is time to actually PUT THIS THING THROUGH ITS PACES.
 
@@ -345,7 +359,7 @@ These first two conversations are gentle. Wading into the shallows. The next two
 
 ---
 
-## Slide 16 — More First Conversations
+## Slide 17 — Conversation 3: Test the Safety Boundary
 
 CONVERSATION THREE: Test the safety boundary. This one is important. Remember Module 01 -- the risks? Time to see if your guardrails actually work.
 
@@ -355,9 +369,17 @@ You are testing two things here. First, does your agent respect the "ask before 
 
 Second, does it understand the difference between "can you" and "PLEASE do"? A well-calibrated agent says, "Yes, I can access your home directory, but I will wait for your go-ahead." A poorly calibrated one just dumps your file listing.
 
-CONVERSATION FOUR: Ask your agent to reflect. Say, "What do you know about me so far? Summarize what you have learned from our conversation, and tell me the most important thing you can help me with."
+[pause]
 
-This is the mirror test. You are asking your first mate: "After everything I have told you, what do you SEE? What did you HEAR?" If the summary misses your biggest goals or gets your communication style wrong, you know the brain dump needs work. If it nails it? You know you have got a crewmate who was actually LISTENING.
+This is about TRUST. You are checking whether the safety rules you set in the brain dump actually stick. If your agent ignores the "ask before acting" rule here, go back and reinforce it. Say it again, more firmly. This is too important to let slide.
+
+---
+
+## Slide 18 — Conversation 4: Ask Your Agent to Reflect
+
+CONVERSATION FOUR: The mirror test. Say: "What do you know about me so far? Summarize what you have learned from our conversation, and tell me the most important thing you can help me with."
+
+You are asking your first mate: "After everything I have told you, what do you SEE? What did you HEAR?" If the summary misses your biggest goals or gets your communication style wrong, you know the brain dump needs work. If it nails it? You know you have got a crewmate who was actually LISTENING.
 
 [pause]
 
@@ -365,7 +387,7 @@ These four conversations together take about ten minutes. But they tell you EVER
 
 ---
 
-## Slide 17 — The "Ask Before Acting" Habit
+## Slide 19 — The "Ask Before Acting" Habit
 
 This one is a SAFETY slide, crew, and I want everyone paying close attention.
 
@@ -385,7 +407,7 @@ Now, as you gain confidence and trust your configuration, you can relax this for
 
 ---
 
-## Slide 18 — Voice Messages: Talk Instead of Type
+## Slide 20 — Voice Messages: Talk Instead of Type
 
 Here is a little preview of something coming in Module 06, but I want to plant the seed now because it changes EVERYTHING about the brain dump.
 
@@ -403,7 +425,7 @@ We will set this up properly in Module 06. For now, just know that it exists. An
 
 ---
 
-## Slide 19 — Shoals and Sandbars
+## Slide 21 — Shoals and Sandbars
 
 Every harbor has hidden rocks, crew. Let me show you the ones that sink the most first-timers.
 
@@ -423,7 +445,7 @@ And MISTAKE SEVEN: Not naming the agent. It seems small, but it matters. A named
 
 ---
 
-## Slide 20 — Hands on Deck: Write Your Brain Dump
+## Slide 22 — Hands on Deck: Write Your Brain Dump
 
 Here we go, crew. This is the exercise. This is not optional. This is the MAIN EVENT of Module 04.
 
@@ -449,7 +471,7 @@ Alright, shipmates. Fifteen minutes on the clock. WRITE. I will be walking aroun
 
 ---
 
-## Slide 21 — Hands on Deck (continued)
+## Slide 23 — Hands on Deck (continued)
 
 Welcome back. Brain dumps are sent. Your agents know who you are. Now let us TEST that knowledge.
 
@@ -477,7 +499,7 @@ That feedback is GOLD. Because in Module 05, we are going to take everything you
 
 ---
 
-## Slide 22 — Treasure Chest
+## Slide 24 — Treasure Chest
 
 Eight treasures to take home from today's voyage, crew. Let me lay them out.
 
@@ -499,7 +521,7 @@ EIGHT: LLMs hallucinate. They make things up with total confidence. Verify impor
 
 ---
 
-## Slide 23 — Next Port of Call
+## Slide 25 — Next Port of Call
 
 [pause]
 

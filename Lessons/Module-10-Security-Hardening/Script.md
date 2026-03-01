@@ -1,7 +1,7 @@
 # Module 10 Teaching Script: Security Hardening
 
 **Total speaking time:** ~38 minutes (plus 45-minute hands-on activity)
-**Slides:** 23
+**Slides:** 25
 
 ---
 
@@ -282,6 +282,12 @@ Third — verify your bind configuration. `npx openclaw config get gateway.bind`
 
 [pause]
 
+Those three checks — auth mode, token rotation, bind configuration — are your gateway essentials. Lock those down and you've closed the front door.
+
+---
+
+## Slide 12 — Gateway Hardening: Additional Steps
+
 Now let's go further. Four additional hardening measures.
 
 Change the default port. Port 18789 is in EVERY OpenClaw tutorial, every video, every blog post on the internet. Anyone scanning for OpenClaw installations checks that port FIRST. Pick something else. Any unused port above 1024. `npx openclaw config set gateway.port 28391`. Or whatever number you want. Then restart the service and update your bookmarks.
@@ -296,7 +302,7 @@ Every one of these is a layer. And layers are what keep ships afloat when one la
 
 ---
 
-## Slide 12 — Home Network Security
+## Slide 13 — Home Network Security
 
 Alright, zoom out. WAY out. We've been hardening the MACHINE your agent runs on. Now let's talk about the NETWORK it sits on.
 
@@ -310,7 +316,11 @@ This is called a flat network. No segmentation. No barriers. One breach and the 
 
 The fix is the same principle that smart home security experts have been preaching for years about IoT devices: put it on a SEPARATE network. Isolate it.
 
-Three options, from easiest to most robust.
+Three options, from easiest to most robust: guest network, VLANs, or a second cheap router. Let's walk through each one.
+
+---
+
+## Slide 14 — Home Network: Guest Network Setup
 
 Option one — guest network. Free. Takes five minutes. Most home routers have this built in. Enable the guest WiFi, set a strong password, connect your agent's machine to the guest network instead of your main one. Guest networks are isolated by default — devices on the guest network can reach the internet but CANNOT see or communicate with devices on the primary network. Log into your router at 192.168.1.1, enable guest network, done.
 
@@ -330,7 +340,7 @@ Yeah. Most of you. That's normal. But after today, I want you to at LEAST use th
 
 ---
 
-## Slide 13 — Credential Management: Password Manager
+## Slide 15 — Credential Management: Password Manager
 
 Here's a dirty secret about OpenClaw out of the box: it stores secrets in PLAINTEXT ON DISK. API keys. Bot tokens. Service credentials. Just sitting there. In config files. In memory files. In `.env` files. Plain text. Readable by anyone who gains access to your filesystem.
 
@@ -362,7 +372,7 @@ Don't use 1Password? Fine. Bitwarden CLI works. KeePassXC CLI works. The PRINCIP
 
 ---
 
-## Slide 14 — File Permissions
+## Slide 16 — File Permissions
 
 This is the simplest hardening step in the entire module, and one of the most effective. Five commands. Sixty seconds. Massive impact.
 
@@ -386,7 +396,7 @@ This is the last line of defense. Even if someone gains access to the system, pr
 
 ---
 
-## Slide 15 — Running Security Audits
+## Slide 17 — Running Security Audits
 
 You've been hardening all day. How do you know you didn't miss anything? How do you know something hasn't drifted since you configured it?
 
@@ -412,7 +422,7 @@ Run the deep audit weekly. We're going to automate that in a couple slides. But 
 
 ---
 
-## Slide 16 — Browser Control Safety
+## Slide 18 — Browser Control Safety
 
 Browser control. This is one of the highest-risk tools in OpenClaw's arsenal, and most of you probably don't even need it.
 
@@ -434,7 +444,7 @@ And if you DON'T need browser control? Disable it entirely. `npx openclaw config
 
 ---
 
-## Slide 17 — Weekly Security Maintenance
+## Slide 19 — Weekly Security Maintenance
 
 Alright, everything we've done today? It's not a one-time thing. Security is not a destination. It's a VOYAGE. Things drift. Configurations change. New skills get installed. Updates roll out. What was locked down last week might have a crack in it this week.
 
@@ -462,7 +472,7 @@ But the MINIMUM — the absolute floor — is that 10-minute weekly check. If yo
 
 ---
 
-## Slide 18 — Incident Response: The Five Steps
+## Slide 20 — Incident Response: The Five Steps
 
 [pause — let the room settle]
 
@@ -498,7 +508,7 @@ Good. Burn that into your brain. Write it on a sticky note. Tape it to your moni
 
 ---
 
-## Slide 19 — Incident Response: Commands
+## Slide 21 — Incident Response: Commands
 
 Here are the actual commands for each step. This is the reference sheet. During a real incident, you'll be stressed, your heart will be pounding, and your hands will be shaking. That's when you need a checklist, not memory.
 
@@ -518,7 +528,7 @@ Print this slide. Seriously. Print it out. Put it next to your machine. When you
 
 ---
 
-## Slide 20 — Shoals and Sandbars (Common Mistakes)
+## Slide 22 — Shoals and Sandbars (Common Mistakes)
 
 Let's run through the greatest hits of security mistakes. The shoals and sandbars that sink ships. I'm going to read each one and I want you to mentally check off how many of these apply to YOUR setup right now. Be honest with yourself. No shame — the whole point of today is to fix these.
 
@@ -548,7 +558,7 @@ Look around the room. Nobody's at zero. And that's FINE. That's why we're here. 
 
 ---
 
-## Slide 21 — Hands on Deck (Activity)
+## Slide 23 — Hands on Deck (Activity)
 
 Alright, crew — this is the most hands-on exercise in the entire course. Forty-five minutes. Five parts. Every person in this room is going to leave with sandboxing active, a clean security audit, and locked-down file permissions. No exceptions.
 
@@ -570,7 +580,7 @@ Go. Forty-five minutes on the clock. If you finish early, check your elevated mo
 
 ---
 
-## Slide 22 — Treasure Chest (Key Takeaways)
+## Slide 24 — Treasure Chest (Key Takeaways)
 
 Welcome back to harbor, crew. Let's lock in what you learned today. Eleven takeaways, and every single one is actionable.
 
@@ -602,7 +612,7 @@ If you only remember THREE things from today: sandbox non-main, password manager
 
 ---
 
-## Slide 23 — Next Port of Call
+## Slide 25 — Next Port of Call
 
 Your ship is hardened. Sandboxing is active. Tool policies are set. Permissions are locked down. You've got an incident response plan burned into your brain — STOP, CLOSE, FREEZE, INVESTIGATE, RESTORE. Your agent's credentials are in a password manager instead of scattered across plaintext files like treasure with no chest. You know how to run a security audit, and you know to do it every week.
 
