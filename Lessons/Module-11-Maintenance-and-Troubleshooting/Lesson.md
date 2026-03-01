@@ -134,7 +134,9 @@ Your main cost is the AI model API. Here's how to track it:
 1. Go to platform.openai.com → Settings → Billing
 2. Set monthly budget cap
 
-**Recommendation:** Start with a $50/month limit. Increase only when you understand your usage patterns.
+**Gemini (free path):** No spending limit setup needed — the free tier has built-in rate limits and no billing. Skip this section.
+
+**Recommendation:** For paid providers, start with a $50/month limit. Increase only when you understand your usage patterns.
 
 ---
 
@@ -498,7 +500,7 @@ npx openclaw config get channels.[channel].dmPolicy  # Check DM mode
 ### Skills
 
 ```bash
-npx clawhub browse             # Browse ClawHub
+npx clawhub search              # Search ClawHub
 npx clawhub search [query]     # Search skills
 npx openclaw skills info [name]        # View skill details
 npx clawhub install [name]     # Install a skill
@@ -512,7 +514,7 @@ npx clawhub delete [name]              # Uninstall a skill
 
 ```bash
 npx openclaw cron list                 # List scheduled jobs
-npx openclaw cron add [name] --schedule [cron] --task [desc]  # Add a job
+npx openclaw cron add --name [name] --cron [pattern] --message [desc]  # Add a job
 npx openclaw cron remove [name]        # Remove a job
 npx openclaw cron disable [name]       # Disable a job
 ```
@@ -548,7 +550,7 @@ This shows detailed internal state — API calls, message routing, config loadin
 /model [name]      # Switch AI model
 /think [level]     # Set thinking depth (off|minimal|low|medium|high|xhigh)
 /config            # Open configuration
-/skills browse     # Browse skills from TUI
+/clawhub search    # Search skills from TUI
 ```
 
 ---

@@ -169,7 +169,7 @@ This message shows that your installation appears to be working correctly.
 ### Step 4: Run OpenClaw's Sandbox Setup
 
 ```bash
-npx openclaw sandbox setup
+npx openclaw sandbox recreate
 ```
 
 This configures Docker containers specifically for OpenClaw sandboxing.
@@ -326,8 +326,9 @@ If your API key is stolen, the attacker can make unlimited calls billed to your 
 
 1. **Anthropic:** Go to console.anthropic.com → Settings → Spending Limits → set a monthly cap just above your expected usage
 2. **OpenAI:** Go to platform.openai.com → Settings → Billing → Usage Limits → set a monthly budget
+3. **Gemini (free path):** No spending limit needed — the free tier has built-in rate limits and no billing
 
-This takes 5 minutes and is your financial kill switch. Without it, a stolen key is a blank check.
+For paid providers, this takes 5 minutes and is your financial kill switch. Without it, a stolen key is a blank check.
 
 ### Install Fail2ban and UFW (Network Hardening)
 

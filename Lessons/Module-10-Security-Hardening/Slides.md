@@ -564,13 +564,13 @@ docker run hello-world
 Once Docker is running, configure 🦞 OpenClaw:
 
 ```bash
-npx openclaw sandbox setup
+npx openclaw sandbox recreate
 npx openclaw config set sandbox.mode "non-main"
 npx openclaw config set sandbox.scope "agent"
 npx openclaw gateway restart
 ```
 
-- `sandbox setup` — builds the sandbox container image
+- `sandbox recreate` — builds the sandbox container image
 - `sandbox.mode` / `sandbox.scope` — what to sandbox and how
 - `gateway restart` — applies the new configuration
 

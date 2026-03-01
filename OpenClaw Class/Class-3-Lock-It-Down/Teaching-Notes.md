@@ -99,8 +99,8 @@ Per-slide guide: key point, talking points, activities, and timing.
 ## Slide 12: Cost Management
 - **Key point:** A well-configured setup costs $10-50/month, not $100-400.
 - **Say:** "The single biggest savings: Haiku for heartbeats. If you're running hourly heartbeats with Opus, you're burning money."
-- **Do:** Have students set their spending limit now — open console.anthropic.com, Settings > Billing > set $50/month.
-- **Say:** "You can always raise it later. But set SOMETHING. The $800 disaster happened because there was no limit."
+- **Do:** Have Anthropic students set their spending limit now — open console.anthropic.com, Settings > Billing > set $50/month. Gemini free path students can skip this — the free tier has built-in rate limits, no billing.
+- **Say:** "If you're on Anthropic or OpenAI, set a limit NOW. You can always raise it later. The $800 disaster happened because there was no limit. Gemini free path? You're already rate-limited — no action needed."
 - **Time:** 5 min
 
 ---

@@ -82,12 +82,12 @@ ClawHub is the community marketplace for skills. As of early 2026, there are ove
 
 **From the terminal:**
 ```bash
-npx openclaw skills browse
+npx clawhub search
 ```
 
 **From the TUI:**
 ```
-/skills browse
+/clawhub search
 ```
 
 **On the web:**
@@ -457,7 +457,7 @@ npx clawhub delete obsidian-notes
 
 ### Part 1: Install from ClawHub (10 minutes)
 
-1. Browse available skills: `npx openclaw skills browse`
+1. Browse available skills: `npx clawhub search`
 2. Search for something relevant to your use case
 3. Inspect the skill: `npx openclaw skills info [skill-name]`
 4. Check for security red flags

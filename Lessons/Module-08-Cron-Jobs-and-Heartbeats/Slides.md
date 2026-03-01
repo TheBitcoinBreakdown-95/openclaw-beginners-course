@@ -545,7 +545,7 @@ npx openclaw config set agents.defaults.heartbeat.model "claude-haiku-4-5"
 Or with Google Gemini:
 
 ```bash
-npx openclaw config set agents.defaults.heartbeat.model "gemini-flash-3"
+npx openclaw config set agents.defaults.heartbeat.model "gemini-2.5-flash"
 ```
 
 <!-- Speaker notes: This single change -- routing heartbeats to a cheap model -- is the fastest way to cut your bill. Five seconds of configuration, $50-190/month saved. -->
@@ -643,9 +643,9 @@ The morning brief is the "killer feature" most 🦞 OpenClaw users set up first.
 
 **Method 2: Via cron job** -- precise timing:
 ```bash
-npx openclaw cron add "morning-brief" \
-  --schedule "0 7 * * *" \
-  --task "Send my morning brief to Telegram"
+npx openclaw cron add --name "morning-brief" \
+  --cron "0 7 * * *" \
+  --message "Send my morning brief to Telegram"
 ```
 
 **Method 3: Just ask your agent** -- easiest:
@@ -721,9 +721,9 @@ Cron uses five fields: `minute hour day-of-month month day-of-week`
 
 ```bash
 npx openclaw cron list
-npx openclaw cron add "weekly-review" \
-  --schedule "0 9 * * 1" \
-  --task "Conduct my weekly review"
+npx openclaw cron add --name "weekly-review" \
+  --cron "0 9 * * 1" \
+  --message "Conduct my weekly review"
 ```
 
 ---
@@ -791,9 +791,9 @@ by helping small businesses with AI automation.
 
 **Schedule a cron** to reverse-prompt:
 ```bash
-npx openclaw cron add "mission-nudge" \
-  --schedule "0 8 * * *" \
-  --task "What is 1 task we can do today to get closer to our mission?"
+npx openclaw cron add --name "mission-nudge" \
+  --cron "0 8 * * *" \
+  --message "What is 1 task we can do today to get closer to our mission?"
 ```
 
 ---

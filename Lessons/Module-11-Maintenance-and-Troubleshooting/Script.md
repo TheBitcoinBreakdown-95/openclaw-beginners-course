@@ -449,7 +449,7 @@ Channels and cron jobs. The connections and the schedules that keep your ship ru
 
 Last category. Skills and TUI commands.
 
-Skills management. `npx clawhub browse` — browse ClawHub. Window shopping for new capabilities. `npx clawhub search` — search for something specific. `npx clawhub install` — install a skill. `npx openclaw skills list` — see what you've got installed. `npx openclaw config set skills.entries.[name].enabled true` and `false` — toggle skills on and off without uninstalling them. This is KEY for cost management. Disable what you're not using. Re-enable when you need it.
+Skills management. `npx clawhub search` — search ClawHub. Window shopping for new capabilities. `npx clawhub search` — search for something specific. `npx clawhub install` — install a skill. `npx openclaw skills list` — see what you've got installed. `npx openclaw config set skills.entries.[name].enabled true` and `false` — toggle skills on and off without uninstalling them. This is KEY for cost management. Disable what you're not using. Re-enable when you need it.
 
 And then the TUI commands — the ones you type INSIDE the chat with your agent.
 

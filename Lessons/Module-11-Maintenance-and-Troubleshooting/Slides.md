@@ -522,16 +522,13 @@ This takes about **10 minutes**. Do it every weekend.
 
 ## Setting API Spending Limits
 
-### Anthropic:
-1. Go to console.anthropic.com -- Settings -- Billing
-2. Set monthly usage limit (e.g., $50)
-3. Set alert threshold (e.g., alert at $40)
+**Anthropic:** console.anthropic.com -- Settings -- Billing -- set monthly limit (e.g., $50) + alert at $40
 
-### OpenAI:
-1. Go to platform.openai.com -- Settings -- Billing
-2. Set monthly budget cap
+**OpenAI:** platform.openai.com -- Settings -- Billing -- set monthly budget cap
 
-> **Recommendation:** Start with a $50/month limit. Increase only when you understand your usage patterns.
+**Gemini (free path):** No spending limit needed -- free tier has built-in rate limits, no billing
+
+> **Recommendation:** For paid providers, start $50/month. Increase only when you understand usage.
 
 ---
 
@@ -753,7 +750,7 @@ npx openclaw config get gateway.bind               # Check bind address
 npx openclaw config set sandbox.mode "[mode]"      # off / non-main / all
 npx openclaw config set sandbox.scope "[scope]"    # session / agent / shared
 npx openclaw config set tools.deny "[tool]"        # Deny a tool
-npx openclaw config set tools.elevated "off"       # Disable elevated mode
+npx openclaw config set tools.elevated.enabled false  # Disable elevated mode
 ```
 
 ---
@@ -780,7 +777,7 @@ npx openclaw config get channels.[ch].dmPolicy  # Check DM mode
 
 # Cron Jobs
 npx openclaw cron list                    # List scheduled jobs
-npx openclaw cron add [name] --schedule [cron] --task [desc]
+npx openclaw cron add --name [name] --cron [pattern] --message [desc]
 npx openclaw cron remove [name]           # Remove a job
 npx openclaw cron disable [name]          # Disable a job
 ```
@@ -790,7 +787,7 @@ npx openclaw cron disable [name]          # Disable a job
 ## Command Cheat Sheet: 🐠 Skills
 
 ```bash
-npx clawhub browse        # Browse ClawHub
+npx clawhub search         # Search ClawHub
 npx clawhub search [q]    # Search skills
 npx clawhub install [n]   # Install a skill
 npx openclaw skills list           # List installed

@@ -515,7 +515,7 @@ When this skill is active and you say "check my inbox," your agent knows exactly
 **Over 5,700 skills available.** Browse from terminal or TUI:
 
 ```bash
-npx openclaw skills browse      # Terminal — or /skills browse in TUI
+npx clawhub search               # Terminal — or /clawhub search in TUI
 ```
 
 ```bash
@@ -857,7 +857,7 @@ npx clawhub delete obsidian-notes
 ## ⚙️ Hands on Deck: Install One, Build One
 
 **Part 1: Install from ClawHub (10 min)**
-1. Browse and search: `npx openclaw skills browse`
+1. Browse and search: `npx clawhub search`
 2. Inspect for red flags: `npx openclaw skills info [skill-name]`
 3. Install with pinning: `npx clawhub install [skill-name] --pin`
 4. Restart: `npx openclaw gateway restart`

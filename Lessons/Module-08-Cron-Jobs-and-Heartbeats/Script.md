@@ -175,7 +175,7 @@ Done. That's it. Your heartbeats now run on Haiku instead of Opus. Same wake-up 
 
 Or if you've got Google Gemini configured:
 
-`npx openclaw config set agents.defaults.heartbeat.model "gemini-flash-3"`
+`npx openclaw config set agents.defaults.heartbeat.model "gemini-2.5-flash"`
 
 Flash is even cheaper. And for the task of "look around, is there anything to do, no? ok bye" — it's more than capable.
 
@@ -291,7 +291,7 @@ Three ways to set it up:
 
 Method one — put it in your HEARTBEAT.md. We just talked about that. If your heartbeat interval is frequent enough to catch the 6:30 to 7:00 AM window, the heartbeat handles it automatically. Simplest approach.
 
-Method two — use a cron job for precise timing. `npx openclaw cron add "morning-brief" --schedule "0 7 * * *" --task "Send my morning brief to Telegram"`. That fires at EXACTLY 7:00 AM. Not 6:47, not 7:12 — seven o'clock, sharp. Every day.
+Method two — use a cron job for precise timing. `npx openclaw cron add --name "morning-brief" --cron "0 7 * * *" --message "Send my morning brief to Telegram"`. That fires at EXACTLY 7:00 AM. Not 6:47, not 7:12 — seven o'clock, sharp. Every day.
 
 Method three — the lazy captain's method, and honestly? My favorite. Just ASK your agent. Tell it: "Set up a daily morning brief at 7 AM on Telegram. Include weather, top AI news, my tasks, and one suggestion." Your agent will configure the automation FOR you. It'll set up the cron job, write the template, wire up the delivery. You just told it what you wanted and it handled the rigging.
 

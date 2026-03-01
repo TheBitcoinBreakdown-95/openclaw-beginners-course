@@ -179,7 +179,7 @@ Step two — add your user to the Docker group. `sudo usermod -aG docker $USER`.
 
 Step three — verify. `docker run hello-world`. If you see "Hello from Docker! This message shows that your installation appears to be working correctly" — you're golden. If you see an error — raise your hand. We'll troubleshoot during the activity.
 
-Steps four and five — run OpenClaw's sandbox setup, then configure the mode and scope and restart the service. Four commands, in order. `npx openclaw sandbox setup`. `npx openclaw config set sandbox.mode "non-main"`. `npx openclaw config set sandbox.scope "agent"`. `npx openclaw gateway restart`.
+Steps four and five — run OpenClaw's sandbox recreate, then configure the mode and scope and restart the service. Four commands, in order. `npx openclaw sandbox recreate`. `npx openclaw config set sandbox.mode "non-main"`. `npx openclaw config set sandbox.scope "agent"`. `npx openclaw gateway restart`.
 
 That's it. Docker installed. Sandboxing active. Your ship just got a reinforced steel hull.
 
@@ -195,7 +195,7 @@ Here's the litmus test. Pull out your phone. Open Telegram. Send your agent this
 
 If sandboxing is working, the agent should NOT see your real home directory. It should see the sandbox's limited file system. It should respond with something like "I can only see files within my sandbox environment. I don't have access to your actual home directory."
 
-If it comes back with a list of YOUR actual files — your Documents folder, your Downloads, your .bashrc — sandboxing is NOT active. Something went wrong. Most common causes: Docker isn't installed, the service wasn't restarted after the config change, or the sandbox setup command wasn't run.
+If it comes back with a list of YOUR actual files — your Documents folder, your Downloads, your .bashrc — sandboxing is NOT active. Something went wrong. Most common causes: Docker isn't installed, the service wasn't restarted after the config change, or the sandbox recreate command wasn't run.
 
 [ask the audience] Who here has ever set up a security feature, assumed it was working, and never actually tested it?
 
@@ -566,11 +566,11 @@ Part one — run the audit. Five minutes. Open your Ubuntu terminal. Type `npx o
 
 Part two — fix all issues. Ten minutes. `npx openclaw security audit --deep --fix`. Let the auto-fix handle what it can. Then manually fix anything it missed. If you're not sure how to fix something, raise your hand. I'll come to you.
 
-Part three — set up Docker and enable sandboxing. Fifteen minutes. This is the big one. Follow the installation steps from the slide. Install Docker. Add yourself to the Docker group. Log out. Log back in. Run `docker run hello-world`. If that works — proceed. `npx openclaw sandbox setup`. `npx openclaw config set sandbox.mode "non-main"`. `npx openclaw config set sandbox.scope "agent"`. `npx openclaw gateway restart`.
+Part three — set up Docker and enable sandboxing. Fifteen minutes. This is the big one. Follow the installation steps from the slide. Install Docker. Add yourself to the Docker group. Log out. Log back in. Run `docker run hello-world`. If that works — proceed. `npx openclaw sandbox recreate`. `npx openclaw config set sandbox.mode "non-main"`. `npx openclaw config set sandbox.scope "agent"`. `npx openclaw gateway restart`.
 
 If Docker installation gives you trouble — and it WILL give some of you trouble, that's completely normal — raise your hand. Docker installation has quirks on some systems. We'll sort it out.
 
-Part four — test the sandbox. Ten minutes. Grab your phone. Open Telegram. Send your agent: "What files are in your current directory? Can you read /etc/passwd?" If it shows your real filesystem, sandboxing is not working. Debug. Common fixes: restart the service, re-run sandbox setup, verify Docker is running with `docker ps`.
+Part four — test the sandbox. Ten minutes. Grab your phone. Open Telegram. Send your agent: "What files are in your current directory? Can you read /etc/passwd?" If it shows your real filesystem, sandboxing is not working. Debug. Common fixes: restart the service, re-run sandbox recreate, verify Docker is running with `docker ps`.
 
 Part five — lock down permissions. Five minutes. `chmod 700 ~/.openclaw`. The full set of commands from the slide. Then verify with `ls -la ~/.openclaw/` and confirm every entry shows `drwx------` or `-rw-------`.
 

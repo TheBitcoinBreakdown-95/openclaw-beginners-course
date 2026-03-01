@@ -130,7 +130,7 @@ npx openclaw config set agents.defaults.heartbeat.model "claude-haiku-4-5"
 Or if you have Google Gemini configured:
 
 ```bash
-npx openclaw config set agents.defaults.heartbeat.model "gemini-flash-3"
+npx openclaw config set agents.defaults.heartbeat.model "gemini-2.5-flash"
 ```
 
 ### Cost Comparison
@@ -276,7 +276,7 @@ If your heartbeat interval is 30 minutes or less, the heartbeat will catch the 6
 For exact timing, you can set up a cron job. In your Ubuntu terminal:
 
 ```bash
-npx openclaw cron add "morning-brief" --schedule "0 7 * * *" --task "Send my morning brief to Telegram"
+npx openclaw cron add --name "morning-brief" --cron "0 7 * * *" --message "Send my morning brief to Telegram"
 ```
 
 This creates a cron job that runs at exactly 7:00 AM every day.
@@ -368,7 +368,7 @@ Cron uses five fields: `minute hour day-of-month month day-of-week`
 npx openclaw cron list
 
 # Add a cron job
-npx openclaw cron add "weekly-review" --schedule "0 9 * * 1" --task "Conduct my weekly review"
+npx openclaw cron add --name "weekly-review" --cron "0 9 * * 1" --message "Conduct my weekly review"
 
 # Remove a cron job
 npx openclaw cron remove "weekly-review"
@@ -441,13 +441,13 @@ Before you build custom automations, set up these three maintenance cron jobs. E
 
 ```bash
 # Session cleanup - every 72 hours
-npx openclaw cron add "session-cleanup" --schedule "0 0 */3 * *" --task "Clean up session files older than 7 days to free disk space. Remove bloated or orphaned session data."
+npx openclaw cron add --name "session-cleanup" --cron "0 0 */3 * *" --message "Clean up session files older than 7 days to free disk space. Remove bloated or orphaned session data."
 
 # Daily security audit - every morning at 6 AM
-npx openclaw cron add "security-audit" --schedule "0 6 * * *" --task "Run a security audit: check firewall status, fail2ban logs, SSH config, open ports, Docker status. Send results to Telegram. Alert immediately for any critical findings."
+npx openclaw cron add --name "security-audit" --cron "0 6 * * *" --message "Run a security audit: check firewall status, fail2ban logs, SSH config, open ports, Docker status. Send results to Telegram. Alert immediately for any critical findings."
 
 # Silent backups - every 2 hours
-npx openclaw cron add "workspace-backup" --schedule "0 */2 * * *" --task "Git commit and push the workspace. Commit message: 'Auto-backup [timestamp]'. Do not message me unless the backup fails."
+npx openclaw cron add --name "workspace-backup" --cron "0 */2 * * *" --message "Git commit and push the workspace. Commit message: 'Auto-backup [timestamp]'. Do not message me unless the backup fails."
 ```
 
 Set these up first. Everything else is a bonus.

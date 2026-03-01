@@ -127,7 +127,7 @@ Now, before you go building every skill from scratch, let me introduce you to Cl
 
 Over 5,700 skills available. That is a LOT of pre-built capability sitting there waiting for you.
 
-You can browse from the terminal with `npx openclaw skills browse`. You can do it from inside the TUI with `/skills browse`. Either way, you will see a categorized list of everything available.
+You can browse from the terminal with `npx clawhub search`. You can do it from inside the TUI with `/clawhub search`. Either way, you will see a categorized list of everything available.
 
 And if you know what you are looking for, search by keyword with `npx clawhub search` followed by your term. Looking for Obsidian integration? Search "obsidian." Want crypto tracking? Search "crypto."
 
@@ -473,7 +473,7 @@ Alright crew, it is TIME. Enough talking. Let's get our hands dirty.
 
 This exercise has two parts. Part one: install a community skill from ClawHub. Part two: build your own custom skill from scratch. Everyone does BOTH.
 
-Part one. You have ten minutes. Browse with `npx openclaw skills browse`. Find something relevant to YOUR use case. INSPECT it with `npx openclaw skills info`. Check for red flags. Install with `npx clawhub install` and the `--pin` flag. Restart. Test it in the TUI.
+Part one. You have ten minutes. Browse with `npx clawhub search`. Find something relevant to YOUR use case. INSPECT it with `npx openclaw skills info`. Check for red flags. Install with `npx clawhub install` and the `--pin` flag. Restart. Test it in the TUI.
 
 Do NOT skip the inspection step. I will be walking around checking.
 

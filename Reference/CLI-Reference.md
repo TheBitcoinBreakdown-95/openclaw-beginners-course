@@ -49,7 +49,7 @@ Replace `<ch>` with: `telegram`, `discord`, `whatsapp`, `slack`, etc.
 | Path | Values | Description |
 |------|--------|-------------|
 | `agents.defaults.heartbeat.every` | `"55m"`, `"30m"`, `"2h"`, `"0m"` | Interval (0m = disabled) |
-| `agents.defaults.heartbeat.model` | `"claude-haiku-4-5"`, `"gemini-flash-3"` | Model for heartbeat (use cheap model) |
+| `agents.defaults.heartbeat.model` | `"claude-haiku-4-5"`, `"gemini-2.5-flash"` | Model for heartbeat (use cheap model) |
 | `agents.defaults.heartbeat.target` | `"last"`, `"telegram"`, `"none"` | Where heartbeat sends |
 | `agents.defaults.heartbeat.activeHours.start` | `"HH:MM"` (e.g., `"07:00"`) | Only run heartbeats after this time |
 | `agents.defaults.heartbeat.activeHours.end` | `"HH:MM"` (e.g., `"23:00"`) | Only run heartbeats before this time |
@@ -168,6 +168,28 @@ npx openclaw models auth add              # Interactive provider auth setup
 
 ---
 
+## Devices
+
+```bash
+npx openclaw devices list [--json]        # List paired devices
+npx openclaw devices approve <id> [--latest]  # Approve a device pairing request
+npx openclaw devices reject <id>          # Reject a device pairing request
+npx openclaw devices rotate               # Rotate device keys
+npx openclaw devices revoke               # Revoke device access
+```
+
+---
+
+## Sandbox
+
+```bash
+npx openclaw sandbox recreate             # Build/rebuild sandbox container image
+npx openclaw sandbox explain              # Explain current sandbox configuration
+npx openclaw sandbox list                 # List sandbox containers
+```
+
+---
+
 ## Diagnostics
 
 ```bash
@@ -191,8 +213,14 @@ Note: `doctor` uses `--repair`. `security audit` uses `--fix`. Different flags!
 npx openclaw tui                          # Terminal chat interface
 npx openclaw dashboard [--no-open]        # Web dashboard
 npx openclaw onboard [--install-daemon]   # Onboarding wizard
-npx openclaw cron add --name "..." --cron "..." --system-event "..."  # Schedule job
+npx openclaw cron add --name "..." --cron "..." --message "..."      # Schedule job (--system-event for system events)
 npx openclaw cron list                    # List scheduled jobs
+npx openclaw cron remove "name"           # Remove a cron job (alias: rm)
+npx openclaw cron disable "name"          # Disable a cron job
+npx openclaw cron enable "name"           # Enable a disabled cron job
+npx openclaw cron edit "name"             # Edit a cron job
+npx openclaw cron status "name"           # Check cron job status
+npx openclaw cron run "name"              # Trigger a cron job immediately
 npx openclaw system event --text "..."    # Trigger immediate heartbeat
 npx openclaw stop                         # Stop everything (alias)
 npx openclaw update                       # Update OpenClaw

@@ -167,13 +167,17 @@ Do this before anything else. These steps take two minutes and prevent the most 
 
 ### 1. Set an API spending limit
 
+**If using Anthropic or OpenAI (paid providers):**
+
 This is non-negotiable. Real users have burned $800+ in a single week without a limit.
 
-1. Go to https://console.anthropic.com/
+1. Go to https://console.anthropic.com/ (or your provider's billing page)
 2. Navigate to **Settings > Plans & Billing > Usage Limits**
 3. Set the **monthly spending limit** to **$20-50** to start
 4. Set a notification threshold at 50% of your limit
 5. Monitor your usage daily for the first week
+
+**If using Gemini (free path):** Skip this step — the free tier has built-in rate limits and no billing.
 
 ### 2. Run the security audit
 
@@ -353,12 +357,12 @@ npx openclaw config set channels.telegram.dmPolicy "pairing"
 
 A morning brief turns your agent from a chatbot into a proactive assistant. It sends you a daily summary without you having to ask.
 
-### 1. Edit heartbeat.md
+### 1. Edit HEARTBEAT.md
 
 Open the heartbeat file:
 
 ```bash
-nano ~/.openclaw/heartbeat.md
+nano ~/.openclaw/workspace/HEARTBEAT.md
 ```
 
 Add your morning brief instructions. For example:
@@ -382,7 +386,7 @@ Save and exit: `Ctrl+O`, `Enter`, `Ctrl+X`.
 ### 2. Schedule it
 
 ```bash
-npx openclaw cron add "morning-brief" --schedule "0 7 * * *" --task "Send morning brief to Telegram"
+npx openclaw cron add --name "morning-brief" --cron "0 7 * * *" --message "Send morning brief to Telegram"
 ```
 
 The schedule `0 7 * * *` means 7:00 AM every day. Adjust the hour to your preference.
