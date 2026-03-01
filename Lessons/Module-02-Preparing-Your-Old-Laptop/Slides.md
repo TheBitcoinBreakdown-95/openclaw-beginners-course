@@ -798,9 +798,7 @@ sudo sed -i 's/#HandleLidSwitchExternalPower=suspend/HandleLidSwitchExternalPowe
 sudo systemctl restart systemd-logind
 ```
 
-> ⚠️ *The restart command logs you out. Screen may go black for 1–2 minutes on older laptops — this is normal. If stuck, hold the power button 5 seconds to restart.*
-
-**Test:** Close lid, wait 30 seconds, open lid. If it didn't sleep — you're good.
+> ⚠️ *The restart command logs you out. Screen may go black for 1–2 minutes on older laptops — this is normal. If stuck, hold the power button 5 seconds to restart. Test: close lid, wait 30 seconds, open — if it didn't sleep, you're good.*
 
 <!-- Speaker notes: Two separate settings that both need changing. The GUI handles idle timeout. The config file handles what happens when you close the lid. Miss either one and the laptop goes to sleep. The logind restart can cause a prolonged black screen on older hardware — the display manager (GDM) takes time to reinitialize. Students should wait up to 2 minutes. If the screen stays black, a hard power-off and normal reboot is safe — the config changes are already saved to disk. Ctrl+Alt+F1 may bring up the login screen on some laptops. -->
 

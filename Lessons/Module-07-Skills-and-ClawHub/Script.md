@@ -1,7 +1,7 @@
 # Module 07 Teaching Script: Skills and ClawHub
 
-**Total speaking time:** ~32 minutes
-**Slide count:** 25 slides
+**Total speaking time:** ~35 minutes
+**Slide count:** 30 slides
 
 ---
 
@@ -107,9 +107,9 @@ That is the anatomy. YAML front matter is the label on the cargo crate. The mark
 
 Below the YAML front matter, you write the INSTRUCTIONS. This is where the real magic lives. This is the part your agent actually READS and FOLLOWS.
 
-Look at this email assistant example. It starts with a clear heading. Then it tells the agent: "When the user asks about email, use the Himalaya CLI tool." And it gives specific commands. Read emails with `himalaya list`. Read a specific email with `himalaya read` and the ID. Send with `himalaya send`. Reply with `himalaya reply`.
+Look at this email assistant example. It starts with a clear heading. Then it tells the agent: "When the user asks about email, use the Himalaya CLI tool." And it gives specific commands for reading and sending.
 
-Then there is a Rules section at the bottom. This is CRITICAL. Always confirm before sending. Show a preview before sending. NEVER auto-reply without user approval.
+Then there is a Rules section at the bottom. This is CRITICAL. Always confirm before sending. Never auto-reply without user approval.
 
 See what is happening here? You are not writing code. You are writing INSTRUCTIONS. The same way you would explain a process to a new crew member on their first day. "Here is how we handle email on this ship. Here are the tools in that drawer. Here are the rules you NEVER break."
 
@@ -129,7 +129,17 @@ Over 5,700 skills available. That is a LOT of pre-built capability sitting there
 
 You can browse from the terminal with `npx openclaw skills browse`. You can do it from inside the TUI with `/skills browse`. Either way, you will see a categorized list of everything available.
 
-And look at these categories. Communication skills for email, Slack, SMS, Telegram. Productivity skills for Obsidian, Notion, task management, calendars. Development skills for GitHub, code review, deployment pipelines. Research skills for web search, data analysis, even academic papers. Social media skills for Twitter, LinkedIn, Instagram. Creative skills for image generation, writing assistance, music. Smart home skills for Home Assistant and IoT devices. Finance skills for crypto tracking, accounting, invoicing.
+And if you know what you are looking for, search by keyword with `npx clawhub search` followed by your term. Looking for Obsidian integration? Search "obsidian." Want crypto tracking? Search "crypto."
+
+[pause]
+
+But remember what I said at the start. ClawHub is the npm of OpenClaw skills. Anyone can publish. That is the power AND the risk. We are going to talk about the risk in just a moment. But first, let me show you what kinds of skills are out there.
+
+---
+
+## Slide 8 — ClawHub Categories
+
+Look at these categories. Communication skills for email, Slack, SMS, Telegram. Productivity skills for Obsidian, Notion, task management, calendars. Development skills for GitHub, code review, deployment pipelines. Research skills for web search, data analysis, even academic papers. Social and creative skills for Twitter, image generation, writing. Smart home and finance skills for Home Assistant, crypto tracking, invoicing.
 
 [ask the audience]
 
@@ -139,11 +149,11 @@ Look around the room. Raise your hand if at least ONE of those categories has so
 
 Yeah. That is the power of a community marketplace. Thousands of people building skills for thousands of use cases.
 
-But remember what I said at the start. ClawHub is the npm of OpenClaw skills. Anyone can publish. That is the power AND the risk. We are going to talk about the risk in just a moment, and it is SERIOUS. But first, let me show you how to find and install a specific skill.
+Now let me show you how to find and install a specific skill.
 
 ---
 
-## Slide 8 — Installing a Skill: Step 1 — Find
+## Slide 9 — Installing a Skill: Step 1 — Find
 
 Step one is FINDING the skill you want. Let me walk you through a real example.
 
@@ -163,7 +173,7 @@ So yes, look at stars and install counts. But treat them like a stranger's recom
 
 ---
 
-## Slide 9 — Rough Waters: Skill Inspection
+## Slide 10 — Rough Waters: Skill Inspection
 
 Alright, everybody. Eyes up here. This is the slide I need you to BURN into your memory.
 
@@ -173,9 +183,9 @@ I do not care how many stars it has. I do not care if it has ten thousand instal
 
 This shows you EVERYTHING. The full YAML front matter, so you can see what tools it uses and what triggers it has. The full markdown instructions, so you can see EXACTLY what it tells the AI to do. The author, the version, community reviews.
 
-Now, here is what you are looking for. Does it request more permissions than it needs? An Obsidian note-taking skill that wants admin access? That is a red flag the size of a mainsail. Does the markdown contain suspicious instructions? Things like "send data to" followed by some URL you do not recognize? Does it ask the agent to run commands that seem UNRELATED to its stated purpose? A note-taking skill that runs network commands? Suspicious. Is the author reputable? Do they have other published skills? Are there actual reviews?
+Now, here is what you are looking for. Does it request more permissions than it needs? Does the markdown contain suspicious instructions? Things like "send data to" followed by some URL you do not recognize?
 
-And here are the RED FLAGS that should make you close the hatch immediately. Skills requesting elevated or admin access. Instructions to send data to external servers. Authors with no other published skills and no reviews. A brand new account, one skill, no history? Walk away. And the biggest one: instructions that tell the agent to DISABLE security features. That is like someone boarding your ship and immediately asking you to turn off the alarm system.
+And here are the RED FLAGS. Skills requesting elevated or admin access. Instructions to send data to external servers. Instructions that tell the agent to DISABLE security features. That is like someone boarding your ship and immediately asking you to turn off the alarm system.
 
 [pause]
 
@@ -183,13 +193,13 @@ This inspection step is not optional. It is not "nice to have." It is your DUTY 
 
 ---
 
-## Slide 10 — Installing a Skill: Steps 3-5
+## Slide 11 — Installing a Skill: Steps 3-4
 
 Alright, you have found your skill, you have inspected it, and it checks out. Everything looks clean. NOW you install.
 
 Step three: `npx clawhub install obsidian-notes --pin`. Notice that `--pin` flag. That is important. ALWAYS use it. What pinning does is lock the version you inspected AND store integrity metadata. So if the skill ever changes after you installed it, OpenClaw will detect that and warn you about integrity drift.
 
-Why does this matter? Without pinning, a skill can SILENTLY UPDATE and change behavior. The version you inspected might be perfectly safe. But a week later, the author pushes an update, and suddenly there are new instructions in there that you never reviewed. Or worse, the author's account gets compromised and an attacker pushes malicious code to all those users who did not pin their versions.
+Why does this matter? Without pinning, a skill can SILENTLY UPDATE and change behavior. The version you inspected might be perfectly safe. But a week later, the author pushes an update, and suddenly there are new instructions in there that you never reviewed. Or worse, the author's account gets compromised and an attacker pushes malicious code.
 
 If you EVER see an integrity drift warning, do NOT ignore it. Stop. Investigate. Re-inspect.
 
@@ -203,11 +213,21 @@ Raise your hand and promise me you will remember to restart.
 
 Good. I am holding you to that.
 
-Step five: test. Open the TUI and actually USE the skill. "Can you list the notes in my Obsidian vault?" See if your agent responds correctly. If it does, congratulations. Your ship just got a new capability.
+---
+
+## Slide 12 — Installing a Skill: Step 5 -- Test
+
+Now you test. Open the TUI and actually USE the skill. "Can you list the notes in my Obsidian vault?" See if your agent responds correctly. If it does, congratulations. Your ship just got a new capability.
+
+If the skill does not respond, the FIRST thing to check is your trigger words. Look at the YAML front matter. If the skill triggers on "obsidian notes" but you said "show me my vault," the trigger might not have matched. Your words need to align with what the skill expects.
+
+[pause]
+
+That is the full install process. Five steps: find, inspect, install with pin, restart, test. Drill it until it is muscle memory.
 
 ---
 
-## Slide 11 — VirusTotal Scanning
+## Slide 13 — VirusTotal Scanning
 
 Now, ClawHub is not completely lawless waters. They DO have safety measures. ClawHub partners with VirusTotal to automatically scan skills for malicious content.
 
@@ -223,11 +243,11 @@ Social engineering embedded in instructions. A skill that tells the agent, "To p
 
 [pause]
 
-So here is the bottom line. VirusTotal is ONE layer of defense. Your manual inspection is ANOTHER layer. Neither alone is sufficient. TOGETHER they provide reasonable safety. Think of it like a ship's hull. You want multiple layers of wood and sealant between you and the ocean. One layer leaks, the other holds.
+So here is the bottom line. VirusTotal is ONE layer of defense. Your manual inspection is ANOTHER layer. Neither alone is sufficient. TOGETHER they provide reasonable safety. Think of it like a ship's hull. You want multiple layers between you and the ocean. One layer leaks, the other holds.
 
 ---
 
-## Slide 12 — Rough Waters: The ClawHub Supply Chain Attack (2026)
+## Slide 14 — Rough Waters: The ClawHub Supply Chain Attack (2026)
 
 Now I need to get DEAD SERIOUS with you for a moment. Everything I just told you about inspecting skills and not trusting install counts? This is WHY.
 
@@ -239,17 +259,17 @@ What did these skills look like on the outside? Professional. Polished. Crypto t
 
 But inside the SKILL.md files? Hidden instructions. Instructions that tricked the AI into getting users to run malicious commands. And the payloads were NASTY. Atomic Stealer, a macOS malware that grabs your passwords, your SSH keys, your crypto wallets, your API keys. And reverse shells. Giving attackers full remote control of your machine.
 
-And the NUMBER ONE RANKED SKILL on all of ClawHub? A skill called "What Would Elon Do." Cisco scanned it and found NINE security vulnerabilities, two of them critical. It was exfiltrating data silently. It used prompt injection to bypass safety guidelines. Downloaded THOUSANDS of times. And the ranking? Gamed. Artificially inflated.
+And the NUMBER ONE RANKED SKILL on all of ClawHub? A skill called "What Would Elon Do." Cisco scanned it and found NINE security vulnerabilities, two of them critical. It was exfiltrating data silently. The ranking? Gamed. Artificially inflated.
 
 [pause]
 
-This is not a hypothetical. This is not "it COULD happen." This HAPPENED. ClawHub's model lets anyone with a one-week-old GitHub account publish a skill. Same risk model as npm, PyPI, or any open package registry. Except here is the difference that should make the hair on the back of your neck stand up: these packages can THINK. They have SHELL ACCESS. And they run on YOUR personal machine.
+This is not a hypothetical. This HAPPENED. ClawHub's model lets anyone with a one-week-old GitHub account publish a skill. These packages can THINK. They have SHELL ACCESS. And they run on YOUR personal machine.
 
 Always inspect. NEVER trust install counts or star ratings alone. This is your ship. You are responsible for what comes aboard.
 
 ---
 
-## Slide 13 — Building a Custom Skill
+## Slide 15 — Building a Custom Skill -- Step 1
 
 Alright, let's shift gears from the dangers to the POSSIBILITIES. Because the most powerful thing about skills is not what you can download. It is what you can BUILD.
 
@@ -259,21 +279,29 @@ Let's build one together, step by step.
 
 Step one: create the file. `nano ~/.openclaw/workspace/skills/daily-standup.md`. That skills directory inside your workspace is where all your custom skills live. If it does not exist yet, create it.
 
-Step two: write the YAML front matter. Give it a name: "daily-standup." Give it a description: "Generates a daily standup report." And give it triggers. What words should activate this skill? "Standup." "Daily standup." "What did I do yesterday."
+Custom skills follow the exact same format as ClawHub skills. The only difference is you write them yourself and store them locally. One markdown file per skill.
+
+---
+
+## Slide 16 — Building a Custom Skill -- Step 2
+
+Step two: write the YAML front matter. Give it a name: "daily-standup." Give it triggers. What words should activate this skill? "Standup." "Daily standup."
 
 See how the triggers map to the natural language you would actually USE? You are not programming a computer here. You are teaching your agent to recognize when you want a standup report based on how you naturally talk.
+
+[pause]
 
 That is the YAML front matter done. Now we need the body, the actual instructions. Let me show you that on the next slide.
 
 ---
 
-## Slide 14 — Custom Skill: The Markdown Body
+## Slide 17 — Custom Skill: The Markdown Body
 
 Here is the body of our standup skill. And notice how READABLE this is. You do not need to be a programmer to write this.
 
 The Format section tells the agent exactly what structure to use. Yesterday: what was accomplished. Check recent session history and memory. Today: what is planned. Check the user's goals and any scheduled tasks. Blockers: any issues or obstacles mentioned recently.
 
-Then the Rules section. Keep each section to three to five bullet points. Pull from ACTUAL history and memory, do NOT make things up. If you do not have enough information, ASK the user. Format as clean markdown.
+Then the Rules section. Keep each section to three to five bullet points. Pull from ACTUAL history and memory, do NOT make things up. If you do not have enough information, ASK the user.
 
 That is it. That is the entire skill. You save it with Ctrl+O, Enter, Ctrl+X. You restart with `npx openclaw gateway restart`. And then you test it. Walk into the TUI and say "Give me my daily standup."
 
@@ -291,7 +319,7 @@ Yeah. Your agent just took that off your plate. And it only took about two minut
 
 ---
 
-## Slide 15 — Custom Skill Ideas
+## Slide 18 — Custom Skill Ideas
 
 Now that you see how it works, let me get your wheels turning about what ELSE you could build.
 
@@ -299,35 +327,43 @@ A RESEARCH TEMPLATE skill. Tell your agent exactly how you want research formatt
 
 A MEETING NOTES skill. Your agent generates structured meeting summaries. Attendees, decisions made, action items, deadlines. Same format every time. No more sloppy notes.
 
-A DECISION FRAMEWORK skill. You say "help me decide between X and Y" and your agent automatically generates a pros-and-cons analysis, a risk assessment, a recommendation. Your own personal decision template.
+A DECISION FRAMEWORK skill. You say "help me decide between X and Y" and your agent automatically generates a pros-and-cons analysis, a risk assessment, a recommendation.
 
-A WEEKLY REVIEW skill. Every Friday, you ask for a weekly review and your agent walks you through a set of reflection questions. What went well? What did not? What do you want to focus on next week?
+A WEEKLY REVIEW skill. Every Friday, you ask for a weekly review and your agent walks you through a set of reflection questions.
 
-A CLIENT ONBOARDING skill. For freelancers, a checklist for new clients. Contract signed? Invoice sent? Project folder created? Kickoff meeting scheduled?
+A CLIENT ONBOARDING skill. For freelancers, a checklist for new clients. Contract signed? Invoice sent? Project folder created?
 
 [pause]
 
-Here is the key principle, and I want you to write this down. If you can explain the process to a human, you can write it as a skill. That is the bar. Not "can you code it?" Not "can you configure an API?" Can you EXPLAIN IT? If yes, you can build the skill.
+Here is the key principle. If you can explain the process to a human, you can write it as a skill. That is the bar. Not "can you code it?" Can you EXPLAIN IT? If yes, you can build the skill.
 
 ---
 
-## Slide 16 — Skill Best Practices
+## Slide 19 — Skill Best Practices (1 of 2)
 
-Alright, you know how to install skills and build them. Now let me give you the WISDOM from experienced sailors who have been doing this for months. These are the tricks that separate a good skill from a great one.
+Alright, you know how to install skills and build them. Now let me give you the WISDOM from experienced sailors. These are the tricks that separate a good skill from a great one.
 
-First: write better descriptions. Include BOTH "use when" AND "don't use when" in your skill descriptions. Look at this example. "Deep research. Use when user asks for analysis. Don't use when user just wants a quick factual answer." Those negative examples are JUST as important as the positive ones. Without them, your agent might fire up the full research skill when you ask "What is the capital of France?" You do not need a deep-dive research report for that. You need three words.
+First: write better descriptions. Include BOTH "use when" AND "don't use when" in your skill descriptions. Look at this example. "Deep research. Use when user asks for analysis. Don't use when user just wants a quick factual answer." Those negative examples are JUST as important as the positive ones. Without them, your agent might fire up the full research skill when you ask "What is the capital of France?" You do not need a deep-dive research report for that.
 
-Second: put templates inside skills. Here is a secret that a lot of people miss. Templates and reference material INSIDE a skill cost ZERO tokens when the skill is not active. They only load into context when the skill is triggered. So do not be afraid to build rich, detailed skills with output templates, checklists, reference tables, example outputs. When the skill is sleeping, it costs you nothing. When it wakes up, it has everything it needs.
+Second: put templates inside skills. Here is a secret that a lot of people miss. Templates and reference material INSIDE a skill cost ZERO tokens when the skill is not active. They only load into context when the skill is triggered. So do not be afraid to build rich, detailed skills with output templates, checklists, reference tables. When the skill is sleeping, it costs you nothing. When it wakes up, it has everything it needs.
+
+---
+
+## Slide 20 — Skill Best Practices (2 of 2)
 
 Third: self-improving skills. Add a "Lessons Learned" section to any skill. Tell your agent: "After using this skill, if you learn something about what works better, add it to the Lessons section." Over time, each skill gets FINE-TUNED to your preferences. Your agent never makes the same mistake twice because it is reading its own notes.
 
 And fourth, and this connects back to security: skills with network access are HIGH RISK. Keep domain allowlists minimal. Use `domain_secrets` for authentication instead of embedding credentials in skill files. A note-taking skill that wants internet access? Suspicious. A web search skill that wants internet access? Expected. Use your judgment.
 
+[pause]
+
+Those four practices will level up every skill you build. Better descriptions, rich templates, self-improving sections, and careful network access. Master these and your skills will outperform ninety percent of what is on ClawHub.
+
 ---
 
-## Slide 17 — The "Twice = Skill" Rule & Channels as Departments
+## Slide 21 — The "Twice = Skill" Rule
 
-I have two powerful patterns to share with you. The first one is a RULE you should tattoo on your forearm. The "Twice Equals Skill" rule.
+I have a RULE I want you to tattoo on your forearm. The "Twice Equals Skill" rule.
 
 The first time you do something is exploration. You are figuring it out. The second time is a pattern. You recognize you are repeating yourself. The THIRD time? That is waste. Pure waste. You are spending time and tokens explaining something you have already explained twice.
 
@@ -335,9 +371,15 @@ So the rule is simple. If you do something more than twice, MAKE A SKILL FOR IT.
 
 [pause]
 
-Now, the second pattern. This one is for the advanced crew members, and it is BRILLIANT. Channels as Departments.
+Ask yourself: "Have I explained this to my agent before?" If yes, write a skill so you never have to again.
 
-If you are using Discord or Telegram with multiple channels, each channel can serve as a "department" that tells your agent which skill to load. Your x-scan channel loads the Twitter skill. Your finances channel loads the finance skill. Your writing channel loads the writing skill. Your research channel loads the research skill.
+---
+
+## Slide 22 — Channels as Departments
+
+Now here is a BRILLIANT pattern for the advanced crew members. Channels as Departments.
+
+If you are using Discord or Telegram with multiple channels, each channel can serve as a "department" that tells your agent which skill to load. Your x-scan channel loads the Twitter skill. Your finances channel loads the finance skill. Your research channel loads the research skill.
 
 The agent knows what MODE to be in based on which channel the message arrives from. You walk into a channel, and your agent automatically puts on the right hat. No switching. No "hey, put on your finance hat." It just KNOWS.
 
@@ -347,19 +389,17 @@ One agent. Many hats. That is the cheapest way to get specialized behavior witho
 
 ---
 
-## Slide 18 — Guardrail Skills
+## Slide 23 — Guardrail Skills
 
 Now here is something that might surprise you. Not all skills add features. Some of the MOST VALUABLE skills you will ever build are skills that PREVENT DISASTERS.
 
 Let me introduce you to the anti-loop pattern. This is one of the first skills the community recommends building, and once I explain why, you will understand.
 
-Picture this. Your agent hits an error. It tries to fix it. Same error. It tries a slightly different approach. Same error. It tries ANOTHER approach. Same error. Over and over and over, burning tokens with every single attempt. On Opus, that loop can burn FIVE to TWENTY DOLLARS in minutes. Just burning money while your agent bangs its head against the same wall.
+Picture this. Your agent hits an error. It tries to fix it. Same error. It tries a slightly different approach. Same error. Over and over, burning tokens with every single attempt. On Opus, that loop can burn FIVE to TWENTY DOLLARS in minutes. Just burning money while your agent bangs its head against the same wall.
 
-The anti-loop skill is TINY. About fifty tokens. It says: "If you see the same error twice, STOP and ask the user. If a tool call fails twice with the same error, report the failure and wait for instructions. Check USER.md before asking questions the user may have already answered."
+The anti-loop skill is TINY. About fifty tokens. It says: "If you see the same error twice, STOP and ask the user."
 
 That is it. Fifty tokens. And that fifty-token skill will save you more money than it will EVER cost to load. One prevented loop on Opus pays for that skill a hundred times over.
-
-[pause]
 
 [ask the audience]
 
@@ -367,91 +407,75 @@ Anyone in here ever watched an AI agent loop on the same error over and over? Be
 
 [wait for responses]
 
-Yeah. You know the pain. The frustration of watching it try the SAME broken thing again and again while your token meter spins like a taxi meter in Manhattan traffic. The anti-loop skill is your emergency brake.
+Yeah. You know the pain. The anti-loop skill is your emergency brake.
 
-Build guardrail skills BEFORE you build feature skills. They are the cheapest insurance in your entire setup. Do not wait until you have been burned. Prevent the fire.
+Build guardrail skills BEFORE you build feature skills. They are the cheapest insurance in your entire setup.
 
 ---
 
-## Slide 19 — Token Impact of Skills
+## Slide 24 — Token Impact of Skills
 
 Alright, let's talk about the economics of skills. Because there IS a cost, and you need to understand it.
 
-When you start a conversation, OpenClaw loads three things into the context window. Your core files: identity, soul, user, memory, agents. All active skill instructions. And the conversation history. All of that has to fit in the context window, which is typically 128K to 200K tokens for Claude Opus 4.6.
+When you start a conversation, OpenClaw loads three things into the context window. Your core files: identity, soul, user, memory, agents. All active skill instructions. And the conversation history.
 
-Now here is the math. Say you get excited. You install fifty skills. Fifty skills at five hundred tokens each. That is TWENTY-FIVE THOUSAND tokens used up just for skills. Before you have said a single word. Before your agent has generated a single response.
+Now here is the math. Say you get excited. You install fifty skills. Fifty skills at five hundred tokens each. That is TWENTY-FIVE THOUSAND tokens used up just for skills. Before you have said a single word.
 
-What does that mean in practice? Less room for conversation history, so your agent forgets earlier parts of the conversation faster. More frequent need for the `/compact` command, which summarizes and compresses your conversation. And higher token costs, because you are paying for those skill instructions with EVERY single message.
+What does that mean in practice? Less room for conversation history, so your agent forgets earlier parts faster. More frequent need for `/compact`. And higher token costs with EVERY single message.
 
 [pause]
 
-The solution is simple. Only ENABLE skills you are actively using. Disable the rest. Keep custom skills concise. Do not write a novel when a paragraph will do. And review periodically. Go through your installed skills every few weeks and ask yourself: "Am I actually using this? Is this earning its place on my ship?"
+The solution is simple. Only ENABLE skills you are actively using. Disable the rest. Keep custom skills concise. And review periodically. Go through your installed skills every few weeks and ask: "Am I actually using this? Is this earning its place on my ship?"
 
-Think of it like cargo weight. Every crate you load onto the ship slows it down a little. Load too many and you sit low in the water, burning more fuel, moving slower. Keep your hold lean. Only carry what you need for THIS voyage.
+Think of it like cargo weight. Every crate you load slows the ship down. Keep your hold lean. Only carry what you need for THIS voyage.
 
 ---
 
-## Slide 20 — Managing Installed Skills
+## Slide 25 — Managing Installed Skills
 
-Here are the commands you need to manage your skill inventory. These are your dock management tools.
+Here are the commands you need to manage your skill inventory.
 
 `npx openclaw skills list` shows you everything you have installed. Run this regularly. Know what is on your ship.
 
-`npx openclaw config set skills.entries.obsidian-notes.enabled false` turns a skill off without removing it. It stays installed but does not load into context. ZERO token cost when disabled. This is perfect for skills you use sometimes but not every day.
+`npx openclaw config set skills.entries.obsidian-notes.enabled false` turns a skill off without removing it. ZERO token cost when disabled. Perfect for skills you use sometimes but not every day.
 
-`npx openclaw config set skills.entries.obsidian-notes.enabled true` turns it back on when you need it.
-
-And `npx clawhub delete obsidian-notes` deletes it entirely. Gone. Off the ship.
+The same command with `true` turns it back on. And `npx clawhub delete obsidian-notes` removes it entirely.
 
 [pause]
 
-Here is the practical guidance. DISABLE is almost always better than REMOVE. Disabling keeps the skill around for later. You inspected it once, you know it is safe, you just do not need it right now. Removing means if you want it again, you have to find it, inspect it AGAIN, and reinstall it.
+Here is the practical guidance. DISABLE is almost always better than REMOVE. Disabling keeps the skill around for later. You inspected it once, you know it is safe, you just do not need it right now. Removing means if you want it again, you have to find it, inspect it AGAIN, and reinstall.
 
-Only remove a skill if you are absolutely sure you will never need it again. Otherwise, disable. It costs you nothing when it is off, and it is there when you need it.
-
-Think of disable like putting a crate in the hold below deck. Out of the way, not slowing you down, but available if you need it. Remove is throwing the crate overboard. It is GONE.
+Only remove if you are absolutely sure you will never need it again. Otherwise, disable. It costs you nothing when it is off, and it is there when you need it.
 
 ---
 
-## Slide 21 — Shoals and Sandbars (Common Mistakes)
+## Slide 26 — Shoals and Sandbars (Common Mistakes)
 
 Let me save you some pain. Here are the rocks other sailors have crashed into so you do not have to.
 
-Mistake number one: installing skills without reading them. You know this by now. I have hammered it. Always use `npx openclaw skills info` first. No exceptions.
+Mistake number one: installing skills without reading them. Always use `npx openclaw skills info` first. No exceptions.
 
-Mistake number two: installing too many skills at once. You get excited, you install twenty skills in one sitting, and suddenly your agent is slow and your bill is higher. Start with two or three. Add more as needed. Build up gradually.
+Mistake number two: installing too many skills at once. Start with two or three. Add more as needed.
 
-Mistake number three: not restarting after installing. This one catches EVERYONE at least once. You install a skill, try to use it, it does not work, you panic. You did not restart. Run `npx openclaw gateway restart` after every installation.
+Mistake number three: not restarting after installing. Run `npx openclaw gateway restart` after every installation.
 
-Mistake number four: skill does not seem to work. You DID restart, but the skill still does not fire. Check the trigger words in the YAML front matter. If the skill triggers on "standup" but you are saying "status report," the skill will not activate. Your words need to match the triggers.
+Mistake number four: skill does not seem to work. Check the trigger words in the YAML front matter. Your words need to match the triggers.
 
-Mistake number five: custom skill has vague instructions. "Do something useful with my notes." That is not a skill. That is a wish. Be SPECIFIC. Tell the agent exactly what to do, what format to use, what rules to follow.
+Mistake number five: custom skill has vague instructions. Be SPECIFIC. Tell the agent exactly what to do, what format to use, what rules to follow.
 
-Mistake number six: leaving unused skills enabled. Wasting context window tokens every single message. Disable or remove skills you are not using. Keep the deck clear.
+Mistake number six: leaving unused skills enabled. Wasting context window tokens every single message. Disable or remove skills you are not using.
 
 ---
 
-## Slide 22 — Hands on Deck: Install One, Build One
+## Slide 27 — Hands on Deck: Install One, Build One
 
 Alright crew, it is TIME. Enough talking. Let's get our hands dirty.
 
 This exercise has two parts. Part one: install a community skill from ClawHub. Part two: build your own custom skill from scratch. Everyone does BOTH.
 
-Part one. You have ten minutes. Here is your procedure, and do NOT skip any steps.
+Part one. You have ten minutes. Browse with `npx openclaw skills browse`. Find something relevant to YOUR use case. INSPECT it with `npx openclaw skills info`. Check for red flags. Install with `npx clawhub install` and the `--pin` flag. Restart. Test it in the TUI.
 
-Step one, browse. `npx openclaw skills browse`. Look around. See what is out there.
-
-Step two, search. Find something relevant to YOUR use case. Something you would actually want your agent to do.
-
-Step three, and this is the one I KNOW some of you are going to be tempted to skip: INSPECT. `npx openclaw skills info` followed by the skill name. Read the full content. Check for red flags. Is the author reputable? Does it request weird permissions? Does the markdown body look clean?
-
-Step four, check for security red flags. Take thirty seconds and actually LOOK.
-
-Step five, install. `npx clawhub install` with the `--pin` flag. Always pin.
-
-Step six, restart. `npx openclaw gateway restart`. Do not forget this.
-
-Step seven, test it in the TUI. Make sure it actually works.
+Do NOT skip the inspection step. I will be walking around checking.
 
 [pause]
 
@@ -463,7 +487,7 @@ Go. Clock is ticking.
 
 ---
 
-## Slide 23 — Hands on Deck (continued)
+## Slide 28 — Hands on Deck (continued)
 
 Alright, five more minutes for Part three. Evaluation time.
 
@@ -471,11 +495,11 @@ I want you to ask yourself four questions about what you just built and installe
 
 First: does the installed skill work as expected? Did it do what the description promised? Did the triggers fire correctly? If not, what went wrong?
 
-Second: does YOUR custom skill produce the output you wanted? Is the format right? Are the instructions specific enough? Did the agent follow your rules?
+Second: does YOUR custom skill produce the output you wanted? Is the format right? Are the instructions specific enough?
 
-Third: what would you improve about either skill? Every first version has room to get better. Maybe the triggers need more keywords. Maybe the instructions need more detail. Maybe the rules need to be stricter.
+Third: what would you improve about either skill? Every first version has room to get better.
 
-And fourth, this is the practical one: how many tokens do your active skills consume? Check with `/status` in the TUI. Get a real number. Know what your skills are costing you.
+And fourth: how many tokens do your active skills consume? Check with `/status` in the TUI. Get a real number.
 
 [ask the audience]
 
@@ -487,27 +511,27 @@ Excellent. Who ran into trouble and had to debug something?
 
 [wait for responses]
 
-Good. That debugging is LEARNING. That is how you get better at this. The mistakes you made today are mistakes you will never make again.
+Good. That debugging is LEARNING. The mistakes you made today are mistakes you will never make again.
 
 ---
 
-## Slide 24 — Treasure Chest (Key Takeaways)
+## Slide 29 — Treasure Chest (Key Takeaways)
 
 Alright, let me lock in what we learned today. Eight takeaways. These are the gems you carry off this ship.
 
 One: skills are markdown files with YAML metadata. They teach your agent new capabilities through instructions. Simple, powerful, text-based.
 
-Two: ClawHub has over 5,700 skills. Browse before you build from scratch. Chances are someone has already solved your problem.
+Two: ClawHub has over 5,700 skills. Browse before you build from scratch.
 
-Three: ALWAYS inspect before installing. Read the full content. Check for security issues. This is non-negotiable. Remember the supply chain attack. Remember the 1,184 malicious skills. Remember "What Would Elon Do."
+Three: ALWAYS inspect before installing. Read the full content. Check for security issues. Remember the supply chain attack. Remember the 1,184 malicious skills.
 
-Four: pin your skill versions. Use that `--pin` flag every single time. Lock versions and detect integrity drift.
+Four: pin your skill versions. Use that `--pin` flag every single time.
 
-Five: token impact matters. Every active skill uses context window space. Only keep what you need active. Disable the rest.
+Five: token impact matters. Every active skill uses context window space. Only keep what you need active.
 
 Six: building custom skills is EASY. If you can write instructions for a human, you can write a skill. The "Twice Equals Skill" rule: if you repeat it, automate it.
 
-Seven: VirusTotal scanning helps but is NOT sufficient. Your manual review is the last line of defense. Automated scanning catches malware patterns. YOUR eyes catch prompt injection and social engineering.
+Seven: VirusTotal scanning helps but is NOT sufficient. Your manual review is the last line of defense.
 
 Eight: disable unused skills. Keep your context lean, your costs down, and your ship fast.
 
@@ -517,7 +541,7 @@ Those are your eight gold coins from today's voyage. Spend them wisely.
 
 ---
 
-## Slide 25 — Next Port of Call: Module 08
+## Slide 30 — Next Port of Call: Module 08
 
 So your agent has new skills now. It can do things it could not do yesterday. That is HUGE. Congratulations.
 
@@ -529,10 +553,10 @@ What if your agent could act on its OWN schedule?
 
 In Module 08, Cron Jobs and Heartbeats, we make your agent PROACTIVE. Morning briefings delivered to your phone before you wake up. Periodic check-ins throughout the day. Monitoring tasks that run in the background. Your agent working for you even when you are NOT asking.
 
-That is when it stops feeling like a tool and starts feeling like having a crew member who takes initiative. Someone who checks the weather before you ask, scans the horizon without being told, and has your morning report ready before your coffee is brewed.
+That is when it stops feeling like a tool and starts feeling like having a crew member who takes initiative.
 
 [pause]
 
-Great work today, everyone. Every one of you should have at least one community skill and one custom skill installed and working. If you do not, finish up before next session. You will need a working skill setup for Module 08.
+Great work today, everyone. Every one of you should have at least one community skill and one custom skill installed and working. If you do not, finish up before next session.
 
 Now go forth and skill up your agents. But INSPECT THAT CARGO FIRST. Dismissed.

@@ -510,15 +510,19 @@ npx openclaw config set agents.defaults.heartbeat.every "30m"
 | 60 minutes | Budget-conscious, low urgency | Lower |
 | 0 (disabled) | No proactive behavior | Zero |
 
-> **Recommended default:** Set heartbeat to **55 minutes** + route to **Haiku** + enable caching = 99.5% cost reduction on heartbeats. This should be the first thing you configure, not an afterthought.
+> **Recommended default:** Set heartbeat to **55 minutes** + route to **Haiku** + enable caching = 99.5% cost reduction. Configure this first, not as an afterthought.
 
-- **To disable heartbeats entirely:**
+---
+
+## Heartbeat: Disable and Restrict
+
+**To disable heartbeats entirely:**
 
 ```bash
 npx openclaw config set agents.defaults.heartbeat.every "0m"
 ```
 
-- **To restrict heartbeats to daytime only:**
+**To restrict heartbeats to daytime only:**
 
 ```bash
 npx openclaw config set agents.defaults.heartbeat.activeHours.start "07:00"
@@ -568,18 +572,18 @@ Using Haiku 4.5 instead of Opus saves **$50-190 per month**.
 
 Run heartbeats on **local 3-4B models** for literally zero cost -- no API calls, no tokens billed.
 
-### Recommended Local Models
-
 | Model | Strength | Speed |
 |-------|----------|-------|
-| **Qwen 3 4B** | "Agentic King" -- most stable for tool-use and structured output | ~30 sec per heartbeat |
+| **Qwen 3 4B** | "Agentic King" -- most stable for tool-use | ~30 sec per heartbeat |
 | **Gemma 3 4B** | Excellent instruction following, clean output | ~21 sec per heartbeat |
 
 - Both are roughly **GPT-4o mini equivalent** for routing and heartbeat tasks
 - Run them in **LM Studio** with the OpenAI-compatible API endpoint
 - Point 🦞 OpenClaw's heartbeat config at `http://localhost:1234`
 
-### When to Use Local vs. Cloud
+---
+
+## Local vs. Cloud Heartbeats
 
 | Setup | Recommendation |
 |-------|---------------|
@@ -635,8 +639,6 @@ nano ~/.openclaw/workspace/HEARTBEAT.md
 
 The morning brief is the "killer feature" most 🦞 OpenClaw users set up first.
 
-### Three methods:
-
 **Method 1: Via HEARTBEAT.md** -- simplest, catches the AM window automatically
 
 **Method 2: Via cron job** -- precise timing:
@@ -648,8 +650,7 @@ npx openclaw cron add "morning-brief" \
 
 **Method 3: Just ask your agent** -- easiest:
 ```
-Set up a daily morning brief at 7 AM on Telegram.
-Include weather, top AI news, my tasks, and one suggestion.
+Set up a daily morning brief at 7 AM on Telegram with weather, AI news, tasks, and one suggestion.
 ```
 
 ---
@@ -662,7 +663,7 @@ Do not wait until tomorrow morning. Test it now:
 Generate and send my morning brief right now as a test.
 ```
 
-### Morning brief format should include:
+**Morning brief format should include:**
 1. Date and greeting
 2. Weather for your city
 3. Top 3 news stories in your interest areas
@@ -679,13 +680,16 @@ Cron uses five fields: `minute hour day-of-month month day-of-week`
 
 ```
   *  *  *  *  *
-  |  |  |  |  |
-  |  |  |  |  day of week (0-7, 0 and 7 = Sunday)
+  |  |  |  |  day of week (0-7, Sunday = 0 or 7)
   |  |  |  month (1-12)
   |  |  day of month (1-31)
   |  hour (0-23)
   minute (0-59)
 ```
+
+---
+
+## Common Cron Patterns
 
 | Pattern | Meaning |
 |---------|---------|
@@ -706,7 +710,7 @@ Cron uses five fields: `minute hour day-of-month month day-of-week`
 | Every day at 6 PM | End-of-day summary | `0 18 * * *` |
 | 1st of month at 10 AM | Monthly goals review | `0 10 1 * *` |
 
-### Cost warning:
+**Cost warning:**
 - 1 cron/day = ~30 API calls/month (manageable)
 - 1 cron/hour = ~720 API calls/month (adds up)
 - 1 cron/15 min = ~2,880 API calls/month (expensive on Opus)
@@ -716,18 +720,18 @@ Cron uses five fields: `minute hour day-of-month month day-of-week`
 ## Managing Cron Jobs
 
 ```bash
-# List all cron jobs
 npx openclaw cron list
-
-# Add a cron job
 npx openclaw cron add "weekly-review" \
   --schedule "0 9 * * 1" \
   --task "Conduct my weekly review"
+```
 
-# Remove a cron job
+---
+
+## Managing Cron Jobs (continued)
+
+```bash
 npx openclaw cron remove "weekly-review"
-
-# Temporarily disable a cron job
 npx openclaw cron disable "weekly-review"
 ```
 
@@ -761,39 +765,49 @@ Set these up before anything else -- experienced users consider them **non-negot
 | **Daily security audit** | Every morning | Check firewall, fail2ban, SSH, ports, Docker |
 | **Silent backups** | Every 2 hours | Git push workspace -- never lose config/memory |
 
-### Executive Assistant Scheduling
+<!-- Speaker notes: These three cron jobs are maintenance hygiene. Session cleanup prevents disk bloat, the security audit catches drift, and silent backups mean you can always roll back. Set them up first, everything else is bonus. -->
+
+---
+
+## Executive Assistant Scheduling
+
 Create a `SCHEDULING.md` with your rules:
 - Working hours, hard boundaries, VIP overrides
 - Travel buffers, video platform defaults
 - CC your agent into email threads for autonomous scheduling
 
-<!-- Speaker notes: These three cron jobs are maintenance hygiene. Session cleanup prevents disk bloat, the security audit catches drift, and silent backups mean you can always roll back. Set them up first, everything else is bonus. The SCHEDULING.md pattern turns your agent into a real executive assistant. -->
+<!-- Speaker notes: The SCHEDULING.md pattern turns your agent into a real executive assistant. -->
 
 ---
 
 ## Mission Statement Reverse Prompt
 
-### Add a Mission Statement
-Add a mission statement to `IDENTITY.md` or `AGENTS.md`:
+**Add a mission statement** to `IDENTITY.md` or `AGENTS.md`:
 ```markdown
 ## Mission
 Build a sustainable freelance business doing $10K/month
 by helping small businesses with AI automation.
 ```
 
-### Schedule a Cron to Reverse-Prompt
+**Schedule a cron** to reverse-prompt:
 ```bash
 npx openclaw cron add "mission-nudge" \
   --schedule "0 8 * * *" \
   --task "What is 1 task we can do today to get closer to our mission?"
 ```
 
-### Why This Works
+---
+
+## Why Reverse Prompting Works
+
 - The agent **suggests tasks you never thought of** -- it sees patterns across all your projects, goals, and conversations
 - Unlike a to-do list, the agent weighs your **current context** (deadlines, energy, dependencies) against your **long-term mission**
 - Schedule proactive **overnight mission execution** -- give the agent a task before bed, wake up to results
 
-### If You Do Not Have a Mission Yet
+---
+
+## If You Don't Have a Mission Yet
+
 Ask the agent:
 ```
 Based on everything you know about me -- my goals, my skills,
@@ -805,15 +819,17 @@ statement for me.
 
 ---
 
-## Advanced: Compaction and Mission Control
+## Advanced: Compaction Thresholds
 
-### Set Compaction Thresholds Early
 Design for long-running sessions from the start:
 - Set 🪸 memory flush threshold: **80K tokens**
 - Set compaction threshold: **80K tokens**
 - Don't wait until the agent crashes from context overflow
 
-### Mission Control Dashboard
+---
+
+## Advanced: Mission Control Dashboard
+
 Create a cron job that generates a **daily status dashboard**:
 - Agent health and uptime
 - Token spend (daily/weekly/monthly)
@@ -848,17 +864,20 @@ Beyond cron and heartbeats, 🦞 OpenClaw supports **event-driven automation**:
 
 Understanding when sessions live and die prevents lost work and wasted money.
 
-### Sessions Are Stateful Only While the Chat Window Is Open
+**Sessions are stateful only while the chat window is open:**
 - The moment you **close the TUI or terminal**, the session dies and work stops
 - There is no background daemon keeping your conversation alive
 - Any in-progress task the agent was working on **halts immediately**
 
-### What This Means for Long Tasks
-- **Use cron jobs for background work**, not long-running sessions -- cron jobs trigger fresh conversations on a schedule and do not depend on an open window
-- **Break one-off tasks into discrete steps** with saved output -- ask the agent to write results to a file after each step so nothing is lost if the session drops
-- **Long-running sessions accumulate context (200K+ tokens)** -- the agent hallucinates more, costs more, and produces lower quality output as the session grows
+**What this means for long tasks:**
+- **Use cron jobs for background work**, not long-running sessions
+- **Break one-off tasks into discrete steps** with saved output
+- **Long-running sessions accumulate context (200K+ tokens)** -- quality degrades and costs spike
 
-### The Cost of Ignoring This
+---
+
+## The Cost of Ignoring Session Limits
+
 | Session Length | Context Size | Quality | Cost per Message |
 |---------------|-------------|---------|-----------------|
 | Fresh (0-30 min) | 5-20K tokens | High | Low |
@@ -888,20 +907,26 @@ Understanding when sessions live and die prevents lost work and wasted money.
 
 <!-- _class: activity -->
 
-## ⚙️ Hands on Deck
+## ⚙️ Hands on Deck: Morning Brief
 
-### Part 1: Set Up the Morning Brief (15 min)
+**Set Up the Morning Brief (15 min)**
 1. Edit `HEARTBEAT.md` with morning brief instructions
 2. Set heartbeat model to Haiku or Gemini Flash
 3. Restart the ⛵ gateway
 4. Test by asking your agent to generate the brief now
 5. Verify it arrives on Telegram
 
-### Part 2: Create One Custom Cron Job (10 min)
+---
+
+<!-- _class: activity -->
+
+## ⚙️ Hands on Deck (continued)
+
+**Create One Custom Cron Job (10 min)**
 - Choose: weekly review, daily summary, price alert, news, or custom reminder
 - Set it up, test it, verify it works
 
-### Part 3: Evaluate (5 min)
+**Evaluate (5 min)**
 - Was the format easy to read on your phone?
 - Is the heartbeat interval appropriate for your needs?
 

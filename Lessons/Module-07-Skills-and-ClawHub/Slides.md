@@ -474,25 +474,19 @@ Without skills, your agent can chat, run commands, and read/write files.
 
 ## Skill YAML Structure
 
-Every 🐠 skill follows this format:
+Every 🐠 skill has YAML front matter between `---` markers:
 
 ```yaml
----
 name: "email-assistant"
 description: "Manages email: read, write, reply, search"
-triggers:
-  - "email"
-  - "send email"
-  - "check my inbox"
-tools:
-  - "himalaya"
----
+triggers: ["email", "send email", "check my inbox"]
+tools: ["himalaya"]
 ```
 
-- **name** — Unique identifier for the skill
-- **description** — What the skill does
-- **triggers** — Keywords that activate the skill
-- **tools** — External CLI tools or APIs the skill uses
+**name** — Unique identifier | **description** — What the skill does
+**triggers** — Keywords that activate it | **tools** — External CLI tools it uses
+
+> Below the YAML, write the skill's instructions in plain markdown. The agent reads these when the skill is active.
 
 <!-- Speaker notes: This is the anatomy of every skill. The YAML front matter is the metadata; the markdown body below it is the actual instructions. Both parts matter. -->
 
@@ -500,39 +494,39 @@ tools:
 
 ## Skill Markdown Body
 
-Below the YAML front matter, write the instructions:
+Below the YAML, write instructions in plain markdown:
 
 ```markdown
 # Email Assistant
-
 When the user asks about email, use Himalaya CLI:
-
-1. **Read emails**: `himalaya list`
-2. **Read specific**: `himalaya read <id>`
-3. **Send email**: `himalaya send --to <addr>`
-4. **Reply**: `himalaya reply <id>`
-
+1. **Read**: `himalaya list` | **Send**: `himalaya send --to <addr>`
 ## Rules
-- Always confirm before sending
-- Show a preview before sending
-- Never auto-reply without user approval
+- Always confirm before sending. Never auto-reply without approval.
 ```
 
 When this skill is active and you say "check my inbox," your agent knows exactly what tool to use and how.
+
+> The markdown body is just instructions written for your agent. If you can explain it to a person, you can write it as a skill.
 
 ---
 
 ## Browsing 🦀 ClawHub
 
-**Over 5,700 skills available.** Browse them:
+**Over 5,700 skills available.** Browse from terminal or TUI:
 
 ```bash
-npx openclaw skills browse      # Terminal
+npx openclaw skills browse      # Terminal — or /skills browse in TUI
 ```
 
+```bash
+npx clawhub search "obsidian"   # Search by keyword
 ```
-/skills browse              # TUI
-```
+
+<!-- Speaker notes: ClawHub is the npm of OpenClaw skills. Anyone can publish. That's the power and the risk. We'll talk about security inspection in a moment. -->
+
+---
+
+## ClawHub Categories
 
 | Category | Examples |
 |----------|---------|
@@ -540,12 +534,8 @@ npx openclaw skills browse      # Terminal
 | **Productivity** | Obsidian, Notion, task management, calendar |
 | **Development** | GitHub, code review, deployment |
 | **Research** | Web search, data analysis, academic papers |
-| **Social Media** | Twitter/X, LinkedIn, Instagram posting |
-| **Creative** | Image generation, writing, music |
-| **Smart Home** | Home Assistant, IoT devices, Tesla |
-| **Finance** | Crypto tracking, accounting, invoicing |
-
-<!-- Speaker notes: ClawHub is the npm of OpenClaw skills. Anyone can publish. That's the power and the risk. We'll talk about security inspection in a moment. -->
+| **Social / Creative** | Twitter/X, LinkedIn, image generation, writing |
+| **Smart Home / Finance** | Home Assistant, IoT, crypto tracking, invoicing |
 
 ---
 
@@ -558,12 +548,9 @@ npx clawhub search "obsidian"
 Results:
 
 ```
-1. obsidian-notes (v1.2.3) - Read, write, search vault
-   4/5 stars (423 installs)
-2. obsidian-daily (v0.8.1) - Daily notes management
-   3/5 stars (156 installs)
-3. obsidian-tasks (v2.0.0) - Task management in vault
-   5/5 stars (812 installs)
+1. obsidian-notes (v1.2.3) - Read, write, search vault  ★4/5 (423)
+2. obsidian-daily (v0.8.1) - Daily notes management     ★3/5 (156)
+3. obsidian-tasks (v2.0.0) - Task management in vault   ★5/5 (812)
 ```
 
 Look at **star rating** and **install count** as initial trust signals.
@@ -586,13 +573,8 @@ npx openclaw skills info obsidian-notes
 
 - Does it request more permissions than it needs?
 - Does the markdown contain suspicious instructions?
-- Is the author reputable? How many installs?
 
-**Red flags:**
-
-- Skills requesting elevated/admin access
-- Instructions to send data to external servers
-- Instructions to disable security features
+**Red flags:** Skills requesting elevated/admin access, instructions to send data to external servers, or instructions to disable security features
 
 <!-- Speaker notes: This is the most important step. Drilling this habit now prevents security incidents later. Skills are community-contributed — anyone can publish. Trust but verify. -->
 
@@ -600,7 +582,7 @@ npx openclaw skills info obsidian-notes
 
 ## Installing a Skill: Steps 3-4
 
-### Step 3: Install (with version pinning)
+**Step 3: Install (with version pinning)**
 
 ```bash
 npx clawhub install obsidian-notes --pin
@@ -608,7 +590,7 @@ npx clawhub install obsidian-notes --pin
 
 > **Always use `--pin`** to lock the version and detect integrity drift.
 
-### Step 4: Restart the gateway
+**Step 4: Restart the gateway**
 
 ```bash
 npx openclaw gateway restart
@@ -695,14 +677,9 @@ Write the YAML front matter and markdown body:
 ```markdown
 ---
 name: "daily-standup"
-description: "Generates a daily standup report"
-triggers:
-  - "standup"
-  - "daily standup"
+triggers: ["standup", "daily standup"]
 ---
-
 # Daily Standup Generator
-
 When the user asks for a standup, generate:
 ```
 
@@ -802,10 +779,9 @@ Map each messaging channel to a specific skill:
 
 Some skills **prevent disasters** instead of adding features.
 
-### The `anti-loop.md` Pattern
+**The `anti-loop.md` Pattern:**
 
 ```markdown
----
 name: "anti-loop"
 triggers: ["error", "failed", "retry"]
 ---
@@ -880,14 +856,14 @@ npx clawhub delete obsidian-notes
 
 ## ⚙️ Hands on Deck: Install One, Build One
 
-### Part 1: Install from 🦀 ClawHub (10 min)
+**Part 1: Install from ClawHub (10 min)**
 1. Browse and search: `npx openclaw skills browse`
 2. Inspect for red flags: `npx openclaw skills info [skill-name]`
 3. Install with pinning: `npx clawhub install [skill-name] --pin`
 4. Restart: `npx openclaw gateway restart`
 5. Test it in the TUI
 
-### Part 2: Build a Custom Skill (15 min)
+**Part 2: Build a Custom Skill (15 min)**
 1. Create file: `nano ~/.openclaw/workspace/skills/my-skill.md`
 2. Write YAML front matter + markdown body, save, restart, and test
 

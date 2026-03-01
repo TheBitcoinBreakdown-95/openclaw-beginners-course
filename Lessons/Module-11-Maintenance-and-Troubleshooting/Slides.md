@@ -451,19 +451,17 @@ By the end of this module, you will be able to:
 
 ## Realistic Timelines
 
-### Level 1 -- Works Immediately
+**Level 1 -- Works Immediately:**
 Basic conversation, file management, simple research, document summarization
 
-### Level 2 -- Requires Hours to Days of Setup
+**Level 2 -- Requires Hours to Days of Setup:**
 Email automation, trading bots, social media management, code projects, multi-step workflows
 
-### The Reality
+**The Reality:**
 - YouTube demos show polished setups that took **days or weeks** to build
 - Budget **2-4 hours/week** for setup and maintenance during your first month
 - The investment pays off -- but not on day one
-
-### ROI
-5 hours/week saved = **200+ hours/year**. At $50/hour, that's $10,000/year in value. But expect setup time first.
+- 5 hours/week saved = **200+ hours/year** ($10,000/year in value)
 
 ---
 
@@ -539,7 +537,7 @@ This takes about **10 minutes**. Do it every weekend.
 
 ## Updating 🦞 OpenClaw
 
-### Release channels: Use **stable** (not beta or dev)
+**Release channels:** Use **stable** (not beta or dev)
 
 | Channel | Use For |
 |---------|---------|
@@ -547,20 +545,24 @@ This takes about **10 minutes**. Do it every weekend.
 | **beta** | Early access (expect bugs) |
 | **dev** | Contributors only |
 
-### Always back up first:
+**Always back up first:**
 
 ```bash
 cd ~/.openclaw && git add -A && git commit -m "Pre-update backup"
 npx openclaw status --json > ~/pre-update-status.json
 ```
 
-### Update:
+---
+
+## Updating 🦞 OpenClaw (continued)
+
+**Update:**
 
 ```bash
 npx openclaw update
 ```
 
-### After updating:
+**After updating:**
 
 ```bash
 npx openclaw gateway restart
@@ -569,28 +571,36 @@ npx openclaw doctor
 npx openclaw security audit --deep
 ```
 
-### If an update breaks something:
+---
+
+## If an Update Breaks Something
+
+**Roll back to the previous version:**
 
 ```bash
 npm install -g @tinybox/openclaw@[previous-version]
 npx openclaw gateway restart
 ```
 
+> This is why we back up first. You can also restore your workspace from Git if config files were changed by the update.
+
 ---
 
 ## Backup and Restore
 
-### Quick backup (Git):
+**Quick backup (Git):**
 ```bash
 cd ~/.openclaw && git add -A && git commit -m "Backup"
 ```
 
-### Full backup (archive):
+**Full backup (archive):**
 ```bash
 tar -czf ~/openclaw-backup-$(date +%Y%m%d).tar.gz ~/.openclaw/
 ```
 
-### What to back up:
+---
+
+## What to Back Up
 
 | Directory | Priority | Contains |
 |-----------|----------|----------|
@@ -600,17 +610,17 @@ tar -czf ~/openclaw-backup-$(date +%Y%m%d).tar.gz ~/.openclaw/
 | `~/.openclaw/sessions/` | Nice to have | Conversation history |
 | `~/.openclaw/logs/` | Nice to have | Activity logs |
 
+> Back up **at least weekly**. Critical directories should be committed to Git after any significant changes.
+
 ---
 
 ## Debugging Mindset
 
 Before diving into specific errors, adopt this approach:
 
-### Rule 1: Run `npx openclaw doctor --repair` First
-Most "my agent is being stupid" issues are actually **configuration problems**, not AI problems. The doctor command catches and fixes the majority of them automatically.
+**Rule 1: Run `npx openclaw doctor --repair` first** -- most "my agent is being stupid" issues are actually configuration problems. The doctor command catches and fixes the majority automatically.
 
-### Rule 2: One Workflow at a Time
-Get one workflow running **end-to-end** before adding the next. Every new integration is a new failure mode.
+**Rule 2: One workflow at a time** -- get one workflow running end-to-end before adding the next. Every new integration is a new failure mode.
 
 - Set up Telegram? Test it thoroughly before adding Discord.
 - Adding a 🐠 skill? Verify it works before installing another.
@@ -635,8 +645,13 @@ Get one workflow running **end-to-end** before adding the next. Every new integr
 - Review: `npx openclaw logs`
 
 **"Port already in use"**
-- Find the process: `lsof -i :18789`
-- Kill it, or change port: `npx openclaw config set gateway.port 18790`
+- Find it with `lsof -i :18789`, then kill or change port: `npx openclaw config set gateway.port 18790`
+
+---
+
+<!-- _class: warning -->
+
+## 🚩 Damage Control: Gateway Errors (continued)
 
 **"Gateway keeps crashing"**
 - Check logs for specific errors
@@ -656,17 +671,14 @@ Get one workflow running **end-to-end** before adding the next. Every new integr
 ## 🚩 Damage Control: API and Channels
 
 **"API key invalid"**
-- Check 🔑 key at your provider's console
-- Regenerate if needed (use the text editor trick when pasting)
+- Check 🔑 key at your provider's console -- regenerate if needed
 - Update: `npx openclaw config set models.providers.anthropic.apiKey "[NEW_KEY]"`
 
 **"Rate limit exceeded"**
-- Wait 1-5 minutes, then retry
-- If persistent: reduce heartbeat frequency
+- Wait 1-5 minutes, then retry -- if persistent, reduce heartbeat frequency
 
 **"Telegram bot not responding"**
-- Check ⛵ gateway: `npx openclaw status`
-- Check pairing: look for pending requests
+- Check ⛵ gateway (`npx openclaw status`), check pairing for pending requests
 - Verify token in BotFather
 
 **"WhatsApp disconnected"**
@@ -712,38 +724,34 @@ Get one workflow running **end-to-end** before adding the next. Every new integr
 ## Command Cheat Sheet: ⛵ Gateway and Status
 
 ```bash
-# Start / Stop
 npx openclaw gateway start         # Start the daemon
 npx openclaw gateway stop          # Stop the daemon
 npx openclaw gateway restart       # Restart the daemon
 npx openclaw tui                   # Open chat interface
-
-# Check Status
 npx openclaw status                # Is the gateway running?
-npx openclaw doctor                # Health check
-npx openclaw doctor --repair          # Auto-fix health issues
-npx openclaw logs          # View logs
+npx openclaw doctor                # Health check (add --repair to auto-fix)
+npx openclaw logs                  # View logs
 ```
 
 ---
 
-## Command Cheat Sheet: Security
+## Command Cheat Sheet: Security Audit
 
 ```bash
-# Security Audit
 npx openclaw security audit --deep        # Full audit
 npx openclaw security audit --deep --fix  # Audit and auto-fix
-
-# Authentication
 npx openclaw config get gateway.auth.mode          # Check auth settings
 npx openclaw config set gateway.auth.token "$(openssl rand -hex 32)"  # Rotate token
 npx openclaw config get gateway.bind               # Check bind address
+```
 
-# Sandboxing
+---
+
+## Command Cheat Sheet: Sandboxing and Tools
+
+```bash
 npx openclaw config set sandbox.mode "[mode]"      # off / non-main / all
 npx openclaw config set sandbox.scope "[scope]"    # session / agent / shared
-
-# Tool Policies
 npx openclaw config set tools.deny "[tool]"        # Deny a tool
 npx openclaw config set tools.elevated "off"       # Disable elevated mode
 ```
@@ -779,10 +787,9 @@ npx openclaw cron disable [name]          # Disable a job
 
 ---
 
-## Command Cheat Sheet: 🐠 Skills and TUI
+## Command Cheat Sheet: 🐠 Skills
 
 ```bash
-# Skills
 npx clawhub browse        # Browse ClawHub
 npx clawhub search [q]    # Search skills
 npx clawhub install [n]   # Install a skill
@@ -791,7 +798,9 @@ npx openclaw config set skills.entries.[name].enabled true   # Enable
 npx openclaw config set skills.entries.[name].enabled false  # Disable
 ```
 
-### Inside the Chat (TUI):
+---
+
+## Command Cheat Sheet: TUI Slash Commands
 
 | Command | Action |
 |---------|--------|
@@ -808,20 +817,14 @@ npx openclaw config set skills.entries.[name].enabled false  # Disable
 ## Command Cheat Sheet: Troubleshooting and Nuclear Options
 
 ```bash
-# Verbose Logging
 OPENCLAW_LOG_LEVEL=debug npx openclaw gateway start  # Debug-level logs
-
-# Updates
 npx openclaw update              # Update OpenClaw
-npx openclaw update --dry-run    # Preview what changes
-
-# Nuclear Options (LAST RESORT -- DESTRUCTIVE)
 npx openclaw reset --dry-run     # Preview what reset clears
 npx openclaw reset --scope config  # Wipe config/creds/sessions
 npx openclaw uninstall           # Complete clean removal
 ```
 
-> `reset` and `uninstall` are irreversible. Always `--dry-run` first. Always back up with Git first.
+> `reset` and `uninstall` are **irreversible**. Always `--dry-run` first. Always back up with Git first.
 
 <!-- Speaker notes: These are the break-glass commands. reset wipes configuration, credentials, and sessions. uninstall removes everything. Students should never need these if they follow maintenance routines, but they should know they exist. OPENCLAW_LOG_LEVEL=debug is the go-to when standard logs don't show enough detail. -->
 
@@ -853,26 +856,31 @@ npx openclaw uninstall           # Complete clean removal
 | **🦞 OpenClaw Reddit** | Longer-form discussions, tutorials |
 | **ClawHub** | 🐠 Skills marketplace, community contributions |
 
-### When asking for help, include:
+---
+
+## When Asking for Help
+
+Always include these five things in your help request:
+
 1. What you were trying to do
 2. The exact error message
 3. Your 🦞 OpenClaw version (`npx openclaw --version`)
 4. Your OS (Ubuntu 24.04 LTS)
 5. What you have already tried
 
+> Good bug reports get fast answers. Vague ones get ignored.
+
 ---
 
 ## 🐠 Skills vs. Agents: Know the Difference
 
-### Use a Skill when:
+**Use a Skill when:**
 - Task is triggered by a specific command
 - Doesn't need its own persistent 🪸 memory
-- Doesn't run independently
-- It's a capability, not an identity
+- Doesn't run independently -- it's a capability, not an identity
 
-### Use a Separate Agent when:
-- Needs persistent 🪸 memory separate from main agent
-- Needs its own identity (e.g., trading bot with different risk parameters)
+**Use a Separate Agent when:**
+- Needs its own persistent 🪸 memory or identity (e.g., trading bot with different risk parameters)
 - Runs independently and proactively
 - Communicates through different channels
 
@@ -882,7 +890,7 @@ npx openclaw uninstall           # Complete clean removal
 
 ## Course Completion Checklist
 
-### You should now have:
+**You should now have:**
 - **Your agent** -- a fully configured AI assistant running 24/7
 - **Security** -- sandboxing, tool policies, authentication, incident response plan
 - **Communication** -- Telegram (and optionally Discord/WhatsApp)
@@ -890,11 +898,9 @@ npx openclaw uninstall           # Complete clean removal
 - **🐠 Skills** -- from ClawHub and custom-built
 - **Knowledge** -- how it all works, how to maintain it, how to troubleshoot it
 
-### What to do next:
-- Use it daily -- 🪸 memory builds over time
-- Update core files monthly -- your goals change
-- Try reverse prompting weekly
-- Join the 🦞 OpenClaw Discord community
+**What to do next:**
+- Use it daily (🪸 memory builds over time) and update core files monthly
+- Try reverse prompting weekly -- join the 🦞 OpenClaw Discord community
 
 ---
 

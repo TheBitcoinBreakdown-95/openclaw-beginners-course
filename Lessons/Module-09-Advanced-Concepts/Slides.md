@@ -485,20 +485,18 @@ Running 🦞 OpenClaw with a single frontier model for all tasks is the **#1 cos
 
 Split your workload between expensive and cheap models:
 
-### The Brain (Opus 4.6)
+**The Brain (Opus 4.6):**
 - Complex decisions and strategy
 - Creative writing
 - Prompt injection defense
 - Orchestrating other models
 
-### The Muscles (Cheaper Models)
+**The Muscles (Cheaper Models):**
 - **Haiku 4.5** -- quick lookups, heartbeats ($1-5/MTok)
 - **Sonnet 4.5** -- code generation, summarization ($5-15/MTok)
 - **Codex** -- development tasks (varies)
 
-> The brain handles the **hard stuff**. The muscles handle the **grunt work**.
-
-<!-- Speaker notes: Think of it like a CEO and their team. The CEO makes the big decisions. They don't answer every email personally. That's what the team is for. -->
+<!-- Speaker notes: Think of it like a CEO and their team. The CEO makes the big decisions. They don't answer every email personally. The brain handles the hard stuff. The muscles handle the grunt work. -->
 
 ---
 
@@ -512,7 +510,7 @@ A named strategy used by experienced 🦞 OpenClaw operators:
 | **Sub-agent execution** | Sonnet 4.5 | Mid-tier |
 | **Heartbeats/routine** | Haiku 4.5 or Gemini Flash | Minimal |
 
-### Real Cost Benchmarks (Community Data)
+**Real Cost Benchmarks (Community Data):**
 - **Without optimization:** $100-400/month
 - **Well-configured:** $10-50/month
 - **Extreme optimization:** <$10/month
@@ -591,7 +589,9 @@ Analyzes each query using a lightweight classifier, then routes to the cheapest 
 | **Premium** | Best quality, less aggressive routing |
 | **Free** | Zero-cost models only (limited capability) |
 
-### Other routing options:
+---
+
+## Other Routing Options
 
 | Approach | Best For |
 |----------|----------|
@@ -606,11 +606,13 @@ Analyzes each query using a lightweight classifier, then routes to the cheapest 
 
 Every API call re-sends your full system prompt (SOUL.md, AGENTS.md, 🪸 MEMORY.md) -- typically **3,000-14,000 tokens**. You pay full price every time.
 
-### With caching enabled:
+**With caching enabled:**
 - First call pays full price
 - Subsequent calls within the cache window pay **90% less** for cached tokens
 
-### Enable it:
+---
+
+## Enabling Prompt Caching
 
 ```json
 {
@@ -641,7 +643,7 @@ Combine three optimizations for maximum savings:
 
 **99.5% reduction** on heartbeat costs.
 
-> Prompt caching also works for regular conversations -- 90% off system prompt costs for every message after the first in a session.
+<!-- Speaker notes: Prompt caching also works for regular conversations -- 90% off system prompt costs for every message after the first in a session. -->
 
 ---
 
@@ -649,21 +651,25 @@ Combine three optimizations for maximum savings:
 
 🦞 OpenClaw's built-in search is functional, but **Perplexity Pro** is significantly better for research.
 
-### Setup via Open Router:
+**Setup via Open Router:**
 1. Create an account at openrouter.ai
 2. Get your 🔑 API key
 3. Add to 🦞 OpenClaw:
+
 ```bash
 npx openclaw config set models.providers.openrouter.apiKey "YOUR_KEY"
 npx openclaw config set models.search.model "perplexity-pro"
 ```
 
-### Cost tip:
-Save research results as markdown files so you do not pay for the same search twice:
+<!-- Speaker notes: Example: "Save this research to ~/.openclaw/workspace/projects/topic.md" — this way the agent references the saved file instead of re-searching (saves tokens). -->
 
-```
-Save this research to ~/.openclaw/workspace/projects/topic.md
-```
+---
+
+## Perplexity Pro: Cost Tips
+
+**Cost tip:** Save research results as markdown files so you do not pay for the same search twice.
+
+The agent references the saved file instead of re-searching -- saves tokens and money every time.
 
 ---
 
@@ -689,7 +695,7 @@ Individual agents communicating through `sessions_send` is more reliable and che
 
 As you get comfortable, you might want separate agents for different areas of your life.
 
-### The Agentic Company Structure:
+**The Agentic Company Structure:**
 
 **Real example (7 days, ~$600):**
 - **Sam (Chief of Staff)** -- email, calendar, CRM
@@ -697,7 +703,7 @@ As you get comfortable, you might want separate agents for different areas of yo
 - **Ritam (Physics Research)** -- cross-domain synthesis
 - **Personal assistant** -- daily life management
 
-### Individual Agents > Sub-Agents
+**Individual Agents > Sub-Agents:**
 Community consensus: **multiple individual agents** with separate Telegram bots work better than one agent spinning up sub-agents. Sub-agents lose context and forget. Individual agents maintain their own 🪸 memory.
 
 > **Start simple.** One agent is enough for most people. Add more only when you have a clear need.
@@ -708,11 +714,9 @@ Community consensus: **multiple individual agents** with separate Telegram bots 
 
 ## 🚩 Rough Waters: The Coordination Tax
 
-Google DeepMind research: accuracy **saturates or degrades past 4 agents** ("Coordination Tax")
+Google DeepMind research: accuracy **saturates or degrades past 4 agents**. The "17x error trap": more agents = multiplied error rate, not throughput.
 
-The "17x error trap": more agents = multiplied error rate, not throughput.
-
-### The 17 → 4 Consolidation
+**The 17 → 4 Consolidation:**
 One user went from 17 agents to 4 core roles:
 1. **Architect** (CEO) -- strategy, priorities
 2. **Builder** (CTO) -- engineering, quality
@@ -721,21 +725,24 @@ One user went from 17 agents to 4 core roles:
 
 Everything else: a **specialist library** (36+ types) spawned on demand by core agents.
 
-### Sub-Agent Best Practice
-**Values inherit, identity does not.** Don't say "You are the CTO." Say "You are a code security auditor. Apply these standards. Your task: review this module."
+**Sub-Agent Best Practice:**
+**Values inherit, identity does not.** Say "You are a code security auditor. Apply these standards. Your task: review this module."
 
-<!-- Speaker notes: Google DeepMind proved this. More agents doesn't mean more output -- it means more coordination overhead. Three well-designed agents outperform seventeen mediocre ones. Before adding another agent, ask if a skill would do the job instead. -->
+<!-- Speaker notes: Google DeepMind proved this. More agents doesn't mean more output -- it means more coordination overhead. Three well-designed agents outperform seventeen mediocre ones. Before adding another agent, ask if a skill would do the job instead. Don't say "You are the CTO" -- give specific role, standards, and task scope. -->
 
 ---
 
-## The Freshman Rule & 🐙 Multi-Agent 🪸 Memory
+## The Freshman Rule
 
-### The Freshman Rule
 - **One task at a time** -- do not stack requests
 - **Ground-up instructions every time** -- assume the agent knows nothing unless it is in files
 - **If it is not in files, it does not exist** -- never assume agents remember past sessions
 
-### Multi-Agent Memory: 4-Layer Architecture
+> **If you would not expect a new employee to know it without docs, do not expect your agent to know it either.**
+
+---
+
+## 🐙 Multi-Agent 🪸 Memory: 4-Layer Architecture
 
 | Layer | What | Example |
 |-------|------|---------|
@@ -744,34 +751,34 @@ Everything else: a **specialist library** (36+ types) spawned on demand by core 
 | **3: QMD paths** | Cross-agent search via shared indexed paths | Any agent searches another's docs |
 | **4: Coordinator** | Dedicated agent maintaining consistency | Resolves conflicts, propagates updates |
 
-### The Principle
-Treat agent memory like **team documentation** -- shared docs (wiki, style guide), private docs (notes, task context), and a team lead keeping everyone aligned.
-
-> **If you would not expect a new employee to know it without docs, do not expect your agent to know it either.**
+Treat agent memory like **team documentation** -- shared docs, private docs, and a team lead keeping everyone aligned.
 
 ---
 
 ## Reverse Prompting
 
-### The normal way (You tell AI what to do):
+**The normal way** (you tell AI what to do):
 ```
 Build me a landing page for my freelance business.
 ```
 
-### The reverse way (AI tells YOU what to do):
+**The reverse way** (AI tells YOU what to do):
 ```
 Based on everything you know about me, my goals,
 and my current situation, what should I be working
 on right now? What would move the needle the most?
 ```
 
-### Why it is powerful:
-- your agent has **perfect 🪸 memory** of every goal and conversation
-- your agent has **no ego** -- will tell you uncomfortable truths
-- your agent **sees patterns** -- spots contradictions in your behavior
-- your agent is **objective** -- evaluates based on data, not emotion
-
 <!-- Speaker notes: This is a mind-shift. Most people think of AI as "I tell it, it does." Reverse prompting flips that. You ask your agent to analyze your situation and tell you what to do. Try it once -- it's surprisingly insightful. -->
+
+---
+
+## Why Reverse Prompting Works
+
+- Your agent has **perfect 🪸 memory** of every goal and conversation
+- Your agent has **no ego** -- will tell you uncomfortable truths
+- Your agent **sees patterns** -- spots contradictions in your behavior
+- Your agent is **objective** -- evaluates based on data, not emotion
 
 ---
 
@@ -779,29 +786,24 @@ on right now? What would move the needle the most?
 
 **Strategic:**
 ```
-What am I overlooking? Based on my goals and what
-I've been working on, what blind spots do you see?
+What am I overlooking? Based on my goals, what blind spots do you see?
 ```
 
 **Accountability:**
 ```
-Review my goals from last month. What did I accomplish?
-What did I skip? What pattern do you notice?
+Review my goals from last month. What did I accomplish? What did I skip?
 ```
 
 **Self-improvement:**
 ```
-Based on our interactions, what are my three biggest
-strengths and three biggest weaknesses in how I work?
+Based on our interactions, what are my three biggest strengths and weaknesses?
 ```
 
 ---
 
-## Self-Improvement Workflows
+## Self-Improvement: Weekly Agent Tuning
 
-### Weekly Agent Tuning (make it a cron job):
-
-Ask your agent:
+Make it a cron job -- ask your agent:
 1. What instructions in your core files feel unclear?
 2. What information about me seems outdated?
 3. What do I keep asking that should be in your 🪸 memory?
@@ -810,15 +812,19 @@ Ask your agent:
 
 Then **actually implement** the suggestions by editing core files.
 
-### Context Optimization:
+---
+
+## Self-Improvement: Token Hygiene
+
+**Context Optimization:**
 - Use `/compact` to reduce conversation history
 - Start new sessions with `/new` for new topics
 - Disable unused 🐠 skills to reduce per-message context
 
-### The Docs Folder Pattern
-Save ALL web research as markdown files in `~/.openclaw/workspace/docs/`. Agent references these instead of re-searching (saves tokens). Avoid the #1 waste: paying to re-search topics you've already researched.
+**The Docs Folder Pattern:**
+Save ALL web research as markdown files in `~/.openclaw/workspace/docs/`. Agent references these instead of re-searching. Avoid the #1 waste: paying to re-search topics you already researched.
 
-### Token Hygiene
+**Token Hygiene:**
 Review MEMORY.md and TOOLS.md weekly. Remove outdated entries, compress verbose sections. Set 80K token memory flush + 80K compaction threshold.
 
 ---
@@ -829,25 +835,29 @@ Review MEMORY.md and TOOLS.md weekly. Remove outdated entries, compress verbose 
 
 A model that writes beautiful essays may **completely fail** at agentic work. Chat benchmarks do not measure tool-calling reliability, multi-step planning, or error recovery.
 
-### Proven for Agentic Work
-| Model | Strengths |
-|-------|----------|
-| **Claude Sonnet 4.5 / Opus 4.6** | Reliable tool calls, strong planning, consistent execution |
-| **GPT-5.2** | Solid multi-step reasoning, dependable function calling |
-| **Kimi K2 / K2.5** | Comparable to Opus on many tasks, excellent cost-to-quality ratio |
+| Model | Verdict | Notes |
+|-------|---------|-------|
+| **Claude Sonnet 4.5 / Opus 4.6** | Proven | Reliable tool calls, strong planning |
+| **GPT-5.2** | Proven | Solid multi-step reasoning |
+| **Kimi K2 / K2.5** | Proven | Comparable to Opus, excellent cost ratio |
+| **DeepSeek Reasoner** | Avoid | Broken tool calls -- reasons well, fails to execute |
+| **GPT-5.1 Mini** | Avoid | Skips steps, incomplete multi-step results |
 
-### Avoid for Autonomous Tasks
-| Model | Problem |
-|-------|---------|
-| **DeepSeek Reasoner** | Great at thinking and analysis, but **broken tool calls** -- it reasons beautifully then fails to execute |
-| **GPT-5.1 Mini** | Skips steps, takes shortcuts, produces incomplete results on multi-step tasks |
+<!-- Speaker notes: Students will see a model topping the chat leaderboard and assume it's the best choice for OpenClaw. Agentic work is a completely different evaluation axis. The DeepSeek example resonates because it genuinely is an excellent reasoning model that falls apart the moment you need it to call tools reliably. -->
 
-### The 3-Tool-Call Test
-Before trusting any model for autonomous work, give it a task requiring **at least 3 sequential tool calls** (e.g., "search for X, save results to a file, then summarize the file"). If it drops a step, misformats a call, or hallucinates a tool -- it is not ready for agentic work.
+---
+
+<!-- _class: warning -->
+
+## 🚩 The 3-Tool-Call Test
+
+Before trusting any model for autonomous work, give it a task requiring **at least 3 sequential tool calls** (e.g., "search for X, save results to a file, then summarize the file").
+
+If it drops a step, misformats a call, or hallucinates a tool -- it is not ready for agentic work.
 
 > **The cheapest model is not always the cheapest *effective* model.** A $0.50 model that fails 40% of the time costs more than a $3.00 model that succeeds every time -- because you pay for retries, debugging, and lost output.
 
-<!-- Speaker notes: This slide addresses a common misconception. Students will see a model topping the chat leaderboard and assume it's the best choice for OpenClaw. Agentic work is a completely different evaluation axis. The 3-tool-call test is a practical heuristic they can use immediately. The DeepSeek example resonates because it genuinely is an excellent reasoning model that falls apart the moment you need it to call tools reliably. -->
+<!-- Speaker notes: The 3-tool-call test is a practical heuristic students can use immediately to evaluate any model before trusting it for autonomous work. -->
 
 ---
 
@@ -871,16 +881,16 @@ Before trusting any model for autonomous work, give it a task requiring **at lea
 
 ## ⚙️ Hands on Deck: Design Your Ideal 🐙 Multi-Agent Setup
 
-### Part 1: Map Your Life Domains (10 min)
+**Part 1: Map Your Life Domains (10 min)**
 - List 3-5 areas: personal, professional, business, creative, other
 
-### Part 2: Design the Roles (10 min)
+**Part 2: Design the Roles (10 min)**
 For each domain:
 - What would the agent focus on?
 - What personality should it have?
 - What model should it use?
 
-### Part 3: Start Simple (5 min)
+**Part 3: Start Simple (5 min)**
 - Pick the **ONE domain** that would benefit most
 - That is your first agent -- master it before adding more
 
