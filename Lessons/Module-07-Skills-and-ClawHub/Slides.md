@@ -446,7 +446,7 @@ By the end of this module, you will be able to:
 | Term | Definition |
 |------|-----------|
 | **Skill** | A plugin for 🦞 OpenClaw — markdown with YAML front matter that teaches your agent a new capability |
-| **ClawHub** | The 🦀 community marketplace for OpenClaw skills (5,700+ available) |
+| **ClawHub** | The 🦀 community marketplace for OpenClaw skills (thousands available) |
 | **YAML front matter** | The metadata section at the top of a skill file, between `---` markers |
 | **Token impact** | The context window space a skill uses. More skills = less room for conversation |
 
@@ -512,7 +512,7 @@ When this skill is active and you say "check my inbox," your agent knows exactly
 
 ## Browsing 🦀 ClawHub
 
-**Over 5,700 skills available.** Browse from terminal or TUI:
+**Thousands of skills available.** Browse from terminal or TUI:
 
 ```bash
 npx clawhub search               # Terminal — or /clawhub search in TUI
@@ -747,11 +747,11 @@ Keep **domain allowlists minimal**. Use `domain_secrets` for auth instead of emb
 
 ---
 
-## The "Twice = Skill" Rule
+## The Rule of Three
 
-### If you do something more than twice, make a 🐠 skill for it
+### First = explore. Second = recognize. Third = encode as a 🐠 skill.
 
-- First time is exploration. Second time is a pattern. **Third time is waste.**
+- First time is exploration. Second time is pattern recognition. **Third time — encode it.**
 - Turn any repeated workflow into a skill and never explain the process again.
 
 > Ask yourself: "Have I explained this to my agent before?" If yes, write a skill so you never have to again.
@@ -887,7 +887,7 @@ npx clawhub delete obsidian-notes
 ## 💎 Treasure Chest
 
 1. **Skills are markdown files with YAML metadata** — they teach your agent new capabilities through instructions
-2. **ClawHub has 5,700+ skills** — browse before building from scratch
+2. **ClawHub has thousands of skills** — browse before building from scratch
 3. **Always inspect before installing** — read the full content and check for security issues
 4. **Pin your skill versions** — use `--pin` to lock versions and detect integrity drift
 5. **Token impact matters** — every active skill uses context window space; only keep what you need

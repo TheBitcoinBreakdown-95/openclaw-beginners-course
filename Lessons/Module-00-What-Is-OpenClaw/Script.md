@@ -329,7 +329,9 @@ Alright — before myths and the exercise, I need to get in your head for a minu
 
 One — think captain and crew, not user and tool. You're the captain. Your agent is your crew. You don't tell crew which knot to tie and in what order and how tight. You say "get us to that island by sunset" and they figure it out. Give goals, not step-by-step instructions. The AI is dramatically better at figuring out the HOW than you are at dictating it. Let go of the wheel. Point at the horizon. Trust the crew.
 
-Two — hands OFF the config files. I mean it. If you want your agent to behave differently, TELL it. In English. "Hey, change your heartbeat to every fifteen minutes." Done. "Start checking my email every morning." Done. Your agent can edit its own configuration files faster and more accurately than you can. Every time you go manually poking around in JSON, you're doing it worse than your agent would. Just talk to it.
+Two — hands OFF the JSON config files. I mean it. If you want your agent to behave differently, TELL it. In English. "Hey, change your heartbeat to every fifteen minutes." Done. "Start checking my email every morning." Done. Your agent can edit its own JSON configuration files faster and more accurately than you can. Every time you go manually poking around in JSON, you're doing it worse than your agent would. Just talk to it.
+
+Now — the workspace markdown files? SOUL.md, IDENTITY.md, USER.md? Those are YOURS. You will absolutely edit those directly. We'll cover that in Module 05. But the JSON config? Hands off. Let the agent handle it.
 
 Three — reverse prompting. This is your SECRET WEAPON and almost nobody discovers it on their own. Instead of always barking orders at your agent, flip it. ASK: "What should we work on today?" or "How would you improve our current setup?" or "Based on everything you know about me, what am I forgetting?" Let the agent propose a course. You approve or redirect. That feedback loop is absurdly powerful. It's like having a first officer who's constantly scanning the horizon and going "captain, I see something over there — want to check it out?"
 

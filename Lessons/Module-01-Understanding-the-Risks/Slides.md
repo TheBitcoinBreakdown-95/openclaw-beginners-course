@@ -652,14 +652,14 @@ If the AI does not recognize this as injection, it executes a **malicious script
 
 ## 🚩 Rough Waters: The $800 🔑 API Bill
 
-**Setup:** User configures pay-per-use API key. Runs 8 agents simultaneously. No spending limit.
+**Setup:** User signs up for pay-per-use API billing (not a flat-rate membership). Runs 8 agents simultaneously. No spending limit set.
 
-**What goes wrong:** $800 burned in less than a week before anyone noticed.
+**What goes wrong:** $800 burned in less than a week — pay-per-use billing with no cap and 8 agents running 24/7.
 
 **Lessons:**
-- **Always set a hard spending limit** -- Anthropic Console > Settings > Usage Limits
+- **Always set a hard spending limit** if using pay-per-use API billing
+- **Consider a flat-rate membership** or the free Gemini path (Module 03)
 - **Start with one agent** and monitor daily for the first week
-- **Use cheap models for routine tasks** -- Haiku for heartbeats, Sonnet for simple tasks
 
 ---
 

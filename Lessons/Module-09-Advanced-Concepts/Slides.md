@@ -493,7 +493,7 @@ Split your workload between expensive and cheap models:
 
 **The Muscles (Cheaper Models):**
 - **Haiku 4.5** -- quick lookups, heartbeats ($1-5/MTok)
-- **Sonnet 4.5** -- code generation, summarization ($5-15/MTok)
+- **Sonnet 4.6** -- code generation, summarization ($3-15/MTok)
 - **Codex** -- development tasks (varies)
 
 <!-- Speaker notes: Think of it like a CEO and their team. The CEO makes the big decisions. They don't answer every email personally. The brain handles the hard stuff. The muscles handle the grunt work. -->
@@ -507,7 +507,7 @@ A named strategy used by experienced 🦞 OpenClaw operators:
 | Role | Model | Cost |
 |------|-------|------|
 | **Orchestration/decisions** | Opus 4.6 | Premium |
-| **Sub-agent execution** | Sonnet 4.5 | Mid-tier |
+| **Sub-agent execution** | Sonnet 4.6 | Mid-tier |
 | **Heartbeats/routine** | Haiku 4.5 or Gemini Flash | Minimal |
 
 **Real Cost Benchmarks (Community Data):**
@@ -523,10 +523,10 @@ A named strategy used by experienced 🦞 OpenClaw operators:
 | Task | Recommended Model | Why |
 |------|------------------|-----|
 | Important conversations | Opus 4.6 | Best reasoning, most nuanced |
-| Code generation | Sonnet 4.5 or Codex | Optimized for code, cheaper |
+| Code generation | Sonnet 4.6 or Codex | Optimized for code, cheaper |
 | Heartbeats | Haiku 4.5 | Routine checks, very cheap |
 | Web search | Perplexity Pro | Built for search |
-| Document summarization | Sonnet 4.5 | Good enough, much cheaper |
+| Document summarization | Sonnet 4.6 | Good enough, much cheaper |
 | Quick factual lookups | Haiku 4.5 | Fast and cheap |
 
 <!-- Speaker notes: This is the cheat sheet. Match the task to the model. The goal is to use the cheapest model that can handle the job well. The second half of this table covers creative, security, and budget options. -->
@@ -551,7 +551,7 @@ Switch models during a conversation without starting a new session:
 
 ```
 /model claude-opus-4-6       # Expensive, best quality
-/model claude-sonnet-4-5      # Good balance
+/model claude-sonnet-4-6      # Good balance
 /model claude-haiku-4-5       # Fast and cheap
 ```
 
@@ -574,7 +574,7 @@ Analyzes each query using a lightweight classifier, then routes to the cheapest 
 | **Simple** | Basic lookups, acknowledgments | DeepSeek, Gemini Flash | ~$0.27-0.60/MTok |
 | **Medium** | Moderate tasks, summarization | GPT-4o-mini, Sonnet | ~$1-5/MTok |
 | **Complex** | Analysis, writing, decisions | Claude Sonnet | ~$3-15/MTok |
-| **Heavy** | Multi-step reasoning, agentic tasks | Opus 4.6, Kimi K2.5 | ~$5-25/MTok |
+| **Heavy** | Multi-step reasoning, agentic tasks | Opus 4.6, Kimi K2.5 | ~$15-75/MTok |
 
 <!-- Speaker notes: This is the table to remember. ClawRouter looks at your query, figures out how hard it is, and sends it to the cheapest model that can handle it. Simple questions go to a $0.27 model. Only the hard stuff hits Opus. -->
 
@@ -837,7 +837,7 @@ A model that writes beautiful essays may **completely fail** at agentic work. Ch
 
 | Model | Verdict | Notes |
 |-------|---------|-------|
-| **Claude Sonnet 4.5 / Opus 4.6** | Proven | Reliable tool calls, strong planning |
+| **Claude Sonnet 4.6 / Opus 4.6** | Proven | Reliable tool calls, strong planning |
 | **GPT-5.2** | Proven | Solid multi-step reasoning |
 | **Kimi K2 / K2.5** | Proven | Comparable to Opus, excellent cost ratio |
 | **DeepSeek Reasoner** | Avoid | Broken tool calls -- reasons well, fails to execute |

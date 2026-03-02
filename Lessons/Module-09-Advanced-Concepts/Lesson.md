@@ -40,7 +40,7 @@ This is the single most important cost optimization technique for OpenClaw users
 
 Running OpenClaw with a single frontier model for all tasks is the #1 cost mistake users make. You can easily run up a monthly API bill in the **$1,000s** even with basic usage.
 
-Why? Because OpenClaw sends *everything* to your primary model by default. Heartbeats, sub-agent tasks, simple calendar lookups, web searches — all go to your primary model. If that's Opus 4.6 ($5/$25 per million tokens), you're paying premium prices for tasks a $0.30 model could handle.
+Why? Because OpenClaw sends *everything* to your primary model by default. Heartbeats, sub-agent tasks, simple calendar lookups, web searches — all go to your primary model. If that's Opus 4.6 ($15/$75 per million tokens), you're paying premium prices for tasks a $0.30 model could handle.
 
 The costs compound through five mechanisms:
 
@@ -128,7 +128,7 @@ Don't overlook these — they can handle significant workloads at minimal or zer
 | **Kimi K2.5** (via NVIDIA build.nvidia.com) | **Free** | Comparable to Opus 4.5 on many tasks | Complex reasoning without cost |
 | **MiniMax M2.5** | ~$10-50/month | Surprisingly powerful for its price; Max plan gives 1,000 prompts per 5 hours | Budget primary model |
 | **Google Cloud free credits** | **$300 free** | Sign-up credits for Gemini 2/2.5/3 Flash/Pro | Getting started at zero cost (rate limits apply) |
-| **DeepSeek** | Very cheap | Strong coding and reasoning | Code generation, analysis |
+| **DeepSeek** | Very cheap | Strong coding and reasoning (not for autonomous agent tasks — see "Models to avoid" below) | Simple routing, code analysis |
 
 Kimi K2.5 is the community's current favorite free option — it's accessed through NVIDIA's API and delivers quality that rivals much more expensive models.
 
@@ -167,10 +167,10 @@ This distinction matters because the cheapest model isn't always the cheapest *e
 | Task | Recommended Model | Why |
 |------|------------------|-----|
 | Important conversations | Opus 4.6 | Best reasoning, most nuanced |
-| Code generation | Sonnet 4.5 or Codex | Optimized for code, cheaper |
+| Code generation | Sonnet 4.6 or Codex | Optimized for code, cheaper |
 | Heartbeats | Haiku 4.5 | Routine checks, very cheap |
 | Web search | Perplexity Pro (via Open Router) | Built for search |
-| Document summarization | Sonnet 4.5 | Good enough, much cheaper |
+| Document summarization | Sonnet 4.6 | Good enough, much cheaper |
 | Quick factual lookups | Haiku 4.5 or Kimi K2.5 | Fast and cheap (or free) |
 | Creative writing | Opus 4.6 | Best quality |
 | Security-sensitive tasks | Opus 4.6 | Best prompt injection resistance |
@@ -242,7 +242,7 @@ ClawRouter is the hottest new tool in the OpenClaw ecosystem — 2,400 GitHub st
 | **Simple** | Basic lookups, acknowledgments | DeepSeek, Gemini Flash | ~$0.27-0.60/MTok |
 | **Medium** | Moderate tasks, summarization | GPT-4o-mini, Sonnet | ~$1-5/MTok |
 | **Complex** | Analysis, writing, decisions | Claude Sonnet | ~$3-15/MTok |
-| **Heavy** | Multi-step reasoning, agentic tasks | Opus 4.6, Kimi K2.5 | ~$5-25/MTok |
+| **Heavy** | Multi-step reasoning, agentic tasks | Opus 4.6, Kimi K2.5 | ~$15-75/MTok |
 
 **ClawRouter profiles:**
 - **Auto** — balanced quality and cost (recommended starting point)
@@ -264,9 +264,9 @@ class RouterSkill(Skill):
     def __init__(self):
         self.rules = {
             r'code|debug|script': 'openai/gpt-5.2-turbo',
-            r'email|schedule|remind': 'anthropic/claude-3-haiku-20240307',
-            r'plan|strategy|brainstorm': 'anthropic/claude-3-opus-20240229',
-            'default': 'google/gemini-flash-1.5'
+            r'email|schedule|remind': 'anthropic/claude-haiku-4-5',
+            r'plan|strategy|brainstorm': 'anthropic/claude-opus-4-6',
+            'default': 'google/gemini-2.5-flash'
         }
 
     async def execute(self, context: Context):
@@ -300,7 +300,7 @@ llm:
         max_cost: 0.50
       - task: "coding"
         model: "openai/gpt-5.2-turbo"
-      - fallback: "anthropic/claude-3-haiku-20240307"
+      - fallback: "anthropic/claude-haiku-4-5"
 ```
 
 Create a free account at https://openrouter.ai/, fund it with credits, update your config, and let OpenRouter handle the routing. Access 300+ models through a single API.

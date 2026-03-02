@@ -49,7 +49,7 @@ Before we hoist the sails, let's get our language straight. Four terms you need 
 
 First: SKILL. A skill is a plugin for OpenClaw. But it is not like a traditional software plugin where you need to compile code or install binaries. A skill is just a markdown file with YAML front matter at the top. That is it. A text file that teaches your agent a new capability. Simple, powerful, and a little bit dangerous, which we will get to.
 
-Second: CLAWHUB. This is the community marketplace for OpenClaw skills. Think of it like the npm registry, or the App Store, but for your agent's abilities. Over 5,700 skills available. Anyone can publish. Anyone can install. Remember that "anyone can publish" part.
+Second: CLAWHUB. This is the community marketplace for OpenClaw skills. Think of it like the npm registry, or the App Store, but for your agent's abilities. Thousands of skills available. Anyone can publish. Anyone can install. Remember that "anyone can publish" part.
 
 Third: YAML FRONT MATTER. This is the metadata section at the very top of a skill file, sandwiched between two sets of triple dashes. It tells OpenClaw the skill's name, what it does, what triggers it, and what tools it needs. Think of it as the label on the cargo crate.
 
@@ -125,7 +125,7 @@ That connection between trigger words and specific tool commands is what makes s
 
 Now, before you go building every skill from scratch, let me introduce you to ClawHub. Because chances are, someone has ALREADY built what you need.
 
-Over 5,700 skills available. That is a LOT of pre-built capability sitting there waiting for you.
+Thousands of skills available. That is a LOT of pre-built capability sitting there waiting for you.
 
 You can browse from the terminal with `npx clawhub search`. You can do it from inside the TUI with `/clawhub search`. Either way, you will see a categorized list of everything available.
 
@@ -361,13 +361,13 @@ Those four practices will level up every skill you build. Better descriptions, r
 
 ---
 
-## Slide 21 — The "Twice = Skill" Rule
+## Slide 21 — The Rule of Three
 
-I have a RULE I want you to tattoo on your forearm. The "Twice Equals Skill" rule.
+I have a RULE I want you to tattoo on your forearm. The Rule of Three.
 
-The first time you do something is exploration. You are figuring it out. The second time is a pattern. You recognize you are repeating yourself. The THIRD time? That is waste. Pure waste. You are spending time and tokens explaining something you have already explained twice.
+The first time you do something is exploration. You are figuring it out. The second time is pattern recognition. You notice you are repeating yourself. The THIRD time? That is when you encode it as a skill. That third repetition is waste — pure waste. You are spending time and tokens explaining something you have already explained twice.
 
-So the rule is simple. If you do something more than twice, MAKE A SKILL FOR IT. Do not wait for the fifth or tenth time. The moment you catch yourself repeating an instruction, an email format, a research structure, a report template, turn it into a skill. It costs nothing when it is sleeping and saves you time and tokens EVERY time it fires.
+So the rule is simple. First time — explore. Second time — recognize the pattern. Third time — stop and MAKE A SKILL FOR IT. Do not let it get to the fifth or tenth time. An email format, a research structure, a report template — the third time you explain it, turn it into a skill. It costs nothing when it is sleeping and saves you time and tokens EVERY time it fires.
 
 [pause]
 
@@ -521,7 +521,7 @@ Alright, let me lock in what we learned today. Eight takeaways. These are the ge
 
 One: skills are markdown files with YAML metadata. They teach your agent new capabilities through instructions. Simple, powerful, text-based.
 
-Two: ClawHub has over 5,700 skills. Browse before you build from scratch.
+Two: ClawHub has thousands of skills. Browse before you build from scratch.
 
 Three: ALWAYS inspect before installing. Read the full content. Check for security issues. Remember the supply chain attack. Remember the 1,184 malicious skills.
 
@@ -529,7 +529,7 @@ Four: pin your skill versions. Use that `--pin` flag every single time.
 
 Five: token impact matters. Every active skill uses context window space. Only keep what you need active.
 
-Six: building custom skills is EASY. If you can write instructions for a human, you can write a skill. The "Twice Equals Skill" rule: if you repeat it, automate it.
+Six: building custom skills is EASY. If you can write instructions for a human, you can write a skill. The Rule of Three: first time you explore, second time you recognize the pattern, third time you encode it as a skill.
 
 Seven: VirusTotal scanning helps but is NOT sufficient. Your manual review is the last line of defense.
 

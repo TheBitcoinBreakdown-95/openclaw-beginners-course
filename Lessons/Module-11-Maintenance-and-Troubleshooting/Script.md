@@ -1,7 +1,7 @@
 # Module 11 Teaching Script: Maintenance and Troubleshooting
 
 **Total speaking time:** ~30 minutes
-**Slides:** 28
+**Slides:** 35
 
 ---
 
@@ -219,9 +219,17 @@ Step one: BACK UP FIRST. Before you touch anything. `cd ~/.openclaw && git add -
 
 Step two: Save your current state. `npx openclaw status --json > ~/pre-update-status.json`. This gives you a snapshot you can compare against after the update, in case something subtle changes.
 
+---
+
+## Slide 11 — Updating OpenClaw (continued)
+
 Step three: Run the update. `npx openclaw update`. That's the actual update command.
 
 Step four: After updating — restart the gateway, check status, run the doctor, run a security audit. Four commands, takes thirty seconds, and confirms everything came through clean.
+
+---
+
+## Slide 12 — If an Update Breaks Something
 
 And if the update BREAKS something? Don't panic. You backed up. You can roll back to the previous version with `npm install -g @tinybox/openclaw@` and the previous version number. Restart. You're back to where you were. The backup saves you. The backup ALWAYS saves you. That's why we do the backup.
 
@@ -231,13 +239,17 @@ Back up. Update. Verify. That's the rhythm. Never skip a beat.
 
 ---
 
-## Slide 11 — Backup and Restore
+## Slide 13 — Backup and Restore
 
 Let's talk about backups properly because this is the single most important habit you will build as an OpenClaw operator.
 
 Two methods. Quick backup with Git — `cd ~/.openclaw && git add -A && git commit -m "Backup"`. Fast, lightweight, version-controlled. You can roll back to any previous commit. This is your daily and weekly workhorse.
 
 Full backup with an archive — `tar -czf` and a filename with today's date. This creates a compressed snapshot of your ENTIRE OpenClaw directory. Good for before major changes, or for copying to an external drive, or for that "just in case the whole laptop dies" scenario.
+
+---
+
+## Slide 14 — What to Back Up
 
 Now — what to back up and what's the priority.
 
@@ -259,7 +271,7 @@ Git commit. Every week. I will haunt your dreams if you don't.
 
 ---
 
-## Slide 12 — Debugging Mindset
+## Slide 15 — Debugging Mindset
 
 Before we dive into the error catalog, I need to install two rules in your brain. Two rules that will save you HOURS of frustration. Maybe days. Maybe your sanity.
 
@@ -283,7 +295,7 @@ The pattern that works: Get ONE workflow running end-to-end. Running without you
 
 ---
 
-## Slide 13 — Damage Control: Gateway Errors
+## Slide 16 — Damage Control: Gateway Errors
 
 Alright, here we go. The error catalog. These are the most common problems you'll hit, and I'm giving you the exact fix for each one. This is your field guide. Dog-ear this page.
 
@@ -292,6 +304,10 @@ Alright, here we go. The error catalog. These are the most common problems you'l
 "Gateway not running." The classic. `npx openclaw status` shows "Stopped." The gateway crashed or wasn't started. Fix: `npx openclaw gateway start`. Then check the logs with `npx openclaw logs` to find out WHY it stopped in the first place. Don't just restart and walk away — find the cause.
 
 "Port already in use." The gateway tries to start but something else is already using port 18789. Find the culprit with `lsof -i :18789`, kill it, or change your port with `npx openclaw config set gateway.port 18790`. Usually this means a zombie gateway process from a previous crash is still hanging around.
+
+---
+
+## Slide 17 — Damage Control: Gateway Errors (continued)
 
 "Gateway keeps crashing." Starts and stops repeatedly. Check the logs for specific errors. Run `npx openclaw doctor --repair`. If you recently installed a plugin, that might be your problem — plugins run IN-PROCESS, so a buggy plugin crash IS a gateway crash. Try disabling recent plugins. If nothing works, restore config from backup and restart.
 
@@ -303,7 +319,7 @@ Gateway errors are the most common category. And the good news? Every single one
 
 ---
 
-## Slide 14 — Damage Control: API and Channels
+## Slide 18 — Damage Control: API and Channels
 
 API errors. These are about your connection to the AI brain.
 
@@ -325,7 +341,7 @@ API and channel errors are almost always quick fixes. The trick is KNOWING what 
 
 ---
 
-## Slide 15 — Damage Control: Ubuntu System
+## Slide 19 — Damage Control: Ubuntu System
 
 Ubuntu system errors. These are about the foundation your ship sits on.
 
@@ -339,7 +355,7 @@ Ubuntu is solid — far more stable than the WSL approach some older tutorials t
 
 ---
 
-## Slide 16 — Damage Control: Performance
+## Slide 20 — Damage Control: Performance
 
 Performance issues. These are the sneaky ones because nothing is technically BROKEN — it's just slow or weird or getting progressively worse.
 
@@ -355,7 +371,7 @@ Performance issues are never emergencies. But they're always annoying. And now y
 
 ---
 
-## Slide 17 — Command Cheat Sheet: Gateway and Status
+## Slide 21 — Command Cheat Sheet: Gateway and Status
 
 Okay, crew. We've reached the part of this module that I'm most excited about. The command cheat sheet. This is your gift. Your parting treasure. The map that keeps giving after the course is over.
 
@@ -381,7 +397,7 @@ These eight commands are your core toolkit. You'll use them more than anything e
 
 ---
 
-## Slide 18 — Command Cheat Sheet: Security
+## Slide 22 — Command Cheat Sheet: Security Audit
 
 Security commands. Module Ten gave you the theory. These are the actual tools.
 
@@ -395,6 +411,10 @@ Security commands. Module Ten gave you the theory. These are the actual tools.
 
 `npx openclaw config get gateway.bind` — check your bind address. This should be loopback. If it's not loopback and you don't have a VERY good reason, change it back to loopback.
 
+---
+
+## Slide 23 — Command Cheat Sheet: Sandboxing and Tools
+
 `npx openclaw config set sandbox.mode` — set your sandboxing mode. Off, non-main, or all. We went deep on this in Module Ten.
 
 `npx openclaw config set tools.deny` — deny a specific tool. If there's a tool your agent should NEVER have access to, this is how you block it.
@@ -405,7 +425,7 @@ Security commands aren't exciting. They're not flashy. But they're the differenc
 
 ---
 
-## Slide 19 — Command Cheat Sheet: Configuration
+## Slide 24 — Command Cheat Sheet: Configuration
 
 Configuration commands. The knobs and dials of your ship.
 
@@ -425,7 +445,7 @@ These are the commands you will use most often when tweaking your setup. Config 
 
 ---
 
-## Slide 20 — Command Cheat Sheet: Channels and Cron Jobs
+## Slide 25 — Command Cheat Sheet: Channels and Cron Jobs
 
 Channel commands. Your messaging connections.
 
@@ -445,11 +465,15 @@ Channels and cron jobs. The connections and the schedules that keep your ship ru
 
 ---
 
-## Slide 21 — Command Cheat Sheet: Skills and TUI
+## Slide 26 — Command Cheat Sheet: Skills
 
 Last category. Skills and TUI commands.
 
 Skills management. `npx clawhub search` — search ClawHub. Window shopping for new capabilities. `npx clawhub search` — search for something specific. `npx clawhub install` — install a skill. `npx openclaw skills list` — see what you've got installed. `npx openclaw config set skills.entries.[name].enabled true` and `false` — toggle skills on and off without uninstalling them. This is KEY for cost management. Disable what you're not using. Re-enable when you need it.
+
+---
+
+## Slide 27 — Command Cheat Sheet: TUI Slash Commands
 
 And then the TUI commands — the ones you type INSIDE the chat with your agent.
 
@@ -473,7 +497,7 @@ That's the complete cheat sheet. Every command you'll ever need for daily operat
 
 ---
 
-## Slide 22 — Troubleshooting and Nuclear Options
+## Slide 28 — Troubleshooting and Nuclear Options
 
 Two more categories before we get to the emergency procedure.
 
@@ -493,7 +517,7 @@ Both of these are IRREVERSIBLE. That's why I said nuclear. You MUST have a Git b
 
 ---
 
-## Slide 23 — Rough Waters: Emergency Quick Reference
+## Slide 29 — Rough Waters: Emergency Quick Reference
 
 Now. The emergency procedure. We covered incident response in Module Ten, but this is the condensed, print-it-out, tape-it-next-to-your-monitor version. Five steps. In order. No thinking required.
 
@@ -517,7 +541,7 @@ Stop. Close. Freeze. Investigate. Restore. Perfect. Now PRINT THAT TABLE and kee
 
 ---
 
-## Slide 24 — Community Resources
+## Slide 30 — Community Resources
 
 You are not alone out there. I need you to internalize that. When you leave this course, you are NOT sailing solo into empty ocean. There's an entire fleet out there.
 
@@ -533,11 +557,15 @@ ClawHub. The skills marketplace. Community-contributed skills you can install wi
 
 [pause]
 
+---
+
+## Slide 31 — When Asking for Help
+
 And here's the KEY to getting good help when you need it. Five things to include EVERY TIME you ask a question. What you were trying to do. The exact error message — not a summary, the EXACT message. Your OpenClaw version. Your OS. And what you've already tried. Include those five things and you'll get a useful answer. Leave them out and you'll get "can you provide more info?" back and forth for three hours. Don't waste your time or theirs. Give them what they need upfront.
 
 ---
 
-## Slide 25 — Skills vs. Agents: Know the Difference
+## Slide 32 — Skills vs. Agents: Know the Difference
 
 One more thing before we wrap up the technical content. This is a trap that catches EVERYONE eventually, and I want to inoculate you against it right now.
 
@@ -557,7 +585,7 @@ Default to skills. ALWAYS default to skills. Only create a new agent when you ge
 
 ---
 
-## Slide 26 — Course Completion Checklist
+## Slide 33 — Course Completion Checklist
 
 Let's take inventory. Let's see what you've actually built over these twelve modules.
 
@@ -587,7 +615,7 @@ Join the OpenClaw Discord community. The people there are where you were twelve 
 
 ---
 
-## Slide 27 — Treasure Chest (Key Takeaways)
+## Slide 34 — Treasure Chest (Key Takeaways)
 
 Seven takeaways. The treasure chest for Module Eleven. The FINAL treasure chest of the course.
 
@@ -611,7 +639,7 @@ Seven rules. Follow them and your ship sails smooth. Break them and... well, you
 
 ---
 
-## Slide 28 — Bon Voyage!
+## Slide 35 — Bon Voyage!
 
 [pause]
 

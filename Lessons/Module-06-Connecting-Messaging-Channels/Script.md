@@ -245,7 +245,7 @@ And then there's OPEN mode. Open means ANYONE on Telegram — any of Telegram's 
 
 Never. Set. It. To. Open. Not for testing. Not "just to try it." Not because you're curious. Never.
 
-And here's a pro tip — after connecting any new channel, run npx openclaw doctor. It scans your configuration and flags anything risky. Think of it as a hull inspection. Do it every time.
+And here's a pro tip — after connecting any new channel, run npx openclaw doctor dash dash fix. That's `--fix`. It scans your configuration, flags anything risky, and automatically fixes common issues. Think of it as a hull inspection that patches the leaks for you. Do it every time.
 
 ---
 

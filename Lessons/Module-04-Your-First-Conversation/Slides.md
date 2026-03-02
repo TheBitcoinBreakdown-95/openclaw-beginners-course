@@ -614,7 +614,7 @@ patience, directness, and quiet confidence.
 | `/status` | Shows model, tokens, gateway info | System overview |
 | `/compact` | Summarizes conversation to free tokens | Token counter above 50K |
 | `/new` | Starts a fresh session | Switching topics entirely |
-| `/think <level>` | Sets thinking depth (off/low/medium/high) | Complex reasoning tasks |
+| `/think <level>` | Sets thinking depth (off/minimal/low/medium/high/xhigh) | Complex reasoning tasks |
 | `/exit` | Leaves the TUI (also: Ctrl+C) | Done chatting |
 
 <!-- Speaker notes: Five essential commands cover 90% of daily use. /compact is the most important one students tend to forget. -->

@@ -49,7 +49,7 @@ Also decide which AI provider you want to use. Here's the comparison:
 |----------|-------|-------------|-------|-----------|------------|
 | **Google** | Gemini 2.5 Flash | Free | Yes — ~250 req/day | No credit card needed, solid quality, just use your Google account | Free tier limits can change, personality varies |
 | **Anthropic** | Claude Opus 4.6 | ~$200/month | No | Most capable, warmest personality, best prompt injection resistance, recommended by OpenClaw creator | Most expensive, TOS gray area (see warning below) |
-| **Anthropic** | Claude Sonnet 4.5 | ~$50-100/month | No | Good balance of capability and cost | Less capable than Opus |
+| **Anthropic** | Claude Sonnet 4.6 | ~$50-100/month | No | Good balance of capability and cost | Less capable than Opus |
 | **OpenAI** | GPT-4 / GPT-5.2 Turbo | ~$20-200/month | No | Permissive about OpenClaw use, strong coding models | Less "warm" personality |
 | **Kimi** | K2.5 | Very cheap | No | Excellent bang-for-buck, latest open model generation | Newer, less community testing |
 | **MiniMax** | M2.5 | ~$10/month | No | Extremely affordable, recently released, surprisingly powerful | Less capable for complex reasoning, weaker prompt injection resistance |
@@ -80,7 +80,7 @@ You have two options for getting started:
 
 ### The #1 Beginner Mistake: Pay-Per-Use Without Limits
 
-> **Real story from the community:** One user ran 8 agents simultaneously on the pay-per-use Anthropic API without setting a spending limit. They burned through **$800 in less than a week** before realizing what happened. Another user hit 150 million tokens in a single day.
+> **Real story from the community:** One user signed up for pay-per-use Anthropic API billing without setting a spending limit, then ran 8 agents simultaneously. They burned through **$800 in less than a week** before realizing what happened. A flat-rate Claude membership or the free Gemini path would have avoided this entirely.
 
 This is the most expensive mistake new users make, and it happens because pay-per-use billing has no natural ceiling. Every API call, every heartbeat, every cron job costs tokens — and tokens add up fast.
 
@@ -163,9 +163,9 @@ Press Enter to select **Local Gateway**.
 
 **Choose: Accept the default (press Enter)**
 
-The workspace is where OpenClaw stores everything — your agent's memory, configuration, session transcripts, skills, and more. The default `~/.openclaw/` is perfect.
+This sets the OpenClaw root directory. The default `~/.openclaw/` is perfect. Your agent's workspace files (IDENTITY.md, SOUL.md, USER.md, and more) will live inside `~/.openclaw/workspace/`.
 
-> **Note:** This creates the directory in your home directory (`/home/openclaw/.openclaw/`).
+> **Note:** This creates the directory in your home directory (`/home/openclaw/.openclaw/`). Configuration lives at `~/.openclaw/openclaw.json`, while workspace files live at `~/.openclaw/workspace/`.
 
 ---
 
@@ -936,7 +936,7 @@ npx openclaw gateway start
 1. Check your internet: `ping google.com` (Ctrl+C to stop)
 2. AI responses typically take 1-10 seconds. Opus is slower than Sonnet/Haiku
 3. If it's consistently slow (30+ seconds), check the Anthropic status page: status.anthropic.com
-4. Consider using a faster model (Sonnet 4.5) for testing: run `npx openclaw config` and select claude-sonnet-4-5 when prompted for the model
+4. Consider using a faster model (Sonnet 4.6) for testing: run `npx openclaw config` and select claude-sonnet-4-6 when prompted for the model
 
 ### "Insufficient credits" or "Rate limit exceeded"
 
@@ -955,7 +955,7 @@ npx openclaw gateway start
 **Fix (cost management):**
 1. Use the `/compact` command in the TUI to compress your conversation history — this can reduce token usage by ~67%
 2. Start new conversations with `/new` instead of continuing very long ones
-3. Consider using Sonnet 4.5 or Haiku 4.5 for routine tasks
+3. Consider using Sonnet 4.6 or Haiku 4.5 for routine tasks
 4. Monitor your spending at console.anthropic.com
 
 ### "Pairing required" in TUI or Dashboard

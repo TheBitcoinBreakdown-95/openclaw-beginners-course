@@ -1,7 +1,7 @@
 # Module 09 Teaching Script: Advanced Concepts
 
 **Total speaking time:** ~32 minutes (plus 25-minute activity)
-**Slides:** 27
+**Slides:** 34
 
 ---
 
@@ -211,7 +211,7 @@ Good news. It's one command. One. Slash model, model name, done.
 
 Slash model claude-opus-4-6 — switches to Opus. Expensive, best quality. The captain takes the wheel.
 
-Slash model claude-sonnet-4-5 — switches to Sonnet. Good balance. The section lead steps up.
+Slash model claude-sonnet-4-6 — switches to Sonnet. Good balance. The section lead steps up.
 
 Slash model claude-haiku-4-5 — switches to Haiku. Fast and cheap. The ensemble gets to work.
 
@@ -269,6 +269,10 @@ Free — zero-cost models only. Limited capability, but your bill is literally z
 
 [pause]
 
+---
+
+## Slide 13 — Other Routing Options
+
 Now, ClawRouter isn't the ONLY routing option. Let me give you the full landscape.
 
 Manual rules in AGENTS.md — lowest complexity, lowest control. Good for getting started. You just write "for heartbeats, use Haiku; for code, use Sonnet" and hope the agent follows the rules. It usually does. Usually.
@@ -283,7 +287,7 @@ My recommendation? Start with manual rules in AGENTS.md. When you're ready to le
 
 ---
 
-## Slide 13 — Prompt Caching: The Hidden Savings Multiplier
+## Slide 14 — Prompt Caching: The Hidden Savings Multiplier
 
 Okay, this one is the hidden treasure. The chest buried in the sand that most people walk right over.
 
@@ -297,6 +301,10 @@ Prompt caching says: "Hey, you already have this. You already processed it. Just
 
 With caching enabled, the FIRST call pays full price — fair enough, the provider needs to process it once. But every subsequent call within the cache window pays NINETY PERCENT LESS for those cached tokens. Ninety percent.
 
+---
+
+## Slide 15 — Enabling Prompt Caching
+
 To enable it, three lines in your config. Cache retention set to "long" — that gives you Anthropic's extended cache at about fifty-five minutes. Cache system prompts set to true. Cache threshold tokens set to 2,048 — so it only caches prompts above a minimum size, doesn't waste effort on tiny requests.
 
 [pause]
@@ -305,7 +313,7 @@ Three lines of config. Ninety percent savings on system prompt costs. This is th
 
 ---
 
-## Slide 14 — The 55-Minute Heartbeat Trick (Revisited)
+## Slide 16 — The 55-Minute Heartbeat Trick (Revisited)
 
 Now we combine THREE optimizations into one beautiful, elegant cost destroyer. I call this the 55-Minute Heartbeat Trick, and if you only implement ONE thing from today's module, make it this.
 
@@ -331,7 +339,7 @@ The 55-minute trick alone can pay for this entire course.
 
 ---
 
-## Slide 15 — Upgrading Web Search with Perplexity Pro
+## Slide 17 — Upgrading Web Search with Perplexity Pro
 
 Let's talk about search for a minute. OpenClaw's built-in web search works. It gets the job done. But if you're using your agent for actual RESEARCH — deep dives, analysis, synthesizing multiple sources — built-in search is like using a rowboat when you could have a research vessel.
 
@@ -339,13 +347,17 @@ Perplexity Pro is that research vessel. It's an AI-powered web search that doesn
 
 Setting it up through Open Router is four steps. Create an account at openrouter.ai. Get your API key from the dashboard. Add it to OpenClaw with the config command. Then configure Perplexity as your search model.
 
+---
+
+## Slide 18 — Perplexity Pro: Cost Tips
+
 And here's the COST TIP — this is the smart sailor's trick. After your agent does research, tell it to SAVE the results as a markdown file in your workspace. "Save this research to tilde slash dot openclaw slash workspace slash projects slash topic dot md." Done. Next time you need that information, the agent reads a FREE local file instead of making a PAID web search.
 
 Turn a paid search into a free file read. Cache your knowledge. Build a living research library. This is the docs folder pattern and it's one of the smartest token-saving tricks in the entire OpenClaw playbook.
 
 ---
 
-## Slide 16 — Agent-to-Agent Communication (sessions_* Tools)
+## Slide 19 — Agent-to-Agent Communication (sessions_* Tools)
 
 Alright, crew. We're leaving single-ship territory. It's time to talk about FLEETS.
 
@@ -369,7 +381,7 @@ Individual agents communicating through sessions send is more reliable AND cheap
 
 ---
 
-## Slide 17 — Multi-Agent Management
+## Slide 20 — Multi-Agent Management
 
 So you've got the communication infrastructure. Now the question is: how many ships do you NEED?
 
@@ -391,7 +403,7 @@ But — and this is a big but — start simple. One agent is enough for most peo
 
 ---
 
-## Slide 18 — Rough Waters: The Coordination Tax
+## Slide 21 — Rough Waters: The Coordination Tax
 
 Now for the warning. The rocks beneath the surface. This is where I have to be the captain who points at the reef and says "do NOT sail over that."
 
@@ -416,7 +428,7 @@ And when your core agents DO spawn sub-agents? Remember this: values inherit, id
 
 ---
 
-## Slide 19 — The Freshman Rule and Multi-Agent Memory
+## Slide 22 — The Freshman Rule
 
 Two more critical concepts for running a fleet.
 
@@ -427,6 +439,10 @@ Rule one: ONE task per agent at a time. I know, I know — you've got ten things
 Rule two: give ground-up instructions every time. Do NOT assume the agent remembers your project's history. The context files are its ONLY memory. If something isn't written in SOUL.md, AGENTS.md, MEMORY.md, or the relevant workspace files — it does NOT exist. Not for the agent. Not in any conversation. If you wouldn't expect a brand-new hire to know something without documentation, don't expect your agent to know it either.
 
 [pause]
+
+---
+
+## Slide 23 — Multi-Agent Memory: 4-Layer Architecture
 
 Now — multi-agent memory. This is where fleet management gets sophisticated. The most successful multi-agent setups use a four-layer memory architecture.
 
@@ -442,7 +458,7 @@ Treat agent memory like a human team's documentation. Some docs are shared — t
 
 ---
 
-## Slide 20 — Reverse Prompting
+## Slide 24 — Reverse Prompting
 
 Alright, crew. This is the moment. This is the slide I've been looking forward to all day. Because THIS is the secret weapon that changes EVERYTHING.
 
@@ -455,6 +471,10 @@ The reverse way looks like this: "Based on everything you know about me, my goal
 [pause]
 
 Feel the difference? You're not giving orders. You're asking for GUIDANCE. You're asking your agent — which has PERFECT MEMORY of every goal you've stated, every decision you've made, every conversation you've had — to analyze YOUR situation and tell YOU what to do.
+
+---
+
+## Slide 25 — Why Reverse Prompting Works
 
 Why is this so powerful? Four reasons.
 
@@ -472,7 +492,7 @@ This is a mind-shift. Most people think of AI as "I tell it, it does." Reverse p
 
 ---
 
-## Slide 21 — Reverse Prompting: Try These
+## Slide 26 — Reverse Prompting: Try These
 
 Here are specific prompts you can try. TODAY. Right after this session. Go home, open your agent, and copy-paste one of these.
 
@@ -500,7 +520,7 @@ Good. Hold each other to it. Check in next week. I promise you — the conversat
 
 ---
 
-## Slide 22 — Self-Improvement Workflows
+## Slide 27 — Self-Improvement: Weekly Agent Tuning
 
 Your agent should get BETTER over time. Not stay the same. Not stagnate. Get better. And that doesn't happen automatically — it happens because you TUNE it.
 
@@ -518,13 +538,17 @@ Five: "What suggestions do you have for improving our workflow?" Open-ended. Let
 
 Then — and this is the critical part — actually IMPLEMENT the suggestions. Edit the core files. Don't just nod and move on. Do the work.
 
+---
+
+## Slide 28 — Self-Improvement: Token Hygiene
+
 Two more things. The docs folder pattern — save ALL web research as markdown files in your workspace docs directory. Over time, your docs folder becomes a living knowledge base. The agent reads a free local file instead of making expensive API-powered web searches. This is the "living files" concept from Module 05 applied directly to cost savings.
 
 And token hygiene. Review MEMORY.md and TOOLS.md weekly. Remove outdated entries. Compress verbose sections into bullet points. Set your context compaction at 80K tokens and memory flush at 80K tokens. Keep your system prompt under eight thousand tokens if possible. Your context files grow like barnacles — scrape them regularly.
 
 ---
 
-## Slide 23 — Shoals and Sandbars: Chat Quality Does Not Equal Agent Quality
+## Slide 29 — Shoals and Sandbars: Chat Quality Does Not Equal Agent Quality
 
 Alright, one more warning before we hit the activity. This one catches EVERYONE.
 
@@ -538,13 +562,17 @@ Avoid for autonomous tasks — DeepSeek Reasoner. And this one HURTS because it'
 
 GPT-5.1 Mini — skips steps, takes shortcuts, produces incomplete results on multi-step tasks. Multiple users report it as unreliable for agent work.
 
+---
+
+## Slide 30 — The 3-Tool-Call Test
+
 Here's your practical test. The 3-Tool-Call Test. Before you trust ANY model for autonomous work, give it a task that requires at least three sequential tool calls. "Search for X. Save the results to a file. Then summarize the file." If it drops a step, misformats a call, or hallucinates a tool name — it is NOT ready for unattended agent work.
 
 And remember this: the cheapest model is NOT always the cheapest EFFECTIVE model. A fifty-cent model that fails forty percent of the time costs MORE than a three-dollar model that succeeds every time. Because you're paying for retries, debugging, wasted output, and your own frustration.
 
 ---
 
-## Slide 24 — Shoals and Sandbars: Common Mistakes
+## Slide 31 — Shoals and Sandbars: Common Mistakes
 
 Quick-fire round. The reef map. Steer clear of these.
 
@@ -568,7 +596,7 @@ Avoid the reefs. Sail the open water. Simple.
 
 ---
 
-## Slide 25 — Hands on Deck: Design Your Ideal Multi-Agent Setup
+## Slide 32 — Hands on Deck: Design Your Ideal Multi-Agent Setup
 
 Alright crew, this is your activity. Twenty-five minutes. This is a THOUGHT EXERCISE — you're not building anything today. You're designing. You're architecting. You're drawing the blueprint for your fleet.
 
@@ -590,7 +618,7 @@ Remember — three good agents with well-crafted souls ship more than seventeen 
 
 ---
 
-## Slide 26 — Treasure Chest
+## Slide 33 — Treasure Chest
 
 Alright crew, let's haul in the treasure. Eight gems from today's voyage.
 
@@ -616,7 +644,7 @@ You came in today as crew. You're leaving as CAPTAINS. Captains who know how to 
 
 ---
 
-## Slide 27 — Next Port of Call
+## Slide 34 — Next Port of Call
 
 So where are we sailing next?
 

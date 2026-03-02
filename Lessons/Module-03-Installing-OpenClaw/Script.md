@@ -99,7 +99,7 @@ Google Gemini 2.5 Flash — let me start with this one because it's your FREE op
 
 Anthropic Claude Opus 4.6 — the BATTLESHIP. Most capable model on the market. Warmest personality. Best prompt injection resistance, which means it's the hardest to trick into doing something it shouldn't. The OpenClaw creator himself recommends it. Downside? About two hundred dollars a month if you let it run wild. That's premium fuel for a premium engine.
 
-Claude Sonnet 4.5 — the FRIGATE. Lighter, cheaper, fifty to a hundred bucks a month. Not as sharp as Opus but still very capable.
+Claude Sonnet 4.6 — the FRIGATE. Lighter, cheaper, fifty to a hundred bucks a month. Not as sharp as Opus but still very capable.
 
 OpenAI GPT-4 and GPT-5.2 Turbo — the MERCHANT VESSEL. Strong, reliable. Twenty to two hundred a month.
 
@@ -233,7 +233,7 @@ Question one: Gateway type. You'll see two options — Local Gateway and Remote 
 
 Question two: Workspace directory. It'll show you a default path — `~/.openclaw` — and ask if that's cool. YES, that's cool. Press enter. Accept the default.
 
-This creates the workspace directory at `/home/yourusername/.openclaw/`. That tilde — `~` — is shorthand for your home directory. Default is perfect. Don't move it. Don't get creative.
+This creates the OpenClaw root at `/home/yourusername/.openclaw/`. That tilde — `~` — is shorthand for your home directory. Default is perfect. Don't move it. Don't get creative. Your agent's workspace files — SOUL.md, IDENTITY.md, USER.md — will live inside `~/.openclaw/workspace/`. The JSON config sits at `~/.openclaw/openclaw.json`. You'll see all of this in Module 05.
 
 [pause]
 

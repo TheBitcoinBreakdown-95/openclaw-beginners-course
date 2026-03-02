@@ -614,7 +614,7 @@ The **Gateway** is the central brain:
 | 2 | **Proactive Automation** | Morning briefings, monitoring, tasks — acts without being asked |
 | 3 | **Multi-Platform Messaging** | One agent, every platform: Telegram, WhatsApp, Discord, Slack |
 | 4 | **Full Computer Access** 🐚 | Shell, file system, browser, APIs — anything a human can do |
-| 5 | **Self-Improving** 🐠 | Open source, modifiable, 5,700+ community skills on ClawHub |
+| 5 | **Self-Improving** 🐠 | Open source, modifiable, thousands of community skills on ClawHub |
 
 <!-- Speaker notes: These five capabilities are what make OpenClaw unique. No other AI tool combines all five. Each one builds on the others. -->
 
@@ -668,7 +668,7 @@ If you see "Clawdbot" or "MoltBot" online — they mean OpenClaw.
 ## The Right Mindset
 
 1. **Think employee, not tool** — Give goals, not step-by-step instructions
-2. **Don't touch config files** — Tell your agent in plain English what to change
+2. **Don't touch JSON config files** — Tell your agent in plain English what to change (workspace `.md` files like SOUL.md are yours to edit directly)
 3. **Use reverse prompting** — Ask "What should we work on?" instead of always commanding
 4. **Every hour invested compounds forever** — Unlike ChatGPT, improvements are permanent
 5. **Security is NOT optional** — Your agent has admin access. Treat that seriously.

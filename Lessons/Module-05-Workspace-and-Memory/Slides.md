@@ -851,12 +851,12 @@ git commit -m "Workspace update: $(date +%Y-%m-%d)"
 
 ## ⚙️ Hands on Deck (continued)
 
-**Part 4: Restart and Test (10 min)**
+**Part 4: Test Your Changes (10 min)**
 
-1. Restart the ⛵ gateway: `npx openclaw gateway restart`
-2. Open the 🐚 TUI: `npx openclaw tui`
-3. Ask: *"What is your name, and what do you know about me?"*
-4. If the response does not reflect your files, check that you saved and restarted
+1. Open the 🐚 TUI: `npx openclaw tui`
+2. Ask: *"What is your name, and what do you know about me?"*
+3. Response should reflect your files (`.md` files hot-reload on next message)
+4. If not, check that you saved the files correctly
 
 **Part 5: Back Up (5 min)**
 
@@ -877,7 +877,7 @@ git commit -m "Initial workspace: agent configured"
 4. **Living files > dead files** — the more knowledge in the workspace, the smarter your agent becomes
 5. **Back up your workspace with Git** — it is irreplaceable
 6. **Update regularly** — your agent should evolve as you do
-7. **Restart the ⛵ gateway after editing** — changes only take effect on restart
+7. **`.md` files hot-reload** — changes take effect on next message; JSON config needs `gateway restart`
 
 ---
 

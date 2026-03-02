@@ -321,7 +321,7 @@ Third scenario. And this one doesn't involve an attacker at all. No hackers. No 
 
 [pause]
 
-Someone is excited about OpenClaw. Brand new. They set up their Anthropic API key with pay-per-use billing. They do NOT set a spending limit. Why would they? They're just testing. Then they spin up EIGHT agents simultaneously because they want to try different things at once. Eight agents, all burning tokens independently. Every heartbeat — every thirty minutes — every cron job, every conversation sends the full system prompt, the conversation context, everything. Eight agents times twenty-four hours times seven days.
+Someone is excited about OpenClaw. Brand new. They sign up for the Anthropic console and start paying per use. NOT a flat-rate membership — pay per use. And they do NOT set a spending limit. Why would they? They're just testing. Then they spin up EIGHT agents simultaneously because they want to try different things at once. Eight agents, all burning tokens independently. Every heartbeat — every thirty minutes — every cron job, every conversation sends the full system prompt, the conversation context, everything. Eight agents times twenty-four hours times seven days.
 
 Eight hundred dollars. In less than a WEEK. Before anyone noticed.
 
@@ -331,7 +331,7 @@ Eight hundred dollars. In less than a WEEK. Before anyone noticed.
 
 Yeah. Same energy. Except with AI APIs there's no natural ceiling. No popup asking "are you sure you want to spend two hundred dollars today?" It just... keeps going. Like a meter running in a cab that nobody told to stop.
 
-Lesson: Set a HARD spending limit on your API account BEFORE you start. Start with ONE agent, not eight. Monitor your spending DAILY for the first week. We'll walk through exactly how to set spending limits in Module 03.
+Lesson: If you go the pay-per-use route, set a HARD spending limit on your API account BEFORE you start. Better yet, consider a flat-rate Claude membership or the free Gemini path — we'll cover both in Module 03. Start with ONE agent, not eight. Monitor your spending DAILY for the first week.
 
 ---
 

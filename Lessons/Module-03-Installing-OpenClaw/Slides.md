@@ -476,7 +476,7 @@ Also decide which AI provider you want to use...
 |----------|-------|------|-------|
 | **Google** | Gemini 2.5 Flash | Free | Yes — ~250 req/day |
 | **Anthropic** | Claude Opus 4.6 | ~$200/mo | No |
-| **Anthropic** | Claude Sonnet 4.5 | ~$50-100/mo | No |
+| **Anthropic** | Claude Sonnet 4.6 | ~$50-100/mo | No |
 | **OpenAI** | GPT-4 / GPT-5.2 Turbo | ~$20-200/mo | No |
 | **Kimi** | K2.5 | Very cheap | No |
 | **MiniMax** | M2.5 | ~$10/mo | No |
@@ -524,7 +524,7 @@ Also decide which AI provider you want to use...
 
 ## 🚩 Rough Waters: No Spending Limits
 
-> **Real story:** One user ran 8 agents on pay-per-use API without a spending limit. **$800 burned in less than a week.**
+> **Real story:** One user used pay-per-use API billing without a cap, ran 8 agents. **$800 burned in less than a week.**
 
 | Protection | How | Priority |
 |-----------|-----|----------|
@@ -585,7 +585,7 @@ The wizard asks a series of questions. We will walk through **every single one**
 ? Workspace directory: (~/.openclaw)
 ```
 
-**Accept the default** (press Enter). Creates `~/.openclaw/` in your home directory.
+**Accept the default** (press Enter). Creates `~/.openclaw/` in your home directory. Workspace files (SOUL.md, etc.) live at `~/.openclaw/workspace/`.
 
 ---
 
@@ -774,9 +774,8 @@ npx openclaw gateway restart
 > **Rate limit error?** Wait a few minutes and retry. If it keeps failing, skip QMD and move on — your agent works without it. Install later.
 
 **Why this matters:**
-- Without QMD, your agent re-reads files every time it needs information (wastes tokens)
-- With QMD, your agent can search indexed files instantly
-- Saves money from day one by avoiding redundant file reads
+- Without QMD, your agent re-reads files every time (wastes tokens)
+- With QMD, your agent searches indexed files instantly — saves money from day one
 - Takes 30 seconds to install
 
 <!-- Speaker notes: Install this before your first real conversation. Module 09 covers configuring cheaper models for routine tasks. -->
@@ -884,7 +883,7 @@ Use `restart` after any config change. Use `logs` to debug startup issues.
 | "Port already in use" | `npx openclaw config` (re-run wizard, change port), then restart |
 | "Connection refused" in browser | Check `npx openclaw gateway status`; use `http://` not `https://` |
 | Daemon does not start on boot | Verify systemd: `systemctl is-system-running` |
-| AI responses very slow (30s+) | Check `status.anthropic.com`; try Sonnet 4.5 temporarily |
+| AI responses very slow (30s+) | Check `status.anthropic.com`; try Sonnet 4.6 temporarily |
 
 ---
 

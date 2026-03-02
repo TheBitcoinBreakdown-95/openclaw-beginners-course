@@ -427,15 +427,15 @@ Save: Control-O, then Enter. Exit: Control-X. That's it. Those are the only two 
 
 [pause]
 
-Now here's the thing that trips up EVERY class I've ever taught, and I need you to hear this because I promise someone in this room is going to make this mistake today:
+Now here's something important about how changes take effect.
 
-After you edit the files, you MUST restart the gateway.
+Workspace markdown files — SOUL.md, IDENTITY.md, USER.md, all those `.md` files — are **hot-reloaded**. That means your agent picks up the changes on the very next message you send. No restart needed. Edit the file, save it, send a message, and your agent is already using the new version.
+
+BUT — and this is the "but" that trips people up — JSON config files are different. If you change your JSON configuration, you DO need to restart the gateway:
 
 `npx openclaw gateway restart`
 
-The gateway loads these files on startup. If you edit SOUL.md and don't restart, your agent is still running on the OLD soul. You'll sit there wondering why nothing changed, getting frustrated, thinking you did something wrong — and the answer is just that you forgot to restart. It's always the restart. ALWAYS.
-
-Write it on a sticky note. Stick it to your monitor. "Did you restart the gateway?" Save yourself the headache.
+So the rule is simple: `.md` workspace files = instant, next message. JSON config = restart required. Most of the time you'll be editing markdown files, so most of the time you won't need to restart at all.
 
 ---
 
@@ -478,7 +478,7 @@ Mistake number three: putting everything in one file. Your SOUL.md should not co
 
 Mistake number four: editing JSON config files directly with a text editor. One misplaced comma and your installation breaks. Use `npx openclaw config` or the TUI `/config` command instead.
 
-Mistake number five: THE BIG ONE. Forgetting to restart after changes. Say it with me — `npx openclaw gateway restart`.
+Mistake number five: expecting instant config changes. Workspace `.md` files hot-reload on the next message — no restart needed. But JSON config changes DO need `npx openclaw gateway restart`. Know the difference.
 
 Mistake number six: never updating. Your goals change. Your preferences evolve. Your files should too. Monthly review. Put it in your calendar.
 
@@ -514,11 +514,9 @@ Go. I'll be walking around if anyone needs help with nano or gets stuck. Twenty 
 
 Alright, pens down — or, keyboards down. Fingers off the keys. Let's see if this actually WORKED.
 
-Part four: restart and test. Ten minutes.
+Part four: test your changes. Ten minutes.
 
-Step one: restart the gateway. `npx openclaw gateway restart`. Say it with me. Out loud. I'm serious. NPX OPENCLAW GATEWAY RESTART. Good. Now actually do it.
-
-Step two: open the TUI. `npx openclaw tui`.
+Step one: open the TUI. `npx openclaw tui`. Remember — workspace `.md` files are hot-reloaded. Your agent already has the latest version of everything you just saved.
 
 Step three: ask your agent this exact question — "What is your name, and what do you know about me?"
 
@@ -576,7 +574,7 @@ Your agent is about to go MOBILE. It's about to leave the terminal and step out 
 
 [pause]
 
-Before next time — make sure your Big Three files are customized. IDENTITY, SOUL, and USER. If you didn't finish them in class today, finish them tonight. Restart the gateway. Test them. Back them up. Because Module 06 builds directly on what we did today, and you'll want a solid foundation before we start connecting channels.
+Before next time — make sure your Big Three files are customized. IDENTITY, SOUL, and USER. If you didn't finish them in class today, finish them tonight. Test them by sending a message in the TUI. Back them up. Because Module 06 builds directly on what we did today, and you'll want a solid foundation before we start connecting channels.
 
 Great work today, crew. Seriously. What you built here is the foundation that everything else in this course sits on top of. The workspace is no longer a mystery — it's YOUR ship, and you know every compartment by name.
 

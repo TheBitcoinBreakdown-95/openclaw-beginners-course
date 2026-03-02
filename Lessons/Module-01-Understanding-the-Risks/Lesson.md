@@ -334,13 +334,13 @@ Now the AI has stored your API keys in its memory files. If those memory files a
 
 ### Scenario 5: The $800 API Bill
 
-**Setup:** A new user is excited to try OpenClaw. They set up an Anthropic API key with pay-per-use billing — no spending limit set. They spin up 8 agents simultaneously to test different use cases.
+**Setup:** A new user is excited to try OpenClaw. They sign up for the Anthropic console and start paying per use — no spending limit set, no flat-rate membership. They spin up 8 agents simultaneously to test different use cases.
 
-**What goes wrong:** Each agent is burning tokens independently. Every heartbeat (every 30 minutes), every cron job, every conversation sends the full system prompt (3,000-14,000 tokens) plus the conversation context. Eight agents running 24/7 means 8× the cost of everything. One user burned 150 million tokens in a single day. Another spent **$800 in under a week** before they realized what was happening.
+**What goes wrong:** Each agent is burning tokens independently. Every heartbeat (every 30 minutes), every cron job, every conversation sends the full system prompt (3,000-14,000 tokens) plus the conversation context. Eight agents running 24/7 means 8× the cost of everything. The root cause was using pay-per-use API billing without a cap — a flat-rate Claude membership would have been far cheaper. The user spent **$800 in under a week** before they realized what was happening.
 
 **Why it's devastating:** Unlike the other scenarios, this isn't an attacker — it's the system working exactly as designed. Pay-per-use API billing has no natural ceiling. There's no popup asking "Are you sure you want to spend $200 today?"
 
-**Lesson:** Set a hard spending limit on your API account BEFORE you start. Start with one agent, not eight. Monitor your spending daily for the first week. We'll walk through spending limits in Module 03.
+**Lesson:** If you use pay-per-use API billing, set a hard spending limit on your API account BEFORE you start. Better yet, consider a flat-rate Claude membership or the free Gemini path (Module 03). Start with one agent, not eight. Monitor your spending daily for the first week.
 
 ---
 

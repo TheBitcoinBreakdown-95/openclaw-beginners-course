@@ -337,7 +337,7 @@ Your data stays on your laptop. Only message text goes to the AI provider.
 | 2 | **Proactive Automation** | Morning briefings, monitoring — acts without being asked |
 | 3 | **Multi-Platform Messaging** | Telegram, WhatsApp, Discord, Slack — one agent, every app |
 | 4 | **Full Computer Access** | Shell, files, browser, APIs — anything a human can do |
-| 5 | **Self-Improving** | Open source, 5,700+ community skills on ClawHub |
+| 5 | **Self-Improving** | Open source, thousands of community skills on ClawHub |
 
 ---
 
@@ -402,7 +402,9 @@ pkill -f openclaw           # If that doesn't work
 - [ ] **WiFi** — network name and password are on the board
 - [ ] **Pen and paper** (or phone Notes app) — for passwords and tokens
 
-*No API key yet? You'll grab it during the install wait. Free path: aistudio.google.com. Paid: console.anthropic.com.*
+<!--
+No API key yet? You'll grab it during the install wait. Free path: aistudio.google.com. Paid: console.anthropic.com.
+-->
 
 ---
 

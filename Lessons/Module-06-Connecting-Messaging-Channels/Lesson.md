@@ -181,7 +181,7 @@ npx openclaw config set channels.telegram.dmPolicy "pairing"
 
 **Never set this to "open"** unless you have a very specific reason and understand the prompt injection risks.
 
-> **Tip:** Run `npx openclaw doctor` after connecting any new channel. It will surface risky or misconfigured DM policies and other potential issues with your channel setup.
+> **Tip:** Run `npx openclaw doctor --fix` after connecting any new channel. It will surface risky or misconfigured DM policies and automatically resolve common issues with your channel setup.
 
 ### What the Modes Mean
 

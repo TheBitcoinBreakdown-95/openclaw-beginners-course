@@ -557,7 +557,7 @@ npx openclaw config set agents.defaults.heartbeat.model "gemini-2.5-flash"
 | Model | Cost per Heartbeat | Monthly Cost (30-min intervals) |
 |-------|-------------------------------|--------------------------------|
 | Claude Opus 4.6 | ~$0.05-0.15 | ~$70-200 |
-| Claude Sonnet 4.5 | ~$0.01-0.05 | ~$15-70 |
+| Claude Sonnet 4.6 | ~$0.01-0.05 | ~$15-70 |
 | Claude Haiku 4.5 | ~$0.001-0.005 | ~$1-7 |
 | Gemini Flash 3 | Free (20/day) or very cheap | ~$0-5 |
 

@@ -796,13 +796,14 @@ Edit **`MEMORY.md`** with:
 - Your chosen AI provider and model
 - At least one goal you want your agent to help you with
 
-### Part 4: Restart and Test (10 minutes)
+### Part 4: Test Your Changes (10 minutes)
 
-1. Restart the gateway: `npx openclaw gateway restart`
-2. Open the TUI: `npx openclaw tui`
-3. Ask your agent: *"What is your name, and what do you know about me?"*
-4. The response should reflect everything you wrote in the core files
-5. If it doesn't, check that you saved the files and restarted the gateway
+1. Open the TUI: `npx openclaw tui`
+2. Ask your agent: *"What is your name, and what do you know about me?"*
+3. The response should reflect everything you wrote in the core files
+4. If it doesn't, check that you saved the files correctly
+
+> **Note:** Workspace `.md` files are hot-reloaded — your agent picks up changes on the next message you send. No gateway restart needed. If you changed JSON config files, those DO require `npx openclaw gateway restart`.
 
 ### Part 5: Back Up (5 minutes)
 
@@ -832,7 +833,7 @@ git commit -m "Initial workspace: agent configured"
 4. **Living files > dead files** — the more knowledge you put in the workspace, the smarter your agent becomes
 5. **Back up your workspace with Git** — it's irreplaceable
 6. **Update regularly** — your agent should evolve as you do
-7. **Restart the gateway after editing** — changes only take effect on restart
+7. **Workspace `.md` files are hot-reloaded** — changes take effect on the next message. JSON config changes require `npx openclaw gateway restart`
 
 ---
 

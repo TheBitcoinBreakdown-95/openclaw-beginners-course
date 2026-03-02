@@ -191,7 +191,7 @@ Let's put real numbers on the table so you can see what I'm talking about.
 
 Claude Opus 4.6 — the flagship, the smartest model, the one you want for complex thinking — costs roughly 5 to 15 cents per heartbeat. At 30-minute intervals, that's 48 heartbeats a day. Do the math and you're looking at $70 to $200 per month. JUST for heartbeats. Just for the "anything new? no? cool" checks.
 
-Claude Sonnet 4.5 — a step down in price, still very capable — one to five cents per heartbeat. $15 to $70 per month.
+Claude Sonnet 4.6 — a step down in price, still very capable — one to five cents per heartbeat. $15 to $70 per month.
 
 Claude Haiku 4.5 — now we're talking. A tenth of a cent to half a cent per heartbeat. $1 to $7 per month. That's the sweet spot for most people.
 

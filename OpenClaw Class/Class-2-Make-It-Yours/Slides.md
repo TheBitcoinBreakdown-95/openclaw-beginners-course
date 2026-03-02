@@ -307,7 +307,7 @@ Skills are **markdown instruction files** that teach your agent new capabilities
 
 - Stored in `~/.openclaw/workspace/skills/`
 - No code — just text-based instructions with YAML metadata
-- 5,700+ community skills on **ClawHub** marketplace
+- Thousands of community skills on **ClawHub** marketplace
 
 ### Examples:
 - Weather lookups, news summaries, calendar integration

@@ -59,7 +59,7 @@ A heartbeat is a periodic "wake-up" for your agent. Every X minutes, the gateway
 
 ### Why Heartbeats and Cron Jobs Are Expensive by Default
 
-This is critical to understand. OpenClaw, by default, sends *everything* to your primary model. If your primary is Opus 4.6, you're paying $5/$25 per million tokens for a heartbeat check that a $0.30 model could easily handle.
+This is critical to understand. OpenClaw, by default, sends *everything* to your primary model. If your primary is Opus 4.6, you're paying $15/$75 per million tokens for a heartbeat check that a $0.30 model could easily handle.
 
 Here's how the costs compound:
 
@@ -138,7 +138,7 @@ npx openclaw config set agents.defaults.heartbeat.model "gemini-2.5-flash"
 | Model | Approximate Cost per Heartbeat | Monthly Cost (30-min intervals) |
 |-------|-------------------------------|--------------------------------|
 | Claude Opus 4.6 | ~$0.05-0.15 | ~$70-200 |
-| Claude Sonnet 4.5 | ~$0.01-0.05 | ~$15-70 |
+| Claude Sonnet 4.6 | ~$0.01-0.05 | ~$15-70 |
 | Claude Haiku 4.5 | ~$0.001-0.005 | ~$1-7 |
 | Gemini Flash 3 | Free (20/day) or very cheap | ~$0-5 |
 

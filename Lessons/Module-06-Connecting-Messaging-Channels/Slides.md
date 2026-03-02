@@ -586,7 +586,7 @@ If your agent responds — everything is connected and working!
 
 We set `allowFrom` during setup — your bot is already locked down.
 
-> **Tip:** Run `npx openclaw doctor` after connecting any channel to check for misconfigurations.
+> **Tip:** Run `npx openclaw doctor --fix` after connecting any channel to check and fix misconfigurations.
 
 <!-- Speaker notes: Emphasize that "open" mode is never acceptable for a personal agent. The allowFrom approach is the simplest AND most secure for a single-user setup. -->
 
@@ -803,4 +803,4 @@ From your phone via Telegram:
 
 > Your agent is now mobile. In Module 07, we teach your agent new 🐠 abilities. Skills are like apps for your agent — email management, image generation, note-taking, and thousands more from the community marketplace.
 
-<!-- Speaker notes: Congratulations — everyone now has their agent in their pocket via Telegram. Module 07 is where we start adding capabilities. The skill marketplace has over 5,700 skills and students can build their own. -->
+<!-- Speaker notes: Congratulations — everyone now has their agent in their pocket via Telegram. Module 07 is where we start adding capabilities. The skill marketplace has thousands of skills and students can build their own. -->

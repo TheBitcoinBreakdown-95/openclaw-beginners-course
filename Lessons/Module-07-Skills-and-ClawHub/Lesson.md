@@ -76,7 +76,7 @@ When this skill is active and you say "check my inbox," your agent knows exactly
 
 ## Browsing ClawHub
 
-ClawHub is the community marketplace for skills. As of early 2026, there are over 5,700 skills available.
+ClawHub is the community marketplace for skills. As of early 2026, there are thousands of skills available.
 
 ### Accessing ClawHub
 
@@ -296,7 +296,7 @@ As you get comfortable, you can build skills that:
 
 The key principle: **a skill is just instructions in markdown**. If you can explain the process to a human, you can write it as a skill.
 
-**The "Twice = Skill" rule:** If you do something more than twice, make a skill for it. Don't wait for the third or fourth time to think "I should automate this." The moment you repeat an instruction — email format, research structure, standup report — turn it into a skill. It costs nothing when inactive and saves time and tokens every time it fires.
+**The Rule of Three:** The first time you do something is exploration — you're figuring it out. The second time is pattern recognition — you notice you're repeating yourself. The **third time is when you encode it as a skill**. That third repetition is pure waste: time and tokens spent on instructions you've already given twice. Turn it into a skill. It costs nothing when inactive and saves time and tokens every time it fires.
 
 ### Channels as Departments
 
@@ -488,7 +488,7 @@ Create a custom skill that's useful for YOUR workflow. Ideas:
 ## Key Takeaways
 
 1. **Skills are markdown files with YAML metadata** — they teach your agent new capabilities through instructions
-2. **ClawHub has 5,700+ skills** — browse before building from scratch
+2. **ClawHub has thousands of skills** — browse before building from scratch
 3. **Always inspect before installing** — read the full skill content and check for security issues
 4. **Pin your skill versions** — use `--pin` to lock versions and detect integrity drift
 5. **Token impact matters** — every active skill uses context window space; only keep what you need active

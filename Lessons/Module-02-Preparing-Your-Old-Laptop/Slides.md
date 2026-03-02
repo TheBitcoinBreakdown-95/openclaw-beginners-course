@@ -529,9 +529,8 @@ In Windows (before we erase it), check your RAM:
 | 50 GB+ | Excellent |
 
 **After Ubuntu install, space usage:**
-- Ubuntu itself: ~10–15 GB
-- Node.js + OpenClaw: ~700 MB
-- OpenClaw data: grows over time (1–10 GB)
+- Ubuntu + Node.js + OpenClaw: ~15 GB total
+- Agent data: grows over time (1–10 GB)
 
 <!-- Speaker notes: Remember, we're erasing the whole drive. So even if you only have 30 GB free on Windows, you'll get the FULL drive for Ubuntu. We're just checking it's a reasonable size. -->
 

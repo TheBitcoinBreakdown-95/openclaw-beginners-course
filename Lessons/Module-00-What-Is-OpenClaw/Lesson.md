@@ -268,7 +268,7 @@ Because it's open source and has access to its own configuration:
 - It can modify its own memory and context files
 - It can build new tools for itself (skills)
 - It can change its own settings when you ask
-- The community shares skills through ClawHub (a skill marketplace with 5,700+ skills)
+- The community shares skills through ClawHub (a skill marketplace with thousands of community skills)
 - You can ask your agent to improve itself, and it will
 
 ### Beyond Text: Canvas and Voice
@@ -377,8 +377,10 @@ Before we move on, here are the mental models that will help you succeed with Op
 ### 1. Think of it as a super-intelligent employee, not a tool
 You are the **manager**. your agent is your employee. You don't micromanage. You give goals and objectives. You say "I want X result" — not "do step 1, then step 2, then step 3." Let your agent figure out the how.
 
-### 2. Don't touch the config files manually
-If you want your agent to behave differently, **tell it in plain English**. Say "Hey your agent, change your heartbeat to every 15 minutes." Don't go digging in JSON files. Your agent can modify its own configuration better than you can.
+### 2. Don't touch the JSON config files manually
+If you want your agent to behave differently, **tell it in plain English**. Say "Hey your agent, change your heartbeat to every 15 minutes." Don't go digging in JSON config files. Your agent can modify its own configuration better than you can.
+
+**Exception:** Workspace `.md` files (IDENTITY.md, SOUL.md, USER.md) are meant to be edited directly by you. Those are your agent's personality and memory — you'll learn to edit them in Module 05.
 
 ### 3. Reverse prompting is your superpower
 Instead of always telling your agent what to do, **ask it questions**:
