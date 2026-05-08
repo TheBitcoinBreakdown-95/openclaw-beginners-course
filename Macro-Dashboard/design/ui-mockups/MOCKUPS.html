@@ -1,0 +1,1245 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<title>Macro Dashboard — 10 Design Directions</title>
+<style>
+:root {
+  --pad: 24px;
+  --gap: 14px;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+html, body {
+  background: #0a0a0a;
+  color: #e0e0e0;
+  font-family: -apple-system, "Segoe UI", sans-serif;
+  line-height: 1.4;
+}
+.page-header {
+  padding: 32px;
+  background: linear-gradient(180deg, #111, #050505);
+  border-bottom: 1px solid #222;
+}
+.page-header h1 {
+  font-size: 1.6rem;
+  font-weight: 300;
+  letter-spacing: 0.05em;
+}
+.page-header p { color: #888; margin-top: 8px; font-size: 0.9rem; }
+.legend {
+  display: flex; gap: 12px; margin-top: 16px; flex-wrap: wrap;
+  font-size: 0.78rem;
+}
+.legend-item { display: flex; align-items: center; gap: 6px; color: #aaa; }
+.legend-dot { width: 10px; height: 10px; border-radius: 50%; display: inline-block; }
+.l5 { background: #0fb5d6; }
+.l4 { background: #c9a227; }
+.l3 { background: #ee8b1a; }
+.l2 { background: #d23a4a; }
+.l1 { background: #ff2d55; box-shadow: 0 0 8px #ff2d55; }
+.section {
+  padding: 32px;
+  border-bottom: 1px solid #1a1a1a;
+}
+.section-meta {
+  display: flex; justify-content: space-between; align-items: baseline;
+  margin-bottom: 24px;
+  flex-wrap: wrap; gap: 8px;
+}
+.section-meta h2 {
+  font-size: 1.1rem; font-weight: 600;
+  letter-spacing: 0.05em;
+}
+.section-meta .subtitle { color: #888; font-size: 0.82rem; }
+.section-meta .build { font-size: 0.7rem; color: #666; }
+
+/* =========================================================
+   1. BLOOMBERG-NATIVE
+   ========================================================= */
+.bb-shell {
+  background: #000;
+  color: #ffb000;
+  font-family: "Consolas", "Monaco", monospace;
+  padding: 16px;
+  border: 1px solid #1a1a1a;
+}
+.bb-topbar {
+  display: flex; justify-content: space-between;
+  border-bottom: 1px solid #1a1a1a; padding-bottom: 8px; margin-bottom: 12px;
+  font-size: 0.7rem; letter-spacing: 0.1em;
+}
+.bb-topbar span { color: #5fc3d6; }
+.bb-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 1px;
+  background: #1a1a1a;
+}
+.bb-tile {
+  background: #000;
+  padding: 10px 12px;
+  border-left: 3px solid transparent;
+}
+.bb-tile.bb-l5 { border-left-color: #0fb5d6; }
+.bb-tile.bb-l4 { border-left-color: #c9a227; }
+.bb-tile.bb-l3 { border-left-color: #ee8b1a; }
+.bb-tile.bb-l2 { border-left-color: #d23a4a; }
+.bb-tile.bb-l1 { border-left-color: #ff2d55; background: rgba(255,45,85,0.05); }
+.bb-tile-name { font-size: 0.62rem; color: #888; letter-spacing: 0.1em; }
+.bb-tile-val { font-size: 1.4rem; color: #ffb000; margin-top: 4px; }
+.bb-tile-meta { font-size: 0.65rem; color: #5fc3d6; margin-top: 4px; }
+
+/* =========================================================
+   2. MISSION CONTROL (NASA-APOLLO)
+   ========================================================= */
+.mc-shell {
+  background: #0d1620;
+  padding: 18px;
+  border: 1px solid #2c4054;
+  border-radius: 4px;
+}
+.mc-topbar {
+  display: flex; justify-content: space-between; align-items: center;
+  background: #1a2738; padding: 8px 12px;
+  border: 1px solid #2c4054; border-radius: 2px;
+  margin-bottom: 16px;
+  font-family: "Courier New", monospace; font-size: 0.78rem;
+  color: #7eb88c;
+  letter-spacing: 0.1em;
+}
+.mc-led { display: inline-block; width: 8px; height: 8px; border-radius: 50%; margin-right: 6px; }
+.mc-led-on { background: #7eb88c; box-shadow: 0 0 6px #7eb88c; }
+.mc-grid {
+  display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px;
+}
+.mc-tile {
+  background: #1a2738;
+  border: 1px solid #2c4054;
+  padding: 12px;
+  position: relative;
+  font-family: "Courier New", monospace;
+  clip-path: polygon(8px 0, 100% 0, 100% calc(100% - 8px), calc(100% - 8px) 100%, 0 100%, 0 8px);
+}
+.mc-tile-led {
+  position: absolute; top: 8px; right: 8px;
+  width: 8px; height: 8px; border-radius: 50%;
+}
+.mc-tile.mc-l5 .mc-tile-led { background: #7eb88c; box-shadow: 0 0 6px #7eb88c; }
+.mc-tile.mc-l4 .mc-tile-led { background: #d4b343; box-shadow: 0 0 6px #d4b343; }
+.mc-tile.mc-l3 .mc-tile-led { background: #ee8b1a; box-shadow: 0 0 6px #ee8b1a; }
+.mc-tile.mc-l2 .mc-tile-led { background: #d23a4a; box-shadow: 0 0 6px #d23a4a; animation: blink 1.5s infinite; }
+.mc-tile.mc-l1 .mc-tile-led { background: #ff2d55; box-shadow: 0 0 12px #ff2d55; animation: blink 0.7s infinite; }
+@keyframes blink { 50% { opacity: 0.3; } }
+.mc-tile-name { font-size: 0.6rem; color: #5fa57a; letter-spacing: 0.15em; text-transform: uppercase; }
+.mc-tile-val { font-size: 1.5rem; color: #d6d6d6; margin-top: 6px; }
+.mc-tile-meta { font-size: 0.65rem; color: #4a7d6a; margin-top: 4px; }
+
+/* =========================================================
+   3. CYBERPUNK HUD
+   ========================================================= */
+.cp-shell {
+  background: linear-gradient(135deg, #04060a 0%, #0a0414 100%);
+  padding: 20px;
+  position: relative;
+  overflow: hidden;
+}
+.cp-shell::before {
+  content: '';
+  position: absolute; inset: 0;
+  background: repeating-linear-gradient(
+    0deg,
+    transparent 0px, transparent 2px,
+    rgba(0, 220, 255, 0.02) 3px, rgba(0, 220, 255, 0.02) 4px
+  );
+  pointer-events: none;
+}
+.cp-topbar {
+  display: flex; justify-content: space-between; align-items: center;
+  margin-bottom: 16px;
+  font-family: "Orbitron", "Courier New", monospace;
+  font-size: 0.75rem; letter-spacing: 0.2em;
+  color: #00dcff;
+  text-shadow: 0 0 8px #00dcff;
+}
+.cp-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; position: relative; }
+.cp-tile {
+  background: rgba(10, 25, 40, 0.4);
+  backdrop-filter: blur(8px);
+  border: 1px solid rgba(0, 220, 255, 0.3);
+  padding: 14px;
+  position: relative;
+  clip-path: polygon(10px 0, 100% 0, 100% calc(100% - 10px), calc(100% - 10px) 100%, 0 100%, 0 10px);
+}
+.cp-tile.cp-l5 { border-color: #00dcff; box-shadow: inset 0 0 20px rgba(0,220,255,0.1); }
+.cp-tile.cp-l4 { border-color: #d4b343; box-shadow: inset 0 0 20px rgba(212,179,67,0.15); }
+.cp-tile.cp-l3 { border-color: #ee8b1a; box-shadow: inset 0 0 20px rgba(238,139,26,0.2); }
+.cp-tile.cp-l2 { border-color: #ff2d55; box-shadow: inset 0 0 20px rgba(255,45,85,0.2), 0 0 12px rgba(255,45,85,0.3); }
+.cp-tile.cp-l1 { border-color: #ff00aa; box-shadow: inset 0 0 30px rgba(255,0,170,0.3), 0 0 20px rgba(255,0,170,0.5); }
+.cp-tile-name { font-size: 0.6rem; color: #4dd9ed; letter-spacing: 0.2em; text-transform: uppercase; }
+.cp-tile-val {
+  font-size: 1.6rem; color: #fff; margin-top: 6px;
+  text-shadow: 0 0 8px rgba(0,220,255,0.5);
+  font-family: "Orbitron", "Courier New", monospace;
+}
+.cp-tile-meta { font-size: 0.65rem; color: #4dd9ed; margin-top: 4px; }
+
+/* =========================================================
+   4. SUBMARINE SONAR
+   ========================================================= */
+.sn-shell {
+  background: radial-gradient(circle at 50% 50%, #062534 0%, #02101a 100%);
+  padding: 20px;
+}
+.sn-topbar {
+  display: flex; justify-content: space-between;
+  font-family: "Courier New", monospace; font-size: 0.75rem;
+  color: #5dd6a8; letter-spacing: 0.15em;
+  margin-bottom: 18px; padding-bottom: 8px;
+  border-bottom: 1px solid rgba(93,214,168,0.2);
+}
+.sn-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; }
+.sn-tile {
+  background: rgba(7, 38, 53, 0.6);
+  border: 1px solid #15546e;
+  border-radius: 50%;
+  aspect-ratio: 1;
+  padding: 16px;
+  position: relative;
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  text-align: center;
+  overflow: hidden;
+}
+.sn-tile::after {
+  content: '';
+  position: absolute;
+  inset: 4px;
+  border-radius: 50%;
+  border: 1px dashed rgba(93,214,168,0.15);
+}
+.sn-tile.sn-l5 { box-shadow: inset 0 0 30px rgba(93,214,168,0.15); }
+.sn-tile.sn-l4 { box-shadow: inset 0 0 30px rgba(212,179,67,0.2); border-color: #4d4318; }
+.sn-tile.sn-l3 { box-shadow: inset 0 0 30px rgba(238,139,26,0.2); border-color: #6e3d15; }
+.sn-tile.sn-l2 { box-shadow: inset 0 0 35px rgba(255,45,85,0.3); border-color: #6b1525; animation: sonar-pulse 2s infinite; }
+.sn-tile.sn-l1 { box-shadow: inset 0 0 40px rgba(255,45,85,0.45), 0 0 20px rgba(255,45,85,0.4); border-color: #ff2d55; animation: sonar-pulse 0.8s infinite; }
+@keyframes sonar-pulse {
+  0%, 100% { box-shadow: inset 0 0 30px rgba(255,45,85,0.3); }
+  50% { box-shadow: inset 0 0 50px rgba(255,45,85,0.5), 0 0 25px rgba(255,45,85,0.5); }
+}
+.sn-tile-name { font-size: 0.55rem; color: #5dd6a8; letter-spacing: 0.2em; text-transform: uppercase; }
+.sn-tile-val { font-size: 1.4rem; color: #d6f5e8; margin-top: 4px; font-family: "Courier New", monospace; }
+.sn-tile-meta { font-size: 0.6rem; color: #4d9b7e; margin-top: 4px; }
+
+/* =========================================================
+   5. DIETER RAMS
+   ========================================================= */
+.dr-shell {
+  background: #f4f1eb;
+  color: #1a1a1a;
+  padding: 28px;
+  font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+}
+.dr-topbar {
+  display: flex; justify-content: space-between; align-items: baseline;
+  border-bottom: 1px solid #1a1a1a;
+  padding-bottom: 12px; margin-bottom: 24px;
+  font-size: 0.78rem; letter-spacing: 0.05em;
+}
+.dr-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 0; border: 1px solid #1a1a1a; }
+.dr-tile {
+  padding: 18px 16px;
+  border-right: 1px solid #1a1a1a;
+  border-bottom: 1px solid #1a1a1a;
+  position: relative;
+}
+.dr-tile:nth-child(4n) { border-right: none; }
+.dr-tile-name { font-size: 0.62rem; color: #555; letter-spacing: 0.08em; text-transform: uppercase; }
+.dr-tile-val { font-size: 1.7rem; font-weight: 300; margin-top: 6px; letter-spacing: -0.02em; }
+.dr-tile-meta { font-size: 0.7rem; color: #888; margin-top: 4px; }
+.dr-status {
+  position: absolute; top: 16px; right: 14px;
+  width: 8px; height: 8px; border-radius: 50%;
+  background: transparent; border: 1px solid #888;
+}
+.dr-tile.dr-l5 .dr-status { border-color: transparent; background: transparent; }
+.dr-tile.dr-l4 .dr-status { background: transparent; border: 1px solid #1a1a1a; }
+.dr-tile.dr-l3 .dr-status { background: #1a1a1a; border-color: #1a1a1a; }
+.dr-tile.dr-l2 .dr-status { background: #d22b2b; border-color: #d22b2b; }
+.dr-tile.dr-l1 .dr-status { background: #d22b2b; border-color: #d22b2b; box-shadow: 0 0 0 3px #fff, 0 0 0 4px #d22b2b; }
+
+/* =========================================================
+   6. BRUTALIST TERMINAL
+   ========================================================= */
+.bt-shell {
+  background: #0d0d0a;
+  padding: 16px;
+  font-family: "Courier New", "Consolas", monospace;
+  color: #4ddc4d;
+}
+.bt-topbar {
+  display: flex; justify-content: space-between;
+  margin-bottom: 14px;
+  font-size: 0.78rem; letter-spacing: 0.1em;
+}
+.bt-grid {
+  display: grid; grid-template-columns: repeat(4, 1fr); gap: 0;
+}
+.bt-tile {
+  border: 1px solid #2d4d2d;
+  padding: 12px;
+  background: #0d0d0a;
+  margin: -1px 0 0 -1px;
+}
+.bt-tile.bt-l5 { color: #4ddc4d; }
+.bt-tile.bt-l4 { color: #d4b343; border-color: #4d4318; }
+.bt-tile.bt-l3 { color: #ee8b1a; border-color: #6e3d15; }
+.bt-tile.bt-l2 { color: #ff5577; border-color: #6b1525; }
+.bt-tile.bt-l1 { color: #ff2d55; background: #1f0710; border-color: #ff2d55; }
+.bt-tile-name { font-size: 0.65rem; opacity: 0.7; }
+.bt-tile-name::before { content: "> "; }
+.bt-tile-val { font-size: 1.5rem; margin-top: 6px; }
+.bt-tile-val::after { content: "_"; animation: cursor 1s infinite; }
+@keyframes cursor { 50% { opacity: 0; } }
+.bt-tile-meta { font-size: 0.65rem; opacity: 0.5; margin-top: 4px; }
+
+/* =========================================================
+   7. VISION-OS / APPLE PRO
+   ========================================================= */
+.vo-shell {
+  background:
+    radial-gradient(circle at 20% 30%, rgba(120,80,200,0.25), transparent 50%),
+    radial-gradient(circle at 80% 70%, rgba(40,120,180,0.25), transparent 50%),
+    #0a0e1a;
+  padding: 24px;
+}
+.vo-topbar {
+  display: flex; justify-content: space-between;
+  font-size: 0.78rem; color: rgba(255,255,255,0.7);
+  margin-bottom: 18px; letter-spacing: 0.05em;
+}
+.vo-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; }
+.vo-tile {
+  background: rgba(255,255,255,0.06);
+  backdrop-filter: blur(20px) saturate(180%);
+  border: 1px solid rgba(255,255,255,0.12);
+  border-radius: 16px;
+  padding: 16px 18px;
+  position: relative;
+  transition: all 0.3s ease;
+  box-shadow: 0 8px 32px rgba(0,0,0,0.3);
+}
+.vo-tile.vo-l5 { }
+.vo-tile.vo-l4 { background: rgba(212,179,67,0.08); border-color: rgba(212,179,67,0.3); }
+.vo-tile.vo-l3 { background: rgba(238,139,26,0.10); border-color: rgba(238,139,26,0.4); }
+.vo-tile.vo-l2 { background: rgba(255,45,85,0.10); border-color: rgba(255,45,85,0.4); }
+.vo-tile.vo-l1 {
+  background: rgba(255,45,85,0.15);
+  border-color: rgba(255,45,85,0.6);
+  box-shadow: 0 8px 32px rgba(255,45,85,0.3);
+}
+.vo-tile-name { font-size: 0.65rem; color: rgba(255,255,255,0.6); letter-spacing: 0.1em; text-transform: uppercase; }
+.vo-tile-val {
+  font-size: 1.7rem; color: #fff; margin-top: 6px;
+  font-weight: 300; letter-spacing: -0.02em;
+}
+.vo-tile-meta { font-size: 0.7rem; color: rgba(255,255,255,0.55); margin-top: 4px; }
+
+/* =========================================================
+   8. F-35 MFD
+   ========================================================= */
+.f35-shell {
+  background: #1a1f15;
+  padding: 16px;
+  border: 2px solid #2d3520;
+  font-family: "Lucida Console", "Courier New", monospace;
+}
+.f35-topbar {
+  display: flex; justify-content: space-between;
+  background: #0d1108; padding: 6px 10px;
+  border: 1px solid #4a5535;
+  margin-bottom: 12px;
+  font-size: 0.72rem; color: #c8d490; letter-spacing: 0.15em;
+}
+.f35-grid {
+  display: grid; grid-template-columns: repeat(4, 1fr); gap: 4px;
+}
+.f35-tile {
+  background: #0d1108;
+  border: 1px solid #4a5535;
+  padding: 10px;
+  position: relative;
+}
+.f35-tile.f35-l5 { color: #c8d490; }
+.f35-tile.f35-l4 { color: #d4b343; border-color: #d4b343; }
+.f35-tile.f35-l3 { color: #ee8b1a; border-color: #ee8b1a; box-shadow: inset 0 0 8px rgba(238,139,26,0.2); }
+.f35-tile.f35-l2 { color: #ff5577; border-color: #ff2d55; background: rgba(255,45,85,0.08); }
+.f35-tile.f35-l1 {
+  color: #ffeb3b; border: 2px solid #ff2d55; background: rgba(255,45,85,0.2);
+  animation: warn 1s infinite;
+}
+@keyframes warn {
+  0%, 100% { background: rgba(255,45,85,0.2); }
+  50% { background: rgba(255,45,85,0.4); }
+}
+.f35-tile-name { font-size: 0.62rem; opacity: 0.85; letter-spacing: 0.15em; }
+.f35-tile-val { font-size: 1.5rem; margin-top: 4px; font-weight: bold; }
+.f35-tile-meta { font-size: 0.62rem; opacity: 0.6; margin-top: 4px; }
+.f35-tile-warn { position: absolute; top: 8px; right: 10px; font-size: 0.58rem; color: #ff2d55; font-weight: bold; }
+
+/* =========================================================
+   9. BITCOIN MAXIMALIST
+   ========================================================= */
+.btc-shell {
+  background: #000;
+  padding: 18px;
+  font-family: "Consolas", "Courier New", monospace;
+  color: #f7931a;
+  border: 1px solid #1a1a1a;
+}
+.btc-topbar {
+  display: flex; justify-content: space-between;
+  border-bottom: 1px solid #1a1a1a; padding-bottom: 10px; margin-bottom: 14px;
+  font-size: 0.75rem; letter-spacing: 0.1em;
+}
+.btc-topbar .height { color: #888; }
+.btc-grid {
+  display: grid; grid-template-columns: repeat(4, 1fr); gap: 1px;
+  background: #1a1a1a;
+}
+.btc-tile {
+  background: #0a0a0a;
+  padding: 12px;
+  position: relative;
+}
+.btc-tile.btc-l5 { border-top: 2px solid #f7931a; }
+.btc-tile.btc-l4 { border-top: 2px solid #d4b343; }
+.btc-tile.btc-l3 { border-top: 2px solid #ee8b1a; }
+.btc-tile.btc-l2 { border-top: 2px solid #ff2d55; }
+.btc-tile.btc-l1 {
+  border-top: 2px solid #ff2d55;
+  background: rgba(255,45,85,0.05);
+  box-shadow: inset 0 -8px 16px rgba(255,45,85,0.08);
+}
+.btc-tile-name { font-size: 0.62rem; color: #666; letter-spacing: 0.15em; text-transform: uppercase; }
+.btc-tile-val { font-size: 1.5rem; color: #f7931a; margin-top: 6px; }
+.btc-tile-meta { font-size: 0.65rem; color: #888; margin-top: 4px; }
+.btc-sats { font-size: 0.6rem; color: #444; margin-top: 4px; }
+
+/* =========================================================
+   10. BAUHAUS MODULAR
+   ========================================================= */
+.bh-shell {
+  background: #f5f0e6;
+  color: #0a0a0a;
+  padding: 24px;
+  font-family: "Futura", "Arial Black", sans-serif;
+}
+.bh-topbar {
+  display: flex; justify-content: space-between; align-items: baseline;
+  margin-bottom: 20px;
+  border-bottom: 4px solid #0a0a0a; padding-bottom: 12px;
+  letter-spacing: 0.1em;
+}
+.bh-topbar h3 { font-size: 1.4rem; font-weight: 900; text-transform: uppercase; }
+.bh-grid {
+  display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px;
+}
+.bh-tile {
+  padding: 18px; position: relative; border: 3px solid #0a0a0a;
+  background: #fff;
+}
+.bh-tile.bh-l5 { background: #fff; }
+.bh-tile.bh-l4 { background: #ffd400; }
+.bh-tile.bh-l3 { background: #ff7a00; color: #fff; }
+.bh-tile.bh-l2 { background: #d22b2b; color: #fff; }
+.bh-tile.bh-l1 { background: #0a0a0a; color: #ffd400; }
+.bh-shape {
+  position: absolute; top: 12px; right: 12px;
+  width: 18px; height: 18px;
+}
+.bh-shape.circle { border-radius: 50%; }
+.bh-shape.triangle {
+  width: 0; height: 0;
+  border-left: 9px solid transparent; border-right: 9px solid transparent;
+  border-bottom: 16px solid;
+}
+.bh-tile.bh-l5 .bh-shape { background: #2858d0; }
+.bh-tile.bh-l4 .bh-shape { background: #0a0a0a; }
+.bh-tile.bh-l3 .bh-shape { background: #fff; }
+.bh-tile.bh-l2 .bh-shape { background: #fff; }
+.bh-tile.bh-l1 .bh-shape { background: #ffd400; }
+.bh-tile-name {
+  font-size: 0.62rem; letter-spacing: 0.2em; text-transform: uppercase; font-weight: 700;
+}
+.bh-tile-val {
+  font-size: 2rem; font-weight: 900; margin-top: 8px; letter-spacing: -0.02em;
+}
+.bh-tile-meta { font-size: 0.7rem; margin-top: 4px; opacity: 0.85; font-weight: 500; }
+
+/* =========================================================
+   11. SWISS INTERNATIONAL
+   ========================================================= */
+.sw-shell { background: #f0ede5; padding: 28px; color: #0a0a0a; font-family: 'Helvetica Neue','Arial',sans-serif; border: 1px solid #0a0a0a; }
+.sw-topbar { display: flex; justify-content: space-between; padding-bottom: 14px; border-bottom: 1px solid #0a0a0a; font-size: 0.74rem; letter-spacing: 0.12em; text-transform: uppercase; font-weight: 500; }
+.sw-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 0; border-bottom: 1px solid #0a0a0a; }
+.sw-tile { padding: 24px 20px; border-right: 1px solid #0a0a0a; border-top: 1px solid #0a0a0a; position: relative; min-height: 120px; }
+.sw-tile:nth-child(4n) { border-right: none; }
+.sw-tile-name { font-size: 0.65rem; font-weight: 500; letter-spacing: 0.15em; text-transform: uppercase; color: #6b6b6b; }
+.sw-tile-val { font-size: 2.4rem; font-weight: 300; letter-spacing: -0.03em; margin-top: 10px; color: #0a0a0a; line-height: 1; }
+.sw-tile-meta { font-size: 0.72rem; font-weight: 400; color: #6b6b6b; margin-top: 8px; }
+.sw-tile.sw-l4::after { content: ''; position: absolute; top: 18px; right: 18px; width: 8px; height: 8px; border-radius: 50%; background: #0a0a0a; }
+.sw-tile.sw-l3::after { content: ''; position: absolute; top: 18px; right: 18px; width: 8px; height: 8px; background: #0a0a0a; }
+.sw-tile.sw-l3 .sw-tile-val { display: inline-block; border-bottom: 1px solid #0a0a0a; padding-bottom: 4px; }
+.sw-tile.sw-l2::after { content: ''; position: absolute; top: 18px; right: 18px; width: 10px; height: 10px; background: #d22b1e; }
+.sw-tile.sw-l2 .sw-tile-val { color: #d22b1e; }
+.sw-tile.sw-l1 { padding-top: 32px; }
+.sw-tile.sw-l1::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 8px; background: #d22b1e; }
+.sw-tile.sw-l1 .sw-tile-val { color: #d22b1e; display: inline-block; border-bottom: 1px solid #d22b1e; padding-bottom: 4px; }
+.sw-tile.sw-l1 .sw-tile-val::before { content: '▲ '; font-size: 1.1rem; vertical-align: 0.35em; }
+
+/* =========================================================
+   12. CONSTRUCTIVIST
+   ========================================================= */
+.ru-shell { background: #f3eddf; padding: 0; font-family: 'Helvetica Neue','Arial Black',sans-serif; position: relative; overflow: hidden; }
+.ru-shell::before { content: ''; position: absolute; inset: 0; background: repeating-linear-gradient(45deg, transparent 0 60px, rgba(0,0,0,0.04) 60px 61px); pointer-events: none; z-index: 0; }
+.ru-topbar { background: #161616; color: #f3eddf; padding: 14px 22px; display: flex; justify-content: space-between; align-items: center; font-size: 0.85rem; letter-spacing: 0.18em; text-transform: uppercase; font-weight: 900; position: relative; z-index: 1; }
+.ru-topbar > span:first-child { transform: skewX(-8deg); display: inline-block; }
+.ru-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 0; position: relative; z-index: 1; }
+.ru-tile { background: #f3eddf; color: #161616; padding: 18px 16px; border-right: 1px solid #161616; border-bottom: 1px solid #161616; position: relative; overflow: hidden; min-height: 130px; }
+.ru-tile:nth-child(4n) { border-right: none; }
+.ru-tile-name { font-size: 0.7rem; font-weight: 900; text-transform: uppercase; letter-spacing: 0.2em; position: relative; z-index: 3; }
+.ru-tile-val { font-size: 2.4rem; font-weight: 900; letter-spacing: -0.04em; margin-top: 10px; position: relative; z-index: 3; line-height: 1; }
+.ru-tile-meta { font-size: 0.68rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.12em; margin-top: 6px; position: relative; z-index: 3; }
+.ru-tile.ru-l4::before { content: ''; position: absolute; inset: 0; background: linear-gradient(135deg, transparent 32%, rgba(22,22,22,0.85) 32%, rgba(22,22,22,0.85) 52%, transparent 52%); z-index: 1; }
+.ru-tile.ru-l3::before { content: ''; position: absolute; inset: 0; background: linear-gradient(135deg, transparent 32%, #c8231d 32%, #c8231d 52%, transparent 52%); z-index: 1; }
+.ru-tile.ru-l2 { background: #c8231d; color: #f3eddf; }
+.ru-tile.ru-l2::before { content: ''; position: absolute; inset: 0; background: linear-gradient(135deg, transparent 32%, rgba(22,22,22,0.7) 32%, rgba(22,22,22,0.7) 52%, transparent 52%); z-index: 1; }
+.ru-tile.ru-l1::before { content: ''; position: absolute; bottom: 0; left: 50%; transform: translateX(-50%); width: 0; height: 0; border-left: 80px solid transparent; border-right: 80px solid transparent; border-bottom: 110px solid #c8231d; z-index: 1; }
+.ru-tile.ru-l1 .ru-tile-val { color: #f3eddf; padding-top: 30px; }
+.ru-tile.ru-l1 .ru-tile-meta { color: #f3eddf; }
+
+/* =========================================================
+   13. MEMPHIS GROUP
+   ========================================================= */
+.mp-shell { background: #faf6e9; padding: 24px; font-family: 'Futura','Trebuchet MS',sans-serif; }
+.mp-topbar { display: flex; justify-content: space-between; padding-bottom: 14px; border-bottom: 4px solid #0a0a0a; margin-bottom: 16px; font-size: 0.85rem; font-weight: 900; letter-spacing: 0.1em; text-transform: uppercase; }
+.mp-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; }
+.mp-tile { background: #faf6e9; color: #0a0a0a; padding: 16px; border: 3px solid #0a0a0a; position: relative; overflow: hidden; min-height: 110px; }
+.mp-tile:nth-child(2n) { border-radius: 0 18px 0 0; }
+.mp-tile:nth-child(3n) { border-top: 6px dashed #0a0a0a; }
+.mp-tile:nth-child(5) { padding-bottom: 28px; }
+.mp-tile:nth-child(7) { padding-bottom: 28px; }
+.mp-tile-name { font-size: 0.62rem; font-weight: 700; letter-spacing: 0.15em; text-transform: uppercase; }
+.mp-tile-val { font-size: 1.8rem; font-weight: 800; font-style: italic; margin-top: 8px; line-height: 1; }
+.mp-tile-meta { font-size: 0.72rem; font-weight: 500; margin-top: 8px; }
+.mp-tile.mp-l5::after { content: ''; position: absolute; bottom: 10px; right: 10px; width: 5px; height: 5px; border-radius: 50%; background: #ff6db8; box-shadow: 9px 0 0 #2dc4d3, 18px 0 0 #ffd028, 9px -9px 0 #0a0a0a; }
+.mp-tile.mp-l4 { background: #ffd028; }
+.mp-tile.mp-l3 { background: #2dc4d3; }
+.mp-tile.mp-l2 { background: #ff6db8; color: #fff; }
+.mp-tile.mp-l1 { background: #ee5d2d; color: #ffd028; }
+.mp-tile.mp-l1::before { content: ''; position: absolute; top: -12px; right: -12px; width: 56px; height: 56px; background: #0a0a0a; clip-path: polygon(50% 0, 61% 35%, 98% 35%, 68% 57%, 79% 91%, 50% 70%, 21% 91%, 32% 57%, 2% 35%, 39% 35%); }
+
+/* =========================================================
+   14. VOGUE EDITORIAL
+   ========================================================= */
+.vg-shell { background: #fff; color: #0a0a0a; padding: 32px; font-family: 'Didot','Bodoni 72','Bodoni MT','Times New Roman',serif; }
+.vg-topbar { display: flex; justify-content: space-between; align-items: baseline; padding-bottom: 18px; border-bottom: 0.5px solid #0a0a0a; margin-bottom: 24px; }
+.vg-topbar h3 { font-size: 3rem; font-weight: 300; letter-spacing: -0.02em; }
+.vg-topbar span { font-size: 0.85rem; font-style: italic; color: #6b6b6b; }
+.vg-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1px; background: #0a0a0a; }
+.vg-tile { background: #fff; padding: 28px 24px; position: relative; min-height: 160px; }
+.vg-tile-name { font-size: 0.55rem; font-weight: 400; letter-spacing: 0.4em; text-transform: uppercase; color: #6b6b6b; }
+.vg-tile-val { font-size: 3rem; font-weight: 300; line-height: 1; letter-spacing: -0.04em; margin-top: 14px; }
+.vg-tile-meta { font-size: 0.78rem; font-style: italic; font-weight: 400; margin-top: 14px; color: #6b6b6b; }
+.vg-tile.vg-l4 .vg-tile-val { display: inline-block; border-bottom: 1px solid #b8860b; padding-bottom: 4px; }
+.vg-tile.vg-l4 .vg-tile-meta::before { content: 'attention · '; }
+.vg-tile.vg-l3 .vg-tile-val { color: #8b0000; display: inline-block; border-bottom: 1px solid #b8860b; padding-bottom: 4px; }
+.vg-tile.vg-l2 .vg-tile-val { color: #8b0000; }
+.vg-tile.vg-l2 .vg-tile-meta::before { content: 'STRESS · '; font-variant: small-caps; }
+.vg-tile.vg-l1 { background: #3d0d10; color: #f5e8d4; }
+.vg-tile.vg-l1 .vg-tile-name { color: #c9a883; }
+.vg-tile.vg-l1 .vg-tile-val { color: #f5e8d4; }
+.vg-tile.vg-l1 .vg-tile-val::before { content: '— '; }
+.vg-tile.vg-l1 .vg-tile-val::after { content: ' —'; }
+.vg-tile.vg-l1 .vg-tile-meta { color: #c9a883; }
+
+/* =========================================================
+   15. BLUE NOTE JAZZ
+   ========================================================= */
+.bn-shell { background: #1a1410; padding: 20px; font-family: 'Helvetica Neue','Arial Black','Impact',sans-serif; color: #ebe2d0; }
+.bn-topbar { display: flex; justify-content: space-between; align-items: baseline; padding-bottom: 14px; border-bottom: 1px solid #3d3328; margin-bottom: 16px; }
+.bn-topbar h3 { font-size: 2.4rem; font-weight: 900; letter-spacing: -0.02em; transform: scaleX(0.85); transform-origin: left; }
+.bn-topbar span { font-size: 0.7rem; font-weight: 700; letter-spacing: 0.15em; color: #c69b56; text-transform: uppercase; }
+.bn-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; }
+.bn-tile { background: #1a1410; aspect-ratio: 16 / 10; padding: 12px; position: relative; overflow: hidden; display: flex; flex-direction: column; }
+.bn-tile-name { font-size: 0.7rem; font-weight: 900; letter-spacing: 0.05em; text-transform: uppercase; color: #ebe2d0; background: #2c5e8a; padding: 6px 10px; align-self: flex-start; max-width: 75%; }
+.bn-tile:nth-child(odd) .bn-tile-name { font-style: italic; }
+.bn-tile-val { font-size: 2rem; font-weight: 900; letter-spacing: -0.03em; transform: scaleX(0.9); transform-origin: left; margin-top: -2px; padding-left: 4px; color: #ebe2d0; line-height: 1.05; }
+.bn-tile-meta { font-size: 0.68rem; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: #c69b56; padding-left: 4px; margin-top: auto; }
+.bn-tile.bn-l4 .bn-tile-name { background: #c69b56; color: #1a1410; }
+.bn-tile.bn-l3 .bn-tile-name { background: #c8511f; }
+.bn-tile.bn-l2 { background: #c8511f; }
+.bn-tile.bn-l2 .bn-tile-name { background: #1a1410; }
+.bn-tile.bn-l2 .bn-tile-meta { color: #ebe2d0; }
+.bn-tile.bn-l1 { background: #c8511f; }
+.bn-tile.bn-l1 .bn-tile-name { background: #1a1410; }
+.bn-tile.bn-l1 .bn-tile-val { display: inline-block; border-bottom: 4px solid #ebe2d0; padding-bottom: 2px; align-self: flex-start; }
+.bn-tile.bn-l1 .bn-tile-meta { color: #ebe2d0; }
+
+/* =========================================================
+   16. ARCHITECTURAL BLUEPRINT
+   ========================================================= */
+.ab-shell { background: #1c4068; padding: 24px; font-family: 'Courier New','Lucida Console','Monaco',monospace; color: #b8c8d8; position: relative; }
+.ab-shell::before { content: ''; position: absolute; inset: 0; background-image: repeating-linear-gradient(0deg, rgba(184,200,216,0.06) 0 1px, transparent 1px 20px), repeating-linear-gradient(90deg, rgba(184,200,216,0.06) 0 1px, transparent 1px 20px); pointer-events: none; }
+.ab-topbar { display: flex; justify-content: space-between; padding-bottom: 12px; border-bottom: 1px dashed #b8c8d8; margin-bottom: 16px; font-size: 0.74rem; letter-spacing: 0.12em; position: relative; }
+.ab-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; position: relative; }
+.ab-tile { background: rgba(28,64,104,0.4); padding: 16px; border: 1px dashed #b8c8d8; position: relative; min-height: 120px; }
+.ab-tile::before, .ab-tile::after { content: ''; position: absolute; width: 8px; height: 8px; }
+.ab-tile::before { top: -2px; left: -2px; border-top: 1px solid #b8c8d8; border-left: 1px solid #b8c8d8; }
+.ab-tile::after { bottom: -2px; right: -2px; border-bottom: 1px solid #b8c8d8; border-right: 1px solid #b8c8d8; }
+.ab-tile-name { font-size: 0.65rem; letter-spacing: 0.15em; text-transform: uppercase; color: #b8c8d8; }
+.ab-tile-val { font-size: 2rem; font-weight: 400; margin-top: 8px; color: #d4dce4; line-height: 1; }
+.ab-tile-meta { font-size: 0.7rem; font-style: italic; margin-top: 6px; color: #8b9eb1; }
+.ab-stamp { position: absolute; top: 10px; right: 10px; padding: 2px 6px; font-size: 0.58rem; font-weight: 700; letter-spacing: 0.1em; transform: rotate(-12deg); border: 1px solid; }
+.ab-tile.ab-l4 .ab-stamp { color: #f0c64a; border-color: #f0c64a; }
+.ab-tile.ab-l3 { border: 1px solid #f0c64a; border-style: dashed; }
+.ab-tile.ab-l3 .ab-tile-val { color: #f0c64a; }
+.ab-tile.ab-l3 .ab-stamp { color: #f0c64a; border-color: #f0c64a; }
+.ab-tile.ab-l2 { border: 1px solid #e85d35; }
+.ab-tile.ab-l2 .ab-tile-val { color: #e85d35; }
+.ab-tile.ab-l2 .ab-stamp { color: #e85d35; border-color: #e85d35; }
+.ab-tile.ab-l1 { border: 2px solid #e85d35; }
+.ab-tile.ab-l1 .ab-tile-val { color: #e85d35; }
+.ab-tile.ab-l1 .ab-stamp { color: #e85d35; border-color: #e85d35; transform: rotate(-10deg); font-weight: 900; padding: 4px 8px; font-size: 0.65rem; }
+
+/* =========================================================
+   17. VIGNELLI SUBWAY
+   ========================================================= */
+.vn-shell { background: #fff; padding: 24px; font-family: 'Helvetica Neue','Helvetica','Arial',sans-serif; color: #0a0a0a; }
+.vn-topbar { display: flex; justify-content: space-between; align-items: center; padding-bottom: 12px; border-bottom: 2px solid #0a0a0a; margin-bottom: 16px; font-size: 0.95rem; font-weight: 700; letter-spacing: 0.04em; }
+.vn-bullets { display: flex; gap: 6px; align-items: center; }
+.vn-bullet-mini { width: 18px; height: 18px; border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; color: #fff; font-size: 0.6rem; font-weight: 700; }
+.vn-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px; }
+.vn-tile { background: #fff; padding: 16px 14px; border-bottom: 1px solid #0a0a0a; position: relative; min-height: 110px; }
+.vn-bullet { position: absolute; top: 14px; right: 14px; width: 28px; height: 28px; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: #fff; font-weight: 700; font-size: 0.85rem; }
+.vn-tile-name { font-size: 0.75rem; font-weight: 700; letter-spacing: 0.04em; text-transform: uppercase; padding-right: 36px; }
+.vn-tile-val { font-size: 2.2rem; font-weight: 700; letter-spacing: -0.02em; margin-top: 12px; line-height: 1; }
+.vn-tile-meta { font-size: 0.78rem; font-weight: 400; margin-top: 6px; color: #555; }
+.vn-tile.vn-l5 .vn-bullet { background: #0039a6; }
+.vn-tile.vn-l4 .vn-bullet { background: #00933c; }
+.vn-tile.vn-l3 .vn-bullet { background: #ff6319; }
+.vn-tile.vn-l3 .vn-tile-val { color: #ff6319; }
+.vn-tile.vn-l2 { border-bottom: 3px solid #ee352e; }
+.vn-tile.vn-l2 .vn-bullet { background: #ee352e; }
+.vn-tile.vn-l2 .vn-tile-val { color: #ee352e; }
+.vn-tile.vn-l1 { border-bottom: 3px solid #b933ad; }
+.vn-tile.vn-l1 .vn-bullet { background: #b933ad; }
+.vn-tile.vn-l1 .vn-tile-val { color: #b933ad; }
+.vn-tile.vn-l1 .vn-tile-meta::before { content: '■ '; color: #b933ad; font-weight: 900; }
+
+/* =========================================================
+   18. RISOGRAPH
+   ========================================================= */
+.ri-shell { background: #f4eddc; padding: 24px; font-family: 'Courier Prime','Courier New',monospace; color: #2452a2; position: relative; }
+.ri-shell::before { content: ''; position: absolute; inset: 0; background-image: radial-gradient(rgba(36,82,162,0.08) 1px, transparent 1px); background-size: 4px 4px; pointer-events: none; }
+.ri-topbar { display: flex; justify-content: space-between; padding-bottom: 12px; border-bottom: 1px dashed #2452a2; margin-bottom: 18px; font-size: 0.78rem; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; position: relative; }
+.ri-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; position: relative; }
+.ri-tile { background: #f4eddc; border: 2px solid #2452a2; padding: 14px; position: relative; box-shadow: 3px 3px 0 rgba(238,64,53,0.55); min-height: 110px; }
+.ri-tile-name { font-family: 'Courier Prime','Courier New',monospace; font-size: 0.7rem; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: #2452a2; }
+.ri-tile-val { font-family: 'Georgia','Garamond',serif; font-size: 2rem; font-weight: 400; font-style: italic; color: #2452a2; margin-top: 8px; line-height: 1; }
+.ri-tile-meta { font-size: 0.72rem; color: #2452a2; opacity: 0.75; margin-top: 6px; }
+.ri-tile.ri-l4 .ri-tile-val { background: linear-gradient(180deg, transparent 55%, rgba(240,184,0,0.7) 55%); display: inline-block; padding: 0 6px; }
+.ri-tile.ri-l3 .ri-tile-val { color: #f0b800; }
+.ri-tile.ri-l2 { box-shadow: 3px 3px 0 #ee4035; }
+.ri-tile.ri-l2 .ri-tile-val { color: #ee4035; display: inline-block; border-bottom: 2px dashed #ee4035; padding-bottom: 4px; }
+.ri-tile.ri-l1 { background: #ee4035; border-color: #2452a2; box-shadow: -4px -4px 0 rgba(36,82,162,0.5); }
+.ri-tile.ri-l1 .ri-tile-name, .ri-tile.ri-l1 .ri-tile-meta, .ri-tile.ri-l1 .ri-tile-val { color: #f4eddc; opacity: 1; }
+
+/* =========================================================
+   19. CASINO MARQUEE
+   ========================================================= */
+.cm-shell { background: #1a0d05; padding: 22px; font-family: 'Impact','Bebek','Arial Black',sans-serif; border: 6px solid #c9a02a; box-shadow: inset 0 0 30px rgba(255,176,0,0.2); }
+.cm-topbar { display: flex; justify-content: space-between; align-items: center; padding-bottom: 14px; border-bottom: 2px dashed #c9a02a; margin-bottom: 16px; }
+.cm-topbar h3 { font-family: 'Pacifico','Brush Script MT',cursive; font-size: 1.9rem; color: #ffb000; text-shadow: 0 0 12px rgba(255,176,0,0.65); font-weight: 400; }
+.cm-topbar span { font-size: 0.75rem; color: #c9a02a; letter-spacing: 0.18em; text-transform: uppercase; font-weight: 900; }
+.cm-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; }
+.cm-tile { background: #1a0d05; padding: 18px 14px; position: relative; min-height: 120px; }
+.cm-tile::before { content: ''; position: absolute; inset: 4px; border: 4px dotted #ffb000; pointer-events: none; opacity: 0.7; }
+.cm-tile-name { font-size: 0.7rem; font-weight: 900; letter-spacing: 0.2em; text-transform: uppercase; color: #c9a02a; position: relative; z-index: 1; padding: 0 6px; }
+.cm-tile-val { font-size: 2.4rem; font-weight: 900; color: #c9a02a; margin-top: 6px; position: relative; z-index: 1; padding: 0 6px; line-height: 1; }
+.cm-tile-meta { font-size: 0.7rem; font-weight: 700; text-transform: uppercase; color: #c9a02a; opacity: 0.85; margin-top: 8px; position: relative; z-index: 1; padding: 0 6px; }
+.cm-tile.cm-l4::before { border-color: #ff6db8; opacity: 0.9; }
+.cm-tile.cm-l4 .cm-tile-val { color: #ff6db8; }
+.cm-tile.cm-l3::before { border-color: #ff6db8; opacity: 1; }
+.cm-tile.cm-l3 .cm-tile-val { color: #ffd57c; }
+.cm-tile.cm-l2::before { border-color: #ff2944; opacity: 1; }
+.cm-tile.cm-l2 .cm-tile-val { color: #ff2944; text-shadow: 0 0 12px rgba(255,41,68,0.6); }
+.cm-tile.cm-l2 .cm-tile-name, .cm-tile.cm-l2 .cm-tile-meta { color: #ff2944; }
+.cm-tile.cm-l1::before { border-color: #ff2944; opacity: 1; }
+.cm-tile.cm-l1 .cm-tile-val { color: #ff2944; text-shadow: 0 0 6px #ff2944, 0 0 18px #ff2944, 2px 2px 0 #1a0d05; }
+.cm-tile.cm-l1 .cm-tile-name, .cm-tile.cm-l1 .cm-tile-meta { color: #ff2944; }
+
+/* =========================================================
+   20. GHIBLI SKY
+   ========================================================= */
+.gh-shell { background: linear-gradient(135deg, #c8d8e8 0%, #e8d4b8 30%, #d4a574 65%, #c47b3f 100%); padding: 28px; font-family: 'Crimson Text','Iowan Old Style','Georgia',serif; color: #1a1410; position: relative; }
+.gh-shell::before { content: ''; position: absolute; inset: 8px; border: 1px dotted rgba(26,20,16,0.25); pointer-events: none; }
+.gh-topbar { display: flex; justify-content: space-between; align-items: baseline; padding-bottom: 14px; margin-bottom: 18px; position: relative; }
+.gh-topbar h3 { font-size: 1.7rem; font-style: italic; font-weight: 400; color: #1a1410; }
+.gh-topbar span { font-size: 0.85rem; font-style: italic; color: #4a3a2a; }
+.gh-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; position: relative; }
+.gh-tile { background: #f7f0e2; padding: 16px; border: 1px solid #1a1410; border-radius: 4px; position: relative; overflow: hidden; min-height: 110px; }
+.gh-tile-name { font-size: 0.65rem; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; color: #4a3a2a; position: relative; z-index: 1; }
+.gh-tile-val { font-size: 1.9rem; font-weight: 400; color: #1a1410; margin-top: 8px; position: relative; z-index: 1; line-height: 1; }
+.gh-tile-meta { font-size: 0.75rem; font-style: italic; color: #4a3a2a; margin-top: 6px; position: relative; z-index: 1; }
+.gh-tile.gh-l5::after { content: ''; position: absolute; bottom: 10px; right: 10px; width: 8px; height: 8px; border-radius: 50%; background: #c8d8e8; }
+.gh-tile.gh-l4 { background: linear-gradient(180deg, #f7f0e2 0%, #d4a574 100%); }
+.gh-tile.gh-l4::after { content: ''; position: absolute; bottom: 8px; right: 8px; width: 14px; height: 14px; border-radius: 50%; background: #d4a574; box-shadow: 0 0 10px rgba(212,165,116,0.7); }
+.gh-tile.gh-l3 { background: linear-gradient(180deg, #f7f0e2 0%, #c47b3f 100%); }
+.gh-tile.gh-l3::after { content: ''; position: absolute; bottom: 6px; right: 8px; width: 18px; height: 10px; background: #6b3038; clip-path: polygon(0 50%, 30% 0, 70% 0, 100% 50%, 70% 100%, 30% 100%); transform: rotate(-25deg); }
+.gh-tile.gh-l2 { background: #6b3038; color: #f7f0e2; }
+.gh-tile.gh-l2 .gh-tile-name, .gh-tile.gh-l2 .gh-tile-meta { color: #d4a574; }
+.gh-tile.gh-l2 .gh-tile-val { color: #f7f0e2; }
+.gh-tile.gh-l2::after { content: ''; position: absolute; bottom: 14px; left: 14px; right: 14px; height: 1px; background: #d4a574; }
+.gh-tile.gh-l1 { background: #2d1318; color: #f7f0e2; }
+.gh-tile.gh-l1 .gh-tile-name { color: #c47b3f; }
+.gh-tile.gh-l1 .gh-tile-val { color: #f7f0e2; }
+.gh-tile.gh-l1 .gh-tile-meta { color: #c47b3f; }
+.gh-tile.gh-l1::after { content: ''; position: absolute; top: 10px; right: 10px; width: 14px; height: 22px; background: #c47b3f; clip-path: polygon(45% 0, 70% 0, 50% 42%, 75% 42%, 30% 100%, 50% 52%, 25% 52%); }
+
+/* utility */
+.choose-cta {
+  padding: 32px; text-align: center;
+  background: #050505;
+  color: #888;
+  font-size: 0.85rem;
+}
+</style>
+</head>
+<body>
+
+<header class="page-header">
+  <h1>Macro Stress Dashboard — 10 Design Directions</h1>
+  <p>Same data, ten aesthetics. Each panel shows 8 sample tiles spanning the full alarm range.</p>
+  <div class="legend">
+    <div class="legend-item"><span class="legend-dot l5"></span>Level 5 — Stable</div>
+    <div class="legend-item"><span class="legend-dot l4"></span>Level 4 — Watching</div>
+    <div class="legend-item"><span class="legend-dot l3"></span>Level 3 — Elevated</div>
+    <div class="legend-item"><span class="legend-dot l2"></span>Level 2 — Stressed</div>
+    <div class="legend-item"><span class="legend-dot l1"></span>Level 1 — Critical</div>
+  </div>
+</header>
+
+<!-- ============ 1. BLOOMBERG-NATIVE ============ -->
+<section class="section">
+  <div class="section-meta">
+    <h2>1 / Bloomberg-Native</h2>
+    <span class="subtitle">Pro-trader terminal. Disappears so you read the number.</span>
+    <span class="build">Build difficulty: 2/5</span>
+  </div>
+  <div class="bb-shell">
+    <div class="bb-topbar">
+      <span>MACRO &lt;GO&gt;</span>
+      <span>03 MAY 2026 14:32:08 EST</span>
+      <span>SYSTEM: 6 INDICATORS CRITICAL</span>
+    </div>
+    <div class="bb-grid">
+      <div class="bb-tile bb-l5"><div class="bb-tile-name">SOFR</div><div class="bb-tile-val">4.32%</div><div class="bb-tile-meta">IORB+1bp · stable</div></div>
+      <div class="bb-tile bb-l3"><div class="bb-tile-name">10Y YIELD</div><div class="bb-tile-val">4.42%</div><div class="bb-tile-meta">+12bp 5d</div></div>
+      <div class="bb-tile bb-l4"><div class="bb-tile-name">HY OAS</div><div class="bb-tile-val">285</div><div class="bb-tile-meta">spread bps · widening</div></div>
+      <div class="bb-tile bb-l2"><div class="bb-tile-name">USD/JPY</div><div class="bb-tile-val">160.43</div><div class="bb-tile-meta">intervention zone</div></div>
+      <div class="bb-tile bb-l5"><div class="bb-tile-name">VIX</div><div class="bb-tile-val">18.81</div><div class="bb-tile-meta">complacent</div></div>
+      <div class="bb-tile bb-l2"><div class="bb-tile-name">ON RRP</div><div class="bb-tile-val">$0.7B</div><div class="bb-tile-meta">drained</div></div>
+      <div class="bb-tile bb-l5"><div class="bb-tile-name">BTC</div><div class="bb-tile-val">$108,490</div><div class="bb-tile-meta">+2.1% 24h</div></div>
+      <div class="bb-tile bb-l1"><div class="bb-tile-name">JGB 10Y</div><div class="bb-tile-val">2.48%</div><div class="bb-tile-meta">YCC BREAK</div></div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ 2. MISSION CONTROL ============ -->
+<section class="section">
+  <div class="section-meta">
+    <h2>2 / Mission Control</h2>
+    <span class="subtitle">Apollo console. Status LEDs. Weighty and important.</span>
+    <span class="build">Build difficulty: 3/5</span>
+  </div>
+  <div class="mc-shell">
+    <div class="mc-topbar">
+      <span><span class="mc-led mc-led-on"></span>MACRO STATION · ONLINE</span>
+      <span>MISSION DAY 1583 · GMT 19:32:08</span>
+      <span>ALERT LEVEL 3 · 6 SYS WARN</span>
+    </div>
+    <div class="mc-grid">
+      <div class="mc-tile mc-l5"><div class="mc-tile-led"></div><div class="mc-tile-name">SOFR</div><div class="mc-tile-val">4.32</div><div class="mc-tile-meta">% · NOMINAL</div></div>
+      <div class="mc-tile mc-l3"><div class="mc-tile-led"></div><div class="mc-tile-name">10Y YIELD</div><div class="mc-tile-val">4.42</div><div class="mc-tile-meta">% · CAUTION</div></div>
+      <div class="mc-tile mc-l4"><div class="mc-tile-led"></div><div class="mc-tile-name">HY OAS</div><div class="mc-tile-val">285</div><div class="mc-tile-meta">BPS · WATCH</div></div>
+      <div class="mc-tile mc-l2"><div class="mc-tile-led"></div><div class="mc-tile-name">USD/JPY</div><div class="mc-tile-val">160.43</div><div class="mc-tile-meta">INTERVENTION</div></div>
+      <div class="mc-tile mc-l5"><div class="mc-tile-led"></div><div class="mc-tile-name">VIX</div><div class="mc-tile-val">18.81</div><div class="mc-tile-meta">NOMINAL</div></div>
+      <div class="mc-tile mc-l2"><div class="mc-tile-led"></div><div class="mc-tile-name">ON RRP</div><div class="mc-tile-val">0.7</div><div class="mc-tile-meta">$B · DRAINED</div></div>
+      <div class="mc-tile mc-l5"><div class="mc-tile-led"></div><div class="mc-tile-name">BTC</div><div class="mc-tile-val">108K</div><div class="mc-tile-meta">USD · STABLE</div></div>
+      <div class="mc-tile mc-l1"><div class="mc-tile-led"></div><div class="mc-tile-name">JGB 10Y</div><div class="mc-tile-val">2.48</div><div class="mc-tile-meta">% · BREACH</div></div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ 3. CYBERPUNK HUD ============ -->
+<section class="section">
+  <div class="section-meta">
+    <h2>3 / Cyberpunk HUD</h2>
+    <span class="subtitle">Glassmorphic with neon edges and scanlines.</span>
+    <span class="build">Build difficulty: 4/5</span>
+  </div>
+  <div class="cp-shell">
+    <div class="cp-topbar">
+      <span>// MACRO_STRESS.SYS</span>
+      <span>NETRUN 03.05.26 // CRITICAL × 6</span>
+    </div>
+    <div class="cp-grid">
+      <div class="cp-tile cp-l5"><div class="cp-tile-name">SOFR</div><div class="cp-tile-val">4.32%</div><div class="cp-tile-meta">stable</div></div>
+      <div class="cp-tile cp-l3"><div class="cp-tile-name">10Y YIELD</div><div class="cp-tile-val">4.42%</div><div class="cp-tile-meta">elevated</div></div>
+      <div class="cp-tile cp-l4"><div class="cp-tile-name">HY OAS</div><div class="cp-tile-val">285</div><div class="cp-tile-meta">widening</div></div>
+      <div class="cp-tile cp-l2"><div class="cp-tile-name">USD/JPY</div><div class="cp-tile-val">160.43</div><div class="cp-tile-meta">intervention</div></div>
+      <div class="cp-tile cp-l5"><div class="cp-tile-name">VIX</div><div class="cp-tile-val">18.81</div><div class="cp-tile-meta">low</div></div>
+      <div class="cp-tile cp-l2"><div class="cp-tile-name">ON RRP</div><div class="cp-tile-val">$0.7B</div><div class="cp-tile-meta">drained</div></div>
+      <div class="cp-tile cp-l5"><div class="cp-tile-name">BTC</div><div class="cp-tile-val">$108K</div><div class="cp-tile-meta">+2.1%</div></div>
+      <div class="cp-tile cp-l1"><div class="cp-tile-name">JGB 10Y</div><div class="cp-tile-val">2.48%</div><div class="cp-tile-meta">YCC break</div></div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ 4. SUBMARINE SONAR ============ -->
+<section class="section">
+  <div class="section-meta">
+    <h2>4 / Submarine SONAR</h2>
+    <span class="subtitle">Circular tiles, pings on alarm escalation.</span>
+    <span class="build">Build difficulty: 4/5</span>
+  </div>
+  <div class="sn-shell">
+    <div class="sn-topbar">
+      <span>SONAR ROOM // PING ACTIVE</span>
+      <span>DEPTH: ALERT-3 // 6 CONTACTS</span>
+    </div>
+    <div class="sn-grid">
+      <div class="sn-tile sn-l5"><div class="sn-tile-name">SOFR</div><div class="sn-tile-val">4.32%</div><div class="sn-tile-meta">stable</div></div>
+      <div class="sn-tile sn-l3"><div class="sn-tile-name">10Y</div><div class="sn-tile-val">4.42%</div><div class="sn-tile-meta">elevated</div></div>
+      <div class="sn-tile sn-l4"><div class="sn-tile-name">HY OAS</div><div class="sn-tile-val">285</div><div class="sn-tile-meta">widening</div></div>
+      <div class="sn-tile sn-l2"><div class="sn-tile-name">JPY</div><div class="sn-tile-val">160.4</div><div class="sn-tile-meta">stress</div></div>
+      <div class="sn-tile sn-l5"><div class="sn-tile-name">VIX</div><div class="sn-tile-val">18.81</div><div class="sn-tile-meta">low</div></div>
+      <div class="sn-tile sn-l2"><div class="sn-tile-name">RRP</div><div class="sn-tile-val">$0.7B</div><div class="sn-tile-meta">drained</div></div>
+      <div class="sn-tile sn-l5"><div class="sn-tile-name">BTC</div><div class="sn-tile-val">108K</div><div class="sn-tile-meta">+2.1%</div></div>
+      <div class="sn-tile sn-l1"><div class="sn-tile-name">JGB</div><div class="sn-tile-val">2.48%</div><div class="sn-tile-meta">BREAK</div></div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ 5. DIETER RAMS ============ -->
+<section class="section">
+  <div class="section-meta">
+    <h2>5 / Dieter Rams / Braun</h2>
+    <span class="subtitle">Restrained. Color reserved for state changes only.</span>
+    <span class="build">Build difficulty: 1/5</span>
+  </div>
+  <div class="dr-shell">
+    <div class="dr-topbar">
+      <span>Macro Status / 03 May 2026</span>
+      <span>6 indicators require attention</span>
+    </div>
+    <div class="dr-grid">
+      <div class="dr-tile dr-l5"><div class="dr-status"></div><div class="dr-tile-name">SOFR</div><div class="dr-tile-val">4.32%</div><div class="dr-tile-meta">IORB+1bp</div></div>
+      <div class="dr-tile dr-l3"><div class="dr-status"></div><div class="dr-tile-name">10Y Yield</div><div class="dr-tile-val">4.42%</div><div class="dr-tile-meta">+12bp 5d</div></div>
+      <div class="dr-tile dr-l4"><div class="dr-status"></div><div class="dr-tile-name">HY OAS</div><div class="dr-tile-val">285</div><div class="dr-tile-meta">spread, bps</div></div>
+      <div class="dr-tile dr-l2"><div class="dr-status"></div><div class="dr-tile-name">USD/JPY</div><div class="dr-tile-val">160.43</div><div class="dr-tile-meta">intervention zone</div></div>
+      <div class="dr-tile dr-l5"><div class="dr-status"></div><div class="dr-tile-name">VIX</div><div class="dr-tile-val">18.81</div><div class="dr-tile-meta">low</div></div>
+      <div class="dr-tile dr-l2"><div class="dr-status"></div><div class="dr-tile-name">ON RRP</div><div class="dr-tile-val">$0.7B</div><div class="dr-tile-meta">drained</div></div>
+      <div class="dr-tile dr-l5"><div class="dr-status"></div><div class="dr-tile-name">BTC</div><div class="dr-tile-val">$108,490</div><div class="dr-tile-meta">+2.1% 24h</div></div>
+      <div class="dr-tile dr-l1"><div class="dr-status"></div><div class="dr-tile-name">JGB 10Y</div><div class="dr-tile-val">2.48%</div><div class="dr-tile-meta">YCC break</div></div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ 6. BRUTALIST TERMINAL ============ -->
+<section class="section">
+  <div class="section-meta">
+    <h2>6 / Brutalist Terminal</h2>
+    <span class="subtitle">Phosphor green. ASCII feel. Cypherpunk native.</span>
+    <span class="build">Build difficulty: 2/5</span>
+  </div>
+  <div class="bt-shell">
+    <div class="bt-topbar">
+      <span>$ macro --watch</span>
+      <span>[6 critical] [03-MAY-2026 14:32:08]</span>
+    </div>
+    <div class="bt-grid">
+      <div class="bt-tile bt-l5"><div class="bt-tile-name">sofr</div><div class="bt-tile-val">4.32%</div><div class="bt-tile-meta">[ok] iorb+1bp</div></div>
+      <div class="bt-tile bt-l3"><div class="bt-tile-name">10y_yield</div><div class="bt-tile-val">4.42%</div><div class="bt-tile-meta">[warn] +12bp 5d</div></div>
+      <div class="bt-tile bt-l4"><div class="bt-tile-name">hy_oas</div><div class="bt-tile-val">285</div><div class="bt-tile-meta">[watch] bps</div></div>
+      <div class="bt-tile bt-l2"><div class="bt-tile-name">usdjpy</div><div class="bt-tile-val">160.43</div><div class="bt-tile-meta">[stress] interv</div></div>
+      <div class="bt-tile bt-l5"><div class="bt-tile-name">vix</div><div class="bt-tile-val">18.81</div><div class="bt-tile-meta">[ok] low</div></div>
+      <div class="bt-tile bt-l2"><div class="bt-tile-name">on_rrp</div><div class="bt-tile-val">$0.7B</div><div class="bt-tile-meta">[stress] drained</div></div>
+      <div class="bt-tile bt-l5"><div class="bt-tile-name">btc</div><div class="bt-tile-val">108490</div><div class="bt-tile-meta">[ok] +2.1%</div></div>
+      <div class="bt-tile bt-l1"><div class="bt-tile-name">jgb_10y</div><div class="bt-tile-val">2.48%</div><div class="bt-tile-meta">[CRIT] YCC BREAK</div></div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ 7. VISION-OS ============ -->
+<section class="section">
+  <div class="section-meta">
+    <h2>7 / Vision-OS / Apple Pro</h2>
+    <span class="subtitle">Frosted glass. Depth. Soft motion.</span>
+    <span class="build">Build difficulty: 4/5</span>
+  </div>
+  <div class="vo-shell">
+    <div class="vo-topbar">
+      <span>Macro Stress · 6 indicators need attention</span>
+      <span>3 May 2026</span>
+    </div>
+    <div class="vo-grid">
+      <div class="vo-tile vo-l5"><div class="vo-tile-name">SOFR</div><div class="vo-tile-val">4.32%</div><div class="vo-tile-meta">IORB+1bp · stable</div></div>
+      <div class="vo-tile vo-l3"><div class="vo-tile-name">10Y Yield</div><div class="vo-tile-val">4.42%</div><div class="vo-tile-meta">+12bp 5d</div></div>
+      <div class="vo-tile vo-l4"><div class="vo-tile-name">HY OAS</div><div class="vo-tile-val">285</div><div class="vo-tile-meta">spread bps</div></div>
+      <div class="vo-tile vo-l2"><div class="vo-tile-name">USD/JPY</div><div class="vo-tile-val">160.43</div><div class="vo-tile-meta">intervention zone</div></div>
+      <div class="vo-tile vo-l5"><div class="vo-tile-name">VIX</div><div class="vo-tile-val">18.81</div><div class="vo-tile-meta">complacent</div></div>
+      <div class="vo-tile vo-l2"><div class="vo-tile-name">ON RRP</div><div class="vo-tile-val">$0.7B</div><div class="vo-tile-meta">drained</div></div>
+      <div class="vo-tile vo-l5"><div class="vo-tile-name">BTC</div><div class="vo-tile-val">$108,490</div><div class="vo-tile-meta">+2.1% 24h</div></div>
+      <div class="vo-tile vo-l1"><div class="vo-tile-name">JGB 10Y</div><div class="vo-tile-val">2.48%</div><div class="vo-tile-meta">YCC break</div></div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ 8. F-35 MFD ============ -->
+<section class="section">
+  <div class="section-meta">
+    <h2>8 / F-35 MFD</h2>
+    <span class="subtitle">Combat instrument. Caution-yellow / master-warn red.</span>
+    <span class="build">Build difficulty: 3/5</span>
+  </div>
+  <div class="f35-shell">
+    <div class="f35-topbar">
+      <span>// MACRO MFD // 03MAY26 1432Z</span>
+      <span>MASTER WARN: 6 SYS</span>
+    </div>
+    <div class="f35-grid">
+      <div class="f35-tile f35-l5"><div class="f35-tile-name">SOFR</div><div class="f35-tile-val">4.32</div><div class="f35-tile-meta">% NOM</div></div>
+      <div class="f35-tile f35-l3"><div class="f35-tile-name">10Y</div><div class="f35-tile-val">4.42</div><div class="f35-tile-meta">% CAUT</div></div>
+      <div class="f35-tile f35-l4"><div class="f35-tile-name">HY OAS</div><div class="f35-tile-val">285</div><div class="f35-tile-meta">BP WATCH</div></div>
+      <div class="f35-tile f35-l2"><div class="f35-tile-name">JPY</div><div class="f35-tile-val">160.4</div><div class="f35-tile-meta">STRESS</div></div>
+      <div class="f35-tile f35-l5"><div class="f35-tile-name">VIX</div><div class="f35-tile-val">18.8</div><div class="f35-tile-meta">NOM</div></div>
+      <div class="f35-tile f35-l2"><div class="f35-tile-name">RRP</div><div class="f35-tile-val">0.7</div><div class="f35-tile-meta">$B DRAIN</div></div>
+      <div class="f35-tile f35-l5"><div class="f35-tile-name">BTC</div><div class="f35-tile-val">108K</div><div class="f35-tile-meta">USD NOM</div></div>
+      <div class="f35-tile f35-l1"><div class="f35-tile-warn">!! WARN</div><div class="f35-tile-name">JGB</div><div class="f35-tile-val">2.48</div><div class="f35-tile-meta">% BREACH</div></div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ 9. BITCOIN MAXIMALIST ============ -->
+<section class="section">
+  <div class="section-meta">
+    <h2>9 / Bitcoin Maximalist</h2>
+    <span class="subtitle">Black + Bitcoin orange. Block-height ticker. Yours.</span>
+    <span class="build">Build difficulty: 2/5</span>
+  </div>
+  <div class="btc-shell">
+    <div class="btc-topbar">
+      <span>MACRO ↳ STACK SATS</span>
+      <span class="height">block 893,247 · 03 may 2026</span>
+    </div>
+    <div class="btc-grid">
+      <div class="btc-tile btc-l5"><div class="btc-tile-name">sofr</div><div class="btc-tile-val">4.32%</div><div class="btc-tile-meta">stable</div></div>
+      <div class="btc-tile btc-l3"><div class="btc-tile-name">10y</div><div class="btc-tile-val">4.42%</div><div class="btc-tile-meta">elevated</div></div>
+      <div class="btc-tile btc-l4"><div class="btc-tile-name">hy oas</div><div class="btc-tile-val">285</div><div class="btc-tile-meta">widening</div></div>
+      <div class="btc-tile btc-l2"><div class="btc-tile-name">usd / jpy</div><div class="btc-tile-val">160.43</div><div class="btc-tile-meta">intervention</div></div>
+      <div class="btc-tile btc-l5"><div class="btc-tile-name">vix</div><div class="btc-tile-val">18.81</div><div class="btc-tile-meta">low</div></div>
+      <div class="btc-tile btc-l2"><div class="btc-tile-name">on rrp</div><div class="btc-tile-val">$0.7B</div><div class="btc-tile-meta">drained</div></div>
+      <div class="btc-tile btc-l5"><div class="btc-tile-name">btc</div><div class="btc-tile-val">$108,490</div><div class="btc-tile-meta">+2.1% 24h</div><div class="btc-sats">1 btc = 100,000,000 sats</div></div>
+      <div class="btc-tile btc-l1"><div class="btc-tile-name">jgb 10y</div><div class="btc-tile-val">2.48%</div><div class="btc-tile-meta">ycc break</div></div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ 10. BAUHAUS MODULAR ============ -->
+<section class="section">
+  <div class="section-meta">
+    <h2>10 / Bauhaus Modular</h2>
+    <span class="subtitle">Geometric editorial. Color is the alarm level.</span>
+    <span class="build">Build difficulty: 2/5</span>
+  </div>
+  <div class="bh-shell">
+    <div class="bh-topbar">
+      <h3>MACRO STRESS</h3>
+      <span>03 / 05 / 26 — ALERT 3</span>
+    </div>
+    <div class="bh-grid">
+      <div class="bh-tile bh-l5"><div class="bh-shape circle"></div><div class="bh-tile-name">SOFR</div><div class="bh-tile-val">4.32%</div><div class="bh-tile-meta">stable</div></div>
+      <div class="bh-tile bh-l3"><div class="bh-shape circle"></div><div class="bh-tile-name">10Y YIELD</div><div class="bh-tile-val">4.42%</div><div class="bh-tile-meta">elevated</div></div>
+      <div class="bh-tile bh-l4"><div class="bh-shape circle"></div><div class="bh-tile-name">HY OAS</div><div class="bh-tile-val">285</div><div class="bh-tile-meta">widening</div></div>
+      <div class="bh-tile bh-l2"><div class="bh-shape triangle" style="border-bottom-color:#fff"></div><div class="bh-tile-name">USD/JPY</div><div class="bh-tile-val">160.43</div><div class="bh-tile-meta">intervention</div></div>
+      <div class="bh-tile bh-l5"><div class="bh-shape circle"></div><div class="bh-tile-name">VIX</div><div class="bh-tile-val">18.81</div><div class="bh-tile-meta">low</div></div>
+      <div class="bh-tile bh-l2"><div class="bh-shape triangle" style="border-bottom-color:#fff"></div><div class="bh-tile-name">ON RRP</div><div class="bh-tile-val">$0.7B</div><div class="bh-tile-meta">drained</div></div>
+      <div class="bh-tile bh-l5"><div class="bh-shape circle"></div><div class="bh-tile-name">BTC</div><div class="bh-tile-val">$108K</div><div class="bh-tile-meta">+2.1%</div></div>
+      <div class="bh-tile bh-l1"><div class="bh-shape triangle" style="border-bottom-color:#ffd400"></div><div class="bh-tile-name">JGB 10Y</div><div class="bh-tile-val">2.48%</div><div class="bh-tile-meta">YCC BREAK</div></div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ 11. SWISS INTERNATIONAL ============ -->
+<section class="section">
+  <div class="section-meta">
+    <h2>11 / Swiss International — Müller-Brockmann poster</h2>
+    <span class="subtitle">Quiet authority. Numbers as headlines. Hairlines and negative space.</span>
+    <span class="build">Build difficulty: 1/5</span>
+  </div>
+  <div class="sw-shell">
+    <div class="sw-topbar">
+      <span>Macro Status / 03 May 2026</span>
+      <span>6 indicators require attention</span>
+    </div>
+    <div class="sw-grid">
+      <div class="sw-tile sw-l5"><div class="sw-tile-name">SOFR</div><div class="sw-tile-val">4.32%</div><div class="sw-tile-meta">IORB+1bp · stable</div></div>
+      <div class="sw-tile sw-l3"><div class="sw-tile-name">10Y Yield</div><div class="sw-tile-val">4.42%</div><div class="sw-tile-meta">+12bp 5d</div></div>
+      <div class="sw-tile sw-l4"><div class="sw-tile-name">HY OAS</div><div class="sw-tile-val">285</div><div class="sw-tile-meta">spread bps · widening</div></div>
+      <div class="sw-tile sw-l2"><div class="sw-tile-name">USD/JPY</div><div class="sw-tile-val">160.43</div><div class="sw-tile-meta">intervention zone</div></div>
+      <div class="sw-tile sw-l5"><div class="sw-tile-name">VIX</div><div class="sw-tile-val">18.81</div><div class="sw-tile-meta">complacent</div></div>
+      <div class="sw-tile sw-l2"><div class="sw-tile-name">ON RRP</div><div class="sw-tile-val">$0.7B</div><div class="sw-tile-meta">drained</div></div>
+      <div class="sw-tile sw-l5"><div class="sw-tile-name">BTC</div><div class="sw-tile-val">$108,490</div><div class="sw-tile-meta">+2.1% 24h</div></div>
+      <div class="sw-tile sw-l1"><div class="sw-tile-name">JGB 10Y</div><div class="sw-tile-val">2.48%</div><div class="sw-tile-meta">YCC break</div></div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ 12. CONSTRUCTIVIST ============ -->
+<section class="section">
+  <div class="section-meta">
+    <h2>12 / Constructivist — Rodchenko / El Lissitzky</h2>
+    <span class="subtitle">Diagonal energy. Black + Soviet red. 1923 factory poster.</span>
+    <span class="build">Build difficulty: 3/5</span>
+  </div>
+  <div class="ru-shell">
+    <div class="ru-topbar">
+      <span>Macro · All Power to Readers</span>
+      <span>Alert 3 / 6 sys</span>
+    </div>
+    <div class="ru-grid">
+      <div class="ru-tile ru-l5"><div class="ru-tile-name">SOFR</div><div class="ru-tile-val">4.32%</div><div class="ru-tile-meta">stable</div></div>
+      <div class="ru-tile ru-l3"><div class="ru-tile-name">10Y Yield</div><div class="ru-tile-val">4.42%</div><div class="ru-tile-meta">elevated</div></div>
+      <div class="ru-tile ru-l4"><div class="ru-tile-name">HY OAS</div><div class="ru-tile-val">285</div><div class="ru-tile-meta">widening</div></div>
+      <div class="ru-tile ru-l2"><div class="ru-tile-name">USD/JPY</div><div class="ru-tile-val">160.43</div><div class="ru-tile-meta">intervention</div></div>
+      <div class="ru-tile ru-l5"><div class="ru-tile-name">VIX</div><div class="ru-tile-val">18.81</div><div class="ru-tile-meta">low</div></div>
+      <div class="ru-tile ru-l2"><div class="ru-tile-name">ON RRP</div><div class="ru-tile-val">$0.7B</div><div class="ru-tile-meta">drained</div></div>
+      <div class="ru-tile ru-l5"><div class="ru-tile-name">BTC</div><div class="ru-tile-val">$108,490</div><div class="ru-tile-meta">+2.1% 24h</div></div>
+      <div class="ru-tile ru-l1"><div class="ru-tile-name">JGB 10Y</div><div class="ru-tile-val">2.48%</div><div class="ru-tile-meta">YCC break</div></div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ 13. MEMPHIS GROUP ============ -->
+<section class="section">
+  <div class="section-meta">
+    <h2>13 / Memphis Group — Sottsass, 1981</h2>
+    <span class="subtitle">Anti-good-taste. Pastels, geometric chaos, deliberate inconsistency.</span>
+    <span class="build">Build difficulty: 3/5</span>
+  </div>
+  <div class="mp-shell">
+    <div class="mp-topbar">
+      <span>MACRO!!</span>
+      <span>03/05/26 · ALERT 3</span>
+    </div>
+    <div class="mp-grid">
+      <div class="mp-tile mp-l5"><div class="mp-tile-name">SOFR</div><div class="mp-tile-val">4.32%</div><div class="mp-tile-meta">stable</div></div>
+      <div class="mp-tile mp-l3"><div class="mp-tile-name">10Y Yield</div><div class="mp-tile-val">4.42%</div><div class="mp-tile-meta">elevated</div></div>
+      <div class="mp-tile mp-l4"><div class="mp-tile-name">HY OAS</div><div class="mp-tile-val">285</div><div class="mp-tile-meta">widening</div></div>
+      <div class="mp-tile mp-l2"><div class="mp-tile-name">USD/JPY</div><div class="mp-tile-val">160.43</div><div class="mp-tile-meta">intervention</div></div>
+      <div class="mp-tile mp-l5"><div class="mp-tile-name">VIX</div><div class="mp-tile-val">18.81</div><div class="mp-tile-meta">low</div></div>
+      <div class="mp-tile mp-l2"><div class="mp-tile-name">ON RRP</div><div class="mp-tile-val">$0.7B</div><div class="mp-tile-meta">drained</div></div>
+      <div class="mp-tile mp-l5"><div class="mp-tile-name">BTC</div><div class="mp-tile-val">$108K</div><div class="mp-tile-meta">+2.1%</div></div>
+      <div class="mp-tile mp-l1"><div class="mp-tile-name">JGB 10Y</div><div class="mp-tile-val">2.48%</div><div class="mp-tile-meta">YCC break</div></div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ 14. VOGUE EDITORIAL ============ -->
+<section class="section">
+  <div class="section-meta">
+    <h2>14 / Vogue Editorial — Didot, oversized</h2>
+    <span class="subtitle">Numbers as fashion headlines. Negative space as luxury.</span>
+    <span class="build">Build difficulty: 1/5</span>
+  </div>
+  <div class="vg-shell">
+    <div class="vg-topbar">
+      <h3>MACRO</h3>
+      <span>no. 47 · 3 may 2026 · 6 sub need</span>
+    </div>
+    <div class="vg-grid">
+      <div class="vg-tile vg-l5"><div class="vg-tile-name">SOFR</div><div class="vg-tile-val">4.32%</div><div class="vg-tile-meta">IORB+1bp · stable</div></div>
+      <div class="vg-tile vg-l3"><div class="vg-tile-name">10Y Yield</div><div class="vg-tile-val">4.42%</div><div class="vg-tile-meta">+12bp 5d</div></div>
+      <div class="vg-tile vg-l4"><div class="vg-tile-name">HY OAS</div><div class="vg-tile-val">285</div><div class="vg-tile-meta">spread bps</div></div>
+      <div class="vg-tile vg-l2"><div class="vg-tile-name">USD/JPY</div><div class="vg-tile-val">160.43</div><div class="vg-tile-meta">intervention zone</div></div>
+      <div class="vg-tile vg-l5"><div class="vg-tile-name">VIX</div><div class="vg-tile-val">18.81</div><div class="vg-tile-meta">complacent</div></div>
+      <div class="vg-tile vg-l2"><div class="vg-tile-name">ON RRP</div><div class="vg-tile-val">$0.7B</div><div class="vg-tile-meta">drained</div></div>
+      <div class="vg-tile vg-l5"><div class="vg-tile-name">BTC</div><div class="vg-tile-val">$108K</div><div class="vg-tile-meta">+2.1% 24h</div></div>
+      <div class="vg-tile vg-l1"><div class="vg-tile-name">JGB 10Y</div><div class="vg-tile-val">2.48%</div><div class="vg-tile-meta">YCC break</div></div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ 15. BLUE NOTE JAZZ ============ -->
+<section class="section">
+  <div class="section-meta">
+    <h2>15 / Blue Note Jazz — Reid Miles album covers</h2>
+    <span class="subtitle">Duotone blocks, condensed black type. Album-cover energy.</span>
+    <span class="build">Build difficulty: 3/5</span>
+  </div>
+  <div class="bn-shell">
+    <div class="bn-topbar">
+      <h3>MACRO</h3>
+      <span>BLUE NOTE 4242 · STEREO</span>
+    </div>
+    <div class="bn-grid">
+      <div class="bn-tile bn-l5"><div class="bn-tile-name">SOFR</div><div class="bn-tile-val">4.32%</div><div class="bn-tile-meta">STABLE</div></div>
+      <div class="bn-tile bn-l3"><div class="bn-tile-name">10Y YIELD</div><div class="bn-tile-val">4.42%</div><div class="bn-tile-meta">ELEVATED</div></div>
+      <div class="bn-tile bn-l4"><div class="bn-tile-name">HY OAS</div><div class="bn-tile-val">285</div><div class="bn-tile-meta">WIDENING</div></div>
+      <div class="bn-tile bn-l2"><div class="bn-tile-name">USD/JPY</div><div class="bn-tile-val">160.43</div><div class="bn-tile-meta">INTERVENTION</div></div>
+      <div class="bn-tile bn-l5"><div class="bn-tile-name">VIX</div><div class="bn-tile-val">18.81</div><div class="bn-tile-meta">LOW</div></div>
+      <div class="bn-tile bn-l2"><div class="bn-tile-name">ON RRP</div><div class="bn-tile-val">$0.7B</div><div class="bn-tile-meta">DRAINED</div></div>
+      <div class="bn-tile bn-l5"><div class="bn-tile-name">BTC</div><div class="bn-tile-val">$108K</div><div class="bn-tile-meta">+2.1% 24H</div></div>
+      <div class="bn-tile bn-l1"><div class="bn-tile-name">JGB 10Y</div><div class="bn-tile-val">2.48%</div><div class="bn-tile-meta">YCC BREAK</div></div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ 16. ARCHITECTURAL BLUEPRINT ============ -->
+<section class="section">
+  <div class="section-meta">
+    <h2>16 / Architectural Blueprint — Cyanotype technical drawing</h2>
+    <span class="subtitle">Drafted in 1962. Dashed lines, dimension marks, REVIEW stamps.</span>
+    <span class="build">Build difficulty: 3/5</span>
+  </div>
+  <div class="ab-shell">
+    <div class="ab-topbar">
+      <span>[A-101] MACRO STRESS · SCALE 1:1 · REV 03</span>
+      <span>DRAFTED 03MAY26 · 6 SYS</span>
+    </div>
+    <div class="ab-grid">
+      <div class="ab-tile ab-l5"><div class="ab-tile-name">SOFR</div><div class="ab-tile-val">4.32%</div><div class="ab-tile-meta">IORB+1bp</div></div>
+      <div class="ab-tile ab-l3"><div class="ab-stamp">REVIEW</div><div class="ab-tile-name">10Y YIELD</div><div class="ab-tile-val">4.42%</div><div class="ab-tile-meta">+12bp 5d</div></div>
+      <div class="ab-tile ab-l4"><div class="ab-stamp">REVIEW</div><div class="ab-tile-name">HY OAS</div><div class="ab-tile-val">285</div><div class="ab-tile-meta">spread bps</div></div>
+      <div class="ab-tile ab-l2"><div class="ab-stamp">WARN</div><div class="ab-tile-name">USD/JPY</div><div class="ab-tile-val">160.43</div><div class="ab-tile-meta">intervention</div></div>
+      <div class="ab-tile ab-l5"><div class="ab-tile-name">VIX</div><div class="ab-tile-val">18.81</div><div class="ab-tile-meta">complacent</div></div>
+      <div class="ab-tile ab-l2"><div class="ab-stamp">WARN</div><div class="ab-tile-name">ON RRP</div><div class="ab-tile-val">$0.7B</div><div class="ab-tile-meta">drained</div></div>
+      <div class="ab-tile ab-l5"><div class="ab-tile-name">BTC</div><div class="ab-tile-val">$108K</div><div class="ab-tile-meta">+2.1% 24h</div></div>
+      <div class="ab-tile ab-l1"><div class="ab-stamp">CRITICAL</div><div class="ab-tile-name">JGB 10Y</div><div class="ab-tile-val">2.48%</div><div class="ab-tile-meta">YCC break</div></div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ 17. VIGNELLI SUBWAY ============ -->
+<section class="section">
+  <div class="section-meta">
+    <h2>17 / Vignelli — 1972 NYC Subway / Unimark</h2>
+    <span class="subtitle">Helvetica + route bullets. Subway station for your portfolio.</span>
+    <span class="build">Build difficulty: 2/5</span>
+  </div>
+  <div class="vn-shell">
+    <div class="vn-topbar">
+      <span>MACRO STATUS</span>
+      <span class="vn-bullets">
+        <span class="vn-bullet-mini" style="background:#0039a6">3</span>
+        <span class="vn-bullet-mini" style="background:#00933c">0</span>
+        <span class="vn-bullet-mini" style="background:#ff6319">1</span>
+        <span class="vn-bullet-mini" style="background:#ee352e">2</span>
+        <span class="vn-bullet-mini" style="background:#b933ad">1</span>
+      </span>
+    </div>
+    <div class="vn-grid">
+      <div class="vn-tile vn-l5"><div class="vn-bullet">5</div><div class="vn-tile-name">SOFR</div><div class="vn-tile-val">4.32%</div><div class="vn-tile-meta">IORB+1bp</div></div>
+      <div class="vn-tile vn-l3"><div class="vn-bullet">3</div><div class="vn-tile-name">10Y Yield</div><div class="vn-tile-val">4.42%</div><div class="vn-tile-meta">+12bp 5d</div></div>
+      <div class="vn-tile vn-l4"><div class="vn-bullet">4</div><div class="vn-tile-name">HY OAS</div><div class="vn-tile-val">285</div><div class="vn-tile-meta">spread bps</div></div>
+      <div class="vn-tile vn-l2"><div class="vn-bullet">2</div><div class="vn-tile-name">USD/JPY</div><div class="vn-tile-val">160.43</div><div class="vn-tile-meta">intervention</div></div>
+      <div class="vn-tile vn-l5"><div class="vn-bullet">5</div><div class="vn-tile-name">VIX</div><div class="vn-tile-val">18.81</div><div class="vn-tile-meta">low</div></div>
+      <div class="vn-tile vn-l2"><div class="vn-bullet">2</div><div class="vn-tile-name">ON RRP</div><div class="vn-tile-val">$0.7B</div><div class="vn-tile-meta">drained</div></div>
+      <div class="vn-tile vn-l5"><div class="vn-bullet">5</div><div class="vn-tile-name">BTC</div><div class="vn-tile-val">$108K</div><div class="vn-tile-meta">+2.1% 24h</div></div>
+      <div class="vn-tile vn-l1"><div class="vn-bullet">1</div><div class="vn-tile-name">JGB 10Y</div><div class="vn-tile-val">2.48%</div><div class="vn-tile-meta">YCC break</div></div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ 18. RISOGRAPH ============ -->
+<section class="section">
+  <div class="section-meta">
+    <h2>18 / Risograph — Two-color print imperfection</h2>
+    <span class="subtitle">Misregistered blue + red. Paper texture. Zine-grade.</span>
+    <span class="build">Build difficulty: 3/5</span>
+  </div>
+  <div class="ri-shell">
+    <div class="ri-topbar">
+      <span>RISO DAILY · ISSUE NO. 47</span>
+      <span>MACRO · 03 MAY 26</span>
+    </div>
+    <div class="ri-grid">
+      <div class="ri-tile ri-l5"><div class="ri-tile-name">SOFR</div><div class="ri-tile-val">4.32%</div><div class="ri-tile-meta">stable</div></div>
+      <div class="ri-tile ri-l3"><div class="ri-tile-name">10Y Yield</div><div class="ri-tile-val">4.42%</div><div class="ri-tile-meta">elevated</div></div>
+      <div class="ri-tile ri-l4"><div class="ri-tile-name">HY OAS</div><div class="ri-tile-val">285</div><div class="ri-tile-meta">widening</div></div>
+      <div class="ri-tile ri-l2"><div class="ri-tile-name">USD/JPY</div><div class="ri-tile-val">160.43</div><div class="ri-tile-meta">intervention</div></div>
+      <div class="ri-tile ri-l5"><div class="ri-tile-name">VIX</div><div class="ri-tile-val">18.81</div><div class="ri-tile-meta">low</div></div>
+      <div class="ri-tile ri-l2"><div class="ri-tile-name">ON RRP</div><div class="ri-tile-val">$0.7B</div><div class="ri-tile-meta">drained</div></div>
+      <div class="ri-tile ri-l5"><div class="ri-tile-name">BTC</div><div class="ri-tile-val">$108K</div><div class="ri-tile-meta">+2.1%</div></div>
+      <div class="ri-tile ri-l1"><div class="ri-tile-name">JGB 10Y</div><div class="ri-tile-val">2.48%</div><div class="ri-tile-meta">YCC break</div></div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ 19. CASINO MARQUEE ============ -->
+<section class="section">
+  <div class="section-meta">
+    <h2>19 / Casino Marquee — Vegas vintage</h2>
+    <span class="subtitle">Amber bulb-borders. Cigar-lounge mahogany. Big numbers, big stakes.</span>
+    <span class="build">Build difficulty: 4/5</span>
+  </div>
+  <div class="cm-shell">
+    <div class="cm-topbar">
+      <h3>Jinn's Macro Lounge</h3>
+      <span>DEAL 3 · 6 ON FIRE</span>
+    </div>
+    <div class="cm-grid">
+      <div class="cm-tile cm-l5"><div class="cm-tile-name">SOFR</div><div class="cm-tile-val">4.32%</div><div class="cm-tile-meta">stable</div></div>
+      <div class="cm-tile cm-l3"><div class="cm-tile-name">10Y</div><div class="cm-tile-val">4.42%</div><div class="cm-tile-meta">elevated</div></div>
+      <div class="cm-tile cm-l4"><div class="cm-tile-name">HY OAS</div><div class="cm-tile-val">285</div><div class="cm-tile-meta">widening</div></div>
+      <div class="cm-tile cm-l2"><div class="cm-tile-name">USD/JPY</div><div class="cm-tile-val">160.43</div><div class="cm-tile-meta">intervention</div></div>
+      <div class="cm-tile cm-l5"><div class="cm-tile-name">VIX</div><div class="cm-tile-val">18.81</div><div class="cm-tile-meta">low</div></div>
+      <div class="cm-tile cm-l2"><div class="cm-tile-name">ON RRP</div><div class="cm-tile-val">$0.7B</div><div class="cm-tile-meta">drained</div></div>
+      <div class="cm-tile cm-l5"><div class="cm-tile-name">BTC</div><div class="cm-tile-val">$108K</div><div class="cm-tile-meta">+2.1%</div></div>
+      <div class="cm-tile cm-l1"><div class="cm-tile-name">JGB 10Y</div><div class="cm-tile-val">2.48%</div><div class="cm-tile-meta">YCC break</div></div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ 20. GHIBLI SKY ============ -->
+<section class="section">
+  <div class="section-meta">
+    <h2>20 / Ghibli Sky — Reactive atmospheric backdrop</h2>
+    <span class="subtitle">Container gradient is the indicator. Storm rises with stress.</span>
+    <span class="build">Build difficulty: 4/5</span>
+  </div>
+  <div class="gh-shell">
+    <div class="gh-topbar">
+      <h3>macro · the wind is rising</h3>
+      <span>3 may 2026 · alert 3</span>
+    </div>
+    <div class="gh-grid">
+      <div class="gh-tile gh-l5"><div class="gh-tile-name">SOFR</div><div class="gh-tile-val">4.32%</div><div class="gh-tile-meta">stable</div></div>
+      <div class="gh-tile gh-l3"><div class="gh-tile-name">10Y Yield</div><div class="gh-tile-val">4.42%</div><div class="gh-tile-meta">elevated</div></div>
+      <div class="gh-tile gh-l4"><div class="gh-tile-name">HY OAS</div><div class="gh-tile-val">285</div><div class="gh-tile-meta">widening</div></div>
+      <div class="gh-tile gh-l2"><div class="gh-tile-name">USD/JPY</div><div class="gh-tile-val">160.43</div><div class="gh-tile-meta">intervention</div></div>
+      <div class="gh-tile gh-l5"><div class="gh-tile-name">VIX</div><div class="gh-tile-val">18.81</div><div class="gh-tile-meta">low</div></div>
+      <div class="gh-tile gh-l2"><div class="gh-tile-name">ON RRP</div><div class="gh-tile-val">$0.7B</div><div class="gh-tile-meta">drained</div></div>
+      <div class="gh-tile gh-l5"><div class="gh-tile-name">BTC</div><div class="gh-tile-val">$108K</div><div class="gh-tile-meta">+2.1%</div></div>
+      <div class="gh-tile gh-l1"><div class="gh-tile-name">JGB 10Y</div><div class="gh-tile-val">2.48%</div><div class="gh-tile-meta">YCC break</div></div>
+    </div>
+  </div>
+</section>
+
+<div class="choose-cta">
+  Pick a number 1-20 (or describe a hybrid). Each shows the same 8 indicators across all 5 alarm states.
+</div>
+
+</body>
+</html>

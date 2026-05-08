@@ -1,0 +1,945 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<title>Macro Stress — Dark Mode (matches Jinn dashboard)</title>
+<style>
+:root {
+  --bg:        #0a0a0a;
+  --paper:     #141414;
+  --paper-2:   #181818;
+  --paper-3:   #1c1c1c;
+  --ink:       #e8e0d0;
+  --muted:     #888;
+  --whisper:   #555;
+  --hairline:  #2a2a2a;
+  --hairline-strong: #3a3a3a;
+  --accent:    #50C878;
+  --accent-warm: #c9a02a;
+
+  --bar-empty:  #2a2a2a;
+  --bar-1:     #50C878;
+  --bar-2:     #c9a02a;
+  --bar-3:     #e08a2a;
+  --bar-4:     #d05238;
+  --bar-5:     #d23a4a;
+
+  --shadow-flat:   0 1px 2px rgba(0, 0, 0, 0.4);
+  --shadow-lift:   0 2px 6px rgba(0, 0, 0, 0.5), 0 1px 2px rgba(0, 0, 0, 0.4);
+  --shadow-hover:  0 6px 24px rgba(0, 0, 0, 0.6), 0 2px 4px rgba(0, 0, 0, 0.4);
+
+  --serif: 'Didot', 'Bodoni 72', 'Bodoni MT', 'Times New Roman', serif;
+  --sans:  -apple-system, 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+html, body {
+  background: var(--bg);
+  color: var(--ink);
+  font-family: var(--sans);
+  font-size: 14px;
+  line-height: 1.5;
+  min-height: 100vh;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* Subtle texture for depth */
+body::before {
+  content: '';
+  position: fixed; inset: 0;
+  background-image: radial-gradient(rgba(255,255,255,0.012) 1px, transparent 1px);
+  background-size: 4px 4px;
+  pointer-events: none;
+  z-index: 1;
+}
+
+.wrap {
+  max-width: 1320px;
+  margin: 0 auto;
+  padding: 48px 36px 96px;
+  position: relative;
+  z-index: 2;
+}
+
+/* ============ HEADER ============ */
+.hero {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  border-bottom: 1px solid var(--hairline-strong);
+  padding-bottom: 18px;
+  margin-bottom: 44px;
+}
+.hero h1 {
+  font-family: var(--serif);
+  font-size: 4.2rem;
+  font-weight: 300;
+  letter-spacing: -0.04em;
+  line-height: 0.9;
+  color: var(--ink);
+}
+.hero-sub {
+  text-align: right;
+  color: var(--muted);
+  font-size: 0.78rem;
+  letter-spacing: 0.05em;
+}
+.hero-sub .alert-pill {
+  display: inline-block;
+  margin-top: 6px;
+  font-family: var(--serif);
+  font-size: 0.95rem;
+  font-style: italic;
+  color: var(--bar-4);
+}
+
+/* ============ SECTION ============ */
+.tier { margin-bottom: 56px; }
+.tier-head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  border-bottom: 0.5px solid var(--hairline-strong);
+  padding-bottom: 10px;
+  margin-bottom: 20px;
+}
+.tier-head h2 {
+  font-family: var(--serif);
+  font-size: 1.6rem;
+  font-weight: 400;
+  letter-spacing: -0.01em;
+  color: var(--ink);
+}
+.tier-head .tier-meta {
+  font-size: 0.72rem;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--whisper);
+}
+.tier-hint {
+  font-size: 0.78rem;
+  font-style: italic;
+  color: var(--muted);
+  margin-top: -8px;
+  margin-bottom: 18px;
+}
+
+/* ============ GRID + TILE ============ */
+.grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 14px;
+}
+.tile {
+  background: var(--paper);
+  border: 0.5px solid var(--hairline);
+  border-radius: 6px;
+  padding: 18px 18px 14px;
+  position: relative;
+  box-shadow: var(--shadow-flat);
+  transition: box-shadow 0.25s ease, transform 0.25s ease, background 0.25s ease, border-color 0.25s ease;
+  cursor: default;
+  display: flex;
+  flex-direction: column;
+}
+.tile:hover {
+  box-shadow: var(--shadow-lift);
+  border-color: var(--hairline-strong);
+}
+
+/* Critical tile gets a deep ember tint */
+.tile[data-level="5"] {
+  background: linear-gradient(180deg, var(--paper) 0%, #1f1010 100%);
+  border-color: rgba(210, 58, 74, 0.25);
+}
+
+/* Tier 2 muted background */
+.tile.tier-2 { cursor: pointer; background: var(--paper-2); }
+.tile.tier-2:hover {
+  background: var(--paper);
+  transform: translateY(-1px);
+  box-shadow: var(--shadow-hover);
+}
+.tile.tier-2.refreshing { pointer-events: none; }
+
+/* ============ TILE INTERNALS ============ */
+.tile-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 8px;
+  margin-bottom: 8px;
+}
+.tile-name {
+  font-size: 0.62rem;
+  font-weight: 500;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--ink);
+}
+.tile-stamp {
+  font-size: 0.66rem;
+  font-style: italic;
+  color: var(--whisper);
+  letter-spacing: 0.02em;
+  white-space: nowrap;
+}
+.tile.tier-2 .tile-stamp { color: var(--accent); opacity: 0.7; }
+.tile.tier-2 .tile-stamp::before {
+  content: '↻ ';
+  font-style: normal;
+  margin-right: 2px;
+}
+
+.tile-value {
+  font-family: var(--serif);
+  font-size: 2.6rem;
+  font-weight: 300;
+  line-height: 1;
+  letter-spacing: -0.03em;
+  color: var(--ink);
+  margin: 4px 0 6px;
+  font-variant-numeric: tabular-nums;
+}
+
+.tile-meta {
+  font-size: 0.78rem;
+  font-style: italic;
+  color: var(--muted);
+  margin-bottom: 14px;
+  line-height: 1.4;
+}
+
+/* ============ 5-SEGMENT BAR ============ */
+.tile-bar {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 3px;
+  margin-bottom: 10px;
+}
+.bar-seg {
+  height: 4px;
+  background: var(--bar-empty);
+  border-radius: 1px;
+  transition: background 0.3s ease;
+}
+.tile[data-level="1"] .bar-seg:nth-child(-n+1) { background: var(--bar-1); }
+.tile[data-level="2"] .bar-seg:nth-child(-n+2) { background: var(--bar-2); }
+.tile[data-level="3"] .bar-seg:nth-child(-n+3) { background: var(--bar-3); }
+.tile[data-level="4"] .bar-seg:nth-child(-n+4) { background: var(--bar-4); }
+.tile[data-level="5"] .bar-seg:nth-child(-n+5) { background: var(--bar-5); box-shadow: 0 0 8px rgba(210,58,74,0.3); }
+
+.tile-bar-label {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 0.65rem;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: var(--whisper);
+  margin-bottom: 0;
+}
+.tile-bar-label .level-num {
+  font-family: var(--serif);
+  font-size: 0.95rem;
+  font-style: italic;
+  font-weight: 400;
+  letter-spacing: 0;
+  text-transform: none;
+}
+.tile[data-level="5"] .tile-bar-label .level-num { color: var(--bar-5); }
+.tile[data-level="4"] .tile-bar-label .level-num { color: var(--bar-4); }
+.tile[data-level="3"] .tile-bar-label .level-num { color: var(--bar-3); }
+.tile[data-level="2"] .tile-bar-label .level-num { color: var(--bar-2); }
+.tile[data-level="1"] .tile-bar-label .level-num { color: var(--bar-1); }
+
+/* ============ FOOT / EXPAND ============ */
+.tile-foot {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: auto;
+  margin-left: -8px;
+  margin-right: -8px;
+  padding: 8px 8px;
+  cursor: pointer;
+  border-radius: 4px;
+  transition: background 0.2s ease;
+  min-height: 44px;
+}
+.tile-foot:hover {
+  background: rgba(255,255,255,0.04);
+}
+.tile-source {
+  font-size: 0.7rem;
+  font-style: italic;
+  color: var(--whisper);
+}
+.tile-source a {
+  color: var(--accent);
+  text-decoration: none;
+  border-bottom: 0.5px solid var(--accent);
+}
+.tile-source a:hover { color: var(--ink); border-bottom-color: var(--ink); }
+
+.expand-toggle {
+  background: none;
+  border: none;
+  color: var(--whisper);
+  font-size: 0.78rem;
+  cursor: pointer;
+  font-family: inherit;
+  font-style: italic;
+  letter-spacing: 0.04em;
+  margin-left: auto;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 4px;
+  transition: color 0.2s ease;
+}
+.expand-toggle .chev {
+  display: inline-block;
+  font-size: 1rem;
+  transition: transform 0.3s ease;
+  font-style: normal;
+  line-height: 1;
+}
+.tile-foot:hover .expand-toggle { color: var(--ink); }
+.tile.expanded .expand-toggle .chev { transform: rotate(180deg); }
+.tile.expanded .expand-toggle .label-collapsed { display: none; }
+.expand-toggle .label-expanded { display: none; }
+.tile.expanded .expand-toggle .label-expanded { display: inline; }
+
+/* ============ EXPLAINER ============ */
+.tile-explainer {
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height 0.4s ease, opacity 0.3s ease, margin-top 0.3s ease, padding-top 0.3s ease;
+  opacity: 0;
+  margin-top: 0;
+  padding-top: 0;
+  border-top: 0px solid transparent;
+  font-size: 0.82rem;
+  line-height: 1.55;
+  color: var(--muted);
+}
+.tile.expanded .tile-explainer {
+  max-height: 320px;
+  opacity: 1;
+  margin-top: 14px;
+  padding-top: 14px;
+  border-top: 0.5px solid var(--hairline);
+}
+.tile-explainer p { margin-bottom: 10px; }
+.tile-explainer p:last-child { margin-bottom: 0; }
+.tile-explainer .threshold-row {
+  display: flex;
+  gap: 16px;
+  margin-top: 8px;
+  font-size: 0.7rem;
+  letter-spacing: 0.04em;
+  font-style: normal;
+  color: var(--whisper);
+}
+.tile-explainer .threshold-row span strong {
+  font-weight: 600;
+  font-style: normal;
+  color: var(--ink);
+}
+
+/* ============ REFRESH ============ */
+.tile.refreshing .tile-value { opacity: 0.3; }
+.tile.refreshing .tile-stamp { color: var(--accent); }
+
+/* ============ TIER 3 (REFERENCE) ============ */
+.tile.tier-3 {
+  background: transparent;
+  border-style: dashed;
+  border-color: var(--hairline-strong);
+  border-width: 0.5px;
+  box-shadow: none;
+}
+.tile.tier-3 .tile-value {
+  font-size: 1.3rem;
+  color: var(--whisper);
+  font-style: italic;
+}
+.tile.tier-3 .tile-thresholds {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  font-size: 0.72rem;
+  margin: 8px 0 14px;
+  font-family: 'Courier New', monospace;
+  color: var(--muted);
+}
+.tile.tier-3 .tile-thresholds .row {
+  display: flex;
+  justify-content: space-between;
+  border-bottom: 0.5px dashed var(--hairline);
+  padding: 2px 0;
+}
+.tile.tier-3 .tile-thresholds .row strong {
+  font-weight: 500;
+  color: var(--ink);
+  font-family: var(--sans);
+  letter-spacing: 0.05em;
+  font-size: 0.66rem;
+  text-transform: uppercase;
+}
+.tile.tier-3 .source-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.72rem;
+  font-weight: 500;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--accent);
+  text-decoration: none;
+  border: 0.5px solid var(--accent);
+  border-radius: 3px;
+  padding: 4px 10px;
+  margin-top: auto;
+  transition: all 0.2s ease;
+  align-self: flex-start;
+}
+.tile.tier-3 .source-link:hover {
+  background: var(--accent);
+  color: var(--bg);
+}
+
+/* ============ DIVIDER ============ */
+.section-divider {
+  text-align: center;
+  margin: 56px 0 36px;
+  position: relative;
+}
+.section-divider::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 0; right: 0;
+  height: 0.5px;
+  background: var(--hairline-strong);
+}
+.section-divider span {
+  background: var(--bg);
+  padding: 0 18px;
+  position: relative;
+  font-family: var(--serif);
+  font-style: italic;
+  font-size: 1rem;
+  color: var(--muted);
+}
+
+/* ============ NOTES (mockup-only) ============ */
+.notes {
+  background: var(--paper);
+  border: 0.5px solid var(--hairline-strong);
+  padding: 22px 26px;
+  margin-bottom: 48px;
+  border-radius: 4px;
+}
+.notes h3 {
+  font-family: var(--serif);
+  font-style: italic;
+  font-size: 1.1rem;
+  font-weight: 400;
+  margin-bottom: 8px;
+  color: var(--ink);
+}
+.notes ul {
+  list-style: none;
+  font-size: 0.82rem;
+  color: var(--muted);
+  line-height: 1.7;
+}
+.notes ul li::before { content: '— '; color: var(--accent); }
+.notes ul strong { color: var(--ink); }
+
+/* ============ VIEW TOGGLE ============ */
+.view-toggle {
+  position: fixed;
+  top: 12px; right: 12px;
+  z-index: 100;
+  display: flex; gap: 4px;
+  background: var(--paper);
+  border: 0.5px solid var(--hairline-strong);
+  border-radius: 8px;
+  padding: 4px;
+  box-shadow: var(--shadow-lift);
+  font-family: var(--sans);
+}
+.view-toggle button {
+  background: none;
+  border: none;
+  padding: 8px 12px;
+  font-size: 0.7rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--muted);
+  cursor: pointer;
+  border-radius: 5px;
+  font-family: inherit;
+  font-weight: 500;
+}
+.view-toggle button.active {
+  background: var(--ink);
+  color: var(--bg);
+}
+
+/* ============ MOBILE PREVIEW + RESPONSIVE ============ */
+body.view-mobile {
+  background: #1a1815;
+  padding-top: 30px;
+  padding-bottom: 60px;
+}
+body.view-mobile .wrap {
+  max-width: 390px;
+  margin: 0 auto;
+  background: var(--bg);
+  border: 10px solid #050505;
+  border-radius: 36px;
+  padding: 24px 12px 48px;
+  box-shadow: 0 40px 80px rgba(0,0,0,0.7), 0 8px 16px rgba(0,0,0,0.5);
+}
+body.view-mobile .grid { grid-template-columns: repeat(2, 1fr) !important; gap: 8px !important; }
+body.view-mobile .hero { flex-direction: column; align-items: flex-start; gap: 10px; }
+body.view-mobile .hero h1 { font-size: 2rem; }
+body.view-mobile .hero-sub { text-align: left; font-size: 0.66rem; }
+body.view-mobile .tile { padding: 12px 12px 4px; }
+body.view-mobile .tile-name { font-size: 0.56rem; letter-spacing: 0.14em; }
+body.view-mobile .tile-stamp { font-size: 0.58rem; }
+body.view-mobile .tile-value { font-size: 1.7rem; margin: 2px 0 4px; }
+body.view-mobile .tile-meta { font-size: 0.68rem; margin-bottom: 8px; line-height: 1.35; }
+body.view-mobile .tile-bar { gap: 2px; margin-bottom: 6px; }
+body.view-mobile .bar-seg { height: 3px; }
+body.view-mobile .tile-bar-label { font-size: 0.56rem; letter-spacing: 0.08em; }
+body.view-mobile .tile-bar-label .level-num { font-size: 0.78rem; }
+body.view-mobile .tile-source { display: none; }
+body.view-mobile .expand-toggle { font-size: 0.7rem; padding: 8px 6px; margin-left: auto; }
+body.view-mobile .expand-toggle .chev { font-size: 1rem; }
+body.view-mobile .tile-foot { min-height: 38px; padding: 4px 6px; margin-left: -6px; margin-right: -6px; justify-content: flex-end; }
+body.view-mobile .tier-head { flex-direction: column; align-items: flex-start; gap: 4px; padding-bottom: 6px; }
+body.view-mobile .tier-head h2 { font-size: 1.2rem; }
+body.view-mobile .tier-head .tier-meta { font-size: 0.62rem; }
+body.view-mobile .tier-hint { font-size: 0.7rem; }
+body.view-mobile .notes { padding: 14px 16px; }
+body.view-mobile .notes ul { font-size: 0.74rem; }
+body.view-mobile .section-divider { margin: 28px 0 16px; }
+body.view-mobile .tile-explainer { font-size: 0.74rem; }
+body.view-mobile .tile-explainer .threshold-row { flex-direction: column; gap: 4px; }
+body.view-mobile .tile.tier-3 .tile-thresholds { font-size: 0.62rem; }
+body.view-mobile .tile.tier-3 .source-link { font-size: 0.62rem; padding: 3px 8px; }
+
+@media (max-width: 900px) {
+  .grid { grid-template-columns: repeat(2, 1fr); }
+  .hero h1 { font-size: 2.6rem; }
+}
+@media (max-width: 540px) {
+  body { font-size: 14px; }
+  .wrap { padding: 24px 12px 48px; }
+  .grid { grid-template-columns: repeat(2, 1fr); gap: 8px; }
+  .hero { flex-direction: column; align-items: flex-start; gap: 10px; }
+  .hero h1 { font-size: 2rem; }
+  .hero-sub { text-align: left; font-size: 0.66rem; }
+  .tile { padding: 12px 12px 4px; }
+  .tile-name { font-size: 0.56rem; letter-spacing: 0.14em; }
+  .tile-stamp { font-size: 0.58rem; }
+  .tile-value { font-size: 1.7rem; margin: 2px 0 4px; }
+  .tile-meta { font-size: 0.68rem; margin-bottom: 8px; }
+  .tile-bar { gap: 2px; margin-bottom: 6px; }
+  .bar-seg { height: 3px; }
+  .tile-bar-label { font-size: 0.56rem; letter-spacing: 0.08em; }
+  .tile-bar-label .level-num { font-size: 0.78rem; }
+  .tile-source { display: none; }
+  .expand-toggle { font-size: 0.7rem; padding: 8px 6px; }
+  .expand-toggle .chev { font-size: 1rem; }
+  .tile-foot { min-height: 38px; padding: 4px 6px; margin-left: -6px; margin-right: -6px; justify-content: flex-end; }
+  .tier-head { flex-direction: column; align-items: flex-start; gap: 4px; padding-bottom: 6px; }
+  .tier-head h2 { font-size: 1.2rem; }
+  .tier-hint { font-size: 0.7rem; }
+  .view-toggle { display: none; }
+  .notes { padding: 14px 16px; }
+  .notes ul { font-size: 0.74rem; }
+  .tile-explainer { font-size: 0.74rem; }
+  .tile-explainer .threshold-row { flex-direction: column; gap: 4px; }
+}
+</style>
+</head>
+<body>
+
+<div class="view-toggle">
+  <button data-view="desktop" class="active">Desktop</button>
+  <button data-view="mobile">Mobile</button>
+</div>
+
+<div class="wrap">
+
+  <div class="hero">
+    <h1>Macro Stress</h1>
+    <div class="hero-sub">
+      03 May 2026 · 14:32 EST<br>
+      <span class="alert-pill">Six indicators above watch</span>
+    </div>
+  </div>
+
+  <div class="notes">
+    <h3>What you are looking at</h3>
+    <ul>
+      <li>Same UX as the cream version — Didot values, 5-segment intensity bars, expandable explainers, tap-to-refresh on Tier 2.</li>
+      <li>Dark palette matches the existing Jinn Dashboard (<strong>#0a0a0a</strong> base, <strong>#50C878</strong> accent green, warm white text).</li>
+      <li>Critical tiles get a faint ember tint + a subtle glow on the L5 progress bar.</li>
+      <li>Bar levels: green (L1) → gold (L2) → amber (L3) → clay (L4) → crimson (L5).</li>
+    </ul>
+  </div>
+
+  <div class="tier">
+    <div class="tier-head">
+      <h2>Live · Top 30</h2>
+      <div class="tier-meta">Auto-refreshed 14:32 EST</div>
+    </div>
+    <div class="grid">
+
+      <div class="tile" data-level="1" data-id="sofr">
+        <div class="tile-row"><div class="tile-name">SOFR</div><div class="tile-stamp">14:32 EST</div></div>
+        <div class="tile-value">4.32%</div>
+        <div class="tile-meta">IORB+1bp · stable</div>
+        <div class="tile-bar"><div class="bar-seg"></div><div class="bar-seg"></div><div class="bar-seg"></div><div class="bar-seg"></div><div class="bar-seg"></div></div>
+        <div class="tile-bar-label"><span>Level <span class="level-num">1</span> of 5</span><span>Stable</span></div>
+        <div class="tile-foot">
+          <div class="tile-source">via FRED</div>
+          <button class="expand-toggle"><span class="label-collapsed">More</span><span class="label-expanded">Less</span><span class="chev">▾</span></button>
+        </div>
+        <div class="tile-explainer">
+          <p>The Secured Overnight Financing Rate is what banks pay for repo collateralized by Treasuries — the post-LIBOR risk-free benchmark. When SOFR spikes above the Fed's IORB rate, it signals the repo plumbing is breaking and dealers can't fund their balance sheets. September 2019's 525bp blowout forced the Fed to restart QE within weeks.</p>
+          <p>Watch sustained moves above IORB+10bp as a five-alarm fire for funding markets. Currently sitting calmly 1bp above IORB — system functioning normally.</p>
+          <div class="threshold-row">
+            <span><strong>L1</strong> &lt;IORB+2bp</span>
+            <span><strong>L3</strong> +5-10bp</span>
+            <span><strong>L5</strong> &gt;+15bp</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="tile" data-level="3" data-id="us10y">
+        <div class="tile-row"><div class="tile-name">10Y Yield</div><div class="tile-stamp">14:32 EST</div></div>
+        <div class="tile-value">4.42%</div>
+        <div class="tile-meta">+12bp 5d · elevated</div>
+        <div class="tile-bar"><div class="bar-seg"></div><div class="bar-seg"></div><div class="bar-seg"></div><div class="bar-seg"></div><div class="bar-seg"></div></div>
+        <div class="tile-bar-label"><span>Level <span class="level-num">3</span> of 5</span><span>Elevated</span></div>
+        <div class="tile-foot">
+          <div class="tile-source">via FRED</div>
+          <button class="expand-toggle"><span class="label-collapsed">More</span><span class="label-expanded">Less</span><span class="chev">▾</span></button>
+        </div>
+        <div class="tile-explainer">
+          <p>The 10-year Treasury yield is the benchmark long-term rate that prices everything from mortgages to discount cash flows. The level matters less than the velocity — fast moves break things in markets that rely on stable duration assumptions.</p>
+          <p>Above 5% historically signals stress, but the more important question is rate of change: a 50bp move in two weeks is more dangerous than 100bp over six months. This is the price of money — the foundation underneath all asset classes.</p>
+        </div>
+      </div>
+
+      <div class="tile" data-level="2" data-id="hyoas">
+        <div class="tile-row"><div class="tile-name">HY OAS</div><div class="tile-stamp">14:32 EST</div></div>
+        <div class="tile-value">285</div>
+        <div class="tile-meta">spread bps · widening</div>
+        <div class="tile-bar"><div class="bar-seg"></div><div class="bar-seg"></div><div class="bar-seg"></div><div class="bar-seg"></div><div class="bar-seg"></div></div>
+        <div class="tile-bar-label"><span>Level <span class="level-num">2</span> of 5</span><span>Watching</span></div>
+        <div class="tile-foot">
+          <div class="tile-source">via FRED</div>
+          <button class="expand-toggle"><span class="label-collapsed">More</span><span class="label-expanded">Less</span><span class="chev">▾</span></button>
+        </div>
+        <div class="tile-explainer">
+          <p>High-yield Option-Adjusted Spread measures the premium investors demand to lend to junk-rated corporations over Treasuries. It's the canonical risk-appetite gauge — when spreads widen, money is fleeing risk; when they tighten, animal spirits are returning.</p>
+          <p>Above 700bp signals real recession territory; the 2008 GFC peak hit 2000bp. The single most useful credit signal for retail tracking, available free via FRED.</p>
+        </div>
+      </div>
+
+      <div class="tile" data-level="4" data-id="usdjpy">
+        <div class="tile-row"><div class="tile-name">USD / JPY</div><div class="tile-stamp">14:32 EST</div></div>
+        <div class="tile-value">160.43</div>
+        <div class="tile-meta">intervention zone</div>
+        <div class="tile-bar"><div class="bar-seg"></div><div class="bar-seg"></div><div class="bar-seg"></div><div class="bar-seg"></div><div class="bar-seg"></div></div>
+        <div class="tile-bar-label"><span>Level <span class="level-num">4</span> of 5</span><span>Stressed</span></div>
+        <div class="tile-foot">
+          <div class="tile-source">via Yahoo</div>
+          <button class="expand-toggle"><span class="label-collapsed">More</span><span class="label-expanded">Less</span><span class="chev">▾</span></button>
+        </div>
+        <div class="tile-explainer">
+          <p>The yen cross is currently the single most important FX pair for global macro because of the yen carry trade — when borrowed yen funds long positions in higher-yielding assets globally, an unwind can crash everything simultaneously.</p>
+          <p>Above 160 triggers Japanese Ministry of Finance intervention, as seen in April and July 2024. The August 2024 carry-trade unwind correlated with a sharp Bitcoin drawdown.</p>
+        </div>
+      </div>
+
+      <div class="tile" data-level="1" data-id="vix">
+        <div class="tile-row"><div class="tile-name">VIX</div><div class="tile-stamp">14:32 EST</div></div>
+        <div class="tile-value">18.81</div>
+        <div class="tile-meta">complacent</div>
+        <div class="tile-bar"><div class="bar-seg"></div><div class="bar-seg"></div><div class="bar-seg"></div><div class="bar-seg"></div><div class="bar-seg"></div></div>
+        <div class="tile-bar-label"><span>Level <span class="level-num">1</span> of 5</span><span>Stable</span></div>
+        <div class="tile-foot">
+          <div class="tile-source">via FRED</div>
+          <button class="expand-toggle"><span class="label-collapsed">More</span><span class="label-expanded">Less</span><span class="chev">▾</span></button>
+        </div>
+        <div class="tile-explainer">
+          <p>The CBOE Volatility Index measures S&amp;P 500 30-day implied volatility — Wall Street's most-watched fear gauge. Above 30 signals real stress; below 16 is complacency that often precedes problems.</p>
+          <p>Often lags MOVE (the bond vol equivalent) in true crisis events because rates stress shows up first.</p>
+        </div>
+      </div>
+
+      <div class="tile" data-level="4" data-id="onrrp">
+        <div class="tile-row"><div class="tile-name">ON RRP</div><div class="tile-stamp">14:32 EST</div></div>
+        <div class="tile-value">$0.7B</div>
+        <div class="tile-meta">drained · liquidity buffer gone</div>
+        <div class="tile-bar"><div class="bar-seg"></div><div class="bar-seg"></div><div class="bar-seg"></div><div class="bar-seg"></div><div class="bar-seg"></div></div>
+        <div class="tile-bar-label"><span>Level <span class="level-num">4</span> of 5</span><span>Stressed</span></div>
+        <div class="tile-foot">
+          <div class="tile-source">via FRED</div>
+          <button class="expand-toggle"><span class="label-collapsed">More</span><span class="label-expanded">Less</span><span class="chev">▾</span></button>
+        </div>
+        <div class="tile-explainer">
+          <p>Overnight Reverse Repo balance is money parked at the Fed when there is nowhere else to deploy it — the system's liquidity buffer. As it drains toward zero, T-bill demand is exhausted and Treasury auctions get harder, forcing yields up.</p>
+          <p>Below $50 billion is the danger zone where mounting Treasury issuance starts breaking things. Currently sub-$1B — the buffer is essentially gone.</p>
+        </div>
+      </div>
+
+      <div class="tile" data-level="1" data-id="btc">
+        <div class="tile-row"><div class="tile-name">BTC</div><div class="tile-stamp">14:32 EST</div></div>
+        <div class="tile-value">$108,490</div>
+        <div class="tile-meta">+2.1% 24h</div>
+        <div class="tile-bar"><div class="bar-seg"></div><div class="bar-seg"></div><div class="bar-seg"></div><div class="bar-seg"></div><div class="bar-seg"></div></div>
+        <div class="tile-bar-label"><span>Level <span class="level-num">1</span> of 5</span><span>Stable</span></div>
+        <div class="tile-foot">
+          <div class="tile-source">via CoinGecko</div>
+          <button class="expand-toggle"><span class="label-collapsed">More</span><span class="label-expanded">Less</span><span class="chev">▾</span></button>
+        </div>
+        <div class="tile-explainer">
+          <p>Bitcoin spot price anchors all crypto-macro analysis — the headline number that frames every conversation. Levels matter: ATH breakouts, prior-cycle resistance, and round numbers all act as psychological anchors.</p>
+          <p>Track velocity (24h % change) for short-term context, but the real story is multi-month regime: sustained breakouts versus sustained corrections.</p>
+        </div>
+      </div>
+
+      <div class="tile" data-level="5" data-id="jgb10y">
+        <div class="tile-row"><div class="tile-name">JGB 10Y</div><div class="tile-stamp">14:32 EST</div></div>
+        <div class="tile-value">2.48%</div>
+        <div class="tile-meta">YCC break · BoJ losses ballooning</div>
+        <div class="tile-bar"><div class="bar-seg"></div><div class="bar-seg"></div><div class="bar-seg"></div><div class="bar-seg"></div><div class="bar-seg"></div></div>
+        <div class="tile-bar-label"><span>Level <span class="level-num">5</span> of 5</span><span>Critical</span></div>
+        <div class="tile-foot">
+          <div class="tile-source">via MoF Japan</div>
+          <button class="expand-toggle"><span class="label-collapsed">More</span><span class="label-expanded">Less</span><span class="chev">▾</span></button>
+        </div>
+        <div class="tile-explainer">
+          <p>Japan's 10-year government bond yield — the YCC (yield curve control) death watch. Above 2% means the Bank of Japan's losses on existing JGB holdings balloon and the entire JGB market becomes unstable.</p>
+          <p>This ripples globally because Japanese investors are the marginal buyer of duration everywhere — from US Treasuries to French OATs to Australian bonds. A breakdown here is a true regime change for global fixed income.</p>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <div class="section-divider"><span>secondary indicators</span></div>
+
+  <div class="tier">
+    <div class="tier-head">
+      <h2>On-Demand · Tap to refresh</h2>
+      <div class="tier-meta">~105 free indicators · click any tile</div>
+    </div>
+    <p class="tier-hint">Click anywhere on a tile to fetch its current value. Used when you want to spot-check during a stress event without polling continuously.</p>
+    <div class="grid">
+
+      <div class="tile tier-2" data-level="2" data-id="ig-oas">
+        <div class="tile-row"><div class="tile-name">IG OAS</div><div class="tile-stamp">2h ago</div></div>
+        <div class="tile-value">96</div>
+        <div class="tile-meta">spread bps · stable</div>
+        <div class="tile-bar"><div class="bar-seg"></div><div class="bar-seg"></div><div class="bar-seg"></div><div class="bar-seg"></div><div class="bar-seg"></div></div>
+        <div class="tile-bar-label"><span>Level <span class="level-num">2</span> of 5</span><span>Watching</span></div>
+        <div class="tile-foot">
+          <div class="tile-source">via FRED</div>
+          <button class="expand-toggle"><span class="label-collapsed">More</span><span class="label-expanded">Less</span><span class="chev">▾</span></button>
+        </div>
+        <div class="tile-explainer">
+          <p>Investment-grade corporate bond spread over Treasuries — the slow-moving credit cycle barometer. Less timely than HY OAS but cleaner trend signal.</p>
+          <p>Above 200bp signals genuine recession-pricing.</p>
+        </div>
+      </div>
+
+      <div class="tile tier-2" data-level="3" data-id="copper-gold">
+        <div class="tile-row"><div class="tile-name">Copper / Gold</div><div class="tile-stamp">5h ago</div></div>
+        <div class="tile-value">0.169</div>
+        <div class="tile-meta">growth vs risk-off</div>
+        <div class="tile-bar"><div class="bar-seg"></div><div class="bar-seg"></div><div class="bar-seg"></div><div class="bar-seg"></div><div class="bar-seg"></div></div>
+        <div class="tile-bar-label"><span>Level <span class="level-num">3</span> of 5</span><span>Elevated</span></div>
+        <div class="tile-foot">
+          <div class="tile-source">via FRED</div>
+          <button class="expand-toggle"><span class="label-collapsed">More</span><span class="label-expanded">Less</span><span class="chev">▾</span></button>
+        </div>
+        <div class="tile-explainer">
+          <p>Copper price divided by gold price — Druckenmiller's favorite divergence trade. Highly correlated to 10Y Treasury yields when working normally.</p>
+          <p>When this falls but yields stay high, something has to give. Cleanest single growth-vs-risk-off gauge across the entire macro complex.</p>
+        </div>
+      </div>
+
+      <div class="tile tier-2" data-level="2" data-id="vix-term">
+        <div class="tile-row"><div class="tile-name">VIX9D / VIX</div><div class="tile-stamp">8h ago</div></div>
+        <div class="tile-value">0.94</div>
+        <div class="tile-meta">term structure normal</div>
+        <div class="tile-bar"><div class="bar-seg"></div><div class="bar-seg"></div><div class="bar-seg"></div><div class="bar-seg"></div><div class="bar-seg"></div></div>
+        <div class="tile-bar-label"><span>Level <span class="level-num">2</span> of 5</span><span>Watching</span></div>
+        <div class="tile-foot">
+          <div class="tile-source">via CBOE</div>
+          <button class="expand-toggle"><span class="label-collapsed">More</span><span class="label-expanded">Less</span><span class="chev">▾</span></button>
+        </div>
+        <div class="tile-explainer">
+          <p>9-day VIX divided by 30-day VIX. Above 1.0 means front-end vol is higher than back-end — the classic backwardation stress signal.</p>
+        </div>
+      </div>
+
+      <div class="tile tier-2" data-level="1" data-id="claims">
+        <div class="tile-row"><div class="tile-name">Jobless Claims 4WMA</div><div class="tile-stamp">1d ago</div></div>
+        <div class="tile-value">218k</div>
+        <div class="tile-meta">labor market firm</div>
+        <div class="tile-bar"><div class="bar-seg"></div><div class="bar-seg"></div><div class="bar-seg"></div><div class="bar-seg"></div><div class="bar-seg"></div></div>
+        <div class="tile-bar-label"><span>Level <span class="level-num">1</span> of 5</span><span>Stable</span></div>
+        <div class="tile-foot">
+          <div class="tile-source">via FRED</div>
+          <button class="expand-toggle"><span class="label-collapsed">More</span><span class="label-expanded">Less</span><span class="chev">▾</span></button>
+        </div>
+        <div class="tile-explainer">
+          <p>Four-week moving average of new unemployment filings. Above 300k is recessionary territory.</p>
+          <p>The single best real-economy leading indicator available — fast, weekly, reliable.</p>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <div class="section-divider"><span>reference · paid sources</span></div>
+
+  <div class="tier">
+    <div class="tier-head">
+      <h2>Reference · Manual lookup</h2>
+      <div class="tier-meta">~28 paid indicators · spot-check during stress</div>
+    </div>
+    <p class="tier-hint">Bloomberg-only or paid-source items. Threshold logic stored here for quick reference; click the source button to look up the current number on the provider's site.</p>
+    <div class="grid">
+
+      <div class="tile tier-3" data-id="move">
+        <div class="tile-row"><div class="tile-name">MOVE Index</div><div class="tile-stamp">paid · ICE / Bloomberg</div></div>
+        <div class="tile-value">— manual —</div>
+        <div class="tile-thresholds">
+          <div class="row"><strong>Level 1</strong><span>&lt; 90</span></div>
+          <div class="row"><strong>Level 3</strong><span>100 - 130</span></div>
+          <div class="row"><strong>Level 5</strong><span>&gt; 140 (SVB peak: 198)</span></div>
+        </div>
+        <div class="tile-foot">
+          <a class="source-link" href="#">Open ICE →</a>
+          <button class="expand-toggle"><span class="label-collapsed">More</span><span class="label-expanded">Less</span><span class="chev">▾</span></button>
+        </div>
+        <div class="tile-explainer">
+          <p>Treasury bond volatility index — when this spikes, dealer balance sheets are stressed and contagion follows. SVB week peak: 198.</p>
+        </div>
+      </div>
+
+      <div class="tile tier-3" data-id="swap10y">
+        <div class="tile-row"><div class="tile-name">10Y Swap Spread</div><div class="tile-stamp">paid · Bloomberg</div></div>
+        <div class="tile-value">— manual —</div>
+        <div class="tile-thresholds">
+          <div class="row"><strong>Level 1</strong><span>-20 to 0bp</span></div>
+          <div class="row"><strong>Level 3</strong><span>-40 to -20bp</span></div>
+          <div class="row"><strong>Level 5</strong><span>&lt; -50bp</span></div>
+        </div>
+        <div class="tile-foot">
+          <a class="source-link" href="#">Open Bloomberg →</a>
+          <button class="expand-toggle"><span class="label-collapsed">More</span><span class="label-expanded">Less</span><span class="chev">▾</span></button>
+        </div>
+        <div class="tile-explainer">
+          <p>10Y swap rate minus 10Y Treasury yield. Negative and widening signals dealer balance sheets are full and Treasuries are being avoided.</p>
+        </div>
+      </div>
+
+      <div class="tile tier-3" data-id="dealer-gamma">
+        <div class="tile-row"><div class="tile-name">SPX Dealer Gamma</div><div class="tile-stamp">paid · SpotGamma</div></div>
+        <div class="tile-value">— manual —</div>
+        <div class="tile-thresholds">
+          <div class="row"><strong>Positive</strong><span>vol-dampening</span></div>
+          <div class="row"><strong>Flip zone</strong><span>~SPX -2% from spot</span></div>
+          <div class="row"><strong>Negative</strong><span>vol-amplifying</span></div>
+        </div>
+        <div class="tile-foot">
+          <a class="source-link" href="#">Open SpotGamma →</a>
+          <button class="expand-toggle"><span class="label-collapsed">More</span><span class="label-expanded">Less</span><span class="chev">▾</span></button>
+        </div>
+        <div class="tile-explainer">
+          <p>Aggregate options dealer hedging position. Negative gamma means dealers amplify moves rather than dampen them — the mechanical reason for fast crashes and squeezes.</p>
+        </div>
+      </div>
+
+      <div class="tile tier-3" data-id="bank-cds">
+        <div class="tile-row"><div class="tile-name">US Bank CDS Basket</div><div class="tile-stamp">paid · Bloomberg</div></div>
+        <div class="tile-value">— manual —</div>
+        <div class="tile-thresholds">
+          <div class="row"><strong>Level 1</strong><span>&lt; 60bp</span></div>
+          <div class="row"><strong>Level 3</strong><span>80 - 120bp</span></div>
+          <div class="row"><strong>Level 5</strong><span>&gt; 150bp (SVB: 130bp)</span></div>
+        </div>
+        <div class="tile-foot">
+          <a class="source-link" href="#">Open Bloomberg →</a>
+          <button class="expand-toggle"><span class="label-collapsed">More</span><span class="label-expanded">Less</span><span class="chev">▾</span></button>
+        </div>
+        <div class="tile-explainer">
+          <p>5-year CDS on JPM/BAC/C/WFC/GS/MS averaged. Counterparty risk barometer — the cleanest pre-banking-crisis signal.</p>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+</div>
+
+<script>
+document.querySelectorAll('.tile-foot').forEach(foot => {
+  foot.addEventListener('click', e => {
+    if (e.target.closest('a')) return;
+    e.stopPropagation();
+    const tile = foot.closest('.tile');
+    tile.classList.toggle('expanded');
+  });
+});
+
+document.querySelectorAll('.tile.tier-2').forEach(tile => {
+  tile.addEventListener('click', e => {
+    if (e.target.closest('.tile-foot')) return;
+    if (e.target.closest('.tile-explainer')) return;
+    if (e.target.closest('a')) return;
+    if (tile.classList.contains('refreshing')) return;
+
+    tile.classList.add('refreshing');
+    const valEl = tile.querySelector('.tile-value');
+    const stampEl = tile.querySelector('.tile-stamp');
+    const oldVal = valEl.textContent;
+    valEl.textContent = '';
+    stampEl.textContent = 'fetching...';
+
+    setTimeout(() => {
+      valEl.textContent = oldVal;
+      stampEl.textContent = 'just now';
+      tile.classList.remove('refreshing');
+    }, 900);
+  });
+});
+
+document.querySelectorAll('.view-toggle button').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.view-toggle button').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    document.body.classList.toggle('view-mobile', btn.dataset.view === 'mobile');
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  });
+});
+</script>
+
+</body>
+</html>

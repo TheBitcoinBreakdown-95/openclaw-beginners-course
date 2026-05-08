@@ -1,7 +1,87 @@
 # WORKLOG
 
-**Last saved:** 2026-05-07 (post Session 68 habit editing + posterity doc)
-**Status:** Session 68 complete -- Atomic Habits + Habit Stacks now editable from the Today tab (rename habits, edit stack triggers, delete, rename sections). Habit checkmarks already integrated with daily ledger via Session 66 hook. Comprehensive `DAILY-LEDGER-ARCHITECTURE.md` written for posterity. Sessions 66 (daily ledger Phase 1) and 67 (Codex migration + outbox routing) remain the other active workstreams.
+**Last saved:** 2026-05-08 (post Session 70 macro velocity logic)
+**Status:** Macro Stress Dashboard is now velocity-aware. 25 of 26 active indicators score on level + per-indicator velocity rule (only `eth_btc` deferred — needs aligned ETH+BTC histories). Stress index reads 3.3/10 "Watching" — false-alarm L5 on ON RRP removed by threshold recalibration. New `Macro-Dashboard/` folder at project root consolidates all design/audit/tooling artifacts with a coverage-table README kept in sync with what's live.
+
+## Session 70 — Macro Threshold Audit + Velocity Logic Phase 0-3 + Macro-Dashboard reorg [signals/macro] (LIVE)
+
+### What Shipped (deployed to Jinn, verified via /api/macro)
+
+1. **Threshold audit** — 17 active-logic indicators recalibrated to 2024-2026 empirical regime (L1≈p25, L3≈p50, L5=top-decile-or-historical-anchor). Old thresholds were calibrated to pre-2020 norms — current regime sat in old L3-L4 producing false alarms. Examples: ON RRP at $0.77B flagged L5-critical → now L4 (post-QT structural normal); 10Y Real Yield old L1 `<0.5%` was unreachable since min has been 1.53%. Bank Reserves L2 gap restored. SOFR hardcoded IORB refreshed 4.40% → 3.65%.
+
+2. **Architectural cleanup swap** — live `index.html` on Jinn (138KB) had inline accumulated macro tab code; local `dashboard-deploy/index.html` (114KB) used the clean external `<script src="/macro-tab.js">` architecture from Session 65. Deployed clean version. ~24KB inline removed. (Resolves the open architectural drift carried in Session 69's Open section.)
+
+3. **Velocity logic Phase 0** — empirical velocity distribution audit. p50/p90/p95/p99 of |Δ(window)| for 24 series 2024-2026 → `Macro-Dashboard/audits/velocity_summary.json`. Empirically-grounded velocity-kick thresholds.
+
+4. **Velocity logic Phase 1 plumbing** — `fetchFred` returns `{value, date, history}` (last 400 obs). New `velocity.js` with 6 primitives (delta, pctChange, rocPerWeek, drawdown, disinversion, yoyPct). 13/13 unit tests pass. Runner computes per-indicator primitives, passes via ctx, persists in data.json. Phase 1 verified as no-op (existing levels unchanged) before any scoring rule converted.
+
+5. **Velocity logic Phase 2-3** — all 25 active-logic indicators got per-indicator velocity rules tuned against Phase 0 distributions. Notable transformations:
+   - **WALCL**: dead `return 2` → live with `+$3.9B/wk (4w roc)` meta; declining=L1, rising=L4-5 (pivot signal). Pure velocity indicator now.
+   - **C&I Loans**: dead `return 2` → L1 with `+5.7% YoY` meta; <0% YoY = L4, <-2% = L5.
+   - **HY OAS**: asymmetric — fast widening kicks alarm up (5d > 50bp → L5), tightening doesn't lower it.
+   - **2s10s + 3m10y**: 30d disinversion check — was-negative-now-positive forces +2 (canonical recession-arrival signal).
+   - **ON RRP**: 5d build > $50B → L4+ (money fleeing back to Fed = risk-off). True L5 deferred (needs RRP+TGA composite).
+   - **SOFR**: 1d spike > 10bp → L4+ regardless of absolute spread (Sept 2019-style detection).
+   - **BTC**: drawdown from 90d high (-20%/-35%/-50% → L3/L4/L5).
+   - **VIX**: +5pt/1d spike → L4 minimum (event in progress).
+   - **USDJPY**: +2.5pt/5d in MOF zone (≥156) → L5 (carry-stress acceleration).
+   - **CoinGecko fetcher** extended with `fetchCoinGeckoHistory` (market_chart endpoint) for BTC + Gold history.
+
+6. **`Macro-Dashboard/` folder created at project root** (next to `OpenClaw Class/`). Consolidates design docs (INDICATORS.md, THRESHOLD-AUDIT.md, VELOCITY-DESIGN.md, ui-mockups), empirical audits, audit tooling, and a README with a per-indicator coverage table (level basis + velocity windows + kick rule). Source deploy code stays in `.claude/macro-deploy/`.
+
+### Files Modified
+- Jinn: `~/.openclaw/workspace/macro/{indicators,fetchers,runner}.js` + new `velocity.js`; `~/.openclaw/workspace/dashboard/public/index.html` (clean swap)
+- Local source: `.claude/macro-deploy/{indicators,fetchers,runner,velocity}.js`
+- Backups on Jinn: `*.2026-05-07-{threshold-audit,pre-clean-swap}.bak` and `*.2026-05-08-{pre-velocity,pre-phase3}.bak`
+- New: `Macro-Dashboard/{README.md, design/, audits/, tooling/}` at project root
+- Moved: `Research/MACRO-INDICATORS.md`, `Research/MACRO-VELOCITY-DESIGN.md`, `Research/MACRO-DASHBOARD-*.html`, `.jin-staging/{fred_summary,velocity_summary,*.py,*.js,threshold-audit-proposal}.{json,py,js,md}` → `Macro-Dashboard/{design,audits,tooling}/`
+
+### Pattern Captured
+**Per-indicator velocity, not a shared scoring engine.** Each indicator's velocity rule lives inline in its `computeLevel`, documented like the threshold-audit regime-basis comments. SOFR cares about 1d spikes; WALCL cares about 4w rate-of-change; C&I Loans cares about YoY. There is no universal "30d delta" default. Three similar lines beats a premature abstraction.
+
+### Open Follow-ups (next session candidates, ordered by signal value)
+- **Composites layer** (highest value) — RRP+TGA combined drain detection unlocks the deferred true L5 case for ON RRP; Bank Reserves + SOFR-IORB cross-confirmation
+- **ETH/BTC velocity** — only un-wired indicator (computed source needs aligned ETH+BTC histories)
+- **Phase 4 UI** — direction arrows, sparkline, hover tooltip in macro-tab.js
+- **Indicator backlog** — currently 18/8/5; original spec is 30/105/28
+- **Regime-shift detection** — fixed 2024-2026 quantile baselines will be wrong if Fed restarts QE / imposes YCC
+
+---
+
+## Session 69 — Daily Ledger Local Sync Layer (Phase 2.5) [daily-ledger] [sync] (LIVE)
+
+### What Shipped
+1. **Plan + scoping** at `c:\...\Ai Playground\.claude\plans\daily-ledger-sync.md` covering the architecture, sealed-day rule, file locations, three-layer backup story, and Phase E deferrals.
+2. **Vault skeleton** `Jinn-Vault/` at workspace root (not nested in any project) -- top-level personal vault, mirrors `TBB/Bitcoin Notes/` separation. README.md explains population and warns against hand-edits.
+3. **Render script** `scripts/render-daily-ledger.js` (Node, ~160 lines, pure function `renderLedger(ledger)` exported). Idempotent JSON-to-markdown conversion: YAML frontmatter (date, day_of_week, counts, tags, ledger_version, synced_at) + Notes/Completed/Habits/Scheduled sections + `[[YYYY-MM-DD]]` backlinks for Obsidian graph navigation.
+4. **Slash command** `.claude/commands/sync-ledger.md` -- pulls via `scp -r` from Jin, walks candidates (`> last-synced AND < today`), renders, advances cursor at `.routing-inbox/daily-pull/.last-synced`, reports one-line summary.
+5. **Three-layer backup verified**: Jin workspace-backup cron tracks `daily/` (commit `feb6582 Auto-backup`, no workspace `.gitignore`); local raw JSON mirror at `.routing-inbox/daily-pull/` (gitignored); rendered markdown at `Jinn-Vault/Daily/` (workspace-tracked, `.obsidian/` already gitignored).
+6. **Scope decisions confirmed with user**: vault path = `Jinn-Vault/`, render = Node, track in workspace git, no GitHub push.
+
+### Verification (all passing)
+- Cold-start sync: scp pulled `2026-05-07.json` from Jin, rendered to `Jinn-Vault/Daily/2026-05-07.md` (745 bytes, frontmatter + 1 note + 3 completed + 1 habit + 0 events + backlinks). `.last-synced` set to 2026-05-07.
+- Idempotency: re-run produces zero candidates (window `> 2026-05-07 AND < 2026-05-08` is empty). No-op as expected.
+- `git check-ignore` confirms `.routing-inbox/` is properly excluded; `Jinn-Vault/` is untracked-and-trackable.
+
+### Files Created
+- `.claude/plans/daily-ledger-sync.md` (gitignored along with all `.claude/plans/`)
+- `Jinn-Vault/README.md`, `Jinn-Vault/Daily/.gitkeep`
+- `scripts/render-daily-ledger.js`
+- `.claude/commands/sync-ledger.md`
+
+### Files Modified
+- `.gitignore` (workspace root) -- added `.routing-inbox/` exclusion (also covers the planned outbox routing pipeline)
+- `AI/Clawdbot aka Openclaw/DAILY-LEDGER-ARCHITECTURE.md` -- new "Local Sync Layer (Phase 2.5 -- LIVE)" section + extended File Locations Summary
+
+### Pattern Learned (Windows quirk)
+`rsync` is not in the default Windows Git Bash environment; `scp -r` is. Slash command falls back to scp for portability. Volume is 1 file/day so the lack of incremental transfer is irrelevant.
+
+### Open
+- Windows Task Scheduler cron for `/sync-ledger` daily at ~02:00 ET (after sealed day rolls over) -- deferred to user.
+- `/review-ledger` weekly insights command -- deferred to Phase E.
+- Architectural drift on Jin live `index.html` (inline macro code vs `dashboard-deploy/` external `<script src="/macro-tab.js">`) still unresolved -- carried over from Sessions 66/68. Not blocking ledger work.
+
+---
 
 ## Session 68 — Atomic Habits Editing + Daily Ledger Posterity Doc [daily-ledger] [habits] (LIVE)
 
