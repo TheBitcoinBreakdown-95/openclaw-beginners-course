@@ -1,19 +1,24 @@
-# Personal / development artifacts
-Activation/
-Research/
-GitHub-Repo/
-CLAUDE.md
-TRANSITION-PROMPT.md
-SESSION-ARCHIVE.md
-.claude/
+# OpenClaw Course -- project .gitignore
 
-# Large binary files (upload via GitHub Releases)
+# Large cloned repos and binary dumps
+GitHub-Repo/
+Files/
+dashboard-build/
+
+# Large binary files
 *.tar.gz
 *.msi
 
-# OS / editor
+# Environment and secrets
+.env
+.env.*
+
+# OS / editor files
 .DS_Store
 Thumbs.db
 *.swp
 *~
 .vscode/
+
+# Obsidian
+.obsidian/

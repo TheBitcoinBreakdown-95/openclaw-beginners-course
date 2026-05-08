@@ -1,7 +1,174 @@
 # WORKLOG
 
-**Last saved:** 2026-05-04 (post Session 64 dashboard fixes, deployed + verified)
-**Status:** Session 64 complete -- 7 dashboard glitches fixed and live on Jinn; context window dropped 112%->74% via new exclusion UI; awaiting GC test of drag-and-drop on Today.
+**Last saved:** 2026-05-07 (post Session 68 habit editing + posterity doc)
+**Status:** Session 68 complete -- Atomic Habits + Habit Stacks now editable from the Today tab (rename habits, edit stack triggers, delete, rename sections). Habit checkmarks already integrated with daily ledger via Session 66 hook. Comprehensive `DAILY-LEDGER-ARCHITECTURE.md` written for posterity. Sessions 66 (daily ledger Phase 1) and 67 (Codex migration + outbox routing) remain the other active workstreams.
+
+## Session 68 — Atomic Habits Editing + Daily Ledger Posterity Doc [daily-ledger] [habits] (LIVE)
+
+### What Shipped
+1. **Backend (`server.js`):** New `PUT /api/habits` endpoint -- edits habit text + stack trigger in place. Single text field re-parses the "After I X, I will Y" pattern (same regex as `parseHabits`), so a stack habit can become plain or vice versa just by editing the string. New `PUT /api/habits/section/rename` endpoint -- renames a section, with collision check.
+2. **Frontend (`public/index.html`):** Atomic Habits card on the Today tab gets per-habit `edit` and `×` buttons, plus an `edit` button next to each section name. Click `edit` swaps the row/header for an inline input (Enter saves, Escape cancels). Delete prompts a confirm. New CSS rules for `.habit-section-header`, `.habit-actions`, `.habit-edit-input` etc. -- subdued at rest, full-opacity on hover.
+3. **Confirmed already done in Session 66:** `/api/habits/toggle` already logs to `habitCompletions[]` of today's `daily/YYYY-MM-DD.json` ledger. So checkmarks on habits already integrate with the daily-ledger capture process. No new wiring needed for the user's "checkmarks integrated with daily notes" ask -- it was already true.
+4. **Posterity doc:** Created `DAILY-LEDGER-ARCHITECTURE.md` at the project root. Consolidates the architecture, schema, endpoints, frontend wiring, deployment runbook, verification suite, drift open-issue, and Phase 2 roadmap. Future sessions should read this first before extending the ledger or habit system. Supersedes scattered notes across WORKLOG (Sessions 66 + 68), DECISIONS.md, and the original plan file.
+5. **Source control:** All edits applied to **both** Jin live and `dashboard-deploy/` source-of-truth (lesson from Session 65 / Session 66 close call).
+
+### Verification (all passing)
+- `PUT /api/habits` edits "Morning stretch" -> "Morning stretch (5 min)"; checkmark state preserved
+- Stack edit: trigger AND action both update via the regex re-parse ("After I coffee, I will immediately journal" -> "After I morning coffee, I will journal one paragraph")
+- `PUT /api/habits/section/rename` "Daily Routines" -> "Morning Routine" then back, no collision issues
+- Bad payload (`{section, index}` without `text`) -> 400 `Missing params`
+- `/api/data` regression -> 200, ~24KB
+- Test data restored to original state on Jin
+
+### Files Modified
+- `~/.openclaw/workspace/dashboard/server.js` (added 2 PUT routes after `/api/habits/section`)
+- `~/.openclaw/workspace/dashboard/public/index.html` (CSS block, habits card markup, 5 helper functions: `editHabit`, `saveHabitEdit`, `deleteHabit`, `editHabitSection`, `saveHabitSectionEdit`)
+- Same files in `.claude/dashboard-deploy/` (source-of-truth)
+- New: `DAILY-LEDGER-ARCHITECTURE.md` at Clawdbot project root
+
+### Pattern (Reinforced)
+Same as Session 66's: edits go to **both** `dashboard-deploy/` and Jin live in the same session. The `cp` from `.jin-staging` to `dashboard-deploy/` is fine for `server.js` (changes are pure additions). For `index.html` they need separate Edit calls because the two files differ on the macro tab integration (Jin has inline accumulated code; `dashboard-deploy/` has external-file architecture). Until that drift is reconciled, never just `cp` index.html across the two locations.
+
+### Open
+- **Architectural drift unresolved**: Live Jin `index.html` (now 137KB) still carries inline macro tab code; `dashboard-deploy/index.html` (now 105KB) uses external `macro-tab.js`. Reconcile by deploying `dashboard-deploy/index.html` to Jin and verifying the Signals tab loads via the external script. Not blocking habit/ledger work. (Carried over from Session 66.)
+- **Browser UI smoke test**: cannot run from this env. User to verify on phone or desktop: `edit` button on each Atomic Habit row swaps to input + saves; `×` confirms and deletes; section `edit` renames; checkbox state survives an edit.
+
+---
+
+## Session 67 — Codex/ChatGPT Plus Migration + Outbox Routing Kickoff [codex-migration] [outbox-routing] [soul-testing] (PARTIAL)
+
+### What Shipped — Codex Migration (DONE)
+
+1. **OpenClaw upgraded** 2026.2.26 → 2026.5.2 on Jinn. Backups at `~/.openclaw/backups/pre-upgrade-2026-05-03/`. Doctor --fix migrated telegram streaming config schema. Gateway restarted, all 7 cron jobs intact.
+
+2. **`@openclaw/codex` plugin installed** (`npx openclaw plugins install @openclaw/codex`). Plugin loaded successfully on 2026.5.2 (failed on 2026.2.26 — version mismatch).
+
+3. **OpenAI Codex CLI installed** (`npm install -g @openai/codex`). Used `codex login --device-auth` flow because OpenClaw's `models auth login --provider openai-codex` requires interactive TTY (failed over non-TTY SSH). User had to enable device-code authorization in ChatGPT Security Settings (Codex returned 403 until that was on).
+
+4. **Auth bridged into OpenClaw** via custom Node script that decodes the JWT in `~/.codex/auth.json`, extracts `account_id` + `email`, and writes an `oauth` profile to `~/.openclaw/agents/main/agent/auth-profiles.json` as `openai-codex:giancarnevale@gmail.com`. OpenClaw's standard `setup-token` and `paste-token` paths don't work for openai-codex (requires the synthetic-auth marker pattern, not a plain token).
+
+5. **All 4 cron jobs switched to `openai-codex/gpt-5.5`** with rewritten prompts that **require visible output** (e.g. "reply with one line: OK / NOOP / FAIL: <reason>"). Codex/GPT-5.x models produce reasoning-only output when prompts permit silence — original prompts ("be silent unless something fails") consistently failed with `incomplete turn detected: stopReason=stop payloads=0`. Verified per cron:
+   - workspace-backup → `NOOP`
+   - sleep-cycle → `AUDIT_DONE: 0 entries marked invalid`
+   - morning-briefing → 3-line briefing (Sunday May 3, calendar items)
+   - afternoon-checkin → Everyday list
+6. **Default chat model switched** to `openai-codex/gpt-5.5` (was MiniMax M2.5). MiniMax demoted to fallback. Updated TOOLS.md so Jinn doesn't parrot stale model identity from context.
+
+7. **Codex native web search enabled** by setting `plugins.entries.codex.config.appServer.args = ["-c", "tools.web_search=true", "app-server"]`. Verified: Jinn correctly answered "current BTC price" with live web data ($78,768 at test). No Brave key needed — uses ChatGPT Plus Responses API web search.
+
+8. **IRC + calendar updated**:
+   - INCIDENT-RESPONSE-CARD.md gained ChatGPT Plus account + Codex OAuth token entries
+   - Jinn's `calendar.md` has 2026-05-10 reminder: "Cancel MiniMax Coding Plan + revoke API key (per IRC). Codex/GPT-5.5 has been running cron jobs for 1 week — verify quality before canceling."
+
+### What Shipped — Soul Testing (DONE)
+
+Three diagnostic prompts run via `npx openclaw agent --message ... --model openai-codex/gpt-5.5`:
+- "Who are you?" → identified as Jinn with owl emoji, "quiet mentor" framing, anti-AI-tells voice
+- "I keep procrastinating and don't know why" → refused abstract framing, asked for the actual thing, named avoidance mechanisms without coaching jargon
+- "What's on my calendar today?" → transactional answer + small "Star Wars Day" footnote (soul present without inflating mundane)
+
+**Verdict:** SOUL-2.md document was already strong (9 iterations, 36 dials). Previous flatness was MiniMax model limitation, not document weakness. With gpt-5.5 the soul executes. User to validate in real Telegram chat over the coming week before iterating on the document.
+
+### What Shipped — Outbox Routing Pipeline (PARTIAL — Steps 0-1 of 6)
+
+Multi-session build. Plan + tracker live in workspace:
+- Plan: `c:\Users\GC\Documents\Ai Playground\.claude\plans\outbox-routing-pipeline.md`
+- Progress: `c:\Users\GC\Documents\Ai Playground\.claude\plans\outbox-routing-PROGRESS.md`
+- Destination map: `c:\Users\GC\Documents\Ai Playground\SECOND-BRAIN-INDEX.md`
+
+Architecture: Outbox tab in Jinn dashboard → nightly Codex cron summarizes + classifies → rsync pulls to local `.routing-inbox/` → `/process-outbox` slash command routes to AI KD topic files / TBB Bitcoin notes / JC BTC CRM / WBIGAF chapter staging / FreedomLab / YouTube inspirations. Existing `/process-notes` stays scoped to Twitter bookmarks only.
+
+**Steps remaining (Session 68+):** rename Content Queue → Outbox in dashboard (server.js + index.html), create `outbox-processor` cron at 03:00 ET, write `/process-outbox` slash command, scaffold `.routing-inbox/`, run end-to-end smoke test.
+
+### Open Issues
+
+- **Telegram outbound delivery broken from upgrade.** Cron "announce" path fails with "Outbound not configured for channel: telegram" even though plugin is enabled (`plugins.entries.telegram.enabled = true`) and `channels status --deep` shows running/connected. Failure-alert path still works (user got the workspace-backup error text). Best-effort-deliver suppresses cascading errors but messages don't reach Telegram. **Not yet fixed** — user wants to see if it self-resolves overnight (or the problem reveals itself with morning briefing tomorrow).
+
+- **Smart extraction Phase 2 from this save** — pending below.
+
+### Next
+
+1. **Verify telegram delivery tomorrow morning** — check whether the 8 AM morning-briefing arrives. If not, debug outbound adapter loading.
+2. **Continue outbox routing build** — Step 2 (rename Content Queue → Outbox in dashboard with full schema migration). Read `outbox-routing-PROGRESS.md` at session start.
+3. **MiniMax cancellation** scheduled 2026-05-10 after 1-week soak.
+
+---
+
+## Session 66 — Daily Calendar Ledger Phase 1 (LIVE)
+
+### What Shipped
+1. **Backend (`server.js`):** New `daily/YYYY-MM-DD.json` ledger system. Helpers (`readDailyLedger`, `writeDailyLedger`, `logCompletedTodo`/`removeCompletedTodo`, `logHabitCompletion`/`removeHabitCompletion`, `isValidDate`). Routes: `GET /api/day`, `POST/PUT/DELETE /api/day/notes[/:id]`. Hooked logging into `/api/todos/toggle` (Everyday + regular), `checkEverydayReset` (nightly), `/api/habits/toggle`. Existing `entropy.md` writes preserved -- streaks unaffected.
+2. **Frontend (`public/index.html`):** Today tab gets a Today's Notes card (multi-timestamped, add/edit/delete) plus a 3-pill summary strip. Calendar > Day view now reads `/api/day` and renders four sections: Scheduled / Completed / Habits / Notes. Today's notes editable; past days read-only.
+3. **Schema:** `{ date, version: 1, notes[], completedTodos[], habitCompletions[] }`. Forward-only -- no `entropy.md` backfill. Local NY day bucketing via existing `todayStr()`; ISO timestamps inside entries.
+4. **Dedupe:** Synthetic stable IDs -- `everyday::<text>` and `habit::<section>::<text>` are idempotent (toggle on/off/on = single entry). Regular todos use one-shot `hexId()-timestamp` IDs (one-way completion, can't double-fire).
+5. **Source control:** Edits applied to **both** Jin live (deploy) and `dashboard-deploy/` (source of truth) -- see Pattern Captured below.
+
+### Verification (all passing)
+- `GET /api/day?date=today`: empty schema, version 1
+- POST/PUT/DELETE notes round-trip; `updatedAt` set on PUT
+- Toggle Everyday item -> appears in `completedTodos` with `id: everyday::<text>`
+- Toggle on/off/on (3x) -> final count = 1 (dedupe works)
+- Past day fetch -> empty ledger arrays + `scheduledEvents` from `calendar.md` still merge in
+- Bad date -> 400 `Invalid date`
+- Date boundary: note created at UTC `2026-05-08T00:57Z` correctly bucketed as `daily/2026-05-07.json` (NY local)
+- `/api/data` regression -> 200, ~24KB; `/api/streaks` regression -> still works
+
+### Files Modified
+- `~/.openclaw/workspace/dashboard/server.js` (1340 -> ~1410 lines, deployed) + `dashboard-deploy/server.js` (source)
+- `~/.openclaw/workspace/dashboard/public/index.html` (deployed) + `dashboard-deploy/index.html` (source)
+- New artifact: `~/.openclaw/workspace/daily/YYYY-MM-DD.json` (lazy creation per local-NY day)
+- Backups on Jin: `server.js.2026-05-07-2050.bak`, `public/index.html.2026-05-07-2050.bak`
+- Plan file: `C:\Users\GC\.claude\plans\hi-i-m-pasting-a-gleaming-snail.md`
+
+### Pattern Captured -- Almost Repeated Session 65's Anti-Pattern
+Initial deploy went through `.jin-staging/` (pulled live Jin file, edited, scp'd back) **without updating `dashboard-deploy/` source**. Caught at save-progress time when WORKLOG showed Session 65's lesson. Back-ported all edits to `dashboard-deploy/server.js` (cp-replaceable since identical pre-edit) and `dashboard-deploy/index.html` (re-applied 6 Edit ops to the cleaner source). Going forward: pull-edit-deploy is fine *if and only if* the same edits also land in `dashboard-deploy/` before session end.
+
+### Architectural Drift Surfaced (Open, Not Resolved This Session)
+Live Jin `index.html` (was 123KB, now 133KB w/ my edits) contains **inline accumulated macro tab code**, while `dashboard-deploy/index.html` (now 102KB w/ my edits) uses the cleaner `<script src="/macro-tab.js">` external-file architecture from Session 65. Session 65 said it deployed the external version, but the live file has drifted back to inline. Reconcile by deploying `dashboard-deploy/index.html` to Jin in a future session and re-verifying the Signals tab still loads via `/macro-tab.js`. Not blocking Phase 1.
+
+### Phase 2 (Parked)
+- Calendar Week/Month indicators (counts/dots from `/api/day/range`)
+- `/api/day/range` + Tracker insights view + JSON/MD export
+- Best-effort `entropy.md` backfill parser
+- Reflection text + daily score
+- Goal tagging (health, learning, Bitcoin, Freedom Lab, etc.)
+
+### What I Could Not Test
+- The browser UI (cannot open a browser from this env). User to verify on phone/desktop at `http://100.124.64.28:4242/`: Today tab shows Notes card + summary; adding a note persists across reload; Calendar > Day shows all four sections; past days are read-only.
+
+---
+
+## Session 65 — Macro Tab Recovery + Source Refactor (LIVE)
+
+### What Happened
+Session 64's `scp` of `dashboard-deploy/index.html` to Jinn silently overwrote the Session 63 macro tab UI (which had been added via direct SSH edits to the live file, never back-ported to local source). User reported "signals tab isn't loading" hours after Session 64.
+
+### What Shipped
+1. **Re-injected macro tab inline** to restore live functionality (temporary hack, would have re-broken on next deploy).
+2. **Refactored to separate source files** for durability:
+   - `c:\...\dashboard-deploy\macro-tab.css` (~14KB) -- standalone stylesheet, scoped to `#signals`
+   - `c:\...\dashboard-deploy\macro-tab.js` (~11KB) -- standalone module with self-healing wrapper
+   - Wrapper auto-creates `<div id="signals">` section div if missing
+   - Wrapper overrides `window.showSection` to call `loadMacro()` on signals navigation
+3. **Updated `dashboard-deploy/index.html` source** to permanently include:
+   - `<link rel="stylesheet" href="/macro-tab.css">` in head
+   - `<script src="/macro-tab.js"></script>` before `</body>`
+   - `<div id="signals" class="section"></div>` in section list (after entropy-view)
+   - `if (id === 'signals' && !macroLoaded) loadMacro();` in showSection handler
+4. **Updated `dashboard-deploy/server.js` source** to permanently include:
+   - `const { registerMacroRoutes } = require('/home/openclaw/.openclaw/workspace/macro/api');`
+   - `registerMacroRoutes(app);` before `app.listen()`
+5. **Deployed all 4 files via scp**, restarted pm2, verified `/macro-tab.css` + `/macro-tab.js` serve 200, stress index live (3.7/10 Watching), Signals tab functional.
+
+### Pattern Captured (saved to memory)
+**Out-of-band edit drift** -- direct SSH edits to live files must be back-ported to local source-controlled files in the same session, or next deploy clobbers them. The gap between live and source grows silently. Saved to `~/.claude/projects/.../memory/feedback_outofband_drift.md`. Going forward: prefer source-edit-then-scp pattern over ssh-sed pattern, even when ssh-sed is faster in the moment.
+
+### Open
+- Hard-refresh required on browser to bust cached HTML/JS after deploy.
+
+---
+
+## Session 64 — Dashboard UX Fixes (LIVE)
 
 ## Session 64 — Dashboard UX Fixes (LIVE)
 
