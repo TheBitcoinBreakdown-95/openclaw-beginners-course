@@ -276,11 +276,56 @@ pm2 restart jinn-dashboard
 
 Rollback: `cp <bak> <orig> && pm2 restart jinn-dashboard`.
 
-## Architectural Drift Open Issue
+## Architectural Drift — RESOLVED in Session 70
 
-As of Session 66, the live Jin `index.html` had been drifting from `dashboard-deploy/index.html` since Session 65. The live file accumulated inline macro-tab code while `dashboard-deploy/` carried the cleaner external-file architecture (`<script src="/macro-tab.js">`). My Session 66 deploy preserved the live drift state (because I pulled from live, edited, pushed back). The Session 68 deploy continued from the same drifted base.
+**Was carried open through Sessions 66–69.** The live Jin `index.html` had been drifting from `dashboard-deploy/index.html` since Session 65 — accumulating inline macro-tab code while `dashboard-deploy/` carried the cleaner external `<script src="/macro-tab.js">` architecture. Sessions 66 and 68 each preserved the drift (pull-from-live → edit → push-back doesn't fix it).
 
-**Reconciliation move**: redeploy `dashboard-deploy/index.html` to Jin and verify the Signals tab still loads. The macro tab files are present at `~/.openclaw/workspace/dashboard/public/macro-tab.{css,js}`, so the external-script architecture should work — but it needs to be tested. Not blocking for daily-ledger or habit-edit functionality.
+**Resolved in Session 70 (2026-05-08)** as part of the macro velocity work: the clean `dashboard-deploy/index.html` (114KB) was deployed to Jin, replacing the 138KB drifted live version (~24KB inline removed). Signals tab verified loading via the external macro-tab.js. Daily ledger and habit work were untouched. See WORKLOG Session 70 entry "Architectural cleanup swap."
+
+## Local Sync Layer (Phase 2.5 — LIVE)
+
+Built in Session 69 (2026-05-08). The ledger is no longer Jin-only — it gets pulled to the local workspace and rendered as Obsidian-friendly markdown.
+
+### Flow
+
+```
+Jin ~/.openclaw/workspace/daily/*.json
+   ↓ scp over Tailscale (manual via /sync-ledger; cron deferred)
+Local .routing-inbox/daily-pull/*.json   (raw mirror, gitignored)
+   ↓ node scripts/render-daily-ledger.js
+Local Jinn-Vault/Daily/*.md              (Obsidian-friendly, tracked in workspace git)
+```
+
+### Sealed-day rule
+
+`/sync-ledger` only renders days where `date > last-synced AND date < today`. Today is in-flight (still being written via the dashboard) and never synced; running the command repeatedly across the day is a no-op until tomorrow.
+
+`.routing-inbox/daily-pull/.last-synced` holds the cursor (single line, `YYYY-MM-DD`). Rendering is idempotent — re-running the script on the same JSON produces the same markdown.
+
+### Markdown shape
+
+YAML frontmatter (`date`, `day_of_week`, counts, tags, `ledger_version`, `synced_at`) + sections for Notes / Completed / Habits / Scheduled Events + `[[YYYY-MM-DD]]` backlinks at the bottom for previous/next day. Designed for Obsidian Dataview queries and graph navigation. Don't hand-edit the markdown files — they're overwritten on next sync. The dashboard remains the only write surface.
+
+### Three layers of backup
+
+| Layer | What | Where |
+|---|---|---|
+| 1 | Jin's workspace-backup cron commits `daily/` nightly to git | `~/.openclaw/workspace/.git` (tracked, no `.gitignore` excludes it — verified Session 69) |
+| 2 | Local raw JSON mirror | `.routing-inbox/daily-pull/*.json` (gitignored, durable on disk) |
+| 3 | Rendered markdown | `Jinn-Vault/Daily/*.md` (workspace-tracked, `.obsidian/` gitignored at line 82) |
+
+### Files
+
+- **Slash command**: `.claude/commands/sync-ledger.md`
+- **Render script**: `scripts/render-daily-ledger.js` (Node, ~160 lines, pure function exported as `renderLedger(ledger)`)
+- **Vault**: `Jinn-Vault/` (top-level workspace folder, not nested in any project)
+- **Plan**: `.claude/plans/daily-ledger-sync.md` (gitignored along with all `.claude/plans/`)
+
+### Phase E (deferred from sync plan)
+
+Windows Task Scheduler cron for daily auto-sync, `/review-ledger` insights command, hand-edit support in markdown, bidirectional sync (probably never).
+
+---
 
 ## Phase 2 (Parked)
 
@@ -306,7 +351,12 @@ The Phase 1 schema accommodates all of these without migration. The `version: 1`
 | Live frontend | `openclaw@100.124.64.28:~/.openclaw/workspace/dashboard/public/index.html` |
 | Source-of-truth backend | `c:\...\.claude\dashboard-deploy\server.js` |
 | Source-of-truth frontend | `c:\...\.claude\dashboard-deploy\index.html` |
-| Ledger files | `openclaw@100.124.64.28:~/.openclaw/workspace/daily/YYYY-MM-DD.json` |
+| Ledger files (live) | `openclaw@100.124.64.28:~/.openclaw/workspace/daily/YYYY-MM-DD.json` |
+| Ledger files (local raw mirror) | `c:\...\Ai Playground\.routing-inbox\daily-pull\YYYY-MM-DD.json` |
+| Ledger files (rendered markdown) | `c:\...\Ai Playground\Jinn-Vault\Daily\YYYY-MM-DD.md` |
+| Sync slash command | `c:\...\Ai Playground\.claude\commands\sync-ledger.md` |
+| Render script | `c:\...\Ai Playground\scripts\render-daily-ledger.js` |
+| Sync plan | `c:\...\Ai Playground\.claude\plans\daily-ledger-sync.md` |
 
 ## Glossary
 
