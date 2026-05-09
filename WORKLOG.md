@@ -1,7 +1,106 @@
 # WORKLOG
 
-**Last saved:** 2026-05-08 (post Session 70 macro velocity logic)
-**Status:** Macro Stress Dashboard is now velocity-aware. 25 of 26 active indicators score on level + per-indicator velocity rule (only `eth_btc` deferred — needs aligned ETH+BTC histories). Stress index reads 3.3/10 "Watching" — false-alarm L5 on ON RRP removed by threshold recalibration. New `Macro-Dashboard/` folder at project root consolidates all design/audit/tooling artifacts with a coverage-table README kept in sync with what's live.
+**Last saved:** 2026-05-09 (post Session 72 Today tab redesign exploration + plan)
+**Status:** Today tab redesign aesthetic locked. 41-direction mockup exploration completed across 4 narrowing rounds. Final aesthetic: pure-black canvas + depth tiles (luminance lift + soft shadow + top-edge highlight) + Gill Sans + parallel rainbow hero beams + spectrum bar (no word labels) + tier-tinted streak counts. Standalone full-page Today mockup at `.claude/plans/today-tab-redesign.html`, 41 surveyed directions at `.claude/plans/MOCKUPS.html`, implementation plan at `.claude/plans/today-tab-redesign-plan.md`. Next session executes the plan: drift reconciliation → token extraction → `renderToday()` refactor → deploy. Inbox-routing Step 3 (`/process-inbox`) from Session 71 still pending. Macro Stress Dashboard still LIVE.
+
+## Session 72 — Today Tab Redesign Exploration [dashboard] [ui-redesign] (PLANNED — not deployed)
+
+### What Shipped — Design exploration
+
+1. **Phase 1 inventory.** Mapped current Jinn dashboard: 11 tabs, ~3000-line `index.html`, 1500-line `server.js`, file-based storage, scp deploy pattern. Catalogued every interactive behavior that must survive a redesign: swipe-to-add (`.swipeable` 80px threshold), Sortable.js `.drag-handle`, card collapse (`toggleCard()` sibling pattern), 4-view calendar, inline edit pattern (12+ callers), entropy optimistic UI (Session 64 fix), 30s polling + skip-while-typing, LTM modal.
+2. **Two rounds of web research.** Round 1 (broad): Linear, Mercury, Things 3, Cron, NYT, iA Writer, Bloomberg, Reflect, Superhuman. Round 2 (narrower): WHOOP three-tier model, Robinhood mobile pattern, sage/olive 2026 trend, luminance hierarchy in dark mode, charts-in-tiles vocabulary.
+3. **41 mockup directions** in `.claude/plans/MOCKUPS.html` across 4 narrowing rounds:
+   - **Round 1 (12):** Editorial Lift, Editorial Journal, Mercury Mature, NYT Editorial, Linear-Inverted, Vercel Geist, Superhuman 5-Shade, Things 3 Inverted, Notion Calm, Bento Hero, Two-Pane Editorial, Typographic-Only.
+   - **Round 2 (13):** Bloomberg Personal, Editorial Bento, Activity Rings, GitHub Pulse, Stripe Atlas, Layered Depth, Linear Dense+, Vercel+Mint, Anthropic Console, Cron 3-col, Bloomberg Wall, Sunsama Daily Review, Index Card Hub.
+   - **Round 3 (LIFE OS Sovereign):** Stoic premium dashboard recreated from user-provided inspiration image (deep midnight + warm gold + Trajan-style serif + classical motifs).
+   - **Round 4 (B+W+rainbow):** BTBAM Cityscape, Prism Spectrum, Vignelli Categorical, Cityscape Prism, Prism Cityscape, Cityscape Depth, Cityscape Depth v2.
+4. **Final standalone Today mockup** at `.claude/plans/today-tab-redesign.html`. Full-page implementation showing redesigned chrome with real Today-tab structure: hero (date + parallel rainbow beams + quote + spectrum bar with marker, no word labels, no big stress number), day-summary pills, streak badges row, two 3-tile rows (Everyday + Atomic Habits + Streaks; Schedule + Notes + Coming Up), Rediscover band, footer. Hover/animation effects: tile lift + glimmer sweep, checkbox pop, marker pulse, beam fade, sidebar shimmer. Honors `prefers-reduced-motion`. Real partial data (Move/JRNL/Water/Cold shower) pulled from `Jinn-Vault/Daily/2026-05-07.md`.
+5. **Implementation plan** at `.claude/plans/today-tab-redesign-plan.md`. 4-phase plan with Phase 0 drift reconciliation (mandatory prerequisite), Phase 1 token extraction, Phase 2 `renderToday()` refactor, Phase 3 other tabs (deferred), Phase 4 QA. Includes preserved-interaction inventory, deploy mechanics, 7-item risk register, effort estimate (4–8 hr to ship Today tab through QA), and explicit list of open data needs from user.
+
+### Aesthetic decisions locked
+
+- **Palette:** pure black canvas (`#000000`), depth-tile gradient `#131313 → #060606`, off-white ink `#ffffff` for primaries, mute `#d4d4d4` for body, full 7-color spectrum (`#ff3838` red → `#b860ff` purple) used as emphasis only.
+- **Type:** Gill Sans (`'Gill Sans', 'Gill Sans MT', 'Cabin', 'Lato', system`) with Cabin loaded from Google Fonts as the closest free fallback. JetBrains Mono for numerics/timestamps.
+- **Depth:** luminance hierarchy (5-tier surface stack) + `inset 0 1px 0 rgba(255,255,255,0.06)` top-edge highlight + soft drop shadow. No outline borders.
+- **Rainbow strategy:** beam burst in hero (parallel slope = -1, 7 lines, 3px stroke, drop-shadow); spectrum bar with marker at bottom of hero; streak counts tier-tinted (3d=red → 60d+=purple); schedule dots vary by time of day; coming-up dots vary by relation type.
+- **Layout:** sidebar nav (200px fixed left at desktop, sticky horizontal scroll at mobile) + main content. Three-column layouts dropped per user feedback. Tile bento with hover lift.
+
+### Files Created (gitignored — `.claude/plans/`)
+
+- `.claude/plans/MOCKUPS.html` — 41 surveyed directions
+- `.claude/plans/today-tab-redesign.html` — standalone full-page Today mockup
+- `.claude/plans/today-tab-redesign-plan.md` — implementation handoff plan
+
+### Open Follow-ups (next session)
+
+- **Execute `today-tab-redesign-plan.md` Phase 0**: pull live `index.html` from Jinn, diff against local `dashboard-deploy/index.html`, reconcile any drift. Per the plan, this MUST happen before any redesign deploy or first scp clobbers live macro tab.
+- **Execute Phase 1**: extract design tokens into `:root` of `dashboard-deploy/index.html`, add Cabin Google Fonts link, add streak-tier helper classes (`.r3` through `.r99`) and `streakTier(days)` JS helper.
+- **Execute Phase 2**: rewrite `renderToday()` (line 1114 in `dashboard-deploy/index.html`) using mockup as ground truth. Preserve all listed interactions (toggleHabit, addDayNote, editHabit, etc. — full list in plan).
+- **Open data the user needs to provide before final content match**: full Everyday list, Atomic Habits sections beyond Daily Routines, real current streak counts, Today's actual schedule shape, Coming Up content, stress-data wiring (whether Today fetches `/api/macro` or needs new fetch).
+- **Inbox-routing Step 3 from Session 71 still pending** — `/process-inbox` slash command. Independent track; can run in parallel.
+
+### Pattern Captured — Element-level iteration narrows faster than whole-design picks
+
+Across 4 rounds, the user converged not by choosing a single mockup but by citing specific elements to keep/drop from multiple ("I like the rainbow header from #35, the triangle from #36, but #37 uses too much color"). Subsequent rounds reconciled cited elements rather than restarting. This compresses what would otherwise be 5+ blind iterations into 2 deliberate combinations.
+
+---
+
+
+
+## Session 71 — Inbox Routing Pipeline: Architectural Redesign + Step 2 [inbox-routing] [dashboard] (LIVE — partial)
+
+### What Shipped — Step 2: Dashboard Outbox Tab (DONE, verified end-to-end)
+
+1. **Dashboard rename Content Queue → Outbox.** Backing file `content-queue.md` → `outbox.md`. Adopted full inbox-style hex-ID CRUD: GET/POST/PUT/DELETE on `/api/outbox[/:id]`, inline edit support (matches inbox tab UX), id-based DELETE replaces index-based, localStorage migration so any user with stale `'content'` activeSection auto-upgrades to `'outbox'` on next load.
+2. **Deployed to Jinn.** Backups: `server.js.2026-05-08-pre-outbox.bak`, `public/index.html.2026-05-08-pre-outbox.bak`. Migrated data via `cp content-queue.md outbox.md` (kept original as fallback — user can `rm content-queue.md` once verified visually). pm2 restart `jinn-dashboard`, PID 1893841 online on port 4242.
+3. **Verified end-to-end.** GET /api/outbox returns 200 with migrated entries (auto-assigned hex IDs `44f48e`, `ef8ebc` on first read), POST creates new entry with new hex ID, DELETE removes by id. File on disk now uses `## TIMESTAMP | HEXID` format with stable IDs.
+4. **Diff sanity check before deploy.** Ran `diff` of local vs live `server.js` and `index.html` — every hunk attributable to my edits, no out-of-band drift on Jinn (validated against the Session 65 anti-pattern memory).
+
+### What Shipped — Architectural Redesign (DONE, plan rewritten)
+
+1. **Killed the Jinn-classifies-overnight design.** Original plan had Jinn run a nightly Codex cron that classified outbox entries against `SECOND-BRAIN-INDEX.md` (passed inline) and wrote YAML to `outbox-processed.md`, which then rsync'd to a `.routing-inbox/` directory, where `/process-outbox` parsed and dispatched. Three machines, two intermediate files, dedup ID tracking. **Wrong because Jinn doesn't have access to the Ai Playground repo** — passing the index inline is not the same as having read access to the actual destination files; the agent can't disambiguate between similar topic files without reading their contents. Classification belongs to chief-of-staff (Claude Code with full repo context).
+2. **Renamed: outbox-routing → inbox-routing.** Plan + PROGRESS files renamed in `.claude/plans/`. Old files deleted. **Asymmetric naming preserved on purpose:** Jinn-side stays "Outbox" (data outbound from Jinn), Windows-side becomes "Inbox" (data inbound to chief-of-staff). Same file, two perspectives.
+3. **Architecture collapsed from 11 steps to 4.** Steps 4 (Jinn cron), 5 (slash command parsing YAML), 6 (`.routing-inbox/` scaffold) folded into a single Step 3: build `/process-inbox` slash command that pulls outbox.md from Jinn via HTTP (GET /api/outbox), classifies against `SECOND-BRAIN-INDEX.md`, routes to destinations, deletes routed entries on Jinn (DELETE /api/outbox/:id) to close the loop. INBOX.md at workspace root is the visible record of last run; REVIEW-QUEUE.md at root for low-confidence items.
+4. **`/process-inbox` is sibling to `/sync-ledger`.** Same "Jinn captures, Windows processes, pull-only" pattern, different source files (outbox.md for inbox routing, daily/*.json for ledger). Could be combined into one `/sync-jinn` later if running separately gets annoying.
+
+### Files Touched
+
+**Dashboard (Step 2):**
+- Jinn live + local `dashboard-deploy/`: `server.js` (parseOutbox/serializeOutbox + 4 CRUD handlers; `outbox` initial state field), `public/index.html` on Jinn / `index.html` locally (tab rename, render/CRUD functions, localStorage migration)
+
+**Plan files (redesign):**
+- Created: `.claude/plans/inbox-routing-pipeline.md` (4-step plan with redesign rationale section), `.claude/plans/inbox-routing-PROGRESS.md` (Steps 0-2 done, Step 3 sub-tasks broken out, session log)
+- Deleted: `.claude/plans/outbox-routing-pipeline.md`, `.claude/plans/outbox-routing-PROGRESS.md`
+
+**Index + companion docs:**
+- `SECOND-BRAIN-INDEX.md` (workspace root) — consumer references → "/process-inbox", REVIEW-QUEUE path moved to root with new format spec, tag-shortcut text, "adding new destination" instructions
+- `.claude/plans/second-brain-extensions.md` — companion link, slot references for origin frontmatter + wikilinks now point to /process-inbox Step 3, sequencing table updated
+- `.claude/commands/sync-ledger.md` — sibling-pipeline reference updated to new plan name
+
+### Pattern Captured — Asymmetric naming maps to perspective
+
+The instinct to "make it consistent" by using one name on both sides loses semantic information about direction. **Outbox** on Jinn is correct (data going outbound from Jinn's POV). **Inbox** on Windows is correct (data inbound to the chief-of-staff's POV). Same file, two perspectives. Don't unify the naming just for symmetry.
+
+### Open Follow-ups (next session candidates)
+
+- **Step 3 — build `/process-inbox`** (the next concrete step). 5 sub-tasks listed in `.claude/plans/inbox-routing-PROGRESS.md`: command file, network reachability check, origin frontmatter stamping, wikilink enrichment (light pass), INBOX.md status comment format.
+- **Step 4 — smoke test** with 6 sample items spanning destination types after Step 3 ships.
+- **`.routing-inbox/` directory naming is now misleading** — only used by `/sync-ledger` for daily-ledger staging (`.routing-inbox/daily-pull/`). Rename to `.jin-staging/` or `.jin-pull/` in a future cleanup pass (touches sync-ledger.md, .gitignore, render-daily-ledger.js paths).
+- **INBOX.md location** currently designed at workspace root. Could move to `Jinn-Vault/Inbox.md` if you want all "from Jinn" content under one folder. Cosmetic — defer until /process-inbox is running.
+- **Cleanup on Jinn**: `~/.openclaw/workspace/content-queue.md` still exists as fallback. Once you've eyeballed the Outbox tab in the browser, `rm content-queue.md` on Jinn.
+
+### Earned-by-bumping-into-it operational notes
+
+- **Tailscale-VPN conflict:** when Tailscale shows a peer "online" but pings/SSH fail with "Permission denied" at the network layer, check if a separate VPN is running first. Tailscale routing breaks while VPN is active. Cost ~5 minutes this session before we figured it out.
+- **Jinn SSH user is `openclaw`** (not `giancarnevale`, not `pi`, not `jinn`). `openclaw@100.124.64.28` over Tailscale. The `~/.ssh/id_ed25519` key authenticates.
+- **pm2 needs the full nvm path on Jinn:** `/home/openclaw/.nvm/versions/node/v22.22.0/bin/pm2`. Bare `pm2` fails with "node: No such file or directory" because pm2 shebangs to `#!/usr/bin/env node` and `node` isn't on default PATH. Workaround: `export PATH=/home/openclaw/.nvm/versions/node/v22.22.0/bin:$PATH && pm2 ...`.
+- **Plan line numbers go stale fast.** The original outbox-routing plan referenced `server.js:612-642` for the inbox CRUD pattern; actual location was 752-782 by the time Step 2 ran. Per the existing memory `feedback_no_hallucinated_identifiers.md`: grep before trusting line numbers from a plan written days ago.
+
+### Earlier this session (Session 67 cleanup)
+
+- Pushed Session 67's commit (`8f7b1c1`) to origin/master after confirming the .gitignore restructure scope. `c02b031..8f7b1c1` two commits to origin.
+
+---
 
 ## Session 70 — Macro Threshold Audit + Velocity Logic Phase 0-3 + Macro-Dashboard reorg [signals/macro] (LIVE)
 
