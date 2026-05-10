@@ -3,15 +3,19 @@
 // on_rrp: RRP draining + TGA refilling → L5 escalation (combined drain).
 // bank_reserves: declining + SOFR-IORB widening → +2 escalation (scarcity confirmed).
 // fed_net_liquidity: synthetic indicator computed from WALCL/TGA/RRP peers — pure velocity scoring.
+// tbill_3m: peer-aware primitive — reads ctx.peers.effr.raw to compute spread.
+// gold_btc_ratio: synthetic indicator computed from gold/btc peers — asymmetric scoring.
 
 const path = require('path');
-const { TIER1 } = require(path.resolve(
+const { TIER1, TIER2 } = require(path.resolve(
   'c:/Users/GC/Documents/Ai Playground/AI/Clawdbot aka Openclaw/.claude/macro-deploy/indicators.js'
 ));
 
 const onRrp = TIER1.find(x => x.id === 'on_rrp');
 const bankReserves = TIER1.find(x => x.id === 'bank_reserves');
 const fedNetLiq = TIER1.find(x => x.id === 'fed_net_liquidity');
+const tbill3m = TIER1.find(x => x.id === 'tbill_3m');
+const goldBtcRatio = TIER2.find(x => x.id === 'gold_btc_ratio');
 
 let pass = 0, fail = 0;
 function t(name, expected, actual) {
@@ -212,6 +216,128 @@ t('fed_net_liquidity L5 — regime change (-$300B/30d)',
 t('fed_net_liquidity L2 placeholder when delta30d missing',
   2,
   fedNetLiq.computeLevel(5800000, { delta30d: null, peers: {} }));
+
+// ---- tbill_3m (peer-aware primitive: reads ctx.peers.effr.raw) ----
+
+// Spread > -10bp: T-bill 3.61, EFFR 3.63 → spread = -2bp → L1.
+t('tbill_3m L1 — calm spread (-2bp)',
+  1,
+  tbill3m.computeLevel(3.61, { peers: { effr: { raw: 3.63 } } }));
+
+// Spread -10 to -25bp: T-bill 3.50, EFFR 3.65 → -15bp → L2.
+t('tbill_3m L2 — mild cuts pricing (-15bp)',
+  2,
+  tbill3m.computeLevel(3.50, { peers: { effr: { raw: 3.65 } } }));
+
+// Spread -25 to -50bp: T-bill 3.30, EFFR 3.65 → -35bp → L3.
+t('tbill_3m L3 — moderate cuts pricing (-35bp)',
+  3,
+  tbill3m.computeLevel(3.30, { peers: { effr: { raw: 3.65 } } }));
+
+// Spread -50 to -100bp: T-bill 2.90, EFFR 3.65 → -75bp → L4.
+t('tbill_3m L4 — clear cuts pricing (-75bp)',
+  4,
+  tbill3m.computeLevel(2.90, { peers: { effr: { raw: 3.65 } } }));
+
+// Spread <-100bp: T-bill 2.40, EFFR 3.65 → -125bp → L5 (recession territory).
+t('tbill_3m L5 — panic-cut zone (-125bp)',
+  5,
+  tbill3m.computeLevel(2.40, { peers: { effr: { raw: 3.65 } } }));
+
+// Positive spread is asymmetric — caps at L1 (uninformative for stress).
+t('tbill_3m positive spread stays L1',
+  1,
+  tbill3m.computeLevel(3.70, { peers: { effr: { raw: 3.65 } } }));
+
+// No effr peer → falls back to L2 placeholder.
+t('tbill_3m no effr peer → L2 placeholder',
+  2,
+  tbill3m.computeLevel(3.61, { peers: {} }));
+
+t('tbill_3m null peers obj → L2 placeholder',
+  2,
+  tbill3m.computeLevel(3.61, { peers: null }));
+
+t('tbill_3m effr peer without raw → L2 placeholder',
+  2,
+  tbill3m.computeLevel(3.61, { peers: { effr: {} } }));
+
+// ---- gold_btc_ratio (synthetic, asymmetric scoring) ----
+
+// compute() with both peers + matching pct30d returns correct raw + delta30dPct.
+// gold = $4715, btc = $80,749, gold.pct30d = +5%, btc.pct30d = -10%
+// gold prior = 4715 / 1.05 = 4490.48; btc prior = 80749 / 0.90 = 89721.11
+// ratio_now = 4715/80749 = 0.058391; ratio_prior = 4490.48/89721.11 = 0.050050
+// pct = (0.058391 - 0.050050) / 0.050050 * 100 = 16.665...
+const goldBtcPeers = {
+  gold: { raw: 4715, velocity: { pct30d: 5 } },
+  btc:  { raw: 80749, velocity: { pct30d: -10 } }
+};
+const goldBtcCalc = goldBtcRatio.composite.compute(goldBtcPeers);
+t('gold_btc_ratio compute raw',
+  true,
+  Math.abs(goldBtcCalc.raw - (4715 / 80749)) < 1e-9);
+t('gold_btc_ratio compute delta30dPct (gold +5, btc -10 → ratio +~16.67%)',
+  true,
+  Math.abs(goldBtcCalc.velocity.delta30dPct - 16.6666666) < 0.01);
+
+// compute() returns null when either peer missing.
+t('gold_btc_ratio compute null on missing gold',
+  null,
+  goldBtcRatio.composite.compute({ btc: goldBtcPeers.btc }));
+t('gold_btc_ratio compute null on missing btc',
+  null,
+  goldBtcRatio.composite.compute({ gold: goldBtcPeers.gold }));
+t('gold_btc_ratio compute null on null peers',
+  null,
+  goldBtcRatio.composite.compute(null));
+
+// compute() returns null on zero btc (avoid divide-by-zero).
+t('gold_btc_ratio compute null on btc.raw === 0',
+  null,
+  goldBtcRatio.composite.compute({
+    gold: { raw: 4715, velocity: { pct30d: 5 } },
+    btc:  { raw: 0,    velocity: { pct30d: -10 } }
+  }));
+
+// compute() degrades gracefully when peer pct30d missing — raw still computes, delta30dPct goes null.
+const noVelPair = {
+  gold: { raw: 4715, velocity: {} },
+  btc:  { raw: 80749, velocity: {} }
+};
+const goldBtcNoVel = goldBtcRatio.composite.compute(noVelPair);
+t('gold_btc_ratio compute raw without velocity',
+  true,
+  Math.abs(goldBtcNoVel.raw - (4715 / 80749)) < 1e-9);
+t('gold_btc_ratio compute null delta30dPct without component pct30d',
+  null,
+  goldBtcNoVel.velocity.delta30dPct);
+
+// Scoring — asymmetric: rising = stress, falling caps at L2.
+t('gold_btc_ratio L1 — calm (+5%/30d)',
+  1,
+  goldBtcRatio.computeLevel(0.058, { delta30dPct: 5, peers: {} }));
+t('gold_btc_ratio L2 — mild gold outperformance (+20%/30d)',
+  2,
+  goldBtcRatio.computeLevel(0.058, { delta30dPct: 20, peers: {} }));
+t('gold_btc_ratio L3 — clear gold outperformance (+30%/30d)',
+  3,
+  goldBtcRatio.computeLevel(0.058, { delta30dPct: 30, peers: {} }));
+t('gold_btc_ratio L4 — major flight (+45%/30d)',
+  4,
+  goldBtcRatio.computeLevel(0.058, { delta30dPct: 45, peers: {} }));
+t('gold_btc_ratio L5 — crisis flight (+70%/30d)',
+  5,
+  goldBtcRatio.computeLevel(0.058, { delta30dPct: 70, peers: {} }));
+t('gold_btc_ratio L1 — modest BTC outperformance (-15%/30d)',
+  1,
+  goldBtcRatio.computeLevel(0.058, { delta30dPct: -15, peers: {} }));
+t('gold_btc_ratio L2 — strong BTC outperformance caps at L2 (-40%/30d)',
+  2,
+  goldBtcRatio.computeLevel(0.058, { delta30dPct: -40, peers: {} }));
+t('gold_btc_ratio L2 placeholder when delta30dPct missing',
+  2,
+  goldBtcRatio.computeLevel(0.058, { delta30dPct: null, peers: {} }));
 
 console.log(`\n${pass} passed, ${fail} failed`);
 process.exit(fail > 0 ? 1 : 0);

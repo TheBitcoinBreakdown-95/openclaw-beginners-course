@@ -16,8 +16,8 @@
 **1. SOFR** — Signal: 10/10 | Free (FRED `SOFR`)
 The secured overnight funding rate banks pay for repo collateralized by Treasuries — the post-LIBOR risk-free benchmark. Spikes vs IORB mean the repo plumbing is breaking; September 2019's 525bp blowout forced the Fed to restart QE within weeks. Any sustained move >IORB+10bp is a five-alarm fire.
 
-**2. EFFR-IORB Spread** — Signal: 8/10 | Free (FRED `EFFR`, `IORB`)
-The gap between Effective Fed Funds and Interest on Reserves measures whether reserves are abundant or scarce. Negative (-7 to -10bp) is normal; rising toward zero signals scarcity. Goes positive only in genuine plumbing stress — that's when you panic.
+**2. EFFR-IORB Spread** — Signal: 8/10 | Free (FRED `EFFR`, `IORB`) — **SHIPPED 2026-05-09**
+The gap between Effective Fed Funds and Interest on Reserves measures whether reserves are abundant or scarce. Negative (-7 to -10bp) was the 2024 norm; the 2026 regime sits closer to -1 to -2bp (tighter). Drift toward zero or positive signals scarcity emerging. Goes positive only in genuine plumbing stress (2018-2019 IOER chase) — that's when you panic. Wired as Tier 1, weight 8, with empirical thresholds anchored to the 2026 regime: L1 <IORB-3bp · L2 -3 to 0 · L3 0-3bp · L5 >+5bp. IORB literal (3.65) refreshed at FOMC, same maintenance burden as SOFR.
 
 **3. ON RRP Balance** — Signal: 9/10 | Free (FRED `RRPONTSYD`)
 Money parked overnight at the Fed when there's nowhere else to go — the system's liquidity buffer. As it drains toward zero, T-bill demand is exhausted and Treasury auctions get harder. Below $50B is the danger zone.
@@ -123,6 +123,9 @@ Investment-grade corporate bond spread over Treasuries — the credit cycle baro
 **34. HY OAS (BAML)** — Signal: 10/10 | Free (FRED `BAMLH0A0HYM2`)
 High-yield spreads — the canonical risk-appetite gauge. Above 700bp is recession territory; GFC peak hit 2000bp. The single most useful credit signal for retail tracking.
 
+**34b. CCC HY OAS (BAML)** — Signal: 8/10 | Free (FRED `BAMLH0A3HYC`) — **SHIPPED 2026-05-10 as `ccc_hy_oas`**
+The distress sub-component of HY — issuers one credit event from default. Widens earlier and farther than the broader HY index in stress, making it the most sensitive free credit-stress gauge available. Wired as Tier 1, weight 8, asymmetric velocity (mirrors hy_oas / ig_oas pattern). Thresholds: L1 <700bp · L3 900-1100 · L5 >=1400bp. 2024-2026 regime sits 800-1000bp; crisis prints reach 2000bp+ (March 2020, Lehman). Effectively replaces the paid #38 LCD CCC Distress Ratio with a free FRED-sourced equivalent signal.
+
 **35. CDX IG 5Y** — Signal: 7/10 | Paid (Markit/Bloomberg)
 Synthetic credit derivative index — moves faster than cash bonds in real time. Useful for intraday stress moves. Cash IG OAS is 95% as good for free.
 
@@ -141,8 +144,8 @@ Business Development Company shares trading below their stated net asset value �
 **40. CMBS BBB- Spreads** — Signal: 7/10 | Paid (Trepp)
 Office and retail commercial real estate bond spreads — the office-CRE death watch. Above 1500bp signals systemic CRE stress. Worth manual lookup quarterly given office secular decline.
 
-**41. EMBI+ Spread** — Signal: 6/10 | Free proxy (FRED `BAMLEMCBPIOAS`)
-Emerging-market sovereign dollar debt spread over Treasuries — aggregate EM stress gauge. Above 600bp is widespread EM crisis. JPM's official EMBI+ is paid; FRED proxy is close enough.
+**41. EMBI+ Spread** — Signal: 6/10 | Free proxy (FRED `BAMLEMCBPIOAS`) — **SHIPPED 2026-05-10 as `em_corp_oas`**
+Emerging-market sovereign dollar debt spread over Treasuries — aggregate EM stress gauge. Above 600bp is widespread EM crisis. JPM's official EMBI+ is paid; FRED proxy is close enough. Wired as Tier 1, weight 6, asymmetric velocity (widening fires; tightening doesn't lower) mirroring HY/IG/CCC pattern. Thresholds anchored to current 2026 regime (130-200bp tight): L1 <160bp · L3 250-350 · L5 >=500bp.
 
 **42. Top US Bank CDS Basket** — Signal: 9/10 | Paid (Bloomberg, manual)
 5-year CDS on JPM/BAC/C/WFC/GS/MS averaged — counterparty risk barometer. SVB week saw GS hit 130bp. Manual quarterly check + monitoring during any banking news.
@@ -395,8 +398,8 @@ Commercial real estate loans on bank books — office unwind happening in slow m
 **114. H.8 Consumer Loans** — Signal: 6/10 | Free (FRED `CONSUMER`)
 Cards, auto, household lending — stress at the consumer level. Slowing growth signals tapped-out consumer. Confirming rather than leading.
 
-**115. Commercial Bank Deposits** — Signal: 8/10 | Free (FRED `DPSACBW027SBOG`)
-System-wide deposits — deposit flight precedes bank failures (SVB lost $42B in a day). Track the trend; sudden drops at smaller banks are huge red flags. Weekly data.
+**115. Commercial Bank Deposits** — Signal: 8/10 | Free (FRED `DPSACBW027SBOG`) — **SHIPPED 2026-05-10 as `bank_deposits`**
+System-wide deposits — deposit flight precedes bank failures (SVB lost $42B in a day). Track the trend; sudden drops at smaller banks are huge red flags. Weekly data. Wired as Tier 1, weight 8, scoring on YoY change (canonical SVB signal): L1 YoY >+5% · L3 0-2% · L5 <-2%, with 12w delta kick of -$200B → +1. Currently $19.1T at +healthy YoY growth → L1.
 
 **116. Money Market Fund AUM** — Signal: 6/10 | Free (ICI weekly)
 Cash sitting in money market funds — $7T+ in 2025 is "stored capital" earning 5%. Deployment back into risk assets requires a Fed cut. Confirming context, not leading.
@@ -532,11 +535,11 @@ Petroyuan progression — Saudi accepting CNY for oil is the petrodollar break n
 
 ## 16. Creative / Pro Indicators
 
-**154. 3M Bill − Fed Funds** — Signal: 7/10 | Free (FRED `DTB3` − `DFF`)
-3-month Treasury bill yield minus Fed Funds rate — deeply negative means cuts being priced fast. Front-end stress signal complementary to 2s10s.
+**154. 3M Bill − Fed Funds** — Signal: 7/10 | Free (FRED `DTB3` − `DFF`) — **SHIPPED 2026-05-10 as `tbill_3m`**
+3-month Treasury bill yield minus Fed Funds rate — deeply negative means cuts being priced fast. Front-end stress signal complementary to 2s10s. Wired as Tier 1, weight 7, peer-aware primitive (reads `ctx.peers.effr.raw` to compute spread inline — same pattern as bank_reserves reading sofr peer). Asymmetric scoring (only negative spreads escalate): L1 >-10bp · L3 -25 to -50 · L5 <-100bp. Estrella research established 3M-FedFunds as a faster cousin to 3M-10Y for Fed-pivot expectations.
 
-**155. Gold/BTC Ratio** — Signal: 7/10 | Free (compute)
-Falling sustained = BTC absorbing gold's monetary mandate (the Bitcoin thesis playing out). Slow-moving but regime-defining trend.
+**155. Gold/BTC Ratio** — Signal: 7/10 | Free (compute) — **SHIPPED 2026-05-10 as `gold_btc_ratio`**
+Falling sustained = BTC absorbing gold's monetary mandate (the Bitcoin thesis playing out). Slow-moving but regime-defining trend. Wired as Tier 2, weight 7, synthetic indicator (`composite.compute(peers)`) reading gold + btc peers. Asymmetric scoring: rising 30d % (gold winning = flight-to-safety = stress) escalates L1→L5; falling (BTC winning = risk-on) caps at L2 informational. Required adding `pct30d` to btc.velocity for the synthetic to compute exact ratio velocity. No Phase-0 audit yet — calibration debt logged.
 
 **156. BTC ETF Share of Spot Volume** — Signal: 7/10 | Free (Farside, Glassnode)
 TradFi vs native-crypto ratio — rising = institutionalization deepening. Confirms the structural shift in BTC ownership.

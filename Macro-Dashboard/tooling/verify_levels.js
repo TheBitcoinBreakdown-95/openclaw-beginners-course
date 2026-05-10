@@ -6,6 +6,11 @@ const { TIER1, TIER2 } = require(path.resolve('c:/Users/GC/Documents/Ai Playgrou
 // Where the indicator divides/multiplies, pass the raw FRED value (units in millions, etc).
 const current = {
   sofr: 3.61,
+  effr: 3.63,          // 2026-05-07 — IORB 3.65, spread -2bp
+  tbill_3m: 3.61,      // 2026-05-07 — DTB3; verify_levels has no peers so falls back to L2 placeholder
+  ccc_hy_oas: 9.15,    // 2026-05-07 — 915bp, expect L3
+  em_corp_oas: 1.46,   // 2026-05-07 — 146bp, expect L1 (current regime is unusually tight)
+  bank_deposits: 19113.30, // 2026-04-29 weekly — verify_levels has no YoY ctx, falls back to L2 placeholder
   us10y: 4.36,
   us2y: 3.87,
   curve_2s10s: 0.49,

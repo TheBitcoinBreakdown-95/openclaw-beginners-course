@@ -1,7 +1,126 @@
 # WORKLOG
 
-**Last saved:** 2026-05-09 (post Session 73 Macro composites + Phase 4 UI + Fed Net Liquidity)
-**Status:** Macro Stress Dashboard reached natural endpoint of velocity workstream — 27 indicators live (19/8/5), composite scoring + direction arrows + first synthetic indicator all SHIPPED. Stress index 3.3 ("Watching") unchanged. Two-pass runner, `ctx.peers` snapshot, and synthetic-card pattern are all reusable for future indicators. Today tab redesign (Session 72) still PLANNED — execution awaiting fresh session per its own handoff. Inbox-routing Step 3 (`/process-inbox`) from Session 71 still pending.
+**Last saved:** 2026-05-10 (post Session 75 Phase 1 — easy-wins indicator batch shipped)
+**Status:** Macro Stress Dashboard at **33 indicators live** on Jinn (was 27 last session). Session 75 shipped EFFR-IORB earlier this turn, then Phase 1 of an easy-wins batch (5 more): 3M T-Bill spread (peer-aware primitive vs effr), CCC HY OAS, EM Corp OAS, Commercial Bank Deposits, Gold/BTC Ratio (synthetic). Tier 1 expanded 19→24, Tier 2 expanded 8→9, Tier 3 unchanged at 5. 55/55 composite tests pass (was 30 — added 25 new tests for tbill_3m + gold_btc_ratio). Today-tab redesign (Session 74) and Inbox-routing Step 3 (Session 71) still pending — independent tracks. Phase 2 of this session = SKEW (Yahoo ^SKEW) pending.
+
+## Session 75 — Indicator Backlog: Easy Wins Batch [signals/macro] (LIVE — Phase 1 of 2)
+
+### What Shipped (deployed to Jinn, verified via /api/macro)
+
+This session is being run in autonomous mode with a phased plan at `.claude/plans/macro-easy-wins-batch-plan.md`. Phase 1 = 5 indicators + EFFR-IORB earlier this turn. Phase 2 = SKEW pending.
+
+1. **EFFR-IORB Spread** — Tier 1, weight 8, peer to SOFR for money-market plumbing. FRED `EFFR`. Spread vs IORB (3.65 hardcoded, refresh at FOMC). Asymmetric scoring anchored to **2026 regime** (-1 to -2bp, tighter than 2024 norms): L1 <IORB-3bp · L2 -3 to 0 · L3 0-3bp · L5 >+5bp. Velocity: 5d delta > 5bp while spread ≥ 0 → +1 (avoids FOMC single-day noise vs 1d). Live: 3.63%, IORB-2bp, **L2** (watchful — accurate read of tightened reserve regime).
+
+2. **3M T-Bill** — Tier 1, weight 7, FRED `DTB3`. Peer-aware primitive: reads `ctx.peers.effr.raw` to compute (DTB3 - EFFR) spread inline (same pattern as bank_reserves reading sofr peer). Asymmetric scoring (only negative spreads escalate): L1 >-10bp · L3 -25 to -50 · L5 <-100bp. Live: 3.61%, FedFunds-2bp, **L1**.
+
+3. **CCC HY OAS** — Tier 1, weight 8, FRED `BAMLH0A3HYC`. Distress sub-component of HY (issuers one credit event from default). Effectively the free FRED-OAS replacement for the paid LCD CCC distress ratio. Asymmetric velocity (mirrors hy_oas). Thresholds: L1 <700bp · L3 900-1100 · L5 >=1400bp. Live: 915bp, +11bp/5d, **L3** (current regime sits 800-1000bp).
+
+4. **EM Corp OAS** — Tier 1, weight 6, FRED `BAMLEMCBPIOAS`. Adds the EM credit dimension previously missing. Captures global dollar funding stress + EM-specific risk premia. Thresholds anchored to current 2026 regime (130-200bp tight): L1 <160bp · L3 250-350 · L5 >=500bp. Live: 146bp, -4bp/5d, **L1**.
+
+5. **Bank Deposits** — Tier 1, weight 8, FRED `DPSACBW027SBOG`. SVB-style banking-stress canary. Pure velocity (YoY-based scoring): L1 YoY >+5% · L3 0-2% · L5 <-2% · -$200B/12w → +1. Live: $19.11T, +5.6% YoY, **L1** (banking system healthy).
+
+6. **Gold/BTC Ratio** — Tier 2, weight 7, synthetic indicator (`composite.compute(peers)`). Reuses gold + btc fetches; required adding `pct30d` to btc.velocity for the synthetic to compute exact ratio velocity. Asymmetric: rising = gold winning (flight-to-safety = stress), falling = BTC winning (risk-on, capped at L2 informational). Thresholds: rising +25% → L3, +60% → L5; falling caps L2. Live: 0.0584, **-11.8%/30d, L1** (BTC outperforming gold over the month — risk-on positioning).
+
+### Tests
+
+- `test_velocity.js` — 13/13 pass (no regression).
+- `test_composites.js` — 55/55 pass (was 30; added 25 new tests for tbill_3m peer-spread + gold_btc_ratio synthetic). All edge cases (missing peers, null inputs, zero-divisors, level-cap interactions) covered.
+- `verify_levels.js` — all 5 new indicators show expected levels against their anchor values.
+
+### Files Modified
+
+- `.claude/macro-deploy/indicators.js` — 5 new indicator entries (tbill_3m, ccc_hy_oas, em_corp_oas, bank_deposits, gold_btc_ratio); 1-line addition of `pct30d` to btc.velocity; total ~+220 lines.
+- `Macro-Dashboard/tooling/verify_levels.js` — 4 anchor values added (tbill_3m, ccc_hy_oas, em_corp_oas, bank_deposits); gold_btc_ratio is a synthetic so it correctly shows SKIP.
+- `Macro-Dashboard/tooling/test_composites.js` — 25 new tests for tbill_3m + gold_btc_ratio.
+- `Macro-Dashboard/README.md` — coverage table updated 19/8/5 → 24/9/5; live-verification line updated; open-questions backlog list updated.
+- `Macro-Dashboard/design/INDICATORS.md` — spec entries #34b (CCC HY OAS), #41 (EM Corp OAS), #115 (Bank Deposits), #154 (3M T-Bill), #155 (Gold/BTC Ratio) all marked **SHIPPED 2026-05-10**.
+- `.claude/plans/macro-easy-wins-batch-plan.md` — created; D1-D10 decisions logged inline.
+- Backups on Jinn: `indicators.js.2026-05-10-0005.bak` (pre-EFFR), `indicators.js.2026-05-10-0138.bak` (pre-Phase-1 batch).
+
+### Decisions captured (full traces in plan file)
+
+- D2: 6-batch over 8-batch — reliability over volume; concentrate Yahoo risk in its own phase.
+- D3: Gold/BTC asymmetric scoring — only the rising direction (gold winning = flight-to-safety) escalates; falling caps at L2 informational.
+- D4: 3M T-Bill modeled as primitive with peer-EFFR spread — keeps T-bill yield visible on the tile and reuses bank_reserves' ctx.peers pattern.
+- D5: Asymmetric T-Bill spread scoring — negative is the stress side (cuts pricing); positive caps at L1.
+- D10: Skipped financial-datasets.ai MCP integration — wrong fit for cron-driven dashboard, doesn't replace FRED, doesn't address remaining hard-track gaps. Useful only for ad-hoc Claude Code research sessions.
+
+### Open Follow-ups (next session or remaining in this one)
+
+- **Phase 2 of this session:** SKEW (Yahoo ^SKEW) — pending.
+- **Phase-0 audits for the new synthetics + intuition-thresholded indicators** (gold_btc_ratio, ccc_hy_oas, em_corp_oas, bank_deposits, tbill_3m, fed_net_liquidity, effr): no empirical 2024-2026 distribution audit yet. Calibration debt logged inline in each `computeLevel` comment block.
+- **Copper/Gold Ratio** — deferred until copper switched from monthly FRED `PCOPPUSDM` to daily Yahoo `HG=F` (frequency mismatch makes daily ratio misleading).
+- **Fed H.4.1 indicators (SRF, Discount Window, Swap Lines, FIMA)** — hard track, needs new HTML-scrape fetcher. Listed in plan file D2 as deliberately skipped this session.
+- Today-tab Phase 4 QA (Session 74), Inbox-routing Step 3 / `/process-inbox` slash command (Session 71) — both still pending, both independent tracks.
+
+---
+
+## Session 74 — UI Redesign Build & Deploy [dashboard] [ui-redesign] (LIVE)
+
+### What Shipped (deployed to Jinn over multiple iterations)
+
+1. **Phase 0 verified.** Drift reconciliation already done in Session 70 — confirmed via md5 across all four deploy artifacts (index.html, server.js, macro-tab.js, macro-tab.css; live = local byte-for-byte). Plan corrected: deploy target is `/home/openclaw/.openclaw/workspace/dashboard/public/` (the `/public/` segment was missing from the original plan).
+
+2. **Today tab — Phase 1 + 2.** Added new design-token block to `:root` (canvas / surface stack, ink hierarchy, hairlines, spectrum colors, shadows, gill / mono fonts, ease curve). Loaded Cabin Google Font. Rewrote `renderToday()` with: hero (parallel rainbow beams + date + meta + quote), standalone stress tile beneath the hero (purple→red gradient — high stress on the right), day-summary pills (4: completed / notes / events / active streaks), streak badges row (tier-tinted via `streakTier()`), 2 rows of 3 tiles (Everyday | Atomic Habits | Streaks; Schedule | Notes | Coming Up), Rediscover band. Preserved every interaction (toggleHabit, addDayNote, editDayNote, deleteDayNote, editHabit, deleteHabit, editHabitSection, addTodayEvent, addHabit, toggleTodo) by keeping `.habit-row[data-secidx][data-idx]`, `.habit-section-block[data-secidx]`, `#day-note-${id}` / `.day-note-text`, `#day-note-input`, `#habit-input` selectors intact.
+
+3. **Sidebar overhaul.** Added prism SVG triangle next to brand. Brand = "JINN" + "DASHBOARD" stacked-caps subtitle. Replaced 11 emoji icons with hand-crafted inline SVG outlines matching the prism aesthetic (sun, check-square, envelope, paper plane, calendar, brain circles, folder, gear, recycle arrows, bar chart, lightning bolt). Hover: SVG stroke switches to global `<linearGradient id="rainbowStroke">` defs, 110% scale. Active border-left switched mint→white. Added `.sb-foot` rainbow rule + version tag at the foot of the sidebar (desktop only).
+
+4. **Phase 3 retrofit (the leverage move).** Instead of rewriting every renderer for visual consistency, applied a scoped CSS override block (`.section:not(#today):not(#signals) ...`) restyling existing classes (`.card`, `.card-header`, `.todo-item`, `.todo-cb`, `.todo-text`, `.btn`, `.btn-ghost`, `.input-row input`, `.quote`, `.progress-bar`/`.progress-fill`, `.reminder-dot`, `.swipe-action`, `.todo-item-inner`, `.day-note-*`). Markup and JS untouched in 8+ tabs. Same trick applied to `.memory-entry` so memory cards match the depth-tile vocabulary.
+
+5. **Masonry layout.** Replaced CSS Grid with **CSS Columns** for multi-card tabs (`#todos.active`, `#system.active`, `#entropy-view.active`, `#memory-timeline`) — `column-width: 360px; column-gap: 14px;` with `break-inside: avoid` on cards. True masonry packing — no dead space below shorter cards. `.new-section-row` and Entropy `.quote` get `column-span: all` to anchor at top/bottom. Bumped `.content` max-width 800 → 2200px so wide screens fill horizontally.
+
+6. **Per-card rainbow phase.** Each card's top stripe starts at a different point in the spectrum via inline `--card-phase` CSS variable. JS helper `applyCardPhase(container, sel)` walks direct children and assigns `(i / N) × 100%`. Stripe gradient is doubled (red→purple→red→purple, `background-size: 200% 100%`) so phase shifts navigate cleanly. Hover shimmer animates from each card's own phase. Phases re-applied on tab switch + after every drag/drop.
+
+7. **Card drag-reorder.** `makeCardsReorderable(containerSel, keyFn, opts)` injects a `⋮⋮` handle into each card-header, persists order to `localStorage[cardOrder:<sel>]`, supports `opts.tail` (e.g. `.new-section-row` always last) and `opts.head` (e.g. `.quote` always first). Wired to Todos / System / Entropy.
+
+8. **Calendar redesigned.** Killed Day-view button. Removed the small side-pane month grid. Main pane is a **full-month 7-col grid** (5–6 rows, faded prev/next-month edge cells). Side pane = year grid only (12 mini-months for navigation). Sub-nav dropped — single mode. Click any day cell → `openDayDetail(ds)` modal with: full date heading, four pills (events / completed / habits / notes), `+ add event` input, 4-col grid of sections (Scheduled / Completed / Habits / Journal & Notes). Modal closes on backdrop / X / Escape. Mobile: month grid stays 7-col with compressed cells (just dots, no event titles); year grid stacks below.
+
+9. **Auto-roll dated todos.** New `rollUncheckedDated()` in `server.js` runs on every `/api/data` request — any unchecked todo with `date < today` gets rolled to today's date and persisted to `todos.md`. Verified end-to-end via curl: yesterday-dated test todo rolled forward, appeared in `state.todayEvents`. Cleaned up the test entry.
+
+10. **"Today" section as literal semantic.** Updated `getEventsForDate(dateStr, ...)` to also include unchecked items from a section literally named `Today` when `dateStr === todayStr()`. So adding "Obsidian 2nd Brain" to the Today section now auto-syncs to: Today's Schedule on Today tab, today's cell in Calendar month grid, and the day-detail modal. No date field required. Items stay until checked.
+
+11. **Explicit `→ today` button on every todo row.** Hover affordance (low-opacity → full on hover) calling `scheduleTodoForDate(section, index, today)`. Already-on-today todos show `✓ today` (active state, white-on-black) — clicking again clears the date. Date pill shows `TODAY` (white-on-black, mono, weighted) when `item.date === today`.
+
+12. **Hero ↔ stress tightening.** Pulled stress bar out of hero into its own tile (rainbow beams no longer compete with the spectrum). Reduced hero padding-bottom (24→14px desktop) + stress padding-top (14→9px) + stress flex gap (10→7px) + 4px margin between them. Beams nearly touch the spectrum bar without overlap.
+
+### Aesthetic decisions locked
+
+- **Stress spectrum direction:** purple (calm) → red (critical), left to right. Marker position = `(macroIndex / 10) * 100%` so semantics map cleanly to color.
+- **CSS Columns over Grid for masonry** — Grid leaves dead space below shorter items; columns pack vertically.
+- **Per-card phase via `--card-phase`** rather than `:nth-child` — adapts to dynamic card counts and drag-reorder.
+- **Retrofit-via-scoped-CSS** for non-Today/Signals tabs — high leverage, no renderer rewrites, contained blast radius.
+- **`Today` section as literal name** — implicit "today list" semantic without requiring a separate API or schema field.
+- **Day-detail modal** as the deep-dive surface — week / month tiles stay scannable; click for full ledger view.
+- **Year-progress bar removed** — user disliked the aesthetic; year context lives in the year side-panel grid instead.
+
+### Files Modified
+
+- Live + local `dashboard-deploy/`: `index.html` (massive — new tokens + sidebar overhaul + retrofit block + calendar rewrite + day-detail modal + helpers `streakTier` / `formatDateLong` / `formatTimeShort` / `weekNum` / `eventDot` / `applyCardPhase` / `makeCardsReorderable` / `scheduleTodoForDate` / `openDayDetail` / `closeDayDetail` / `addCalendarEventAt`, renderToday rewrite, renderCalendar + renderCalMonthMain + renderMonthCells, sb-foot markup, brand-stack markup, 11 inline SVG icons, rainbow-stroke `<defs>`)
+- Live + local `dashboard-deploy/`: `server.js` (added `rollUncheckedDated()`, updated `getEventsForDate()` for the Today-section semantic)
+- `.claude/plans/today-tab-redesign-plan.md` — Phase 0 marked done, path correction (`/public/` was missing)
+- Backups on Jinn for revert: `index.html.pre-today-redesign-...`, `pre-phase3-retrofit-...`, `pre-grid-rainbow-...`, `pre-tabfix-reorder-...`, `pre-columns-icons-...`, `pre-stress-yearprog-...`, `pre-calendar-redesign-...`, `pre-7col-wider-...`, `pre-daydetail-...`, `pre-monthgrid-stresstile-...`, `pre-rollover-...`, `pre-todaysection-...`, `server.js.pre-rollover-...`, `server.js.pre-todaysection-...` (all under `dashboard/public/` and `dashboard/`).
+
+### Pattern Captured — Retrofit-via-scoped-CSS for visual consistency
+
+When you need to apply a new aesthetic across N tabs that each have their own renderer, **scope a CSS override block to the relevant container selector and restyle the existing class names** (`.section:not(#today):not(#signals) .card { ... }`). Don't rewrite each renderer to use new classes — that's N times the blast radius and risk of regressions in interaction handlers (swipe gesture math, Sortable.js handles, `toggleCard()` sibling lookups). Instead, keep markup and JS untouched, and let CSS do the visual lift. Used here for Phase 3 retrofit (8 tabs), Calendar redesign (additive scoped block), and `.memory-entry` (one block to align with `.card` aesthetic). Fast, safe, reversible.
+
+### Earned-by-bumping-into-it operational notes
+
+- **CSS specificity gotcha**: `#todos { display: grid }` (ID selector, 100) beats `.section { display: none }` (class, 010). Inactive sections rendered at the bottom of whatever tab was active. Fix: qualify with `.active` → `#todos.active { display: grid }`. Caught when user reported tab-switching showed multiple sections piled together.
+- **Sortable + appendChild loop bug**: `makeCardsReorderable` reorders cards by `appendChild` in saved order, which moves them past sibling `.new-section-row`, putting it visually at the top. Fix: re-anchor head/tail elements via `opts` after the appendChild loop.
+- **`column-span: all`** requires the element to be a direct child of the column container, not nested. Worked for `.new-section-row` and Entropy's `.quote` — both direct children.
+- **SVG `stroke: url(#rainbowStroke)` cross-references** require the gradient `<defs>` to be in the same document; a hidden top-of-body SVG with the linearGradient defs works fine.
+- **`/api/data` is the right hook** for `rollUncheckedDated()` — gets called on every page load + 30s polling, so the daily roll happens within 30s of midnight. No cron needed.
+
+### Open Follow-ups (next session)
+
+- **Phase 4 QA** — mobile (iOS Safari + Android Chrome): swipe-to-Today on Todos, drag-handle reorders inside cards, day-detail modal scrolls, month grid cells tappable. Desktop: Sortable card drag works in Todos / System / Entropy, Sortable.js `.drag-handle` on todos still reorders inside cards. Browser console: no JS errors.
+- **Inbox / Outbox visual polish** — they emit one big `.card` so they got the retrofit but haven't been laid out for wide canvas. Could split into list + detail panes or 2-col masonry of note items.
+- **Lightning tab** — has its own QR + payment list structure; visual retrofit applied but layout untouched.
+- **Memory drag-reorder** — `applyCardPhase` runs but `makeCardsReorderable` not wired (memory entries aren't `.card` class). Easy add if user wants.
+- **Inbox-routing Step 3 (`/process-inbox`)** from Session 71 still pending — independent track.
+
+---
 
 ## Session 73 — Macro Composites + Phase 4 UI + Fed Net Liquidity Synthetic [signals/macro] (LIVE)
 
