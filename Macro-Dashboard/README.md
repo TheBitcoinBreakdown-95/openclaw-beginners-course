@@ -1,6 +1,6 @@
 # Macro Stress Dashboard
 
-A self-hosted macro signals dashboard running on Jinn (the user's personal AI assistant box) at `http://100.124.64.28:4242/` — Signals tab. Tracks 26 macro indicators across funding markets, credit, rates, FX, labor, and crypto. Each indicator gets a five-level alarm score (L1 stable → L5 critical). A holistic stress index aggregates them into a single 1-10 reading.
+A self-hosted macro signals dashboard running on Jinn (the user's personal AI assistant box) at `http://100.124.64.28:4242/` — Signals tab. Tracks 27 macro indicators across funding markets, credit, rates, FX, labor, and crypto. Each indicator gets a five-level alarm score (L1 stable → L5 critical). A holistic stress index aggregates them into a single 1-10 reading.
 
 This folder holds **everything we've designed, learned, and built** for the dashboard — except the live deploy code, which lives in `.claude/macro-deploy/` so the deploy pattern (source-edit-then-scp to Jinn) stays clean.
 
@@ -26,7 +26,8 @@ Macro-Dashboard/
     ├── fred_audit_remote.py       ← variant that runs from Jinn over SSH (FRED hangs from Windows under load)
     ├── velocity_audit.py          ← velocity-primitive distribution fetcher (writes audits/velocity_summary.json)
     ├── verify_levels.js           ← runs each indicator's computeLevel against current FRED values; sanity check before deploy
-    └── test_velocity.js           ← unit tests for velocity.js primitives (13 cases)
+    ├── test_velocity.js           ← unit tests for velocity.js primitives (13 cases)
+    └── test_composites.js         ← unit tests for ON RRP and Bank Reserves composite scoring (15 cases)
 ```
 
 The deploy code lives elsewhere:
@@ -66,7 +67,7 @@ The dashboard is served on port 4242 via the Express app in `dashboard/server.js
 
 Every active-logic indicator has both an absolute-level scoring rule (calibrated to 2024-2026 empirical distribution) and a velocity-aware kick that reflects its specific natural cadence. The velocity column shows the windows the indicator's `computeLevel` consumes from `ctx`. The kick column summarizes when velocity overrides or augments the absolute-level read.
 
-### Tier 1 (18 indicators — all velocity-aware)
+### Tier 1 (19 indicators — all velocity-aware; 1 synthetic composite)
 
 | Indicator | Source | Level basis | Velocity windows | Kick rule |
 |---|---|---|---|---|
@@ -80,7 +81,8 @@ Every active-logic indicator has both an absolute-level scoring rule (calibrated
 | 5y5y Inflation | FRED T5YIFR | anchored band 2.0-2.5 | 30d | moving away from anchor at p99 → +1 |
 | ON RRP | FRED RRPONTSYD | recent regime ($0-720B) | 5d, 30d | +$50B/5d (build) → L4+ (risk-off) |
 | TGA | FRED WTREGEN | recent regime ($296B-$1T) | 30d | +$200B/30d → +1, +$300B/30d → +2 |
-| Fed Balance Sheet | FRED WALCL | pure velocity (4w roc) | 4w, 12w | declining → L1, rising > $12.5B/wk → L4-5 |
+| Fed Balance Sheet | FRED WALCL | pure velocity (4w roc) | 4w, 12w, 30d | declining → L1, rising > $12.5B/wk → L4-5 |
+| **Fed Net Liquidity** | **synthetic (WALCL−TGA−RRP)** | pure velocity (30d) | derived 30d | rising → L1; -$60B/30d → L3 (normal QT); -$200B/30d → L5 (regime change) |
 | Bank Reserves | FRED WRESBAL | recent regime ($2.85-3.63T) | 4w, 12w | -$200B/4w in low zone → +1 |
 | Jobless Claims 4WMA | FRED IC4WSA | recent regime (202-242k) | 12w | +20k/12w → +1, -20k/12w → -1 |
 | C&I Loans | FRED BUSLOANS | pure velocity (YoY) | YoY (365d) | <0% YoY → L4, <-2% → L5 |
@@ -108,7 +110,7 @@ MOVE Index, 10Y Swap Spread, SPX Dealer Gamma, US Bank CDS Basket, EU Bank CDS B
 
 ### Live Verification
 
-Run `ssh openclaw@100.124.64.28 "curl -s http://127.0.0.1:4242/api/macro"` and check `values[id].velocity` is populated for the 25 of 26 active indicators (everything except `eth_btc`).
+Run `ssh openclaw@100.124.64.28 "curl -s http://127.0.0.1:4242/api/macro"` and check `values[id].velocity` is populated for 26 of 27 active indicators (everything except `eth_btc`). `fed_net_liquidity` derives its raw + velocity from peer WALCL/TGA/RRP snapshots — verify it's present with `values.fed_net_liquidity.raw` matching `walcl.raw - tga.raw - on_rrp.raw`.
 
 ---
 
@@ -124,7 +126,15 @@ Run `ssh openclaw@100.124.64.28 "curl -s http://127.0.0.1:4242/api/macro"` and c
 
 **Velocity logic Phase 3 (remaining 19 indicators wired):** SHIPPED 2026-05-08. All 17 FRED-based indicators now have per-indicator velocity rules. CoinGecko fetcher extended with `fetchCoinGeckoHistory` (market_chart endpoint); BTC and Gold both wired with drawdown/pctChange velocity. ETH/BTC deferred (computed indicator — needs both ETH and BTC histories aligned by date; non-trivial). 25 of 26 indicators currently emit velocity fields in `/api/macro`.
 
-**Velocity logic Phase 4 (UI surfacing):** OPTIONAL. Velocity meta strings already render in the dashboard tab via the existing `meta` field (e.g., WALCL displays `+$3.9B/wk (4w roc)`, BTC displays `-1.9% off 90d high`). Could add direction arrows, sparkline, or hover tooltip in macro-tab.js — non-trivial CSS/JS work, defer when needed.
+**Composites layer (cross-indicator scoring):** SHIPPED 2026-05-08. `runner.js` now runs in two passes: Pass 1 fetches raw + computes velocity for every indicator; Pass 2 builds a `peers` snapshot (`{indicatorId: {raw, velocity}}`) and scores levels with `ctx.peers` available. Two cross-references wired:
+- **ON RRP composite L5** — RRP draining (delta30d < -$100B) AND TGA refilling (delta30d > +$200B) → L5 escalation. Captures the canonical debt-ceiling-style combined-drain event that single-variable scoring caps at L4.
+- **Bank Reserves composite +2** — reserves declining (delta4w < -$100B) AND SOFR-IORB spread > 5bp → +2 levels. Confirms genuine repo-plumbing scarcity vs. theoretical (Logan/Williams' "$3T scarcity" was theoretical; SOFR confirming is the empirical signal).
+
+Synthetic-indicator pattern (`fed_net_liquidity = WALCL - TGA - RRP` as its own card) was considered and rejected — would be the abstraction trap §9 of `design/VELOCITY-DESIGN.md` warns about for two cross-refs. If composite cards become valuable later (3+ cases), revisit then.
+
+**Velocity logic Phase 4 (UI surfacing):** SHIPPED 2026-05-08. Direction arrows (↑/↓/→) render next to each value, derived from the indicator's primary velocity field (first one declared in `velocity[]`). Up uses the existing orange `--mc-bar-3` tint, down uses yellow `--mc-bar-2`, flat is muted whisper — neutral differentiation, not good/bad semantics (which vary per indicator: HY OAS rising is alarm, BTC falling is alarm, 2Y rising/falling are both informative). Existing `meta` strings still carry magnitude. Sparklines and hover tooltips deferred — both need on-disk history retention, which is its own decision per design doc §7.5 (current data.json only stores current+velocity snapshot).
+
+**Synthetic indicators (composite cards):** SHIPPED 2026-05-08. The runner's two-pass architecture (Pass 1 fetch + velocity, Pass 2 score with peers visible) was extended to support indicators with no source — they declare `composite.compute(peers) → {raw, date, velocity}` and the runner derives raw from already-fetched peers in Pass 2. First and only synthetic so far is **Fed Net Liquidity** (signal 10/10): WALCL − TGA − RRP, scored on its 30d delta (sum of component deltas with correct signs). WALCL gained `delta30d` to its velocity[] specifically to feed this. Calibration debt: thresholds set from spec (>$300B/qtr decline = regime change, mapped to ~$100B/30d for L5) plus intuition; no Phase-0 empirical audit yet for the synthetic series. Pattern is now ready for additional synthetics (e.g., Copper/Gold ratio, Gold/BTC ratio) when they become highest-priority gaps.
 
 ---
 
@@ -196,6 +206,14 @@ node Macro-Dashboard/tooling/test_velocity.js
 # 13 cases covering delta, pctChange, rocPerWeek, drawdown, disinversion, yoyPct, computeVelocity integration
 ```
 
+**Composite unit tests** (run before any indicator.js change to on_rrp or bank_reserves):
+
+```bash
+node Macro-Dashboard/tooling/test_composites.js
+# 15 cases covering ON RRP composite (RRP+TGA combined drain → L5) and Bank Reserves composite
+# (declining + SOFR-IORB widening → +2). Includes edge cases: missing peers, threshold blocks, level caps.
+```
+
 ---
 
 ## Key Decisions (preserved verbatim from sessions)
@@ -216,17 +234,17 @@ These are the architectural calls made during the build that future-you would wa
 
 7. **Velocity weighting is asymmetric for credit spreads.** HY OAS widens fast in panic (single-event compression) but tightens slowly (regime drift). The velocity kick fires on widening; tightening doesn't lower the alarm faster than the absolute-level path. This prevents "false all-clear" signals.
 
-8. **Cross-indicator scoring (RRP+TGA combined, Bank Reserves + SOFR-IORB) is deferred.** True L5 on ON RRP requires combined-drain logic with TGA velocity. We capped ON RRP at L4 in the absolute-level audit and noted the dependency in comments. Composites design is an open question in `design/VELOCITY-DESIGN.md` §7.
+8. **Cross-indicator scoring uses both augmentation and synthesis — added incrementally as cases earned.** First two cases were augmentation: ON RRP reads `ctx.peers.tga.velocity.delta30d` to escalate to L5; Bank Reserves reads `ctx.peers.sofr.raw` (computes IORB spread inline) to escalate by +2. Implemented via a two-pass runner (Pass 1: fetch + velocity; Pass 2: score with peers visible). Synthetic-indicator pattern was deliberately deferred at two cases — that would be the abstraction trap — but earned promotion when the third highest-priority gap (Fed Net Liquidity, signal 10/10) was specifically a synthetic. Pattern: indicator config gets `composite.compute(peers) → {raw, date, velocity}` and no source. Pass 1 skips fetch for synthetics; Pass 2 computes raw from peers before scoring. Future synthetics (Copper/Gold Ratio, Gold/BTC Ratio) reuse the same plumbing with no further runner changes.
 
 ---
 
 ## Open Questions / Next Work
 
-- **Phase 3:** wire the remaining 14 indicators with velocity layers per the spec in `design/VELOCITY-DESIGN.md` §5.
-- **Composites layer:** combined RRP+TGA drain detection, Bank Reserves + SOFR-IORB scarcity confirmation. Either passing `ctx.allIndicators` into computeLevel, or adding a synthetic-indicator config layer.
-- **Indicator backlog:** original spec was 30/105/28 (Tier 1/2/3). Currently shipping 18/8/5. Adding more is mostly config — see Session 63 worklog gap list.
-- **UI surfacing of velocity:** direction arrows, sparkline, hover tooltip. Phase 4. Defer until Phase 3 done.
-- **Regime-shift detection:** if Fed restarts QE or imposes YCC, the 2024-2026 quantile baselines will be wrong. Manual recalibration after major Fed actions is the current implicit pattern; auto-rolling-window is an option but loses the historical anchor.
+- **ETH/BTC velocity:** still placeholder L2. Needs both ETH and BTC histories aligned by date (computed indicator). Non-trivial — defer until needed.
+- **Indicator backlog:** original spec was 30/105/28 (Tier 1/2/3). Currently shipping 19/8/5. Highest-signal remaining gaps: SRF Usage / Discount Window / Swap Lines / FIMA (10-9/10, all Fed H.4.1 HTML scrapes — need new fetcher); Spot ETF Net Flows (10/10, Farside scrape); MOVE Index real-time (paid); JGB 10Y / UK Gilt 10Y / OAT-Bund spread (9-10/10, foreign yields available only at monthly cadence via FRED — frequency mismatch); Copper/Gold Ratio + Gold/BTC Ratio (synthetic, easy adds once daily data infrastructure for both is in place).
+- **Sparklines & hover tooltips:** Phase 4 stopped at direction arrows because both need on-disk history retention. If the UI gap is felt, the smallest unlock is appending each refresh's velocity snapshot to a rolling time-series file (SQLite or daily JSON). Don't build until the absence is felt.
+- **Phase-0 audit for synthetic indicators:** Fed Net Liquidity ships with intuition-derived thresholds (~$300B/qtr decline = L5 per spec). A proper Phase-0 audit would compute the synthetic series over 2024-2026 (requires aligning WALCL weekly + TGA weekly + RRP daily on common timestamps, taking weekly snapshots, computing the 30d-delta distribution for empirical p25/p50/p75/p90/p99). Recalibrate Net Liq thresholds against that distribution. Skip until thresholds visibly misfire.
+- **Regime-shift detection:** if Fed restarts QE or imposes YCC, the 2024-2026 quantile baselines (level + velocity) will be wrong. Manual recalibration after major Fed actions is the current implicit pattern; auto-rolling-window is an option but loses the historical anchor.
 - **Sub-daily refresh:** current cron is 5pm ET only. Velocity logic doesn't need sub-daily, but if we want to surface intra-day SOFR spikes or VIX events same-day, a 9am + 3pm + 5pm cadence would help. Trade-off: more cron noise, marginal benefit for retail.
 
 ---

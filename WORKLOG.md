@@ -1,7 +1,60 @@
 # WORKLOG
 
-**Last saved:** 2026-05-09 (post Session 72 Today tab redesign exploration + plan)
-**Status:** Today tab redesign aesthetic locked. 41-direction mockup exploration completed across 4 narrowing rounds. Final aesthetic: pure-black canvas + depth tiles (luminance lift + soft shadow + top-edge highlight) + Gill Sans + parallel rainbow hero beams + spectrum bar (no word labels) + tier-tinted streak counts. Standalone full-page Today mockup at `.claude/plans/today-tab-redesign.html`, 41 surveyed directions at `.claude/plans/MOCKUPS.html`, implementation plan at `.claude/plans/today-tab-redesign-plan.md`. Next session executes the plan: drift reconciliation → token extraction → `renderToday()` refactor → deploy. Inbox-routing Step 3 (`/process-inbox`) from Session 71 still pending. Macro Stress Dashboard still LIVE.
+**Last saved:** 2026-05-09 (post Session 73 Macro composites + Phase 4 UI + Fed Net Liquidity)
+**Status:** Macro Stress Dashboard reached natural endpoint of velocity workstream — 27 indicators live (19/8/5), composite scoring + direction arrows + first synthetic indicator all SHIPPED. Stress index 3.3 ("Watching") unchanged. Two-pass runner, `ctx.peers` snapshot, and synthetic-card pattern are all reusable for future indicators. Today tab redesign (Session 72) still PLANNED — execution awaiting fresh session per its own handoff. Inbox-routing Step 3 (`/process-inbox`) from Session 71 still pending.
+
+## Session 73 — Macro Composites + Phase 4 UI + Fed Net Liquidity Synthetic [signals/macro] (LIVE)
+
+### What Shipped (deployed to Jinn, verified via /api/macro)
+
+1. **Composites layer (cross-indicator scoring).** `runner.js` extended to a two-pass refresh: Pass 1 fetches raw + computes velocity for every indicator (no scoring); Pass 2 builds a `peers = {indicatorId: {raw, velocity}}` snapshot and scores levels with `ctx.peers` available. Two augmentation cases wired:
+   - **ON RRP composite L5** — `ctx.peers.tga.velocity.delta30d > +$200B` (clear refill, ~p90 build) AND `ctx.delta30d < -$100B` (RRP draining clearly) → L5. Captures the canonical debt-ceiling-style combined-drain event. Spec `+$100B` TGA threshold tightened to `+$200B` because empirical p90 TGA build is +$235B; +$100B is normal pre-issuance noise.
+   - **Bank Reserves composite +2** — `ctx.peers.sofr.raw - 3.65 > 5bp` AND `ctx.delta4w < -$100B` → +2 levels. Confirms genuine repo-plumbing scarcity vs. theoretical (Logan/Williams' "$3T scarcity" was theoretical; SOFR confirming is the empirical signal). Caps at L5.
+
+2. **Synthetic-indicator pattern earned promotion.** Originally deferred at two cross-ref cases ("avoid the abstraction trap"). Earned its keep when the third highest-priority gap (Fed Net Liquidity, signal 10/10) was specifically a synthetic, not an augmentation. Pattern: indicator config gets `composite.compute(peers) → {raw, date, velocity}` and no source. Pass 1 skips fetch for synthetics; Pass 2 derives raw from peers before scoring. Future synthetics (Copper/Gold ratio, Gold/BTC ratio) reuse the same plumbing.
+
+3. **Fed Net Liquidity (signal 10/10, first synthetic).** `WALCL − TGA − RRP` from existing fetches. Currently $5.83T at +$4B/30d (essentially flat, normal QT regime). Pure velocity scoring asymmetric like WALCL — rises bullish, slow drains normal QT, fast drains regime change. Thresholds: `>+$100B/30d → L1`; `-$100B to -$25B → L3` (normal QT); `>-$200B/30d → L5` (regime change, mapped from spec's $300B/qtr trigger). WALCL gained `delta30d` to its velocity[] specifically to feed the synthetic.
+
+4. **Phase 4 UI — direction arrows.** `velocityDirection(velocity)` helper in `dashboard-deploy/macro-tab.js` picks the first numeric velocity field (skips categoricals like disinversion's `curveState30d`), returns `{arrow: ↑/↓/→, kind: up/down/flat}`. Arrow injected next to value in tile template. Tier-2 refresh handler updates arrow on tap-refresh. Coloring is neutral differentiation (orange `--mc-bar-3` up, yellow `--mc-bar-2` down, whisper flat) — not good/bad semantics, since direction-meaning varies per indicator.
+
+5. **Test coverage.** New `Macro-Dashboard/tooling/test_composites.js`: 30 cases total (was 0). Covers ON RRP composite paths (5d panic / RRP+TGA combined drain / threshold blocks / missing peers / peer-velocity-missing fallback / level caps), Bank Reserves composite paths (single-var kick + composite compounding to L5 cap, threshold blocks, missing peers), Fed Net Liquidity composite (compute correctness, missing-peer null returns, all 5 asymmetric scoring buckets, placeholder L2 fallback). Existing 13 velocity-primitive tests still pass.
+
+### Files Modified
+
+**Source (deployed via scp):**
+- `.claude/macro-deploy/runner.js` — two-pass refresh, `fetchOnly`/`scoreFromPending`/`buildPeersFromPending`/`buildPeersFromStored` helpers, synthetic-indicator support
+- `.claude/macro-deploy/indicators.js` — ON RRP composite L5 path, Bank Reserves +2 composite, WALCL gained `delta30d` velocity field, new `fed_net_liquidity` indicator with `composite.compute(peers)`
+- `.claude/dashboard-deploy/macro-tab.js` — `velocityDirection()` helper + arrow rendering in tile template + tier-2 refresh handler updates arrow
+- `.claude/dashboard-deploy/macro-tab.css` — `.mc-dir`, `.mc-dir-up`, `.mc-dir-down`, `.mc-dir-flat`
+
+**New tooling:**
+- `Macro-Dashboard/tooling/test_composites.js` — 30 unit tests for cross-indicator + synthetic scoring
+
+**Docs:**
+- `Macro-Dashboard/README.md` — indicator count 27 total (19/8/5); Status section gained composites + Phase 4 + synthetic subsections; Key Decisions #8 rewritten; Open Questions trimmed (composites + Phase 4 removed); coverage table gained `fed_net_liquidity` row; folder layout includes test_composites.js; deploy workflow unchanged.
+
+**Backups on Jinn:** `indicators.js.2026-05-09-{HHMM}.bak`, `runner.js.2026-05-09-{HHMM}.bak`, `macro-tab.js.2026-05-09-{HHMM}.bak`, `macro-tab.css.2026-05-09-{HHMM}.bak`.
+
+### Verification
+
+- 30/30 composite tests pass; 13/13 velocity tests pass; `verify_levels.js` shows no regression on 23 indicators with current FRED values
+- Live `/api/macro` confirms: `fed_net_liquidity` present at $5.83T (L2), `+$4.1B/30d`; `on_rrp` composite path reachable but currently silent (TGA delta30d only +$30B, well below $200B trigger); `bank_reserves` composite path reachable but currently silent (delta4w only -$84B, SOFR at IORB-5bp). Stress index 3.3 unchanged. Tier 1 count 19; total contributing indicators 19.
+- Deploy: backups, scp, syntax-check on Jinn, pm2 restart, `runner.js all` refresh, curl-verify all completed clean.
+
+### Pattern Captured — Augmentation vs. Synthesis (architectural)
+
+Cross-indicator logic comes in two shapes that look similar but route through different machinery: **augmentation** modifies an existing indicator's score by reading peers (no new card surfaces); **synthesis** creates a new indicator card that doesn't exist as a source. The deferred cases in the codebase before this session were augmentations — `on_rrp` and `bank_reserves` wanted to read peer velocity to escalate their own score. Trying to solve those with a synthetic-card framework would have been the abstraction trap. When the third case was a genuine synthetic (Fed Net Liquidity), the synthetic pattern earned its keep on its own merits, not as a forced unification of the augmentation cases. The lesson: don't unify two patterns that differ in shape just because they share a substrate (the `peers` snapshot). Each pattern earns its keep by its own concrete case.
+
+### Open Follow-ups (next session candidates)
+
+- **Indicator backlog continuation** — easy adds remaining: Gold/BTC Ratio (signal 7, synthetic from existing data), EFFR-IORB Spread (signal 8, FRED `EFFR` clone of SOFR pattern). Hard adds: Fed H.4.1 indicators (Swap Lines, Discount Window, FIMA, SRF) — most-expected FRED IDs return 404, would need catalog discovery or HTML scrape. Spot ETF Net Flows (Farside scrape) and MOVE Index real-time (paid) also high signal but new infrastructure.
+- **Phase-0 audit for Fed Net Liquidity thresholds** — currently intuition-derived from spec. A proper audit computes the synthetic series over 2024-2026 (align WALCL weekly + TGA weekly + RRP daily, take weekly snapshots, get 30d-delta empirical distribution) and recalibrates. Skip until thresholds visibly misfire.
+- **ETH/BTC velocity** — still placeholder L2 (computed indicator needs aligned ETH+BTC histories).
+- **Sparklines / hover tooltips** — needs on-disk history retention (rolling JSON or SQLite). Defer until UI gap is felt.
+- **Inbox-routing Step 3 (`/process-inbox`) from Session 71 still pending** — independent track.
+- **Today tab redesign (Session 72) execution still pending** — independent track, full handoff plan exists in `.claude/plans/today-tab-redesign-plan.md`.
+
+---
 
 ## Session 72 — Today Tab Redesign Exploration [dashboard] [ui-redesign] (PLANNED — not deployed)
 
