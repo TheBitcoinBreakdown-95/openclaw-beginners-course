@@ -234,8 +234,8 @@ Bond vol vs stock vol — when high (>8), rates stress isn't yet priced into equ
 **66. SPX Dealer Gamma Exposure** — Signal: 8/10 | Paid (SpotGamma ~$60/mo, manual)
 Aggregate options dealer hedging position — negative gamma means dealers amplify moves rather than dampen them. The mechanical reason for fast crashes (and squeezes). Worth subscribing or manual lookup during volatile periods.
 
-**67. CBOE SKEW Index** — Signal: 7/10 | Free (`SKEW` ticker)
-Tail-risk pricing relative to ATM options — high SKEW with low VIX is the classic complacency-tail-risk setup. Above 155 is extreme. Black swan meter.
+**67. CBOE SKEW Index** — Signal: 7/10 | Free (Yahoo `^SKEW`) — **ATTEMPTED 2026-05-10, BLOCKED**
+Tail-risk pricing relative to ATM options — high SKEW with low VIX is the classic complacency-tail-risk setup. Above 155 is extreme. Black swan meter. Indicator config + thresholds were authored, but Yahoo aggressively rate-limits the Jinn egress IP regardless of User-Agent (429 with plain "Too Many Requests" body). UA fix landed in `fetchers.js` (browser UA option for Yahoo path), but Yahoo's block is at the egress level. Retry from a different IP or wait for rate limit to relax. Indicator entry was rolled back; replaced with `mortgage_30y` for the same Phase 2 slot.
 
 **68. Equity Put/Call Ratio** — Signal: 5/10 | Free (CBOE)
 Total CBOE put/call — pure sentiment. Below 0.6 = greed extreme, above 1.2 = fear extreme. Contrarian only; mostly noise in between.

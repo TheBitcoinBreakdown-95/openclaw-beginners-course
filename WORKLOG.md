@@ -1,13 +1,13 @@
 # WORKLOG
 
-**Last saved:** 2026-05-10 (post Session 75 Phase 1 — easy-wins indicator batch shipped)
-**Status:** Macro Stress Dashboard at **33 indicators live** on Jinn (was 27 last session). Session 75 shipped EFFR-IORB earlier this turn, then Phase 1 of an easy-wins batch (5 more): 3M T-Bill spread (peer-aware primitive vs effr), CCC HY OAS, EM Corp OAS, Commercial Bank Deposits, Gold/BTC Ratio (synthetic). Tier 1 expanded 19→24, Tier 2 expanded 8→9, Tier 3 unchanged at 5. 55/55 composite tests pass (was 30 — added 25 new tests for tbill_3m + gold_btc_ratio). Today-tab redesign (Session 74) and Inbox-routing Step 3 (Session 71) still pending — independent tracks. Phase 2 of this session = SKEW (Yahoo ^SKEW) pending.
+**Last saved:** 2026-05-10 (post Session 75 Phase 1+2 — easy-wins indicator batch + Mortgage 30Y substituted for SKEW)
+**Status:** Macro Stress Dashboard at **34 indicators live** on Jinn (was 27 last session — net +7). Session 75 shipped EFFR-IORB, then 5 more in Phase 1 (3M T-Bill peer-spread, CCC HY OAS, EM Corp OAS, Commercial Bank Deposits, Gold/BTC Ratio synthetic), then Phase 2 swapped Mortgage 30Y in for SKEW (SKEW Yahoo egress 429ed even after browser-UA fix landed in fetchers.js — block is at the IP level, not the UA). Tier 1: 19→25, Tier 2: 8→9, Tier 3 unchanged at 5. 55/55 composite tests pass. Today-tab redesign (Session 74) and Inbox-routing Step 3 (Session 71) still pending — independent tracks.
 
-## Session 75 — Indicator Backlog: Easy Wins Batch [signals/macro] (LIVE — Phase 1 of 2)
+## Session 75 — Indicator Backlog: Easy Wins Batch [signals/macro] (LIVE — both phases shipped)
 
 ### What Shipped (deployed to Jinn, verified via /api/macro)
 
-This session is being run in autonomous mode with a phased plan at `.claude/plans/macro-easy-wins-batch-plan.md`. Phase 1 = 5 indicators + EFFR-IORB earlier this turn. Phase 2 = SKEW pending.
+This session was run in autonomous mode with a phased plan at `.claude/plans/macro-easy-wins-batch-plan.md`. Phase 1 = 5 indicators + EFFR-IORB earlier this turn. Phase 2 = Mortgage 30Y (substituted for SKEW after Yahoo egress block).
 
 1. **EFFR-IORB Spread** — Tier 1, weight 8, peer to SOFR for money-market plumbing. FRED `EFFR`. Spread vs IORB (3.65 hardcoded, refresh at FOMC). Asymmetric scoring anchored to **2026 regime** (-1 to -2bp, tighter than 2024 norms): L1 <IORB-3bp · L2 -3 to 0 · L3 0-3bp · L5 >+5bp. Velocity: 5d delta > 5bp while spread ≥ 0 → +1 (avoids FOMC single-day noise vs 1d). Live: 3.63%, IORB-2bp, **L2** (watchful — accurate read of tightened reserve regime).
 
@@ -20,6 +20,12 @@ This session is being run in autonomous mode with a phased plan at `.claude/plan
 5. **Bank Deposits** — Tier 1, weight 8, FRED `DPSACBW027SBOG`. SVB-style banking-stress canary. Pure velocity (YoY-based scoring): L1 YoY >+5% · L3 0-2% · L5 <-2% · -$200B/12w → +1. Live: $19.11T, +5.6% YoY, **L1** (banking system healthy).
 
 6. **Gold/BTC Ratio** — Tier 2, weight 7, synthetic indicator (`composite.compute(peers)`). Reuses gold + btc fetches; required adding `pct30d` to btc.velocity for the synthetic to compute exact ratio velocity. Asymmetric: rising = gold winning (flight-to-safety = stress), falling = BTC winning (risk-on, capped at L2 informational). Thresholds: rising +25% → L3, +60% → L5; falling caps L2. Live: 0.0584, **-11.8%/30d, L1** (BTC outperforming gold over the month — risk-on positioning).
+
+7. **30Y Mortgage** (Phase 2 substitution) — Tier 1, weight 7, FRED `MORTGAGE30US` weekly. Adds the housing-finance dimension previously absent. Asymmetric scoring (rising = stress): L1 <6.5% · L3 7.0-7.5 · L5 >=8.0%. Velocity kicks: +50bp/4w → +1, +100bp/12w → +1. Live: 6.37%, +0bp/4w (flat), **L1**.
+
+### What Got Blocked
+
+**SKEW (Yahoo ^SKEW)** — Phase 2 originally targeted SKEW. Yahoo's egress filter 429s the Jinn IP regardless of User-Agent. First attempt got `Yahoo ^SKEW: rate-limited at query2` from the existing `<` / `Edge:` text-startsWith detector. Diagnosed as UA-based blocking, deployed a browser-UA fix to `fetchers.js` (`getText` now accepts an optional `userAgent` arg, fetchYahoo passes a Chrome UA). Second attempt got plain `Too Many Requests\r\n` body — Yahoo is now blocking the IP regardless of UA, the failure crossed the JSON.parse rather than the existing detector. Per autonomous rule (verification fail twice on same phase), surfaced and switched to D9 fallback: Mortgage 30Y. The browser-UA fix in fetchers.js is still net-positive for future Yahoo indicators (or SKEW retried on a different egress / after rate-limit relaxation).
 
 ### Tests
 
@@ -45,13 +51,18 @@ This session is being run in autonomous mode with a phased plan at `.claude/plan
 - D5: Asymmetric T-Bill spread scoring — negative is the stress side (cuts pricing); positive caps at L1.
 - D10: Skipped financial-datasets.ai MCP integration — wrong fit for cron-driven dashboard, doesn't replace FRED, doesn't address remaining hard-track gaps. Useful only for ad-hoc Claude Code research sessions.
 
-### Open Follow-ups (next session or remaining in this one)
+### Open Follow-ups (next session)
 
-- **Phase 2 of this session:** SKEW (Yahoo ^SKEW) — pending.
-- **Phase-0 audits for the new synthetics + intuition-thresholded indicators** (gold_btc_ratio, ccc_hy_oas, em_corp_oas, bank_deposits, tbill_3m, fed_net_liquidity, effr): no empirical 2024-2026 distribution audit yet. Calibration debt logged inline in each `computeLevel` comment block.
+- **SKEW retry:** wait for Yahoo egress rate limit to relax (or retry from a different IP). The browser-UA fix in fetchers.js is in place; just re-add the indicator entry (it's straightforward to reconstruct from `INDICATORS.md` #67 + the rolled-back code) and refresh.
+- **Phase-0 audits for the new synthetics + intuition-thresholded indicators** (gold_btc_ratio, ccc_hy_oas, em_corp_oas, bank_deposits, tbill_3m, mortgage_30y, fed_net_liquidity, effr): no empirical 2024-2026 distribution audit yet. Calibration debt logged inline in each `computeLevel` comment block.
 - **Copper/Gold Ratio** — deferred until copper switched from monthly FRED `PCOPPUSDM` to daily Yahoo `HG=F` (frequency mismatch makes daily ratio misleading).
 - **Fed H.4.1 indicators (SRF, Discount Window, Swap Lines, FIMA)** — hard track, needs new HTML-scrape fetcher. Listed in plan file D2 as deliberately skipped this session.
+- **Stablecoin Supply / BTC Perp Funding / Spot ETF Flows** — need DefiLlama / CoinGlass / Farside fetchers respectively.
 - Today-tab Phase 4 QA (Session 74), Inbox-routing Step 3 / `/process-inbox` slash command (Session 71) — both still pending, both independent tracks.
+
+### Discussion: Session Architecture (file-state vs single-session)
+
+User raised the question of moving to a "files persist, sessions die" pattern (spec.md / state.json / N short sessions read state from disk) to avoid compaction. My take, captured here for future-me: the pattern works great for sustained build-out (ship-N-indicators-following-template, audit-each-of-N-files), but oversells. Setup tax is real (~30 min before any code runs); exploratory work doesn't decompose into pass/fail tasks; we already have 80% of the pattern via the plan file + WORKLOG.md acting as informal state. Recommendation: formalize for future macro-backlog grinding (Fed H.4.1, foreign sovereigns, alt-data fetchers) where the work IS template-following at scale; keep current approach for mixed exploration + execution sessions like this one.
 
 ---
 

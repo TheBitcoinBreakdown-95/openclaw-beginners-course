@@ -25,6 +25,7 @@ const current = {
   jobless_claims: 203250, // people
   ci_loans: 2827.5,     // billions
   vix: 17.39,
+  mortgage_30y: 6.37,  // 2026-05-07 — FRED MORTGAGE30US weekly; expect L1 (sub-6.5)
   dxy: 118.39,
   usdjpy: 156.76,
   breakeven_10y: 2.45,
