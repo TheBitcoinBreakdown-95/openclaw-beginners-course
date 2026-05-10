@@ -31,17 +31,17 @@ Total Fed holdings of Treasuries and MBS — the QT/QE scoreboard. Steady declin
 **6. Standing Repo Facility (SRF) Usage** — Signal: 9/10 | Free (NY Fed Operations)
 Dealer use of the Fed's repo backstop — the "break glass" facility. Any meaningful usage means private repo isn't clearing; September 2024's $2.6B quarter-end print made headlines. Above $20B = system breaking.
 
-**7. Discount Window Primary Credit** — Signal: 9/10 | Free (Fed H.4.1)
-Bank emergency borrowing from the Fed — historically taboo, used when nothing else works. SVB week: $153B drawn in days. Above $50B sustained is a banking crisis in real time.
+**7. Discount Window Primary Credit** — Signal: 9/10 | Free (Fed H.4.1) — **SHIPPED 2026-05-10 as `discount_window` (FRED `BORROW`)**
+Bank emergency borrowing from the Fed — historically taboo, used when nothing else works. SVB week: $153B drawn in days. Above $50B sustained is a banking crisis in real time. Original handoff said "needs HTML scrape" — turned out FRED hosts the monthly aggregated series under `BORROW` (Total Reserve Bank Borrowings of Depository Institutions). Wired as Tier 1, weight 9, monthly cadence: L1 <$1B · L2 $1-10B · L4 $30-100B · L5 >$100B.
 
-**8. Foreign Repo Pool (FIMA)** — Signal: 8/10 | Free (Fed H.4.1)
-Foreign central banks' use of the Fed's repo facility — a global dollar shortage gauge. March 2020 saw spikes; normal is sub-$300M. Above $10B sustained means dollar funding is broken offshore.
+**8. Foreign Repo Pool (FIMA)** — Signal: 8/10 | Free (Fed H.4.1) — **SHIPPED 2026-05-10 as `fima_repo` (FRED `WORAL`)**
+Foreign central banks' use of the Fed's repo facility — a global dollar shortage gauge. March 2020 saw spikes; normal is sub-$300M. Above $10B sustained means dollar funding is broken offshore. Wired as Tier 1, weight 8, weekly cadence: L1 <$500M · L3 $2-10B · L4 $10-30B · L5 >$30B. Recent Apr 15 2026 single-week spike to $10.5B was a flash event — informative but not yet sustained.
 
 **9. Bank Reserves at Fed** — Signal: 7/10 | Free (FRED `WRESBAL`)
 System-wide bank reserves — Logan and Williams have flagged ~$3T as the "scarcity zone" where SOFR starts misbehaving. Below $3T historically forces Fed action. Lagging weekly data but the floor matters.
 
-**10. Fed Swap Lines Drawn** — Signal: 10/10 | Free (Fed H.4.1)
-FX swaps to ECB, BoJ, BoE, SNB, BoC — anything above zero means global dollar shortage. March 2020 hit $449B. Any non-zero print warrants attention; >$50B is full crisis.
+**10. Fed Swap Lines Drawn** — Signal: 10/10 | Free (Fed H.4.1) — **SHIPPED 2026-05-10 as `swap_lines` (FRED `SWPT`)**
+FX swaps to ECB, BoJ, BoE, SNB, BoC — anything above zero means global dollar shortage. March 2020 hit $449B. Any non-zero print warrants attention; >$50B is full crisis. Wired as Tier 1, weight 10 (highest), weekly cadence. Asymmetric scoring: L1 <$1B · L2 $1-10B · L3 $10-50B · L4 $50-200B · L5 >$200B. Current $206M is small but non-zero — minor activity, attention warranted per the spec framing. Pairs with FIMA Repo Pool as the offshore-dollar-stress duo.
 
 **11. Fed Net Liquidity** — Signal: 10/10 | Free (compute from FRED: WALCL − TGA − RRP)
 The single best gauge of effective liquidity reaching risk assets. Rising = bull tailwind for stocks and Bitcoin; falling = headwind regardless of price. Decline >$300B/quarter is regime change.

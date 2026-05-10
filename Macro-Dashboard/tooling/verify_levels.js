@@ -33,6 +33,9 @@ const current = {
   core_cpi_yoy: 334.165, // 2026-03 — CPILFESL index; same placeholder behavior
   brent: 118.26,       // 2026-05-01 — DCOILBRENTEU; expect L4 (105-120)
   natgas: 2.67,        // 2026-05-04 — DHHNGSP; expect L1 (2.5-5.0 normal)
+  swap_lines: 206,     // 2026-05-06 — SWPT $millions; expect L1 (<$1B)
+  discount_window: 5097.5, // 2026-03 — BORROW $millions monthly; expect L2 ($1-10B)
+  fima_repo: 2,        // 2026-05-06 — WORAL $millions; expect L1 (<$500M)
   dxy: 118.39,
   usdjpy: 156.76,
   breakeven_10y: 2.45,

@@ -1,7 +1,7 @@
 # WORKLOG
 
-**Last saved:** 2026-05-10 (post Session 75 Phase 3 — final 7-indicator FRED batch shipped)
-**Status:** Macro Stress Dashboard at **41 indicators live** on Jinn (was 27 at session start — net +14 in one session). Session 75 shipped EFFR, then Phase 1 batch of 5 (3M T-Bill peer-spread, CCC HY OAS, EM Corp OAS, Bank Deposits, Gold/BTC Ratio synthetic), then Phase 2 substituted Mortgage 30Y for SKEW (Yahoo egress block), then Phase 3 added 7 more (30Y Yield, 30Y Real Yield, CPI YoY, Core CPI YoY, Building Permits, Brent, Natural Gas). Tier 1: 19→30, Tier 2: 8→11, Tier 3 unchanged at 5. 55/55 composite tests still pass. Notable Phase 3 readings: real_yield_30y L4 (2.68%, tight), brent L4 ($118, +5.7%/5d surge), cpi_yoy L3 (+3.3% YoY) — coherent late-cycle financial-tightening picture. Today-tab redesign (Session 74) and Inbox-routing Step 3 (Session 71) still pending — independent tracks.
+**Last saved:** 2026-05-10 (post Session 75 Phase 4 — Fed H.4.1 hard-track indicators shipped)
+**Status:** Macro Stress Dashboard at **44 indicators live** on Jinn (was 27 at session start — net +17 in one session). Session 75 shipped (in order): EFFR, Phase 1 batch of 5 (3M T-Bill peer-spread, CCC HY OAS, EM Corp OAS, Bank Deposits, Gold/BTC Ratio synthetic), Phase 2 (Mortgage 30Y substituted for SKEW after Yahoo egress block), Phase 3 batch of 7 (30Y Yield, 30Y Real Yield, CPI YoY, Core CPI YoY, Building Permits, Brent, Natural Gas), and Phase 4 batch of 3 Fed H.4.1 indicators (Swap Lines via SWPT, Discount Window via BORROW, FIMA Repo Pool via WORAL — the original handoff's "hard track" turned out to be FRED-fetchable, no HTML scraper needed). Tier 1: 19→33, Tier 2: 8→11, Tier 3 unchanged at 5. 55/55 composite tests still pass. Notable readings: real_yield_30y L4, brent L4, discount_window L2 with +12% YoY borrowings, swap_lines L1 but non-zero ($206M activity). Today-tab redesign (Session 74) and Inbox-routing Step 3 (Session 71) still pending — independent tracks.
 
 ## Session 75 — Indicator Backlog: Easy Wins Batch [signals/macro] (LIVE — three phases shipped)
 
@@ -37,6 +37,16 @@ This session was run in autonomous mode with a phased plan at `.claude/plans/mac
 
 14. **Natural Gas (HH)** (Phase 3) — Tier 2, weight 5, FRED `DHHNGSP`. Henry Hub spot. Symmetric stress framework: low = oversupply/weak industrial demand; high = winter shortage / industrial input shock. Live: **$2.67/MMBTU, -6.6%/30d, L1** (normal range, soft trend).
 
+15. **Fed Swap Lines** (Phase 4) — Tier 1, weight 10, FRED `SWPT` (H.4.1 weekly). Original handoff's "Hard but high-signal: Fed H.4.1 indicators" — turned out FRED hosts SWPT directly so no HTML scraper needed. Asymmetric: ANY non-zero is informative. L1 <$1B · L3 $10-50B · L5 >=$200B. Live: **$206M, +$101M/4w, L1** (small but non-zero — minor activity).
+
+16. **Discount Window** (Phase 4) — Tier 1, weight 9, FRED `BORROW` (H.4.1 monthly). Total Reserve Bank Borrowings of Depository Institutions, aggregating discount window primary credit + Bank Term Funding Program (BTFP, 2023-2024). L1 <$1B · L2 $1-10B · L4 $30-100B · L5 >$100B. Live: **$5.1B, +12% YoY, L2** (post-pandemic elevated regime; YoY rising is mildly notable).
+
+17. **FIMA Repo Pool** (Phase 4) — Tier 1, weight 8, FRED `WORAL` (H.4.1 weekly). Foreign central banks' standing facility for overnight USD against UST collateral. L1 <$500M · L3 $2-10B · L4 $10-30B · L5 >$30B. Live: **$2M, -$99M/4w, L1** (essentially zero, back to normal after Apr 15 2026 single-week $10.5B flash spike).
+
+### Phase 4 insight: H.4.1 catalog research succeeded
+
+The original handoff (Session 73 → 74 transition) described the Fed H.4.1 indicators as "Hard but high-signal: most expected FRED IDs return 404, needs catalog research." Phase 4 validated this concern was overblown for 3 of 4 spec indicators. Working FRED IDs found via probe-test on Jinn: `SWPT` (Central Bank Liquidity Swaps Outstanding), `BORROW` (Total Reserve Bank Borrowings), `WORAL` (Other Repurchase Agreement Liabilities = Foreign Repo Pool). Only **SRF Usage** remains untracked — no obvious FRED ID for the Standing Repo Facility specifically. SRF would require an HTML scrape of the NY Fed Operations page, the only piece of the H.4.1 quartet still requiring new fetcher infrastructure.
+
 ### What Got Blocked
 
 **SKEW (Yahoo ^SKEW)** — Phase 2 originally targeted SKEW. Yahoo's egress filter 429s the Jinn IP regardless of User-Agent. First attempt got `Yahoo ^SKEW: rate-limited at query2` from the existing `<` / `Edge:` text-startsWith detector. Diagnosed as UA-based blocking, deployed a browser-UA fix to `fetchers.js` (`getText` now accepts an optional `userAgent` arg, fetchYahoo passes a Chrome UA). Second attempt got plain `Too Many Requests\r\n` body — Yahoo is now blocking the IP regardless of UA, the failure crossed the JSON.parse rather than the existing detector. Per autonomous rule (verification fail twice on same phase), surfaced and switched to D9 fallback: Mortgage 30Y. The browser-UA fix in fetchers.js is still net-positive for future Yahoo indicators (or SKEW retried on a different egress / after rate-limit relaxation).
@@ -68,6 +78,7 @@ This session was run in autonomous mode with a phased plan at `.claude/plans/mac
 
 ### Open Follow-ups (next session)
 
+- **SRF Usage** — only remaining Fed H.4.1 indicator (signal 9-10). No FRED ID found via probe-test. Would require an HTML scrape of the NY Fed Operations page (`https://www.newyorkfed.org/markets/desk-operations/standing-repo-facility-operational-details`). Defer until the absence is felt — SRF was zero through 2024-2025 and only spikes during specific quarter-end stress events.
 - **SKEW retry:** wait for Yahoo egress rate limit to relax (or retry from a different IP). The browser-UA fix in fetchers.js is in place; just re-add the indicator entry (it's straightforward to reconstruct from `INDICATORS.md` #67 + the rolled-back code) and refresh.
 - **Phase-0 audits for the new synthetics + intuition-thresholded indicators** (gold_btc_ratio, ccc_hy_oas, em_corp_oas, bank_deposits, tbill_3m, mortgage_30y, fed_net_liquidity, effr): no empirical 2024-2026 distribution audit yet. Calibration debt logged inline in each `computeLevel` comment block.
 - **Copper/Gold Ratio** — deferred until copper switched from monthly FRED `PCOPPUSDM` to daily Yahoo `HG=F` (frequency mismatch makes daily ratio misleading).
