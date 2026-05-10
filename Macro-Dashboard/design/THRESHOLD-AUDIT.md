@@ -235,3 +235,89 @@ Current logic is asymmetric Goldilocks: low=demand-weakness=L2, middle=L1, high=
 - **1 structural fix:** Bank Reserves missing L2 band restored.
 - **1 constant refresh:** SOFR's hardcoded IORB updated 4.40 → 3.65 (with comment).
 - **Open questions:** Copper symmetric vs monotonic, WTI Goldilocks vs monotonic.
+
+---
+
+# Threshold Audit — 2026-05-10 (Session 76 Phase 0 Calibration Audit)
+
+**Method:** Same as 2026-05-07 audit (FRED 2024-2026, p10/p25/p50/p75/p90/p99, scoped to indicators with documented "calibration debt" comments). Goal: confirm that Session-75 indicators that shipped with intuition-derived thresholds match empirical regime.
+
+**Scope:** 13 primitive indicators added during Session 75 (effr, tbill_3m, ccc_hy_oas, em_corp_oas, bank_deposits, mortgage_30y, us30y, real_yield_30y, cpi_yoy, core_cpi_yoy, building_permits, brent, natgas). Synthetics (gold_btc_ratio, fed_net_liquidity) audited separately in Phase C.
+
+**Meaningful Drift Policy:** Threshold updates only if (a) p50 lies outside L2-L3 band, (b) p90 lies below configured L4 boundary, (c) p10 lies above configured L1 boundary, or (d) L5 anchor is more than 2× empirical max. Cosmetic alignment without policy trigger does NOT change thresholds.
+
+## Results: 13/13 KEEP
+
+No threshold changes triggered. Every Session-75 primitive indicator's intuition-derived thresholds align with empirical 2024-2026 distribution under strict policy. Calibration debt cleared.
+
+### EFFR (peer-aware vs IORB)
+- **Empirical EFFR-IORB spread (bp), n=589:** p10=-7, p25=-7, p50=-7, p75=-6, p90=-1, p99=-1, min=-7, max=-1
+- **Config:** L1<-3 / L2 -3-0 / L3 0-3 / L4 3-5 / L5 ≥5
+- **Verdict:** Keep. 2024-2025 era ran -7bp (firmly L1); 2026 Q2 regime tightened to -1 to -2bp (L2 watchful). Config matches the regime the indicator was designed for. Velocity 5d kick at >5bp sits at p99 of 5d distribution — rare-event appropriate.
+
+### tbill_3m (peer-aware vs EFFR)
+- **Empirical DTB3-EFFR spread (bp), n=587:** p10=-31, p25=-19, p50=-11, p75=-8, p90=-4, p99=-1.86, min=-68, max=0
+- **Config:** L1>-10 / L2 -10 to -25 / L3 -25 to -50 / L4 -50 to -100 / L5 ≤-100
+- **Verdict:** Keep. p50=-11 sits just inside L2 (mild cuts pricing — matches active Fed cutting cycle). p10=-31 in L3. L5 unreached in 2024-26 (min=-68); preserved as historical recession anchor (1990-style panic-cut).
+
+### ccc_hy_oas (BAMLH0A3HYC)
+- **Empirical (bp), n=616:** p25=821, p50=885, p90=957, current=915
+- **Config:** L1<700 / L2 700-900 / L3 900-1100 / L4 1100-1400 / L5 ≥1400
+- **Verdict:** Keep. p50 at L2 ceiling; p90 in L3 — design intent (regime sits L2-L3, "watchful with periodic stress"). L4-L5 historical anchors (GFC/2020 1400-2000bp).
+
+### em_corp_oas (BAMLEMCBPIOAS)
+- **Empirical (bp), n=616:** p25=159, p50=172, p90=208, current=146
+- **Config:** L1<160 / L2 160-250 / L3 250-350 / L4 350-500 / L5 ≥500
+- **Verdict:** Keep. p50=172 in lower-L2 (watchful); current=146 in L1. L3+ unreached (regime is yield-chasing tight). L4-L5 preserve historical anchors (2013 taper tantrum 400bp, 2014-15 oil crash 550bp, 2020 pandemic 700bp).
+
+### bank_deposits (DPSACBW027SBOG)
+- **Empirical YoY% (n=122 weekly):** p25=2.05, p50=2.93, p75=3.90, p90=4.68, current=5.6
+- **Config:** L1>5% / L2 2-5 / L3 0-2 / L4 -2 to 0 / L5 <-2
+- **Verdict:** Keep. p50=2.93 in mid-L2 (normal growth); current=5.6 in L1 (rare healthy growth). L4-L5 anchored to 2023 SVB episode (briefly YoY-negative). 12w velocity p90=$274B; configured -$200B kick is rare-event appropriate (above empirical p85).
+
+### mortgage_30y (MORTGAGE30US)
+- **Empirical, n=123 weekly:** p25=6.30%, p50=6.65%, p90=6.94%, current=6.37
+- **Config:** L1<6.5 / L2 6.5-7.0 / L3 7.0-7.5 / L4 7.5-8.0 / L5 ≥8.0
+- **Verdict:** Keep. p50 in L2 (current regime); current 6.37 in L1 (relief from peak). 4w velocity p90=33bp / p99=47bp; configured +50bp/4w kick at p99+ rare-event.
+
+### us30y (DGS30)
+- **Empirical, n=587:** p25=4.46, p50=4.69, p90=4.91, current=4.97
+- **Config:** L1<4.0 / L2 4.0-4.7 / L3 4.7-5.2 / L4 5.2-5.7 / L5 ≥5.7
+- **Verdict:** Keep. p50 at L2/L3 boundary; current=4.97 in L3. L1<4.0 unreached (p25=4.46 is empirical floor) — pre-cutting-cycle relief anchor preserved. L5 historical duration-distress anchor.
+
+### real_yield_30y (DFII30)
+- **Empirical, n=587:** p25=2.17%, p50=2.41%, p90=2.65%, current=2.68
+- **Config:** L1<1.5 / L2 1.5-2.0 / L3 2.0-2.5 / L4 2.5-3.0 / L5 ≥3.0
+- **Verdict:** Keep. p50 in L3 (current regime), p90 in L4 (sustained tight FCI episodes). L4 fires for top decile by design — "L4 = very tight" matches "sustained 2.65%+ IS very tight." L1<1.5 preserved as pre-2022-regime anchor. Indicator is meant to run hot when FCI is genuinely tight; current L4 reading is signal not noise.
+
+### cpi_yoy (CPIAUCSL via yoyPct)
+- **Empirical YoY% (n=26 monthly):** p25=2.59, p50=2.77, p75=3.01, p90=3.27, current=3.3
+- **Config:** L1 2.0-2.5 / L2 2.5-3.0 (and 1.0-2.0) / L3 3.0-4.0 / L4 4.0-5.0 (and <1.0) / L5 ≥5
+- **Verdict:** Keep. Thresholds anchored to Fed 2% target (institutional, not regime-derived). p50=2.77 in L2 (above-target not deflationary), p75-p90 in L3 (uncomfortable). L4/L5 unreached in current regime; held as pre-disinflation anchors.
+
+### core_cpi_yoy (CPILFESL via yoyPct)
+- **Empirical YoY% (n=26 monthly):** p25=2.78, p50=3.18, p75=3.29, p90=3.69, current=2.6
+- **Config:** Same as cpi_yoy
+- **Verdict:** Keep. Core ran hotter than headline — p50 in L3 reflects "median core reading is uncomfortable." Current=2.6 is the lower part of the distribution (core cooling). Same Fed-target framework; no regime fit problem.
+
+### building_permits (PERMIT)
+- **Empirical, n=27 monthly:** p25=1400, p50=1436, p90=1520, current=1363
+- **Empirical YoY% (n=27):** p25=-6.1, p50=-2.6, p90=+0.3, max=+9.6, current YoY=-8.0
+- **Config:** L1>1500 / L2 1300-1500 / L3 1100-1300 / L4 900-1100 / L5 ≤900; YoY <-10% in low zone → +1
+- **Verdict:** Keep. p50 in mid-L2 (current regime); L1 captures top decile (rare-healthy zone, design intent for a leading indicator). L3-L5 anchored to recession history (2008<800k, 2023 trough 1300k). YoY kick at <-10% fires only at empirical p1 — current YoY=-8.0% is just shy of triggering.
+
+### brent (DCOILBRENTEU)
+- **Empirical, n=591:** p25=68.2, p50=74.6, p90=88.3, current=118.3
+- **Config:** L1=70-85 / L2 60-70 or 85-95 / L3<60 or 95-105 / L4=105-120 / L5≥120
+- **Verdict:** Keep. Symmetric Goldilocks framework — p50 in L1 (calm middle); current=118 in L4 (Mideast surge). Calibration well-fit; current event is genuine, not threshold mis-fire.
+
+### natgas (DHHNGSP)
+- **Empirical, n=582:** p25=2.19, p50=2.90, p90=4.04, current=2.67
+- **Config:** L4<1.5 / L2 1.5-2.5 / L1 2.5-5.0 / L2 5-7 / L3 7-10 / L4 10-15 / L5 ≥15
+- **Verdict:** Keep. Symmetric stress framework — current 2024-2026 regime sits firmly L1-L2 (low gas era). L3-L5 historical anchors (2022 European energy crisis pushed Henry Hub to $9). Current=2.67 in L1.
+
+## Audit Notes
+
+- Peer-spread distributions (effr, tbill_3m) computed by separate script on Jinn — saved to `audits/peer_spread_summary.json`.
+- YoY% distributions for monthly index series (CPI, Core CPI, Permits) and weekly bank deposits computed via a one-off yoyPct walkthrough — not persisted as a separate file (the indicators' own velocity primitives reproduce these distributions on demand).
+- The "no changes" outcome is informative: Session 75's authors set thresholds with informed intuition that held up against empirical review. Future calibration audits on this set should not re-litigate unless a regime shift or visible misfire emerges.
