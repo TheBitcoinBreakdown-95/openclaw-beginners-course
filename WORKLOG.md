@@ -1,11 +1,14 @@
 # WORKLOG
 
-**Last saved:** 2026-05-10 (Session 76 Phase B — primitive recalibration audit complete, no threshold changes)
-**Status:** Macro Stress Dashboard at **44 indicators live** on Jinn. Session 76 (autonomous Phase-0 calibration audit) in progress: Phase A + Phase B complete — calibration debt cleared on 13 of 15 in-scope indicators with **zero threshold changes**. Strict application of the Meaningful Drift Policy confirmed every Session-75 primitive's intuition-derived thresholds align with the empirical 2024-2026 distribution. indicators.js comment lines updated to reference the new audit doc instead of declaring debt; THRESHOLD-AUDIT.md appended with full per-indicator empirical anchors and verdicts. Live /api/macro returns unchanged levels for all 13 audited indicators (no regression). Phase C (synthetic recalibration: gold_btc_ratio, fed_net_liquidity) pending.
+**Last saved:** 2026-05-10 (Session 76 complete — autonomous Phase-0 calibration audit, all 15 indicators reviewed, zero threshold changes)
+**Status:** Macro Stress Dashboard at **44 indicators live** on Jinn. Session 76 complete (autonomous Phase-0 calibration audit, three phases): all 15 in-scope indicators (13 primitives + 2 synthetics) reviewed against empirical 2024-2026 distribution under the Meaningful Drift Policy. **Zero threshold changes** — every Session-75 intuition-derived threshold aligns with the regime it was designed for. Calibration debt cleared. indicators.js comment lines swapped from "calibration debt: TODO" to references to the new audit doc; `Macro-Dashboard/design/THRESHOLD-AUDIT.md` appended with two new sections (primitives + synthetics) carrying full per-indicator empirical anchors + verdicts; `audits/peer_spread_summary.json` and `audits/synthetic_summary.json` added; `Macro-Dashboard/tooling/synthetic_audit.py` added (reusable for future synthetic indicators). Live /api/macro returns unchanged levels for all 15 (effr L2, tbill_3m L1, ccc_hy_oas L3, em_corp_oas L1, bank_deposits L1, mortgage_30y L1, us30y L3, real_yield_30y L4, cpi_yoy L3, core_cpi_yoy L2, building_permits L2, brent L4, natgas L1, fed_net_liquidity L2, gold_btc_ratio L1).
 
-## Session 76 — Phase 0 Calibration Audit [signals/macro] (IN PROGRESS — Phase A done)
+## Session 76 — Phase 0 Calibration Audit [signals/macro] (LIVE — three phases shipped, zero threshold changes)
 
 Plan file: `.claude/plans/phase-0-calibration-audit-plan.md`. Autonomous run, three phases. Goal: re-anchor thresholds on the 15 Session-75 indicators that shipped with intuition-derived thresholds (13 primitives + 2 synthetics).
+
+### Top-line outcome
+**Zero threshold changes across all 15 indicators.** Strict Meaningful Drift Policy yielded "keep" on every audit. Session 75's authors set thresholds with informed intuition that held up against empirical review. The audit's value is preventative: the calibration-debt comments in `indicators.js` are now replaced with references to the empirical anchors in `THRESHOLD-AUDIT.md`, so future audits don't re-litigate.
 
 ### Phase A — Audit Data Generation (DONE)
 - Extended `Macro-Dashboard/tooling/fred_audit.py` with 13 new FRED series IDs (EFFR, DTB3, BAMLH0A3HYC, BAMLEMCBPIOAS, DPSACBW027SBOG, MORTGAGE30US, DGS30, DFII30, CPIAUCSL, CPILFESL, PERMIT, DCOILBRENTEU, DHHNGSP).
@@ -22,8 +25,31 @@ Plan file: `.claude/plans/phase-0-calibration-audit-plan.md`. Autonomous run, th
 - Phase B output: indicators.js "calibration debt" comments swapped for one-line references to the new audit doc; appended a "Threshold Audit — 2026-05-10 (Session 76 Phase 0 Calibration Audit)" section to `Macro-Dashboard/design/THRESHOLD-AUDIT.md` with full per-indicator empirical anchors and verdicts.
 - **Verification:** `node --check indicators.js` clean, 13/13 velocity tests pass, 55/55 composite tests pass. Deployed to Jinn (`indicators.js.2026-05-10-0311.bak` is the rollback target), data.json refreshed via runner.js, /api/macro returns ok=true with unchanged levels for all 13 audited indicators.
 
-### Phase C — Synthetic Recalibration (PENDING)
-gold_btc_ratio + fed_net_liquidity. Bespoke audit (no single FRED ID); will write `tooling/synthetic_audit.py` for these two.
+### Phase C — Synthetic Recalibration (DONE — no threshold changes)
+- Built `Macro-Dashboard/tooling/synthetic_audit.py` (reusable for future synthetic indicators).
+- **fed_net_liquidity:** reconstructed WALCL−TGA−RRP synthetic over 2024-2026 (n=123 weekly aligned on WALCL Wednesdays). delta30d distribution ($M): p10=-224B / p25=-130B / p50=-69B / p75=+55B / p90=+147B / p99=+333B; falling max=-321B. Distribution well-balanced across L1-L5 (10/30/30/20/10%). p50 in L3 ("moderate drain / normal QT") matches active-QT regime. L5 captures top 5-10% of drain weeks (regime-change events). Verdict: keep.
+- **gold_btc_ratio:** CoinGecko free-tier API caps historical at 365 days (D4); used `market_chart?days=365`. Reconstructed gold/btc ratio over last 365 days (n=365 daily, 335 30d-pct readings). delta30d% distribution: p10=-11.7 / p25=-4.5 / p50=+5.8 / p75=+14.2 / p90=+28.4 / p99=+51.2; rising max=+55.7. p50 in L1 (calm modest moves), L3 fires above p90, L4 around p99. L5 (>+60%) preserved as historical crisis anchor (max 2024-2026 = +55.7%, just below). Verdict: keep.
+- D4 logged in plan: gold_btc_ratio audit window is 2025-05 to 2026-05 instead of full 2024-2026 because of CoinGecko free-tier limit. Acceptable for distribution shape; documented caveat in THRESHOLD-AUDIT.md if regime-shift recalibration is later needed.
+- Verification: node --check clean, 13/13 velocity tests pass, 55/55 composite tests pass, deployed to Jinn (backup `indicators.js.2026-05-10-0327.bak`), runner.js refreshed data.json, /api/macro returns unchanged levels — fed_net_liquidity L2 (+$4B/30d stable), gold_btc_ratio L1 (-11.8%/30d, BTC outperforming).
+- Files added: `Macro-Dashboard/tooling/synthetic_audit.py`, `Macro-Dashboard/audits/synthetic_summary.json`. THRESHOLD-AUDIT.md appended with Phase C section.
+
+### Files Modified (Session 76 totals)
+- **Audit infrastructure:** `Macro-Dashboard/tooling/fred_audit.py`, `fred_audit_remote.py`, `velocity_audit.py` extended with 13 Session-75 series IDs. `synthetic_audit.py` created (~250 lines, reusable for future synthetics).
+- **Audit data:** `Macro-Dashboard/audits/fred_summary.json` regenerated (37 series). `velocity_summary.json` regenerated (37 series, multi-window). `peer_spread_summary.json` added (EFFR-IORB, DTB3-EFFR). `synthetic_summary.json` added (fed_net_liquidity 30d delta, gold_btc_ratio 30d pct).
+- **Documentation:** `Macro-Dashboard/design/THRESHOLD-AUDIT.md` extended with two new sections (Phase B per-indicator + Phase C synthetics). 15 indicators in `indicators.js` had calibration-debt comments replaced with one-line audit references.
+- **Source-of-truth deploy:** `.claude/macro-deploy/indicators.js` (gitignored; deployed to Jinn).
+
+### Decisions captured (full traces in plan file)
+- D1: FRED-from-Windows hung with curl rc=56 on first attempt; fell back to running `fred_audit_remote.py` and `velocity_audit.py` on Jinn (existing documented fallback).
+- D2: Strict Meaningful Drift Policy yielded zero threshold changes across the 13 primitives. Borderline cases (`em_corp_oas`, `real_yield_30y`) are explicitly designed to behave the way they do; not policy triggers.
+- D3: Peer-spread distributions for `effr` and `tbill_3m` computed via inline script (can't be derived from `fred_summary.json`'s absolute-level distributions). Saved to `peer_spread_summary.json`.
+- D4: gold_btc_ratio audit window narrowed to last 365 days because CoinGecko free-tier caps historical at 365d.
+
+### Open Follow-ups (next session)
+- Sparklines + history retention (Track C from prior handoff): still pending; would unlock UI improvements and replace some of the bespoke audit work.
+- SRF Usage scraper (Track B from prior handoff): only remaining Fed H.4.1 indicator; needs new HTML scrape infrastructure.
+- Phase-0 audits for the H.4.1 trio (swap_lines, discount_window, fima_repo): not in scope for this audit — their thresholds are anchored to historical crisis events (2008/2020/SVB) rather than current-regime distributions, so empirical recalibration doesn't apply the same way. Could be revisited if a 2026 regime episode warrants.
+- Today-tab Phase 4 QA (Session 74), Inbox-routing Step 3 (Session 71): both still pending, both independent tracks.
 
 ---
 

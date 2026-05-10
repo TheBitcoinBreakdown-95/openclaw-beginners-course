@@ -321,3 +321,31 @@ No threshold changes triggered. Every Session-75 primitive indicator's intuition
 - Peer-spread distributions (effr, tbill_3m) computed by separate script on Jinn — saved to `audits/peer_spread_summary.json`.
 - YoY% distributions for monthly index series (CPI, Core CPI, Permits) and weekly bank deposits computed via a one-off yoyPct walkthrough — not persisted as a separate file (the indicators' own velocity primitives reproduce these distributions on demand).
 - The "no changes" outcome is informative: Session 75's authors set thresholds with informed intuition that held up against empirical review. Future calibration audits on this set should not re-litigate unless a regime shift or visible misfire emerges.
+
+## Phase C — Synthetic Indicators (2026-05-10)
+
+Synthetic-indicator audit needed bespoke handling — neither has a single FRED ID. Built `Macro-Dashboard/tooling/synthetic_audit.py` to reconstruct each series from peers, compute the velocity-primitive distribution, and write `audits/synthetic_summary.json`. Run on Jinn (FRED-from-Windows hangs; CoinGecko fine on either).
+
+### fed_net_liquidity (synthetic = WALCL − TGA − RRPONTSYD)
+- **Source build:** Pulled WALCL (weekly, n=1221), WTREGEN (weekly, n=1221), RRPONTSYD (daily, n=3238) from FRED. Aligned on WALCL Wednesday dates (n=123 weekly observations 2024-2026); for each, took TGA and RRP at-or-before that date.
+- **Empirical 30d delta ($millions):** p10=-224B / p25=-130B / p50=-69B / p75=+55B / p90=+147B / p99=+333B. Falling subset: p50=+109B / p90=+264B / p99=+301B / max=+321B. Rising subset: p50=+106B / p90=+224B / p99=+368B / max=+388B.
+- **Current:** $5.83T net liquidity (current_date 2026-05-06).
+- **Config:** L1 > +$100B/30d / L2 -$25B to +$100B / L3 -$100B to -$25B / L4 -$200B to -$100B / L5 > -$200B/30d drain.
+- **Distribution mapping:** L1 ~10% of weeks (rare injection events), L2 ~30%, L3 ~30%, L4 ~20%, L5 ~10% — well-distributed. Median in L3 ("moderate drain / normal QT") matches active-QT regime intent. L5 captures the deepest 5-10% of drains (genuine regime-change events; max draw -321B sits just past L5 boundary).
+- **Verdict:** Keep. Spec-derived thresholds (>$300B/quarter decline = regime change → ~$100B/30d for L5 starting point) align well with empirical distribution.
+
+### gold_btc_ratio (synthetic = gold / btc)
+- **Source build:** Fetched CoinGecko `pax-gold` and `bitcoin` daily price histories. Free-tier API caps `market_chart/range` at 365 days; switched to `market_chart?days=365&interval=daily` which returned full 365-day series for both. Aligned by date; computed ratio (n=365 aligned daily observations, ~2025-05 to 2026-05 window).
+- **Empirical delta30d% distribution:** p10=-11.7% / p25=-4.5% / p50=+5.8% / p75=+14.2% / p90=+28.4% / p99=+51.2%. Rising max=+55.7%, falling max=-22.5%.
+- **Current:** ratio=0.0584 (current_date 2026-05-10).
+- **Config:** L1 calm/modest / L2 +15% to +25% (mild) or <-25% (informational) / L3 +25% to +40% / L4 +40% to +60% / L5 > +60%.
+- **Distribution mapping:** L1 captures bulk (p25 to p75 — modest moves either way); L2 captures top quartile of rising (mild gold outperformance); L3 fires above p90 (~5% of days, "clear gold outperformance"); L4 fires around p99 (~1% of days, "major flight"); L5 (>+60%) preserved as historical crisis anchor — max 2024-2026 rising of +55.7% just below L5 boundary, design intent ("L5 = unreached in current regime, fires only on actual crisis flight to safety").
+- **Verdict:** Keep. Asymmetric scoring (rising escalates, falling caps at L2) holds; thresholds correctly produce a quiet indicator in normal regime with rare-event escalations.
+
+### Synthetic Summary
+
+Both synthetic indicators keep their thresholds. The Phase C result mirrors Phase B: intuition-derived thresholds held up against empirical review. The `synthetic_audit.py` tool is now reusable — future synthetic indicators (e.g., Copper/Gold ratio when copper switches to a daily source) can be added to the script's two audit functions and rerun.
+
+### Caveat: gold_btc_ratio audit window
+
+CoinGecko free-tier limits historical data to 365 days. The audit window is 2025-05 to 2026-05 (last year), narrower than the 2024-01-01 to 2026-05 window used for FRED-based indicators. This is acceptable for distribution shape but means earlier 2024 movements (which include the spring 2024 BTC drawdown) are not in the audit. If a regime-shift recalibration is later warranted, paid-tier CoinGecko (or a CryptoCompare/Kraken alternative) would extend the window.
