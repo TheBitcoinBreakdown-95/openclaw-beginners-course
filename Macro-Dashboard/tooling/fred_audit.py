@@ -41,6 +41,20 @@ SERIES = {
     "CCSA":           ("Continuing Claims","people (weekly)"),
     "BUSLOANS":       ("C&I Loans",        "$ billions (weekly)"),
     "PCOPPUSDM":      ("Copper",           "$/MT (monthly)"),
+    # Session 75 additions (2026-05-10) — calibration debt audit
+    "EFFR":           ("EFFR",             "%"),
+    "DTB3":           ("3M T-Bill",        "%"),
+    "BAMLH0A3HYC":    ("CCC HY OAS",       "% (1.0 = 100bp)"),
+    "BAMLEMCBPIOAS":  ("EM Corp OAS",      "% (1.0 = 100bp)"),
+    "DPSACBW027SBOG": ("Bank Deposits",    "$ billions (weekly)"),
+    "MORTGAGE30US":   ("30Y Mortgage",     "% (weekly)"),
+    "DGS30":          ("30Y Yield",        "%"),
+    "DFII30":         ("30Y Real Yield",   "%"),
+    "CPIAUCSL":       ("CPI (level)",      "index (monthly)"),
+    "CPILFESL":       ("Core CPI (level)", "index (monthly)"),
+    "PERMIT":         ("Building Permits", "k SAAR (monthly)"),
+    "DCOILBRENTEU":   ("Brent Crude",      "$/bbl"),
+    "DHHNGSP":        ("Natural Gas HH",   "$/MMBTU"),
 }
 
 START = "2024-01-01"

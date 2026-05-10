@@ -1,7 +1,26 @@
 # WORKLOG
 
-**Last saved:** 2026-05-10 (post Session 75 Phase 4 — Fed H.4.1 hard-track indicators shipped)
-**Status:** Macro Stress Dashboard at **44 indicators live** on Jinn (was 27 at session start — net +17 in one session). Session 75 shipped (in order): EFFR, Phase 1 batch of 5 (3M T-Bill peer-spread, CCC HY OAS, EM Corp OAS, Bank Deposits, Gold/BTC Ratio synthetic), Phase 2 (Mortgage 30Y substituted for SKEW after Yahoo egress block), Phase 3 batch of 7 (30Y Yield, 30Y Real Yield, CPI YoY, Core CPI YoY, Building Permits, Brent, Natural Gas), and Phase 4 batch of 3 Fed H.4.1 indicators (Swap Lines via SWPT, Discount Window via BORROW, FIMA Repo Pool via WORAL — the original handoff's "hard track" turned out to be FRED-fetchable, no HTML scraper needed). Tier 1: 19→33, Tier 2: 8→11, Tier 3 unchanged at 5. 55/55 composite tests still pass. Notable readings: real_yield_30y L4, brent L4, discount_window L2 with +12% YoY borrowings, swap_lines L1 but non-zero ($206M activity). Today-tab redesign (Session 74) and Inbox-routing Step 3 (Session 71) still pending — independent tracks.
+**Last saved:** 2026-05-10 (Session 76 Phase A — calibration audit data regenerated)
+**Status:** Macro Stress Dashboard at **44 indicators live** on Jinn. Session 76 (autonomous Phase-0 calibration audit) in progress: Phase A complete — `fred_audit.py` and `velocity_audit.py` extended with 13 Session-75 series, audits regenerated on Jinn (Windows curl rc=56 fallback, documented in plan D1), `audits/fred_summary.json` + `audits/velocity_summary.json` updated with empirical 2024-2026 distributions for all 13 indicators (n=26-616 obs each). Phase B (primitive recalibration) and Phase C (synthetic recalibration) pending.
+
+## Session 76 — Phase 0 Calibration Audit [signals/macro] (IN PROGRESS — Phase A done)
+
+Plan file: `.claude/plans/phase-0-calibration-audit-plan.md`. Autonomous run, three phases. Goal: re-anchor thresholds on the 15 Session-75 indicators that shipped with intuition-derived thresholds (13 primitives + 2 synthetics).
+
+### Phase A — Audit Data Generation (DONE)
+- Extended `Macro-Dashboard/tooling/fred_audit.py` with 13 new FRED series IDs (EFFR, DTB3, BAMLH0A3HYC, BAMLEMCBPIOAS, DPSACBW027SBOG, MORTGAGE30US, DGS30, DFII30, CPIAUCSL, CPILFESL, PERMIT, DCOILBRENTEU, DHHNGSP).
+- Extended `Macro-Dashboard/tooling/velocity_audit.py` with the same 13 series + windows matching each indicator's `velocity[]` config in `indicators.js`.
+- D1: Windows-local `python fred_audit.py` returned `curl rc=56` (schannel) on all 37 series — documented Windows-curl-vs-FRED failure mode. Fallback: scp'd `fred_audit_remote.py` (the existing remote variant) and `velocity_audit.py` (with sed-overridden OUT_PATH=`/tmp/velocity_summary.json`) to Jinn `/tmp/`, ran both there, scp'd the JSON outputs back to local `audits/`. No new `velocity_audit_remote.py` file added since this is a build-environment workaround, not a permanent dual-script need.
+- Regenerated `audits/fred_summary.json` (37 series) and `audits/velocity_summary.json` (37 series, multi-window) with non-error results across all in-scope IDs.
+- Sample reads showing the calibration debt is real and Phase B will have meaningful work: PERMIT p25=1400 / p50=1436 / p90=1520 / current=1363 — configured "L1 >1500k" only captures top quartile, p50 reading scores L2 (regime mismatch). DGS30 p50=4.69 / p90=4.91 / current=4.97 — current configured "L3 4.7-5.2" is empirically tight to p90 region (could be calibrated less aggressively). Bank deposits, brent, natgas, mortgage_30y all returned reasonable distributions ready for review.
+
+### Phase B — Primitive Recalibration (PENDING)
+13 primitives to review. Apply Meaningful Drift Policy (plan §"Meaningful Drift Policy"). Will commit when complete.
+
+### Phase C — Synthetic Recalibration (PENDING)
+gold_btc_ratio + fed_net_liquidity. Bespoke audit (no single FRED ID); will write `tooling/synthetic_audit.py` for these two.
+
+---
 
 ## Session 75 — Indicator Backlog: Easy Wins Batch [signals/macro] (LIVE — three phases shipped)
 

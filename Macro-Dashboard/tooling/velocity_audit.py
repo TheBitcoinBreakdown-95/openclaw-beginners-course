@@ -53,6 +53,23 @@ WINDOWS = {
     "BUSLOANS":     [("yoy", 365)],                      # YoY
     # Monthly — narrow window options
     "PCOPPUSDM":    [("3m", 90)],
+    # Session 75 additions (2026-05-10) — calibration debt audit
+    # Daily series
+    "EFFR":         [("1d", 1), ("5d", 5)],              # spread vs IORB; 5d kick on rising
+    "DTB3":         [("5d", 5), ("20d", 20)],            # 3M T-Bill (peer-aware vs EFFR)
+    "BAMLH0A3HYC":  [("1d", 1), ("5d", 5), ("20d", 20)], # CCC HY OAS — distress-tier
+    "BAMLEMCBPIOAS":[("5d", 5), ("20d", 20)],            # EM Corp OAS
+    "DGS30":        [("1d", 1), ("5d", 5), ("20d", 20)], # 30Y Yield
+    "DFII30":       [("5d", 5), ("30d", 30)],            # 30Y Real Yield
+    "DCOILBRENTEU": [("5d", 5), ("20d", 20)],            # Brent
+    "DHHNGSP":      [("5d", 5), ("30d", 30)],            # Natural Gas (Henry Hub)
+    # Weekly series
+    "DPSACBW027SBOG": [("12w", 84), ("yoy", 365)],       # Bank Deposits — banking-system canary
+    "MORTGAGE30US": [("4w", 28), ("12w", 84)],           # 30Y Mortgage
+    # Monthly series
+    "CPIAUCSL":     [("yoy", 365)],                      # Headline CPI YoY
+    "CPILFESL":     [("yoy", 365)],                      # Core CPI YoY
+    "PERMIT":       [("3m", 90), ("yoy", 365)],          # Building permits — housing leading
 }
 
 
