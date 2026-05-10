@@ -1,6 +1,6 @@
 # Macro Stress Dashboard
 
-A self-hosted macro signals dashboard running on Jinn (the user's personal AI assistant box) at `http://100.124.64.28:4242/` — Signals tab. Tracks 34 macro indicators across funding markets, credit, rates, FX, labor, and crypto. Each indicator gets a five-level alarm score (L1 stable → L5 critical). A holistic stress index aggregates them into a single 1-10 reading.
+A self-hosted macro signals dashboard running on Jinn (the user's personal AI assistant box) at `http://100.124.64.28:4242/` — Signals tab. Tracks 41 macro indicators across funding markets, credit, rates, FX, labor, housing, inflation, and crypto. Each indicator gets a five-level alarm score (L1 stable → L5 critical). A holistic stress index aggregates them into a single 1-10 reading.
 
 This folder holds **everything we've designed, learned, and built** for the dashboard — except the live deploy code, which lives in `.claude/macro-deploy/` so the deploy pattern (source-edit-then-scp to Jinn) stays clean.
 
@@ -67,7 +67,7 @@ The dashboard is served on port 4242 via the Express app in `dashboard/server.js
 
 Every active-logic indicator has both an absolute-level scoring rule (calibrated to 2024-2026 empirical distribution) and a velocity-aware kick that reflects its specific natural cadence. The velocity column shows the windows the indicator's `computeLevel` consumes from `ctx`. The kick column summarizes when velocity overrides or augments the absolute-level read.
 
-### Tier 1 (25 indicators — all velocity-aware; 1 synthetic composite + 1 peer-aware primitive)
+### Tier 1 (30 indicators — all velocity-aware; 1 synthetic composite + 1 peer-aware primitive)
 
 | Indicator | Source | Level basis | Velocity windows | Kick rule |
 |---|---|---|---|---|
@@ -76,13 +76,17 @@ Every active-logic indicator has both an absolute-level scoring rule (calibrated
 | **3M T-Bill** | **FRED DTB3 + peer effr** | **spread vs EFFR (peer-aware)** | 5d, 20d | (spread-based, asymmetric — only negative escalates) |
 | 10Y Yield | FRED DGS10 | recent regime quantile | 5d, 20d | \|Δ5d\| > 25bp → +1, > 50bp → +2 |
 | 2Y Yield | FRED DGS2 | recent regime quantile | 5d, 20d | \|Δ5d\| > 25bp → +1 |
+| **30Y Yield** | **FRED DGS30** | **recent regime (4-5%)** | 5d, 20d | \|Δ5d\| > 25bp → +1, > 50bp/20d → +1 |
 | 2s10s Curve | FRED T10Y2Y | empirical bands (-0.47 to +0.74) | 30d disinversion + delta | dis-inverted → +2 (recession trigger) |
 | HY OAS | FRED BAMLH0A0HYM2 | recent regime (259-461bp) | 5d, 20d | +25bp/5d → L4 min, +50bp/5d → L5 |
 | **CCC HY OAS** | **FRED BAMLH0A3HYC** | **distress-tier sub-component** | 5d, 20d | +25bp/5d → +1, +50bp/5d → +2 |
 | IG OAS | FRED BAMLC0A0CM | recent regime (73-121bp) | 5d, 20d | +10bp/5d → +1, +25bp/20d → +1 |
 | **EM Corp OAS** | **FRED BAMLEMCBPIOAS** | **EM credit dimension** | 5d, 20d | +25bp/5d → +1, +50bp/5d → +2 |
 | 10Y Real Yield | FRED DFII10 | recent regime (1.53-2.34) | 30d | +25bp/30d (rising) → +1 |
+| **30Y Real Yield** | **FRED DFII30** | **financial-conditions tightening** | 30d | +25bp/30d → +1, +50bp/30d → +2 |
 | 5y5y Inflation | FRED T5YIFR | anchored band 2.0-2.5 | 30d | moving away from anchor at p99 → +1 |
+| **CPI YoY** | **FRED CPIAUCSL (yoyPct)** | **realized headline (Fed 2% target)** | YoY | L4 <1.0% (deflation) · L3 3-4% · L5 >5% YoY |
+| **Core CPI YoY** | **FRED CPILFESL (yoyPct)** | **core ex food/energy (Fed target signal)** | YoY | same as CPI YoY |
 | ON RRP | FRED RRPONTSYD | recent regime ($0-720B) | 5d, 30d | +$50B/5d (build) → L4+ (risk-off) |
 | TGA | FRED WTREGEN | recent regime ($296B-$1T) | 30d | +$200B/30d → +1, +$300B/30d → +2 |
 | Fed Balance Sheet | FRED WALCL | pure velocity (4w roc) | 4w, 12w, 30d | declining → L1, rising > $12.5B/wk → L4-5 |
@@ -94,10 +98,11 @@ Every active-logic indicator has both an absolute-level scoring rule (calibrated
 | BTC | CoinGecko bitcoin | drawdown from 90d high | drawdown 90d, pct 7d | -20% → L3, -35% → L4, -50% → L5 |
 | VIX | FRED VIXCLS | recent regime (11.86-52.33) | 1d, 5d | +5pt/1d → L4 min (event in progress) |
 | **30Y Mortgage** | **FRED MORTGAGE30US** | **historical band (3-8%)** | 4w, 12w | +50bp/4w → +1, +100bp/12w → +1 |
+| **Building Permits** | **FRED PERMIT** | **housing leading indicator (k SAAR)** | 3m, YoY | <-10% YoY in low zone → +1 |
 | Broad Dollar | FRED DTWEXBGS | recent regime (117-130) | 5d (delta + pct) | +1.5%/5d (rising) → +1 |
 | USD/JPY | FRED DEXJPUS | recent regime (140-162) | 5d | +2.5pt/5d in MOF zone → L5 |
 
-### Tier 2 (9 indicators — 8 velocity-aware, 1 deferred; 1 synthetic composite)
+### Tier 2 (11 indicators — 10 velocity-aware, 1 deferred; 1 synthetic composite)
 
 | Indicator | Source | Level basis | Velocity windows | Kick rule |
 |---|---|---|---|---|
@@ -110,6 +115,8 @@ Every active-logic indicator has both an absolute-level scoring rule (calibrated
 | **Gold/BTC Ratio** | **synthetic (gold/btc)** | **30d % change of ratio** | derived 30d pct | rising +25%/30d → L3 (gold winning); +60% → L5 (flight); falling caps L2 |
 | Copper | FRED PCOPPUSDM | symmetric Dr. Copper bands | 3m pct | ±20%/3m → +1 |
 | WTI Crude | FRED DCOILWTICO | asymmetric Goldilocks | 5d (delta + pct) | ±8%/5d → +1, ±15%/5d → +2 |
+| **Brent Crude** | **FRED DCOILBRENTEU** | **global benchmark (Mideast risk)** | 5d (delta + pct) | ±8%/5d → +1, ±15%/5d → +2 |
+| **Natural Gas (HH)** | **FRED DHHNGSP** | **symmetric stress (low + high)** | 30d pct | ±30%/30d → +1 |
 
 ### Tier 3 (5 indicators — paid sources, manual reference cards, no velocity)
 
@@ -117,7 +124,7 @@ MOVE Index, 10Y Swap Spread, SPX Dealer Gamma, US Bank CDS Basket, EU Bank CDS B
 
 ### Live Verification
 
-Run `ssh openclaw@100.124.64.28 "curl -s http://127.0.0.1:4242/api/macro"` and check `values[id].velocity` is populated for 33 of 34 active indicators (everything except `eth_btc`). `fed_net_liquidity` derives its raw + velocity from peer WALCL/TGA/RRP snapshots — verify `values.fed_net_liquidity.raw` matches `walcl.raw - tga.raw - on_rrp.raw`. `gold_btc_ratio` derives its raw + 30d pct change from gold + btc peers — verify `values.gold_btc_ratio.raw` matches `gold.raw / btc.raw`. `tbill_3m` reads `ctx.peers.effr.raw` to compute its spread inline (peer-aware primitive, no synthetic compute step).
+Run `ssh openclaw@100.124.64.28 "curl -s http://127.0.0.1:4242/api/macro"` and check `values[id].velocity` is populated for 40 of 41 active indicators (everything except `eth_btc`). `fed_net_liquidity` derives its raw + velocity from peer WALCL/TGA/RRP snapshots — verify `values.fed_net_liquidity.raw` matches `walcl.raw - tga.raw - on_rrp.raw`. `gold_btc_ratio` derives its raw + 30d pct change from gold + btc peers — verify `values.gold_btc_ratio.raw` matches `gold.raw / btc.raw`. `tbill_3m` reads `ctx.peers.effr.raw` to compute its spread inline (peer-aware primitive, no synthetic compute step).
 
 ---
 
@@ -248,7 +255,7 @@ These are the architectural calls made during the build that future-you would wa
 ## Open Questions / Next Work
 
 - **ETH/BTC velocity:** still placeholder L2. Needs both ETH and BTC histories aligned by date (computed indicator). Non-trivial — defer until needed.
-- **Indicator backlog:** original spec was 30/105/28 (Tier 1/2/3). Currently shipping 25/9/5. Highest-signal remaining gaps: SRF Usage / Discount Window / Swap Lines / FIMA (10-9/10, all Fed H.4.1 HTML scrapes — need new fetcher); Spot ETF Net Flows (10/10, Farside scrape); MOVE Index real-time (paid); JGB 10Y / UK Gilt 10Y / OAT-Bund spread (9-10/10, foreign yields available only at monthly cadence via FRED — frequency mismatch); CBOE SKEW (Yahoo ^SKEW, signal 7 — attempted 2026-05-10, blocked at Yahoo egress; UA fix landed in fetchers.js but Yahoo 429s the IP regardless of UA. Retry on a different egress or wait for the rate limit to relax); Copper/Gold Ratio (signal 9, requires switching copper from monthly FRED to daily Yahoo HG=F first); Stablecoin Supply / BTC Perp Funding / Spot ETF Flows (need DefiLlama / CoinGlass / Farside fetchers respectively).
+- **Indicator backlog:** original spec was 30/105/28 (Tier 1/2/3). Currently shipping 30/11/5 (Session 75 added 13 net new indicators). Highest-signal remaining gaps that aren't yet shipped: SRF Usage / Discount Window / Swap Lines / FIMA (10-9/10, all Fed H.4.1 HTML scrapes — need new fetcher); Spot ETF Net Flows (10/10, Farside scrape); MOVE Index real-time (paid); JGB 10Y / UK Gilt 10Y / OAT-Bund spread (9-10/10, foreign yields available only at monthly cadence via FRED — frequency mismatch); CBOE SKEW (Yahoo ^SKEW, attempted 2026-05-10 but Yahoo 429s the Jinn egress IP regardless of User-Agent — retry from different network); Copper/Gold Ratio (signal 9, requires switching copper from monthly FRED to daily Yahoo HG=F first); Stablecoin Supply / BTC Perp Funding (need DefiLlama / CoinGlass fetchers).
 - **Sparklines & hover tooltips:** Phase 4 stopped at direction arrows because both need on-disk history retention. If the UI gap is felt, the smallest unlock is appending each refresh's velocity snapshot to a rolling time-series file (SQLite or daily JSON). Don't build until the absence is felt.
 - **Phase-0 audit for synthetic indicators:** Fed Net Liquidity ships with intuition-derived thresholds (~$300B/qtr decline = L5 per spec). A proper Phase-0 audit would compute the synthetic series over 2024-2026 (requires aligning WALCL weekly + TGA weekly + RRP daily on common timestamps, taking weekly snapshots, computing the 30d-delta distribution for empirical p25/p50/p75/p90/p99). Recalibrate Net Liq thresholds against that distribution. Skip until thresholds visibly misfire.
 - **Regime-shift detection:** if Fed restarts QE or imposes YCC, the 2024-2026 quantile baselines (level + velocity) will be wrong. Manual recalibration after major Fed actions is the current implicit pattern; auto-rolling-window is an option but loses the historical anchor.

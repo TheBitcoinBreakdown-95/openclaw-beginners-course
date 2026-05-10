@@ -265,14 +265,14 @@ Issuance volume — spikes mark late cycles. Slow and confirming rather than lea
 **75. WTI Front-Month** — Signal: 6/10 | Free (FRED `DCOILWTICO`)
 US crude price — reflects demand and geopolitical risk. Regime-dependent rather than threshold-based. Watch alongside Brent and the curve.
 
-**76. Brent Front-Month** — Signal: 6/10 | Free (FRED `DCOILBRENTEU`)
-Global benchmark — more geopolitically sensitive than WTI. Premium to WTI signals US-specific dynamics vs global. Daily cross-check.
+**76. Brent Front-Month** — Signal: 6/10 | Free (FRED `DCOILBRENTEU`) — **SHIPPED 2026-05-10 as `brent`**
+Global benchmark — more geopolitically sensitive than WTI. Premium to WTI signals US-specific dynamics vs global. Daily cross-check. Wired as Tier 2, weight 6, asymmetric Goldilocks (mirrors WTI). Thresholds shifted ~$5 higher than WTI to reflect typical Brent-WTI spread. Live: $118, +0%/5d, L4.
 
 **77. WTI 1M-12M Spread (Contango/Backwardation)** — Signal: 7/10 | Free (CME)
 Front-month vs 12-month-out price — backwardation means physical tightness; deep contango means glut. Above $3 contango is oversupply territory; backwardation $1-3 is healthy demand.
 
-**78. Henry Hub Natural Gas** — Signal: 5/10 | Free (FRED `DHHNGSP`)
-US natural gas — industrial cost and winter risk gauge. Less macro-relevant than oil for now. Watch during cold snaps and AI data center buildout.
+**78. Henry Hub Natural Gas** — Signal: 5/10 | Free (FRED `DHHNGSP`) — **SHIPPED 2026-05-10 as `natgas`**
+US natural gas — industrial cost and winter risk gauge. Less macro-relevant than oil for now. Watch during cold snaps and AI data center buildout. Wired as Tier 2, weight 5, symmetric stress (low + high both signal trouble). Thresholds: L1 $2.5-5 normal · L4 <$1.5 (oversupply) or $10-15 (winter shortage) · L5 >$15. Live: $2.67/MMBTU, L1.
 
 **79. TTF (Dutch Natural Gas)** — Signal: 7/10 | Free (ICE)
 European gas benchmark — EU industrial competitiveness gauge. Above €100/MWh deindustrializes Germany. Russian gas weaponization aftermath still rippling.
@@ -611,3 +611,16 @@ Treasury vol divided by FX vol — high means rates are the source of stress, no
 - **Phase 3 manual-lookup notes:** 5-7 ranked items get a "manually update" placeholder with link to source.
 
 Free-tier coverage hits ~80% of the signal density of the full universe. The paid items add resolution but aren't required for thesis-level tracking.
+
+---
+
+## Beyond-Spec Additions (shipped indicators not in the original 163)
+
+These were added during Session 75 (2026-05-10) to fill dimensional gaps the original spec didn't comprehensively cover:
+
+- **`us30y` — 30Y Yield** (FRED `DGS30`) — Tier 1, weight 7. Long-end nominal duration risk. The original spec listed 10Y, 2Y, 5s30s curve, but no standalone 30Y level entry. Live: 4.97%, L3.
+- **`real_yield_30y` — 30Y Real Yield** (FRED `DFII30`) — Tier 1, weight 7. Long-end real yield, financial-conditions tightening gauge. The original spec listed 10Y real (#32) but no 30Y real entry. Live: 2.68%, L4.
+- **`mortgage_30y` — 30Y Mortgage Rate** (FRED `MORTGAGE30US`) — Tier 1, weight 7. Housing-finance transmission. Spec covered most macro dimensions but housing-credit was thin. Substituted for SKEW after Yahoo egress block. Live: 6.37%, L1.
+- **`building_permits` — Building Permits** (FRED `PERMIT`) — Tier 1, weight 7. Leading housing-activity indicator. Same dimensional gap as mortgage_30y. Live: 1363k, L2.
+- **`cpi_yoy` — CPI YoY** (FRED `CPIAUCSL` via yoyPct primitive) — Tier 1, weight 7. Realized headline inflation. The original spec covered forward expectations (5y5y inflation, breakevens) but not realized prints.
+- **`core_cpi_yoy` — Core CPI YoY** (FRED `CPILFESL` via yoyPct) — Tier 1, weight 7. Core inflation, the cleaner Fed-target signal.

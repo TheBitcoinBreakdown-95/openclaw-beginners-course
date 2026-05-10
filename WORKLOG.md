@@ -1,13 +1,13 @@
 # WORKLOG
 
-**Last saved:** 2026-05-10 (post Session 75 Phase 1+2 — easy-wins indicator batch + Mortgage 30Y substituted for SKEW)
-**Status:** Macro Stress Dashboard at **34 indicators live** on Jinn (was 27 last session — net +7). Session 75 shipped EFFR-IORB, then 5 more in Phase 1 (3M T-Bill peer-spread, CCC HY OAS, EM Corp OAS, Commercial Bank Deposits, Gold/BTC Ratio synthetic), then Phase 2 swapped Mortgage 30Y in for SKEW (SKEW Yahoo egress 429ed even after browser-UA fix landed in fetchers.js — block is at the IP level, not the UA). Tier 1: 19→25, Tier 2: 8→9, Tier 3 unchanged at 5. 55/55 composite tests pass. Today-tab redesign (Session 74) and Inbox-routing Step 3 (Session 71) still pending — independent tracks.
+**Last saved:** 2026-05-10 (post Session 75 Phase 3 — final 7-indicator FRED batch shipped)
+**Status:** Macro Stress Dashboard at **41 indicators live** on Jinn (was 27 at session start — net +14 in one session). Session 75 shipped EFFR, then Phase 1 batch of 5 (3M T-Bill peer-spread, CCC HY OAS, EM Corp OAS, Bank Deposits, Gold/BTC Ratio synthetic), then Phase 2 substituted Mortgage 30Y for SKEW (Yahoo egress block), then Phase 3 added 7 more (30Y Yield, 30Y Real Yield, CPI YoY, Core CPI YoY, Building Permits, Brent, Natural Gas). Tier 1: 19→30, Tier 2: 8→11, Tier 3 unchanged at 5. 55/55 composite tests still pass. Notable Phase 3 readings: real_yield_30y L4 (2.68%, tight), brent L4 ($118, +5.7%/5d surge), cpi_yoy L3 (+3.3% YoY) — coherent late-cycle financial-tightening picture. Today-tab redesign (Session 74) and Inbox-routing Step 3 (Session 71) still pending — independent tracks.
 
-## Session 75 — Indicator Backlog: Easy Wins Batch [signals/macro] (LIVE — both phases shipped)
+## Session 75 — Indicator Backlog: Easy Wins Batch [signals/macro] (LIVE — three phases shipped)
 
 ### What Shipped (deployed to Jinn, verified via /api/macro)
 
-This session was run in autonomous mode with a phased plan at `.claude/plans/macro-easy-wins-batch-plan.md`. Phase 1 = 5 indicators + EFFR-IORB earlier this turn. Phase 2 = Mortgage 30Y (substituted for SKEW after Yahoo egress block).
+This session was run in autonomous mode with a phased plan at `.claude/plans/macro-easy-wins-batch-plan.md`. Phase 1 = 5 indicators + EFFR-IORB earlier this turn. Phase 2 = Mortgage 30Y (substituted for SKEW after Yahoo egress block). Phase 3 = 7 more FRED-based indicators (30Y rates dimension, inflation realized prints, energy expansion, housing leading indicator). Net session contribution: 14 indicators added (27 → 41).
 
 1. **EFFR-IORB Spread** — Tier 1, weight 8, peer to SOFR for money-market plumbing. FRED `EFFR`. Spread vs IORB (3.65 hardcoded, refresh at FOMC). Asymmetric scoring anchored to **2026 regime** (-1 to -2bp, tighter than 2024 norms): L1 <IORB-3bp · L2 -3 to 0 · L3 0-3bp · L5 >+5bp. Velocity: 5d delta > 5bp while spread ≥ 0 → +1 (avoids FOMC single-day noise vs 1d). Live: 3.63%, IORB-2bp, **L2** (watchful — accurate read of tightened reserve regime).
 
@@ -23,6 +23,20 @@ This session was run in autonomous mode with a phased plan at `.claude/plans/mac
 
 7. **30Y Mortgage** (Phase 2 substitution) — Tier 1, weight 7, FRED `MORTGAGE30US` weekly. Adds the housing-finance dimension previously absent. Asymmetric scoring (rising = stress): L1 <6.5% · L3 7.0-7.5 · L5 >=8.0%. Velocity kicks: +50bp/4w → +1, +100bp/12w → +1. Live: 6.37%, +0bp/4w (flat), **L1**.
 
+8. **30Y Yield** (Phase 3) — Tier 1, weight 7, FRED `DGS30`. Long-end nominal duration anchor. Beyond-spec — original spec didn't have a standalone 30Y entry. Velocity: 5d, 20d. Thresholds anchored to current regime: L1 <4.0% · L3 4.7-5.2 · L5 >=5.7%. Live: **4.97%, L3**.
+
+9. **30Y Real Yield** (Phase 3) — Tier 1, weight 7, FRED `DFII30`. Long-end real, the ultimate financial-conditions tightening gauge. Beyond-spec. Thresholds: L1 <1.5% · L3 2.0-2.5 · L5 >=3.0%. Live: **2.68%, L4** (very tight FCI — confirms the SOFR-IORB and bank-reserves narrative from a different angle).
+
+10. **CPI YoY** (Phase 3) — Tier 1, weight 7, FRED `CPIAUCSL` via `yoyPct` primitive. Realized headline inflation (the public-facing print). Beyond-spec — the original spec covered forward expectations (5y5y, breakevens) but not realized prints. Thresholds: L1 2.0-2.5% · L3 3.0-4.0 · L5 >5.0% YoY · L4 <1.0% (deflation risk). Live: **+3.3% YoY, L3** (above target, uncomfortable territory).
+
+11. **Core CPI YoY** (Phase 3) — Tier 1, weight 7, FRED `CPILFESL` via `yoyPct`. Core CPI ex food/energy — the cleaner Fed-target signal. Same thresholds as CPI YoY. Live: **+2.6% YoY, L2** (slightly above target — Fed-relevant for next-move probabilities).
+
+12. **Building Permits** (Phase 3) — Tier 1, weight 7, FRED `PERMIT`. Privately-owned housing units authorized (k SAAR). Leading indicator — permits today become starts in 30d, completions in 6-9mo. Beyond-spec but pairs naturally with mortgage_30y. Thresholds: L1 >1500k · L3 1100-1300 · L5 <900k. YoY decline kick: <-10% YoY in low zone → +1. Live: **1363k, -8.0% YoY, L2**.
+
+13. **Brent Crude** (Phase 3) — Tier 2, weight 6, FRED `DCOILBRENTEU`. Global oil benchmark, Mideast-sensitive complement to WTI. Same asymmetric Goldilocks framework with thresholds shifted ~$5 higher than WTI. Live: **$118.26, +5.7%/5d, L4** (current surge — geopolitical pricing).
+
+14. **Natural Gas (HH)** (Phase 3) — Tier 2, weight 5, FRED `DHHNGSP`. Henry Hub spot. Symmetric stress framework: low = oversupply/weak industrial demand; high = winter shortage / industrial input shock. Live: **$2.67/MMBTU, -6.6%/30d, L1** (normal range, soft trend).
+
 ### What Got Blocked
 
 **SKEW (Yahoo ^SKEW)** — Phase 2 originally targeted SKEW. Yahoo's egress filter 429s the Jinn IP regardless of User-Agent. First attempt got `Yahoo ^SKEW: rate-limited at query2` from the existing `<` / `Edge:` text-startsWith detector. Diagnosed as UA-based blocking, deployed a browser-UA fix to `fetchers.js` (`getText` now accepts an optional `userAgent` arg, fetchYahoo passes a Chrome UA). Second attempt got plain `Too Many Requests\r\n` body — Yahoo is now blocking the IP regardless of UA, the failure crossed the JSON.parse rather than the existing detector. Per autonomous rule (verification fail twice on same phase), surfaced and switched to D9 fallback: Mortgage 30Y. The browser-UA fix in fetchers.js is still net-positive for future Yahoo indicators (or SKEW retried on a different egress / after rate-limit relaxation).
@@ -35,13 +49,14 @@ This session was run in autonomous mode with a phased plan at `.claude/plans/mac
 
 ### Files Modified
 
-- `.claude/macro-deploy/indicators.js` — 5 new indicator entries (tbill_3m, ccc_hy_oas, em_corp_oas, bank_deposits, gold_btc_ratio); 1-line addition of `pct30d` to btc.velocity; total ~+220 lines.
-- `Macro-Dashboard/tooling/verify_levels.js` — 4 anchor values added (tbill_3m, ccc_hy_oas, em_corp_oas, bank_deposits); gold_btc_ratio is a synthetic so it correctly shows SKIP.
-- `Macro-Dashboard/tooling/test_composites.js` — 25 new tests for tbill_3m + gold_btc_ratio.
-- `Macro-Dashboard/README.md` — coverage table updated 19/8/5 → 24/9/5; live-verification line updated; open-questions backlog list updated.
-- `Macro-Dashboard/design/INDICATORS.md` — spec entries #34b (CCC HY OAS), #41 (EM Corp OAS), #115 (Bank Deposits), #154 (3M T-Bill), #155 (Gold/BTC Ratio) all marked **SHIPPED 2026-05-10**.
+- `.claude/macro-deploy/indicators.js` — 14 new indicator entries (effr, tbill_3m, ccc_hy_oas, em_corp_oas, bank_deposits, gold_btc_ratio, mortgage_30y, us30y, real_yield_30y, cpi_yoy, core_cpi_yoy, building_permits, brent, natgas); 1-line addition of `pct30d` to btc.velocity. Total ~+580 lines.
+- `.claude/macro-deploy/fetchers.js` — Yahoo browser-UA fix (Phase 2 side-effect): `getText` accepts optional `userAgent`, fetchYahoo passes Chrome UA. Net positive for future Yahoo callers but didn't unblock SKEW (Yahoo blocks at IP level).
+- `Macro-Dashboard/tooling/verify_levels.js` — 11 anchor values added (synthetics correctly show SKIP).
+- `Macro-Dashboard/tooling/test_composites.js` — 25 new tests for tbill_3m + gold_btc_ratio (still 55/55 pass after Phase 3).
+- `Macro-Dashboard/README.md` — coverage table updated 19/8/5 → 30/11/5; live-verification line; open-questions backlog updated. Tier 1 grew from 19 to 30 (+11), Tier 2 from 8 to 11 (+3).
+- `Macro-Dashboard/design/INDICATORS.md` — spec entries marked SHIPPED for all that match: #2 (EFFR), #34b (CCC HY OAS — added), #41 (EM Corp OAS), #67 (CBOE SKEW — ATTEMPTED/blocked), #76 (Brent), #78 (Henry Hub), #115 (Bank Deposits), #154 (3M T-Bill), #155 (Gold/BTC Ratio). Beyond-spec additions (us30y, real_yield_30y, mortgage_30y, building_permits, cpi_yoy, core_cpi_yoy) documented in new "Beyond-Spec Additions" footer section.
 - `.claude/plans/macro-easy-wins-batch-plan.md` — created; D1-D10 decisions logged inline.
-- Backups on Jinn: `indicators.js.2026-05-10-0005.bak` (pre-EFFR), `indicators.js.2026-05-10-0138.bak` (pre-Phase-1 batch).
+- Backups on Jinn: `indicators.js.2026-05-10-0005.bak` (pre-EFFR), `indicators.js.2026-05-10-0138.bak` (pre-Phase-1), `indicators.js.2026-05-10-XXXX.bak` (pre-Phase-2 SKEW attempt and pre-Phase-3 batch).
 
 ### Decisions captured (full traces in plan file)
 

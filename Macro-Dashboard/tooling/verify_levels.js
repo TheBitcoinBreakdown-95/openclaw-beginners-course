@@ -26,6 +26,13 @@ const current = {
   ci_loans: 2827.5,     // billions
   vix: 17.39,
   mortgage_30y: 6.37,  // 2026-05-07 — FRED MORTGAGE30US weekly; expect L1 (sub-6.5)
+  us30y: 4.97,         // 2026-05-07 — DGS30; expect L3 (4.7-5.2)
+  real_yield_30y: 2.68, // 2026-05-07 — DFII30; expect L3 (2.0-2.5 lower bound) actually L4 (2.5-3.0)
+  building_permits: 1363, // 2026-03 — PERMIT thousands SAAR; expect L2 (1300-1500)
+  cpi_yoy: 330.293,    // 2026-03 — CPIAUCSL index; verify_levels has no pctYoY ctx → L2 placeholder
+  core_cpi_yoy: 334.165, // 2026-03 — CPILFESL index; same placeholder behavior
+  brent: 118.26,       // 2026-05-01 — DCOILBRENTEU; expect L4 (105-120)
+  natgas: 2.67,        // 2026-05-04 — DHHNGSP; expect L1 (2.5-5.0 normal)
   dxy: 118.39,
   usdjpy: 156.76,
   breakeven_10y: 2.45,
