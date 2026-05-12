@@ -1,7 +1,7 @@
 # WORKLOG
 
-**Last saved:** 2026-05-12 (Session 78 Wave 2 — 15 new indicators shipped via 2 new fetchers; dashboard now 65 indicators live)
-**Status:** [signals/macro] Wave 2 of the 121-missing-indicator backlog implementation shipped: CBOE CDN family (vix9d, vix3m, vix9d_vix_ratio, vix_vix3m_ratio, skew), FRED-OECD foreign sovereign yields (jgb_10y, bund_10y, gilt_10y, oat_10y, italy_btp_10y) + synthetic spreads (btp_bund_spread, oat_bund_spread), Treasury Fiscal Data auctions (auction_bid_to_cover, auction_indirect_bidder, auction_primary_dealer). 2 new fetcher types added (`cboe`, `fiscaldata`). Dashboard now at **65 indicators live** (was 50). Skipped with reason: equity_pc_ratio (CBOE static CSV stale since 2020); silver/platinum/palladium (Stooq apikey wall + not on FRED + tokenized proxies untrustworthy); spr (FRED WCESTUS1 doesn't exist, EIA needs key per spec); china_cgb_10y (FRED OECD lacks China); treasury_net_issuance (different endpoint, deferred). Waves 3-6 still pending (~55 more indicators + ~26 Tier-3 cards). [jinn/gmail] Gmail access for Jinn shipped via 2-min polling cron — Session 77 details below; remains stable.
+**Last saved:** 2026-05-12 (Session 78 Wave 3 — 9 new indicators shipped via 6 new fetcher types + minimal runner extension; dashboard now 74 indicators live)
+**Status:** [signals/macro] Wave 3 of the 121-missing-indicator backlog implementation shipped: DefiLlama stablecoin supply (#105 signal 9), NY Fed SRF (#6 signal 9) + FTD (#25 signal 8), CoinGecko BTC dominance (#99 signal 7), OKX BTC perp funding (#107 signal 8, pivot from Binance/Bybit due to geo-block on Jinn IP — verified 2026-05-12), mempool.space hashrate 7DMA (#101 signal 6), SP500 (FRED `SP500`, weight 6 reference series for the correlation synthetic), plus two BTC-history synthetics: `btc_realized_vol_30d` (#108) and `btc_spx_correlation_30d` (#109). 6 new fetcher types added (`defillama_stablecoins`, `nyfed_repo`, `nyfed_pd`, `okx_funding`, `mempool_hashrate`, `coingecko_global`). Runner.js extended minimally so composite indicators can opt into peer-history access via `historyNeeded:true` — used by both new synthetics. Dashboard now at **74 indicators live** (was 65). Skipped with documented reason: hashprice #102 (HashrateIndex API gated to paid Silver tier per research file), btc_mvrv #100 (LookIntoBitcoin scrape fragile per task spec), hyperscaler_capex #133 (deferred to Wave 4 — SEC EDGAR XBRL parsing complex), treasury_net_issuance #128 (deferred from Wave 2; different fiscaldata endpoint, defer to Wave 4). Waves 4-6 still pending (~46 more indicators + ~26 Tier-3 cards). [jinn/gmail] Gmail access for Jinn shipped via 2-min polling cron — Session 77 details below; remains stable.
 
 ## Session 78 — Missing-Indicators Backlog Implementation [signals/macro] (LIVE — Wave 1 of 6 shipped)
 
@@ -72,9 +72,42 @@ Five sub-batches attempted; **15 indicators shipped, 9 indicators skipped with d
 
 **Verification**: `node --check` clean on both files; 13/13 velocity tests pass; 55/55 composite tests pass; deployed to Jinn (backups `indicators.js.2026-05-12-0053.bak`, `fetchers.js.2026-05-12-0053.bak`); pm2 restart applied (new fetcher dispatcher case requires restart); runner full refresh succeeded; `/api/macro` returns `ok=true` for all 15 new indicators plus all 50 pre-existing. Total dashboard indicator count **50 → 65** (+15).
 
-### Waves 3-6 (PENDING)
+### Wave 3 — Single-Purpose API Fetchers (DONE)
 
-Wave 3 (deferred items from Wave 2 sub-batches + originally-planned): China CGB 10Y, SPR via EIA API, treasury_net_issuance, plus DefiLlama, NY Fed Markets API, CCXT, mempool.space, HashrateIndex, SEC EDGAR. Wave 4 = HTML scrapes. Wave 5 = ~10 MANUAL Tier-3 cards. Wave 6 = ~16 paid Tier-3 cards.
+Nine indicators shipped via six new fetcher types plus one minimal runner extension. All return `ok=true` on `/api/macro` with valid raw + level + meta.
+
+**New fetcher types added (`fetchers.js`)**:
+- **`defillama_stablecoins`** — `https://stablecoins.llama.fi/stablecoincharts/all` → aggregate USD-pegged stablecoin supply daily history. Returns $millions with 30d/YoY velocity. No key, no auth. Drops final partial-day record if peggedUSD < 50% of prior day's (DefiLlama refresh-in-flight pattern).
+- **`nyfed_repo`** — `https://markets.newyorkfed.org/api/rp/all/all/results/lastTwoWeeks.json` → aggregates Repo `totalAmtAccepted` per operationDate (SRF morning + afternoon ops). Browser UA spoof required (per research file).
+- **`nyfed_pd`** — `https://markets.newyorkfed.org/api/pd/get/{SERIES_ID}.json` → weekly $M observations. Parametric over series ID. PDFTD-USTET = Treasury fails-to-deliver (ex-TIPS).
+- **`okx_funding`** — `https://www.okx.com/api/v5/public/funding-rate?instId=BTC-USDT-SWAP`. Pivot: Binance returns "restricted location" geo-block and Bybit returns CloudFront country-block — both verified 2026-05-12 from Jinn. OKX is the working free public endpoint. Funding rate per-8h; annualized × (3 × 365 × 100) in `format.multiplier`.
+- **`mempool_hashrate`** — `https://mempool.space/api/v1/mining/hashrate/{window}` → daily `avgHashrate` in H/s, returns 7-day trailing mean converted to EH/s.
+- **`coingecko_global`** — `https://api.coingecko.com/api/v3/global` → reads field from `data.market_cap_percentage` (currently `btc_dominance`, expandable to `eth_dominance`).
+
+**Runner.js extension**: Composite indicators can now read peer history (not just raw + velocity) when the producer indicator declares `historyNeeded:true`. Added `entry.history` and `entry.date` on opt-in peers in `buildPeersFromPending`; `fetchOnly` extended to fetch CoinGecko history for non-velocity history consumers. Used by both Wave 3 synthetics. Backward compatible — defaults to no history exposure.
+
+**Indicators shipped**:
+- `stablecoin_supply` (Tier 2 weight 9, #105 signal 9): $321B, +1.3%/30d, +32% YoY, **L2** (normal expansion).
+- `srf_usage` (Tier 2 weight 9, #6 signal 9): $0B accepted today, **L1**. ANY non-zero would be informative.
+- `fails_to_deliver` (Tier 2 weight 8, #25 signal 8): $74.0B as of 2026-04-29, −$123B vs 4w ago, **L2** ($50-100B band).
+- `btc_dominance` (Tier 2 weight 7, #99 signal 7): 58.3%, **L1** (BTC-dominant regime; asymmetric — falling dominance = altseason caps at L5).
+- `btc_perp_funding` (Tier 2 weight 8, #107 signal 8): 3.2%/yr annualized longs paying shorts, **L1**. OKX BTC-USDT-SWAP.
+- `hashrate_7dma` (Tier 2 weight 6, #101 signal 6): 1005 EH/s, **L1**. mempool.space 1y series, 7-day trailing mean.
+- `sp500` (Tier 2 weight 6, reference): 7,413, 0.0% off 90d high, +8.7%/30d, **L1**. Needed by btc_spx_correlation_30d.
+- `btc_realized_vol_30d` (Tier 2 weight 6, synthetic, #108 signal 6): 31%, **L1**. 30d log-return stdev × √365 from BTC peer history.
+- `btc_spx_correlation_30d` (Tier 2 weight 7, synthetic, #109 signal 7): +0.27, **L2** (mild co-move; digital-money thesis intact). 30d Pearson on log-returns, BTC weekends dropped from alignment.
+
+**Skipped with reason**:
+- **`hashprice` (#102)** — HashrateIndex API requires `X-Hi-Api-Key` header gated to paid Silver tier per research file `06-bitcoin-crypto-alt-data.md`. The compute-from-primitives proxy (block subsidy + fees × blocks/day × BTC/hashrate) would need mempool.space `/blocks/fees/24h` + a small derivation indicator; deferred to a future "compute-only" pass.
+- **`btc_mvrv` (#100)** — LookIntoBitcoin HTML scrape is fragile (task spec flagged). Glassnode free tier is gone (Pro-plan only as of 2024-25). No clean free path.
+- **`hyperscaler_capex` (#133)** — SEC EDGAR XBRL parsing is heavy per task spec, defer to Wave 4 dedicated time.
+- **`treasury_net_issuance` (#128)** — deferred from Wave 2. Different fiscaldata endpoint (`debt_to_penny`); per-security aggregation needed for true net-issuance. Defer to Wave 4.
+
+**Verification**: `node --check` clean on indicators.js + fetchers.js + runner.js; 13/13 velocity tests pass; 55/55 composite tests pass; deployed to Jinn (`indicators.js.2026-05-12-0510.bak`, `fetchers.js.2026-05-12-0510.bak`, `runner.js.2026-05-12-0510.bak`); pm2 restart applied (new fetcher dispatcher cases require restart); runner full refresh succeeded — 74/74 indicators `ok=true`. Dashboard count **65 → 74** (+9).
+
+### Waves 4-6 (PENDING)
+
+Wave 4 = HTML scrapes (~12 indicators incl. Farside ETF flows, BDC NAV, Westmetall aluminum, etc.). Wave 5 = ~10 MANUAL Tier-3 cards. Wave 6 = ~16 paid Tier-3 cards. Plus 4 carry-overs from Wave 3 skip list: hashprice (compute-only pass), btc_mvrv, hyperscaler_capex, treasury_net_issuance.
 
 ---
 

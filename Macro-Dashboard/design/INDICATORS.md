@@ -28,7 +28,7 @@ Treasury's checking account at the Fed — when it builds, liquidity drains from
 **5. Fed Balance Sheet** — Signal: 8/10 | Free (FRED `WALCL`)
 Total Fed holdings of Treasuries and MBS — the QT/QE scoreboard. Steady decline is normal QT; pace slowing or reversing is the pivot signal. Emergency expansions (BTFP-style) are crisis flares.
 
-**6. Standing Repo Facility (SRF) Usage** — Signal: 9/10 | Free (NY Fed Operations)
+**6. Standing Repo Facility (SRF) Usage** — Signal: 9/10 | Free (NY Fed Operations) — **SHIPPED 2026-05-12 as `srf_usage` (NY Fed Markets API `/api/rp/all/all/results/lastTwoWeeks.json`)**
 Dealer use of the Fed's repo backstop — the "break glass" facility. Any meaningful usage means private repo isn't clearing; September 2024's $2.6B quarter-end print made headlines. Above $20B = system breaking.
 
 **7. Discount Window Primary Credit** — Signal: 9/10 | Free (Fed H.4.1) — **SHIPPED 2026-05-10 as `discount_window` (FRED `BORROW`)**
@@ -89,7 +89,7 @@ What primary dealers got stuck with after the auction. Above 25% means dealers h
 **24. Foreign Treasury Holdings (TIC)** — Signal: 6/10 | Free (Treasury TIC)
 Total foreign custody of US Treasuries by country. Two-month lag makes it slow, but the trend (especially China) is the de-dollarization scoreboard. Confirming, not leading.
 
-**25. Treasury Fails-to-Deliver** — Signal: 8/10 | Free (NY Fed Primary Dealer Stats)
+**25. Treasury Fails-to-Deliver** — Signal: 8/10 | Free (NY Fed Primary Dealer Stats) — **SHIPPED 2026-05-12 as `fails_to_deliver` (NY Fed `/api/pd/get/PDFTD-USTET.json`)**
 Settlement failures in the Treasury market — when they spike, collateral is genuinely scarce. Above $300B/week is a yellow flag for plumbing stress. Often missed by retail trackers.
 
 **26. On-the-run / Off-the-run Spread** — Signal: 8/10 | Paid (Bloomberg; partial via ICE BofA)
@@ -346,13 +346,13 @@ Container freight rates — Red Sea disruption and supply chain stress. Spikes s
 **98. BTC Spot Price** — Signal: 8/10 | Free (CoinGecko, mempool.space)
 The headline number — anchors all crypto-macro analysis. Regime-defining at multi-month moves. Levels matter: ATH breakouts, prior-cycle resistance.
 
-**99. BTC Dominance** — Signal: 7/10 | Free (TradingView, CoinGecko)
+**99. BTC Dominance** — Signal: 7/10 | Free (TradingView, CoinGecko) — **SHIPPED 2026-05-12 as `btc_dominance` (CoinGecko `/api/v3/global` `data.market_cap_percentage.btc`)**
 BTC market cap as share of total crypto — above 55% signals risk-off within crypto, below 45% signals altcoin mania. Cycle-stage gauge. Less useful for macro than for crypto-internal positioning.
 
 **100. MVRV Ratio** — Signal: 9/10 | Free (LookIntoBitcoin)
 Market value / realized value — below 1 is capitulation (rare buy signal), above 3.5 is euphoria (sell signal). One of the cleanest on-chain valuation metrics. Glassnode paid tier has it but free alternatives exist.
 
-**101. Hashrate (7DMA)** — Signal: 6/10 | Free (mempool.space, Hashrate Index)
+**101. Hashrate (7DMA)** — Signal: 6/10 | Free (mempool.space, Hashrate Index) — **SHIPPED 2026-05-12 as `hashrate_7dma` (mempool.space `/api/v1/mining/hashrate/1y`, 7d trailing mean of `avgHashrate`)**
 Total network hashrate — new ATHs are usually post-cycle, so it's confirming not leading. Security metric; lagging price. Hash drops can signal miner capitulation.
 
 **102. Hashprice** — Signal: 7/10 | Free (Hashrate Index)
@@ -364,19 +364,19 @@ BTC held in mining pool wallets — falling fast = miners selling pressure. Pre-
 **104. Exchange BTC Reserves** — Signal: 8/10 | Free-via-proxy (CryptoQuant free tier limited; Glassnode has no free tier as of 2024-2025 — spec annotation stale; use BitMEX BTC reserves + Binance public Proof-of-Reserves snapshots as substitute)
 Coins on exchange wallets — falling means HODL conviction (bullish), rising means sell intent (bearish). One of the most useful flow signals available free.
 
-**105. Stablecoin Supply (USDT+USDC)** — Signal: 9/10 | Free (DefiLlama)
+**105. Stablecoin Supply (USDT+USDC)** — Signal: 9/10 | Free (DefiLlama) — **SHIPPED 2026-05-12 as `stablecoin_supply` (DefiLlama `/stablecoincharts/all`, aggregate `totalCirculatingUSD.peggedUSD`)**
 Total dollar-pegged stablecoin market cap — rising = inflows ready to deploy into BTC, falling = outflows / capital leaving crypto. Cleanest crypto-liquidity signal.
 
 **106. USDT Mint/Burn Rate** — Signal: 8/10 | Free (Tether transparency)
 Tether issuance velocity — rapid mints historically precede BTC rallies because Tether mints on demand. Sustained mints = bid on its way. Watch for divergences.
 
-**107. BTC Perp Funding Rate** — Signal: 8/10 | Free (Coinglass, exchange APIs)
+**107. BTC Perp Funding Rate** — Signal: 8/10 | Free (Coinglass, exchange APIs) — **SHIPPED 2026-05-12 as `btc_perp_funding` (OKX `/api/v5/public/funding-rate?instId=BTC-USDT-SWAP`; Binance + Bybit geo-blocked from Jinn IP)**
 Long/short premium on perpetual futures across Binance/Bybit — sustained above 0.05% per 8h = leveraged-long crowding (correction setup), negative = capitulation (bottom signal). Real-time leverage gauge.
 
-**108. BTC 30D Realized Vol** — Signal: 6/10 | Free (LookIntoBitcoin)
+**108. BTC 30D Realized Vol** — Signal: 6/10 | Free (LookIntoBitcoin) — **SHIPPED 2026-05-12 as `btc_realized_vol_30d` (synthetic; computed from BTC 120d history via composite, annualized via √365)**
 Actual 30-day price volatility — compression historically precedes expansion. Useful for option-pricing context. Less directly actionable.
 
-**109. BTC-SPX 30D Rolling Correlation** — Signal: 7/10 | Free (compute)
+**109. BTC-SPX 30D Rolling Correlation** — Signal: 7/10 | Free (compute) — **SHIPPED 2026-05-12 as `btc_spx_correlation_30d` (synthetic; composite from BTC + SP500 peer histories, BTC weekends dropped, Pearson on log-returns)**. Also added `sp500` (FRED `SP500`) as standalone Tier-2 indicator (weight 6) to feed the correlation peer.
 The decoupling watch — below zero means BTC is acting as an actual hedge rather than a tech-stock proxy. Currently mostly correlated; decoupling regime would be huge thesis confirmation.
 
 **110. Spot ETF Net Flows** — Signal: 10/10 | Free (Farside Investors)
