@@ -1,7 +1,7 @@
 # WORKLOG
 
-**Last saved:** 2026-05-12 (Session 78 Wave 3 — 9 new indicators shipped via 6 new fetcher types + minimal runner extension; dashboard now 74 indicators live)
-**Status:** [signals/macro] Wave 3 of the 121-missing-indicator backlog implementation shipped: DefiLlama stablecoin supply (#105 signal 9), NY Fed SRF (#6 signal 9) + FTD (#25 signal 8), CoinGecko BTC dominance (#99 signal 7), OKX BTC perp funding (#107 signal 8, pivot from Binance/Bybit due to geo-block on Jinn IP — verified 2026-05-12), mempool.space hashrate 7DMA (#101 signal 6), SP500 (FRED `SP500`, weight 6 reference series for the correlation synthetic), plus two BTC-history synthetics: `btc_realized_vol_30d` (#108) and `btc_spx_correlation_30d` (#109). 6 new fetcher types added (`defillama_stablecoins`, `nyfed_repo`, `nyfed_pd`, `okx_funding`, `mempool_hashrate`, `coingecko_global`). Runner.js extended minimally so composite indicators can opt into peer-history access via `historyNeeded:true` — used by both new synthetics. Dashboard now at **74 indicators live** (was 65). Skipped with documented reason: hashprice #102 (HashrateIndex API gated to paid Silver tier per research file), btc_mvrv #100 (LookIntoBitcoin scrape fragile per task spec), hyperscaler_capex #133 (deferred to Wave 4 — SEC EDGAR XBRL parsing complex), treasury_net_issuance #128 (deferred from Wave 2; different fiscaldata endpoint, defer to Wave 4). Waves 4-6 still pending (~46 more indicators + ~26 Tier-3 cards). [jinn/gmail] Gmail access for Jinn shipped via 2-min polling cron — Session 77 details below; remains stable.
+**Last saved:** 2026-05-12 (Session 78 Wave 4 — 4 new indicators shipped via 4 new fetcher types; dashboard now 78 indicators live)
+**Status:** [signals/macro] Wave 4 of the 121-missing-indicator backlog implementation shipped: hyperscaler_capex (#133 signal 9, SEC EDGAR XBRL — MSFT+GOOGL+AMZN+META = $129.8B/qtr, +80% YoY, **L4**), treasury_net_issuance (#128 signal 8, fiscaldata debt_to_penny — +$349B/90d net issuance, **L2**), indeed_sw_dev_postings (#132 signal 8, hiring-lab GitHub CSV — index 72.2 vs Feb-2020=100, **L4**), baltic_dry (#96 signal 6, HandyBulk scrape — 2,978 points, **L1**). 4 new fetcher types added (`sec_hyperscaler_capex`, `debt_to_penny`, `indeed_postings`, `handybulk_bdi`); 2 more fetchers built but deferred (`farside_etf`, `bdc_nav`) — both blocked from Jinn's Tailscale egress (Farside = Cloudflare challenge; bdcinvestor = login wall) despite working from residential dev IPs. Dashboard now at **78 indicators live** (was 74). Wave 4 net: 4 SHIPPED, 4 DEFERRED (spot_etf_flows #110, bdc_discount_to_nav #39, tech_layoffs_cumulative #131, finra_margin_debt #69). Waves 5-6 still pending (~26 Tier-3 cards). [jinn/gmail] Gmail access for Jinn shipped via 2-min polling cron — Session 77 details below; remains stable.
 
 ## Session 78 — Missing-Indicators Backlog Implementation [signals/macro] (LIVE — Wave 1 of 6 shipped)
 
@@ -105,9 +105,45 @@ Nine indicators shipped via six new fetcher types plus one minimal runner extens
 
 **Verification**: `node --check` clean on indicators.js + fetchers.js + runner.js; 13/13 velocity tests pass; 55/55 composite tests pass; deployed to Jinn (`indicators.js.2026-05-12-0510.bak`, `fetchers.js.2026-05-12-0510.bak`, `runner.js.2026-05-12-0510.bak`); pm2 restart applied (new fetcher dispatcher cases require restart); runner full refresh succeeded — 74/74 indicators `ok=true`. Dashboard count **65 → 74** (+9).
 
-### Waves 4-6 (PENDING)
+### Wave 4 — HTML Scrapes + Deferred Items (DONE)
 
-Wave 4 = HTML scrapes (~12 indicators incl. Farside ETF flows, BDC NAV, Westmetall aluminum, etc.). Wave 5 = ~10 MANUAL Tier-3 cards. Wave 6 = ~16 paid Tier-3 cards. Plus 4 carry-overs from Wave 3 skip list: hashprice (compute-only pass), btc_mvrv, hyperscaler_capex, treasury_net_issuance.
+Four indicators shipped via four new fetcher types. Two additional fetchers (`farside_etf`, `bdc_nav`) were built and verified working from residential IPs but blocked by edge gates on Jinn's Tailscale egress — both retained in `fetchers.js` for future proxy use, their indicators deferred.
+
+**New fetcher types added (`fetchers.js`)**:
+- **`sec_hyperscaler_capex`** — SEC EDGAR `companyfacts` for MSFT/GOOGL/META/AMZN. Pulls quarterly `PaymentsToAcquirePropertyPlantAndEquipment` (or `PaymentsToAcquireProductiveAssets` for AMZN), filters to single-quarter durations (80-100 day spans), dedupes by end-date (10-Q + 10-K can restate same period), aligns across all 4 firms (Q1 ends 3/31 is the only common calendar quarter — MSFT skips 6/30 because their FY ends there, AMZN skips 12/31 because of 10-K wrap). Returns `{value, date, history, breakdown}` with 5+ years of aligned Q1 sums for YoY velocity. SEC fair-access UA = "Macro-Dashboard <email>" with 1s pacing + 3-attempt retry.
+- **`debt_to_penny`** — `https://api.fiscaldata.treasury.gov/services/api/fiscal_service/v2/accounting/od/debt_to_penny`. 200-day history of total public debt outstanding in $M. The 90d delta is the net-issuance proxy (the signal). No key, no auth.
+- **`indeed_postings`** — `https://raw.githubusercontent.com/hiring-lab/job_postings_tracker/master/US/job_postings_by_sector_US.csv`. Filters to display_name="Software Development" + variable="total postings". CSV is ~9MB (multi-year × 24 sectors × 2 variables); required adding `opts.maxBuffer` override to `getText` (default 8MB was too small).
+- **`handybulk_bdi`** — `https://www.handybulk.com/baltic-dry-index/` HTML scrape. Regex matches "Baltic Dry Index (BDI) ... to reach X,XXX points" in the latest daily article paragraph. Most scrape-fragile indicator on the dashboard.
+
+**Indicators shipped**:
+- `hyperscaler_capex` (Tier 2 weight 9, #133 signal 9): **$129.8B/qtr** (MSFT+GOOGL+AMZN+META Q1 2026 aligned sum), +80% YoY, **L4** (baseLevel L3 by absolute + L4 from >50% YoY velocity kick). 5 aligned-Q1 history points back to 2022.
+- `treasury_net_issuance` (Tier 2 weight 8, #128 signal 8): **+$349B/90d**, total stock $38.94T, **L2** ($200-400B band).
+- `indeed_sw_dev_postings` (Tier 2 weight 8, #132 signal 8): **72.2** (vs Feb-2020=100), -0.6%/30d, +4.2%/90d, **L4** (70-85 band, contracted labor market).
+- `baltic_dry` (Tier 2 weight 6, #96 signal 6): **2,978**, **L1** (>2000 healthy shipping demand).
+
+**Deferred with reason** (fetchers retained for proxy use):
+- **`spot_etf_flows` (#110)** — Farside Investors returns Cloudflare challenge (`Cf-Mitigated: challenge`) on Jinn's Tailscale IP. Parser works perfectly from residential IPs: latest Total row = $27M on 2026-05-11 with 400-day history including outflow streaks visible at -$268M and -$145M on May 7-8. Top-priority indicator (signal 10) — recommend building a proxy-egress workstream to unblock.
+- **`bdc_discount_to_nav` (#39)** — bdcinvestor.com returns 200-OK but serves a login-wall page on Jinn IP (442 lines vs 931 on dev box, no price/NAV `<td>N.NNx</td>` cells in response). Parser works from residential IPs: top-10 BDCs averaged +19.7% premium on 2026-05-12.
+- **`tech_layoffs_cumulative` (#131)** — layoffs.fyi page is purely Airtable `<iframe>` embeds; no cumulative counter renders in static HTML. Requires Airtable JSON token + viewId reverse-engineering OR headless render (skip rule: JS-rendering pages defer to a future scrape-infrastructure build).
+- **`finra_margin_debt` (#69)** — FINRA xlsx URL returns Cloudflare JS-challenge `Cf-Mitigated: challenge` to all UA spoof attempts; same as bdcinvestor pattern, no proxy fix.
+
+**Other Wave 4 skip-list items** (per task lower-priority + skip rules):
+- `btc_mvrv` (#100) — task spec already flagged as SKIP-if-blocked; LookIntoBitcoin scrape too fragile.
+- Westmetall #88 / #90, SCFI #97, hashprice #102 — all lower priority per task; deferred.
+
+**Bug fix found and applied**:
+- `getText` had hardcoded 8MB curl maxBuffer; Indeed Hiring Lab sector CSV is 9MB. Extended to accept `opts.maxBuffer` override (used by Indeed fetcher with 16MB headroom). Backward compatible — default remains 8MB.
+
+**Spec corrections found**:
+- Task spec said SEC `companyfacts` URL = `https://data.sec.gov/api/xbrl/companyfacts/CIK{paddedCIK}.json` — verified correct. Spec also said AMZN tag = `PaymentsToAcquireProductiveAssets` — verified correct (AMZN does also report `PaymentsToAcquirePropertyPlantAndEquipment` but only legacy years through 2017; `PaymentsToAcquireProductiveAssets` is the current series).
+- Task spec for treasury_net_issuance said "90d diff of total public debt outstanding" — implemented exactly as specified. Verified live: $349B over 90 days is the realized signal.
+- Task spec for FINRA suggested URL `https://www.finra.org/sites/default/files/2025-XX/margin-statistics.xlsx` — actual canonical path remains `2021-03/margin-statistics.xlsx` (per research file). Both paths return Cloudflare challenge regardless, so URL accuracy is moot.
+
+**Verification**: `node --check` clean on indicators.js + fetchers.js + runner.js (runner.js unchanged this wave); 13/13 velocity tests pass; 55/55 composite tests pass; deployed to Jinn (`indicators.js.2026-05-12-0154.bak`, `fetchers.js.2026-05-12-0154.bak`); pm2 restart applied for new dispatcher cases; runner full refresh succeeded — **78/78 indicators `ok=true`**. Dashboard count **74 → 78** (+4 net; 6 attempted, 2 deferred to proxy build).
+
+### Waves 5-6 (PENDING)
+
+Wave 5 = ~10 MANUAL Tier-3 reference cards (no data fetch — link to source pages). Wave 6 = ~16 paid Tier-3 reference cards. Carry-overs that need future infrastructure: `spot_etf_flows` + `bdc_discount_to_nav` (proxy egress build); `tech_layoffs_cumulative` + `finra_margin_debt` (headless-Chrome/JS-render build); `btc_mvrv` (compute-from-realized-cap fallback) + hashprice (compute-from-primitives pass).
 
 ---
 

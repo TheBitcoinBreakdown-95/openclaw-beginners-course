@@ -138,7 +138,7 @@ Secondary prices on syndicated loans — below 95 average signals stress. Tracks
 **38. CCC Distress Ratio (LCD)** — Signal: 8/10 | Paid (LCD/PitchBook)
 Percentage of HY trading below 70¢ or +1000bp — the default-cycle precursor. Above 15% historically precedes default waves by 6-12 months. Worth manual quarterly check.
 
-**39. BDC Discount-to-NAV** — Signal: 8/10 | Free (BDC Investor)
+**39. BDC Discount-to-NAV** — Signal: 8/10 | Free (BDC Investor) — **DEFERRED 2026-05-12 (Wave 4)**: scraper works from residential IPs but bdcinvestor.com serves a login-wall page to Jinn's Tailscale egress (200-OK, no data table). Fetcher `bdc_nav` retained in fetchers.js for proxy use.
 Business Development Company shares trading below their stated net asset value — the private credit canary. Below -15% means the market is pricing major writedowns coming. Often missed by retail.
 
 **40. CMBS BBB- Spreads** — Signal: 7/10 | Paid (Trepp)
@@ -240,7 +240,7 @@ Tail-risk pricing relative to ATM options — high SKEW with low VIX is the clas
 **68. Equity Put/Call Ratio** — Signal: 5/10 | Free (CBOE)
 Total CBOE put/call — pure sentiment. Below 0.6 = greed extreme, above 1.2 = fear extreme. Contrarian only; mostly noise in between.
 
-**69. Margin Debt (FINRA)** — Signal: 7/10 | Free (FINRA monthly)
+**69. Margin Debt (FINRA)** — Signal: 7/10 | Free (FINRA monthly) — **DEFERRED 2026-05-12 (Wave 4)**: FINRA URL returns Cloudflare JS-challenge (`Cf-Mitigated: challenge`) to all UA spoof attempts; needs headless browser per Wave 4 skip rules. Deferred to scrape-infrastructure build.
 NYSE margin balances — YoY growth above 50% has historically marked tops. Slow signal but reliable at extremes. Lagged data limits timing utility.
 
 **70. AAII Bull-Bear Spread** — Signal: 4/10 | Free (AAII weekly)
@@ -333,7 +333,7 @@ Soft commodities — cocoa hit ATH ~$11k in 2024 from supply shocks. Niche unles
 **95. Urea + DAP + Potash Index** — Signal: 6/10 | Free (World Bank Pink Sheet, monthly)
 Fertilizer prices — food inflation precursor by 6-12 months. Russia/Belarus exposure makes it geopolitically charged. Worth monthly tracking.
 
-**96. Baltic Dry Index** — Signal: 6/10 | Free (Baltic Exchange, Trading Economics)
+**96. Baltic Dry Index** — Signal: 6/10 | Free (Baltic Exchange, Trading Economics) — **SHIPPED 2026-05-12 as `baltic_dry` (HandyBulk daily HTML scrape, fetcher `handybulk_bdi`)**
 Dry bulk shipping rates — real-time global trade pulse. Above 3000 = strong demand; below 700 = collapse. Volatile but informative.
 
 **97. Drewry WCI / Shanghai SCFI** — Signal: 6/10 | Free (Drewry, SSE)
@@ -379,7 +379,7 @@ Actual 30-day price volatility — compression historically precedes expansion. 
 **109. BTC-SPX 30D Rolling Correlation** — Signal: 7/10 | Free (compute) — **SHIPPED 2026-05-12 as `btc_spx_correlation_30d` (synthetic; composite from BTC + SP500 peer histories, BTC weekends dropped, Pearson on log-returns)**. Also added `sp500` (FRED `SP500`) as standalone Tier-2 indicator (weight 6) to feed the correlation peer.
 The decoupling watch — below zero means BTC is acting as an actual hedge rather than a tech-stock proxy. Currently mostly correlated; decoupling regime would be huge thesis confirmation.
 
-**110. Spot ETF Net Flows** — Signal: 10/10 | Free (Farside Investors)
+**110. Spot ETF Net Flows** — Signal: 10/10 | Free (Farside Investors) — **DEFERRED 2026-05-12 (Wave 4)**: fetcher `farside_etf` works from residential IPs (verified — daily Total row parses cleanly with 400-day history) but Farside returns Cloudflare challenge (`Cf-Mitigated: challenge`) on Jinn's Tailscale IP. Fetcher retained for proxy use. Top-priority candidate for the "proxy egress" build.
 IBIT, FBTC, etc. daily flows — TradFi demand barometer. Sustained outflows are the thesis test; sustained inflows confirm institutionalization. Single most important new data series for BTC.
 
 **111. ETH/BTC Ratio** — Signal: 6/10 | Free (TradingView)
@@ -441,7 +441,7 @@ Household mood survey — below 70 signals stress. Politically polarized post-20
 **127. Retail Sales Control Group** — Signal: 6/10 | Free (FRED `RSFSXMV`) — **SHIPPED 2026-05-12 as `retail_sales_control`**
 Core consumer spending excluding volatile categories — feeds GDP nowcasts directly. Monthly data with revision risk. Confirming spending strength or weakness. Spec ID correction (2026-05-12 research): correct series is `RSFSXMV` (Retail Sales: Total minus Food Services, Auto Dealers, Building Materials, Gasoline Stations), not the generic `RSXFS` variant the spec originally implied. Wired as Tier 2, weight 6, YoY-based: L1 >+4% · L3 -2 to +1 · L5 <-5%.
 
-**128. Treasury Net Issuance** — Signal: 8/10 | Free (TBAC refunding)
+**128. Treasury Net Issuance** — Signal: 8/10 | Free (TBAC refunding) — **SHIPPED 2026-05-12 as `treasury_net_issuance` (fiscaldata `/v2/accounting/od/debt_to_penny`, 90d delta of total public debt outstanding)**
 Quarterly Treasury borrowing plans — Q1 2024 and Q4 2024 surges drained liquidity from markets. Watch the Quarterly Refunding Announcement (QRA). Bessent's bills-vs-bonds choice matters.
 
 **129. Federal Interest Expense (TTM)** — Signal: 7/10 | Free (FRED `A091RC1Q027SBEA`) — **SHIPPED 2026-05-12 as `fed_interest_expense`**
@@ -454,13 +454,13 @@ Federal deficit as share of GDP — above 6% during expansion is abnormal. Press
 
 ## 13. AI Disruption & Labor
 
-**131. Layoffs.fyi Tech Cumulative** — Signal: 7/10 | Free (layoffs.fyi)
+**131. Layoffs.fyi Tech Cumulative** — Signal: 7/10 | Free (layoffs.fyi) — **DEFERRED 2026-05-12 (Wave 4)**: layoffs.fyi is purely Airtable iframe embeds; no cumulative counter is rendered in the static HTML. Requires Airtable JSON token + viewId reverse-engineering OR headless render — both fall under Wave 4 skip rules (JS rendering / scrape infrastructure).
 Running tracker of tech layoffs by company. YoY surges signal restructuring waves. Not always macro-relevant but tracks the AI-disruption theme.
 
-**132. Indeed Software Dev Postings** — Signal: 8/10 | Free (Indeed Hiring Lab)
+**132. Indeed Software Dev Postings** — Signal: 8/10 | Free (Indeed Hiring Lab) — **SHIPPED 2026-05-12 as `indeed_sw_dev_postings` (raw.githubusercontent.com `hiring-lab/job_postings_tracker/master/US/job_postings_by_sector_US.csv`, "Software Development" / "total postings" filter)**
 Job postings for software developers — currently down 35%+ from 2022 peak. Direct evidence of AI-driven hiring slowdown. Best leading indicator for the AI-displacement thesis.
 
-**133. Hyperscaler Capex Sum** — Signal: 9/10 | Free (10-Q filings, SemiAnalysis)
+**133. Hyperscaler Capex Sum** — Signal: 9/10 | Free (10-Q filings, SemiAnalysis) — **SHIPPED 2026-05-12 as `hyperscaler_capex` (SEC EDGAR XBRL `companyfacts` for MSFT/GOOGL/META `PaymentsToAcquirePropertyPlantAndEquipment` + AMZN `PaymentsToAcquireProductiveAssets`; aligned-quarter sum + YoY)**
 MSFT + GOOGL + META + AMZN trailing-twelve-month capex — $300B+ in 2025. Are they overinvesting (bubble) or under-investing for the demand they see? Quarterly tracking, single most important AI-thesis indicator.
 
 **134. NVDA Forward Revenue Guidance** — Signal: 8/10 | Free (NVDA earnings)
