@@ -1,9 +1,9 @@
 # WORKLOG
 
-**Last saved:** 2026-05-12 (Session 78 Wave 4 — 4 new indicators shipped via 4 new fetcher types; dashboard now 78 indicators live)
-**Status:** [signals/macro] Wave 4 of the 121-missing-indicator backlog implementation shipped: hyperscaler_capex (#133 signal 9, SEC EDGAR XBRL — MSFT+GOOGL+AMZN+META = $129.8B/qtr, +80% YoY, **L4**), treasury_net_issuance (#128 signal 8, fiscaldata debt_to_penny — +$349B/90d net issuance, **L2**), indeed_sw_dev_postings (#132 signal 8, hiring-lab GitHub CSV — index 72.2 vs Feb-2020=100, **L4**), baltic_dry (#96 signal 6, HandyBulk scrape — 2,978 points, **L1**). 4 new fetcher types added (`sec_hyperscaler_capex`, `debt_to_penny`, `indeed_postings`, `handybulk_bdi`); 2 more fetchers built but deferred (`farside_etf`, `bdc_nav`) — both blocked from Jinn's Tailscale egress (Farside = Cloudflare challenge; bdcinvestor = login wall) despite working from residential dev IPs. Dashboard now at **78 indicators live** (was 74). Wave 4 net: 4 SHIPPED, 4 DEFERRED (spot_etf_flows #110, bdc_discount_to_nav #39, tech_layoffs_cumulative #131, finra_margin_debt #69). Waves 5-6 still pending (~26 Tier-3 cards). [jinn/gmail] Gmail access for Jinn shipped via 2-min polling cron — Session 77 details below; remains stable.
+**Last saved:** 2026-05-12 (Session 78 — all 6 waves shipped; dashboard 49 → 114 tiles, spec coverage ~30% → ~60%)
+**Status:** Session 78 ran all 6 implementation waves of the 121-missing-indicator backlog autonomously. **Dashboard 49 → 114 tiles** (78 auto-scored + 36 Tier-3 reference cards). Spec coverage roughly doubled. Waves shipped: 1 (6 FRED drop-ins) + 2 (15 indicators via CBOE CDN + Treasury Fiscal Data fetchers + FRED OECD foreign-sovereigns + Stooq pivots after Stooq apikey wall) + 3 (9 indicators via DefiLlama, NY Fed Markets, OKX perp funding, mempool, CoinGecko global, plus 2 synthetic computes for BTC realized vol + BTC-SPX correlation) + 4 (4 indicators via SEC EDGAR XBRL hyperscaler capex + Treasury debt_to_penny + Indeed Hiring Lab CSV + HandyBulk BDI; 4 deferred to proxy-egress build) + Waves 5+6 (31 Tier-3 reference cards: 17 paid-only + 10 manual quarterly + 4 Wave 4 deferrals). Top new live readings: hyperscaler_capex L4 ($129.8B/qtr, +80% YoY = the AI-capex regime signal), stablecoin_supply L2 (+32% YoY), btc_perp_funding L1 (3.2%/yr), btc_dominance L1 (58.3%), umich_sentiment L5 (53.3 — recession-level consumer mood), srf_usage L1 (zero — Fed plumbing calm), btc_spx_correlation_30d L2 (+0.27 — BTC decoupling from SPX). Open follow-ups: proxy-egress build (unlocks spot_etf_flows signal 10/10 + 3 others), headless-Chrome scraper, EIA API-key registration. [jinn/gmail] Session 77 Gmail integration unchanged and stable.
 
-## Session 78 — Missing-Indicators Backlog Implementation [signals/macro] (LIVE — Wave 1 of 6 shipped)
+## Session 78 — Missing-Indicators Backlog Implementation [signals/macro] (LIVE — all 6 waves shipped)
 
 Plan: implement all 6 waves of the `Macro-Dashboard/design/MISSING-INDICATORS-BACKLOG.md` plan autonomously. Wave 1 = spec corrections + 6 FRED drop-ins. Waves 2-6 cover shared-infrastructure batches, new APIs, HTML scrapes, Tier-3 manual and paid reference cards.
 
@@ -141,9 +141,44 @@ Four indicators shipped via four new fetcher types. Two additional fetchers (`fa
 
 **Verification**: `node --check` clean on indicators.js + fetchers.js + runner.js (runner.js unchanged this wave); 13/13 velocity tests pass; 55/55 composite tests pass; deployed to Jinn (`indicators.js.2026-05-12-0154.bak`, `fetchers.js.2026-05-12-0154.bak`); pm2 restart applied for new dispatcher cases; runner full refresh succeeded — **78/78 indicators `ok=true`**. Dashboard count **74 → 78** (+4 net; 6 attempted, 2 deferred to proxy build).
 
-### Waves 5-6 (PENDING)
+### Waves 5+6 — Tier-3 Reference Cards (DONE — 31 cards added)
 
-Wave 5 = ~10 MANUAL Tier-3 reference cards (no data fetch — link to source pages). Wave 6 = ~16 paid Tier-3 reference cards. Carry-overs that need future infrastructure: `spot_etf_flows` + `bdc_discount_to_nav` (proxy egress build); `tech_layoffs_cumulative` + `finra_margin_debt` (headless-Chrome/JS-render build); `btc_mvrv` (compute-from-realized-cap fallback) + hashprice (compute-from-primitives pass).
+Reference cards are metadata-only entries (id, name, sourceLabel, sourceUrl, sourceLinkLabel, thresholds, explainer) — no fetcher, no auto-scoring. They surface at the bottom of the dashboard with click-out links to canonical sources for manual lookup on whatever natural cadence the data uses.
+
+**Wave 6 — Paid-only (17 cards):** ccp_margin_calls (#12), otr_ofr_spread (#26), swap_30y (#28 — FRED removed ICE swaps 2022), cdx_ig (#35), cdx_hy (#36), lsta_loan_index (#37), lcd_ccc_distress (#38), cmbs_bbb (#40), xccy_eur_usd_3m (#49), xccy_jpy_usd_3m (#50), em_sovereign_cds (#61), move_realtime (#65), cryptoquant_miner_reserves (#103), ism_manufacturing (#123 — FRED-purged 2016), ism_services (#124 — same), conference_board_lei (#125 — CB is paid; USSLIND is Philly Fed not CB), move_cvix_ratio (#163).
+
+**Wave 5 — MANUAL (10 cards, quarterly/irregular):** nvda_forward_revenue (#134), chatgpt_wau (#138), lvmh_revenue (#140), hermes_revenue (#141), sothebys_christies_totals (#143), livex_fine_wine_100 (#144), manhattan_apt_median (#145), private_jet_hours (#146), mastercard_spendingpulse (#147), hindenburg_omen (#160).
+
+**Wave 4 deferral cards (4 cards):** spot_etf_flows_manual (#110, signal 10 — fetcher works on residential, Cloudflare-blocked from Jinn datacenter IP), bdc_discount_manual (#39 — same issue with bdcinvestor login wall), tech_layoffs_manual (#131 — Airtable iframe), finra_margin_debt_manual (#69 — Cloudflare JS challenge). All four have working fetcher code retained in fetchers.js for when proxy-egress infrastructure ships.
+
+**Tier-3 total:** 5 (original) + 17 (paid) + 10 (manual) + 4 (Wave 4 deferrals) = **36 cards**.
+
+### Session 78 Final Totals
+
+**Dashboard tiles:** 49 at session start (44 active + 5 Tier-3) → **114 tiles** (78 active + 36 Tier-3).
+
+**Spec coverage** (of 163 original):
+- Auto-scored active: ~70 of 163 (was 42 — +28 via Waves 1-4)
+- Tier-3 reference cards: ~30 of 163 (was 5 — +25 via Waves 4-6)
+- **Addressable now: ~100 of 163 (~60%), vs ~30% at session start.**
+
+**New fetcher types added across Waves 2-4:** `cboe`, `fiscaldata`, `defillama_stablecoins`, `nyfed_repo`, `nyfed_pd`, `okx_funding`, `mempool_hashrate`, `coingecko_global`, `sec_hyperscaler_capex`, `debt_to_penny`, `indeed_postings`, `handybulk_bdi`, `farside_etf` (built but deferred), `bdc_nav` (built but deferred). Plus runner.js gained a `historyNeeded:true` flag so synthetic indicators can consume peer history (used by btc_realized_vol_30d and btc_spx_correlation_30d).
+
+**Surprises / spec corrections found in execution:**
+- Stooq apikey wall on bond + commodity tickers (Wave 2 — affected foreign sovereigns + precious metals; pivoted to FRED OECD)
+- FRED `WCESTUS1` (SPR) doesn't exist; EIA hosts but needs key (deferred)
+- Binance + Bybit perp APIs geo-blocked from Jinn IP — OKX works as substitute (Wave 3)
+- Glassnode free tier eliminated 2024-2025 (spec annotation now stale)
+- Farside, bdcinvestor, FINRA, layoffs.fyi all gate datacenter/Tailscale IPs — bare curl works from residential but not Jinn (Wave 4 → 4 deferred items)
+- CBOE Put/Call CSV stopped updating in 2019 (Wave 2 skipped)
+- SEC EDGAR XBRL `companyfacts` accepts descriptive UA — hyperscaler capex shipped (Wave 4)
+
+**Open follow-ups (not in scope for Session 78):**
+1. **Proxy-egress infrastructure** would unblock 4 deferred fetchers — biggest leverage: spot_etf_flows (signal 10).
+2. **Headless-Chrome scraper** for FINRA, layoffs.fyi, ChinaBond — moderate cost, unlocks ~4-6 more.
+3. **EIA API-key registration** unblocks #80 crack spreads, #81 SPR, #82 OPEC spare.
+4. **`btc_mvrv` from realized cap** — vendor-independent compute approach.
+5. **`hashprice` from primitives** — compute-only proxy without HashrateIndex paid tier.
 
 ---
 
