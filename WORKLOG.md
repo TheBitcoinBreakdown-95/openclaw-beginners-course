@@ -1,7 +1,52 @@
 # WORKLOG
 
-**Last saved:** 2026-05-10 (Session 76 complete — autonomous Phase-0 calibration audit, all 15 indicators reviewed, zero threshold changes)
-**Status:** Macro Stress Dashboard at **44 indicators live** on Jinn. Session 76 complete (autonomous Phase-0 calibration audit, three phases): all 15 in-scope indicators (13 primitives + 2 synthetics) reviewed against empirical 2024-2026 distribution under the Meaningful Drift Policy. **Zero threshold changes** — every Session-75 intuition-derived threshold aligns with the regime it was designed for. Calibration debt cleared. indicators.js comment lines swapped from "calibration debt: TODO" to references to the new audit doc; `Macro-Dashboard/design/THRESHOLD-AUDIT.md` appended with two new sections (primitives + synthetics) carrying full per-indicator empirical anchors + verdicts; `audits/peer_spread_summary.json` and `audits/synthetic_summary.json` added; `Macro-Dashboard/tooling/synthetic_audit.py` added (reusable for future synthetic indicators). Live /api/macro returns unchanged levels for all 15 (effr L2, tbill_3m L1, ccc_hy_oas L3, em_corp_oas L1, bank_deposits L1, mortgage_30y L1, us30y L3, real_yield_30y L4, cpi_yoy L3, core_cpi_yoy L2, building_permits L2, brent L4, natgas L1, fed_net_liquidity L2, gold_btc_ratio L1).
+**Last saved:** 2026-05-12 (Session 77 — Gmail integration via gog + polling pipeline live on Jinn)
+**Status:** Gmail access for Jinn shipped tonight via 2-min polling cron — pivoted from Pub/Sub push (blocked by two freedomlab.nyc org policies). gc@freedomlab.nyc authorized at `gmail.modify` scope (read + drafts, no send). End-to-end verified — gog search → /hooks/gmail (200 OK) → agent run queued. Telegram outbound delivery to user still broken on OpenClaw 2026.5.2 (separate pre-existing bug; summaries queue in `~/.openclaw/delivery-queue/failed/`). Full setup doc at `Activation/GMAIL-SETUP-2026-05-12.md`. Macro Dashboard remains at 44 indicators live (Session 76 work unchanged).
+
+## Session 77 — Gmail Integration for Jinn [jinn/gmail] (LIVE — polling pipeline shipped, Telegram delivery still broken upstream)
+
+Plan: progressive enablement of Gmail/Calendar/Contacts for gc@freedomlab.nyc dedicated bot account. Get Phase 1 working (read + drafts) tonight, defer send/calendar/contacts to later sessions per safety progression.
+
+### What shipped
+- gc@freedomlab.nyc Google Workspace account set up as Jinn-only mailbox with 2FA (authenticator app, not SMS)
+- GCP project `jinn-gmail` (number 157619683458) created with OAuth client + APIs enabled (Gmail + Pub/Sub)
+- `gog` v0.16.0 and Google Cloud SDK 567.0.0 installed to user-local paths on Jinn (no sudo)
+- gog authed for `gmail.modify` + `gmail.settings.basic/sharing` (NOT `gmail.send`) — drafts work, send blocked at scope level
+- gcloud authed via Python pty-wrapper daemon (PKCE flow across multiple SSH calls)
+- File-based encrypted keyring for gog (D-Bus secret-service unreachable on headless Jinn) — env vars persisted via `~/.gog-env` sourced from `.bashrc` top + `.profile` tail
+- OpenClaw hooks block enabled in `~/.openclaw/openclaw.json` with templated `sessionKey: hook:gmail:{{messages[0].id}}` for per-email dedup
+- Polling cron `*/2 * * * * /home/openclaw/bin/gmail-poll.sh` — replaces blocked Pub/Sub push
+- Three scripts staged in repo: `.jin-staging/{gmail-poll.py,gmail-poll.sh,update_openclaw_hooks.py}` (canonical sources)
+- IRC updated with 10 new entries (5 secrets, 2 accounts, 3 access perms + 1 informational blocker)
+- Full setup doc at `Activation/GMAIL-SETUP-2026-05-12.md` (architecture, decisions, smoke tests, recovery procedures, admin email)
+- Committed at `ca2312a` (local only, not pushed)
+
+### What got blocked / deferred
+- Pub/Sub push: blocked by `iam.disableServiceAccountKeyCreation` and `iam.allowedPolicyMemberDomains` (freedomlab.nyc Workspace Secure-by-Default policies). Admin email drafted (Appendix A of setup doc). Polling is the polite workaround.
+- Telegram outbound delivery: broken pre-existing on OpenClaw 2026.5.2 — `loadChannelOutboundAdapter("telegram")` returns null at `deliver.ts:124`. Failed agent summaries land in `delivery-queue/failed/`. Workaround sketched in setup doc Appendix B (direct Telegram Bot API curl from cron, bypassing OpenClaw delivery layer).
+- Gmail send scope: explicit decision deferred. User chose `full + --gmail-no-send` middle ground earlier in session, then accepted the safer scope-level limit (`gmail.modify`).
+- Calendar + Contacts scopes: one `gog auth add` re-run away; deferred to next session.
+
+### Decisions captured
+- **Full compartmentalization** between Jinn and GC's personal Google data. Personal calendar NOT shared with Jinn. Jinn books on its own gc@freedomlab.nyc calendar and CCs personal email for invites.
+- **Polling over push** given org policy block — 1-2 min latency acceptable for personal AI assistant; structurally simpler (no Pub/Sub, IAM, Tailscale Funnel push subscription).
+- **`hooks.allowRequestSessionKey=true` accepted** as bounded risk — token-gated, 127.0.0.1-only, prefix-whitelisted (`hook:`, `hook:gmail:`).
+
+### Surprises / Patterns Named
+- **Headless-keyring state coupling** — gog stores OAuth flow state in the same keyring as the refresh token. Step 1 of multi-step auth needs the keyring env too.
+- **Org-policy-blocked auth recipe** — Workspaces auto-apply Secure-by-Default policies that break the standard "service account JSON key" tutorial pattern.
+- **PKCE single-process requirement** — OAuth code_verifier must live in the same process across "click URL → paste code." Solution: Python pty.fork daemon that survives SSH disconnect.
+- **pkill-self foot-gun** — `pkill -f gcloud` matches the parent bash command line containing "gcloud" → self-kills → SSH exit 255.
+
+### Open Follow-ups (next session, priority order)
+- **P0:** Telegram outbound bug fix OR build failed-queue → Telegram Bot API bypass cron (sketch in setup doc Appendix B)
+- **P1:** GC sends admin the org-policy-exception email (Appendix A) — when granted, migrate polling → Pub/Sub push
+- **P2:** Add Calendar + Contacts scopes via one `gog auth add` re-run (single browser click)
+- **P3:** Phase 4 — enable send scope; decide scope-level (`mail.google.com`) vs flag-level (`gmail.send` + remove `--gmail-no-send`); add recipient allowlist before turning on
+
+---
+
+## Session 76 — Phase 0 Calibration Audit [signals/macro] (LIVE — three phases shipped, zero threshold changes)
 
 ## Session 76 — Phase 0 Calibration Audit [signals/macro] (LIVE — three phases shipped, zero threshold changes)
 
