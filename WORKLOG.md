@@ -1,7 +1,7 @@
 # WORKLOG
 
-**Last saved:** 2026-05-12 (Session 78 Wave 1 — 6 FRED drop-in indicators shipped; macro dashboard now 50 indicators live)
-**Status:** Two recent workstreams. [signals/macro] Wave 1 of the 121-missing-indicator backlog implementation shipped: cre_loans, consumer_loans, jolts_quits, umich_sentiment, retail_sales_control, fed_interest_expense — all FRED-direct, no new fetcher needed. Spec corrections applied to INDICATORS.md (7 fixes: wrong FRED IDs, stale cadence, FRED-purged ISM, Glassnode tier stale). Dashboard now at **50 indicators live** (was 44). Live levels: cre_loans L2 (+2.4% YoY), consumer_loans L2 (+3.5%), jolts_quits L3 (2.0%), umich_sentiment L5 (53.3 — recession-level), retail_sales_control L1 (+5.5%), fed_interest_expense L3 ($1.22T, +6.5% YoY). Waves 2-6 of the implementation plan still pending (~70 more indicators to add via shared infrastructure batches, new APIs, scrapes, plus ~26 Tier-3 reference cards). [jinn/gmail] Gmail access for Jinn shipped via 2-min polling cron — Session 77 details below; remains stable.
+**Last saved:** 2026-05-12 (Session 78 Wave 2 — 15 new indicators shipped via 2 new fetchers; dashboard now 65 indicators live)
+**Status:** [signals/macro] Wave 2 of the 121-missing-indicator backlog implementation shipped: CBOE CDN family (vix9d, vix3m, vix9d_vix_ratio, vix_vix3m_ratio, skew), FRED-OECD foreign sovereign yields (jgb_10y, bund_10y, gilt_10y, oat_10y, italy_btp_10y) + synthetic spreads (btp_bund_spread, oat_bund_spread), Treasury Fiscal Data auctions (auction_bid_to_cover, auction_indirect_bidder, auction_primary_dealer). 2 new fetcher types added (`cboe`, `fiscaldata`). Dashboard now at **65 indicators live** (was 50). Skipped with reason: equity_pc_ratio (CBOE static CSV stale since 2020); silver/platinum/palladium (Stooq apikey wall + not on FRED + tokenized proxies untrustworthy); spr (FRED WCESTUS1 doesn't exist, EIA needs key per spec); china_cgb_10y (FRED OECD lacks China); treasury_net_issuance (different endpoint, deferred). Waves 3-6 still pending (~55 more indicators + ~26 Tier-3 cards). [jinn/gmail] Gmail access for Jinn shipped via 2-min polling cron — Session 77 details below; remains stable.
 
 ## Session 78 — Missing-Indicators Backlog Implementation [signals/macro] (LIVE — Wave 1 of 6 shipped)
 
@@ -30,9 +30,51 @@ Plan: implement all 6 waves of the `Macro-Dashboard/design/MISSING-INDICATORS-BA
 
 **Verification:** `node --check` clean, 13/13 velocity tests pass, 55/55 composite tests pass; deployed to Jinn (backup `indicators.js.2026-05-12-0030.bak`); runner refreshed; /api/macro returns ok=true for all 6 new indicators with expected levels. Dashboard count 44 → 50.
 
-### Waves 2-6 (PENDING)
+### Wave 2 — Shared-Infrastructure Batches (DONE)
 
-Per backlog file. Wave 2 = 5 shared-infrastructure batches (Treasury Fiscal Data, CBOE CDN, Stooq sovereigns, Stooq commodities, EIA API). Wave 3 = new single-purpose APIs (DefiLlama, NY Fed Markets, CCXT, mempool, HashrateIndex, SEC EDGAR). Wave 4 = HTML scrapes (Farside, BDC, LME, BDI, SCFI, Layoffs, Indeed, FINRA). Wave 5 = ~10 MANUAL Tier-3 cards. Wave 6 = ~16 paid Tier-3 cards.
+Five sub-batches attempted; **15 indicators shipped, 9 indicators skipped with documented reasons**.
+
+**New fetchers added (`fetchers.js`)**:
+- **`cboe`** — fetches from `cdn.cboe.com` CSV with two URL templates (`index` for VIX-family, `pc` for put/call ratios with 2-line preamble). MM/DD/YYYY date normalization to ISO. CloudFront-cached, no auth, no rate-limit.
+- **`fiscaldata`** — fetches from `api.fiscaldata.treasury.gov/services/api/fiscal_service/v1/accounting/od/auctions_query` and returns rolling N-week mean of a per-auction statistic (`bid_to_cover` / `indirect_pct` / `primary_dealer_pct`). Keyless. Requires `--globoff` curl flag for `page[size]=` and `filter:gte:` syntax — added globally to `getText`.
+
+**Sub-batch 2A — CBOE CDN vol family (SHIPPED 5 of 4 spec items)**:
+- `vix9d` (CBOE VIX9D, Tier 2 weight 5): 16.89, L2. Standalone 9-day implied vol.
+- `vix3m` (CBOE VIX3M aka VXV, Tier 2 weight 5): 21.24, L3.
+- `vix9d_vix_ratio` (synthetic, weight 6, #63 signal 8): 0.983 (contango 1.7% steep), L2. Backwardation gauge.
+- `vix_vix3m_ratio` (synthetic, weight 6, #64 signal 7): 0.809 (contango 19% steep), L1. The canonical Goldman term-structure-inversion gauge.
+- `skew` (CBOE SKEW, Tier 2 weight 6, #67 signal 7): 140.2, L3. Replaces the 2026-05-10 failed Yahoo path.
+- **SKIPPED `equity_pc_ratio` (#68)** — CBOE static `equitypc.csv` and `totalpc.csv` are stale (Last-Modified 2020-10-30, data ends 2019-10-04). Current CBOE moved P/C ratios to dynamic API; no free CSV path. Research file overstated freshness.
+
+**Sub-batch 2B — Foreign sovereign 10Y yields (SHIPPED 7 of 8 spec items, via FRED-OECD fallback)**:
+- Stooq's bond tickers (10jpy.b, 10dey.b, etc.) now require an apikey (verified 2026-05-12 — all 6 tickers return apikey-registration page). Substituted FRED's OECD `IRLTLT01{ISO}M156N` monthly series. Tradeoff: monthly instead of daily, ~6w lag, but free + stable.
+- `jgb_10y` (FRED IRLTLT01JPM156N, Tier 2 weight 8, #54 signal 10): 2.35%, L4. JGB climbed 1.6→2.3% across 8 months — genuine yen-carry-unwind pressure registering.
+- `bund_10y` (FRED IRLTLT01DEM156N, Tier 2 weight 6): 2.91%, L3.
+- `gilt_10y` (FRED IRLTLT01GBM156N, Tier 2 weight 7, #56 signal 9): 4.70%, L4 (Truss-zone adjacent).
+- `oat_10y` (FRED IRLTLT01FRM156N, Tier 2 weight 5): 3.40%, L3.
+- `italy_btp_10y` (FRED IRLTLT01ITM156N, Tier 2 weight 6, #59): 3.39%, L2.
+- `btp_bund_spread` (synthetic, weight 8, #57 signal 8): 0.48pp, L1. Eurozone fragmentation gauge.
+- `oat_bund_spread` (synthetic, weight 9, #58 signal 9): 0.49pp, L2. France-Germany spread.
+- **SKIPPED `china_cgb_10y` (#60)** — FRED OECD does not include China. ChinaBond official portal needs headless Chrome (Wave 3 territory).
+
+**Sub-batch 2C — Stooq precious metals (SKIPPED 3 of 3)**:
+- Stooq apikey wall blocks `si.f`, `pl.f`, `pa.f`. FRED carries gold and aluminum (`PALUMUSDM`) but NOT silver/platinum/palladium (verified — all FRED IDs return HTML 404 wrapper). CoinGecko tokenized proxies (Kinesis Silver KAG, Matrixdock Silver) trade at sustained $85+/oz premium vs spot ~$32/oz — unreliable. No reliable free path identified; deferred indefinitely with note.
+
+**Sub-batch 2D — SPR Inventory (SKIPPED 1 of 1)**:
+- Spec called for FRED `WCESTUS1`. Verified series does not exist on FRED — only EIA hosts WCSSTUS1 via XLS or API v2 (requires registration). Per task spec, skipping until Wave 3 EIA-API-key workstream.
+
+**Sub-batch 2E — Treasury Fiscal Data auctions (SHIPPED 3 of 4 spec items)**:
+- Endpoint `v1/accounting/od/auctions_query` works keyless; 109 auctions in last 12 weeks.
+- `auction_bid_to_cover` (Tier 2 weight 8, #21 signal 8): 2.88x mean, L1.
+- `auction_indirect_bidder` (Tier 2 weight 8, #22 signal 8): 56.3% mean, L4.
+- `auction_primary_dealer` (Tier 2 weight 7, #23 signal 7): 27.2% mean, L4.
+- **SKIPPED `treasury_net_issuance` (#128)** — different endpoint pattern (debt_to_penny + per-security aggregation), more complex; deferred to Wave 3.
+
+**Verification**: `node --check` clean on both files; 13/13 velocity tests pass; 55/55 composite tests pass; deployed to Jinn (backups `indicators.js.2026-05-12-0053.bak`, `fetchers.js.2026-05-12-0053.bak`); pm2 restart applied (new fetcher dispatcher case requires restart); runner full refresh succeeded; `/api/macro` returns `ok=true` for all 15 new indicators plus all 50 pre-existing. Total dashboard indicator count **50 → 65** (+15).
+
+### Waves 3-6 (PENDING)
+
+Wave 3 (deferred items from Wave 2 sub-batches + originally-planned): China CGB 10Y, SPR via EIA API, treasury_net_issuance, plus DefiLlama, NY Fed Markets API, CCXT, mempool.space, HashrateIndex, SEC EDGAR. Wave 4 = HTML scrapes. Wave 5 = ~10 MANUAL Tier-3 cards. Wave 6 = ~16 paid Tier-3 cards.
 
 ---
 
