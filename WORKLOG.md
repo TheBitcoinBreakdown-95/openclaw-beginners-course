@@ -1,7 +1,40 @@
 # WORKLOG
 
-**Last saved:** 2026-05-12 (Session 77 — Gmail integration via gog + polling pipeline live on Jinn)
-**Status:** Gmail access for Jinn shipped tonight via 2-min polling cron — pivoted from Pub/Sub push (blocked by two freedomlab.nyc org policies). gc@freedomlab.nyc authorized at `gmail.modify` scope (read + drafts, no send). End-to-end verified — gog search → /hooks/gmail (200 OK) → agent run queued. Telegram outbound delivery to user still broken on OpenClaw 2026.5.2 (separate pre-existing bug; summaries queue in `~/.openclaw/delivery-queue/failed/`). Full setup doc at `Activation/GMAIL-SETUP-2026-05-12.md`. Macro Dashboard remains at 44 indicators live (Session 76 work unchanged).
+**Last saved:** 2026-05-12 (Session 78 Wave 1 — 6 FRED drop-in indicators shipped; macro dashboard now 50 indicators live)
+**Status:** Two recent workstreams. [signals/macro] Wave 1 of the 121-missing-indicator backlog implementation shipped: cre_loans, consumer_loans, jolts_quits, umich_sentiment, retail_sales_control, fed_interest_expense — all FRED-direct, no new fetcher needed. Spec corrections applied to INDICATORS.md (7 fixes: wrong FRED IDs, stale cadence, FRED-purged ISM, Glassnode tier stale). Dashboard now at **50 indicators live** (was 44). Live levels: cre_loans L2 (+2.4% YoY), consumer_loans L2 (+3.5%), jolts_quits L3 (2.0%), umich_sentiment L5 (53.3 — recession-level), retail_sales_control L1 (+5.5%), fed_interest_expense L3 ($1.22T, +6.5% YoY). Waves 2-6 of the implementation plan still pending (~70 more indicators to add via shared infrastructure batches, new APIs, scrapes, plus ~26 Tier-3 reference cards). [jinn/gmail] Gmail access for Jinn shipped via 2-min polling cron — Session 77 details below; remains stable.
+
+## Session 78 — Missing-Indicators Backlog Implementation [signals/macro] (LIVE — Wave 1 of 6 shipped)
+
+Plan: implement all 6 waves of the `Macro-Dashboard/design/MISSING-INDICATORS-BACKLOG.md` plan autonomously. Wave 1 = spec corrections + 6 FRED drop-ins. Waves 2-6 cover shared-infrastructure batches, new APIs, HTML scrapes, Tier-3 manual and paid reference cards.
+
+### Wave 1 — Spec Corrections + 6 FRED Drop-Ins (DONE)
+
+**Indicators added** (all via existing FRED fetcher, no new infrastructure):
+- **#113 `cre_loans`** (FRED CREACBM027SBOG, Tier 1, weight 7): H.8 Commercial Real Estate loans. YoY scoring: L1 >+3% / L3 -3 to 0 / L5 <-8%. Live: $3.08T, +2.4% YoY, L2.
+- **#114 `consumer_loans`** (FRED CONSUMER, Tier 2, weight 6): H.8 consumer credit. YoY: L1 >+5% / L3 0-2 / L5 <-3%. Live: $1.89T, +3.5% YoY, L2.
+- **#122 `jolts_quits`** (FRED JTSQUR, Tier 1, weight 7): voluntary departures rate. Level: L1 >=2.8% / L3 2.0-2.4 / L5 <1.7% + 3m delta kick. Live: 2.0%, L3.
+- **#126 `umich_sentiment`** (FRED UMCSENT, Tier 2, weight 5): UMich consumer sentiment. Level: L1 >=85 / L3 65-75 / L5 <55 + 3m delta -10pt kick. Live: 53.3, L5 (recession-level — confirms current consumer mood is at 2008/2022-trough territory).
+- **#127 `retail_sales_control`** (FRED RSFSXMV, Tier 2, weight 6): retail sales control group (GDP-clean). YoY: L1 >+4% / L3 -2 to +1 / L5 <-5%. Live: $612B, +5.5% YoY, L1.
+- **#129 `fed_interest_expense`** (FRED A091RC1Q027SBEA, Tier 2, weight 7): federal interest expense quarterly SAAR. Level: L1 <$800B / L3 $1000-1300B / L5 >=$1600B + YoY accel kick. Live: $1.22T, +6.5% YoY, L3.
+
+**Mid-wave bug caught + fixed:** fed_interest_expense initially showed raw=1218.938, level=L1, meta="$1B" because the format `divisor:1000` was applied while computeLevel also divided `v / 1000`. Result: scoring path saw v=1.22 (instead of 1219), scored L1. Fixed by removing internal divide; thresholds now read v in $billions directly. Re-deployed, re-verified L3.
+
+**Spec corrections applied to `Macro-Dashboard/design/INDICATORS.md`**:
+- #113 FRED ID: `RREACBM027SBOG` → `CREACBM027SBOG` (spec had residential code by mistake; CRE is the correct one)
+- #117 cadence: "weekly" → "quarterly" (FHLB Office of Finance reports quarterly, not weekly)
+- #123/#124 FRED-purged note: FRED removed ISM series in 2016 after license change; no free path via FRED, move to Tier-3 reference card
+- #125 source clarification: `USSLIND` is Philly Fed State Leading Index, NOT the Conference Board LEI; Conference Board is paid
+- #127 FRED ID: corrected to `RSFSXMV` (the control-group series)
+- #28 added: "FRED removed ICE swap rates 2022-01-31" — no clean free path exists for 30Y Swap Spread
+- #104 Glassnode tier note: spec annotation "Glassnode free" is stale; Glassnode has no meaningful free tier as of 2024-2025
+
+**Verification:** `node --check` clean, 13/13 velocity tests pass, 55/55 composite tests pass; deployed to Jinn (backup `indicators.js.2026-05-12-0030.bak`); runner refreshed; /api/macro returns ok=true for all 6 new indicators with expected levels. Dashboard count 44 → 50.
+
+### Waves 2-6 (PENDING)
+
+Per backlog file. Wave 2 = 5 shared-infrastructure batches (Treasury Fiscal Data, CBOE CDN, Stooq sovereigns, Stooq commodities, EIA API). Wave 3 = new single-purpose APIs (DefiLlama, NY Fed Markets, CCXT, mempool, HashrateIndex, SEC EDGAR). Wave 4 = HTML scrapes (Farside, BDC, LME, BDI, SCFI, Layoffs, Indeed, FINRA). Wave 5 = ~10 MANUAL Tier-3 cards. Wave 6 = ~16 paid Tier-3 cards.
+
+---
 
 ## Session 77 — Gmail Integration for Jinn [jinn/gmail] (LIVE — polling pipeline shipped, Telegram delivery still broken upstream)
 

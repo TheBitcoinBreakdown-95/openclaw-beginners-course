@@ -98,8 +98,8 @@ Yield gap between newest and seasoned Treasuries — widens when liquidity dries
 **27. 10Y Swap Spread** — Signal: 9/10 | Paid (Bloomberg)
 The 10Y interest rate swap rate minus the 10Y Treasury yield — negative and widening signals dealer balance sheets are full and Treasuries are being avoided. The single most-overlooked stress signal in retail tracking. Worth manual monthly check.
 
-**28. 30Y Swap Spread** — Signal: 7/10 | Paid (Bloomberg)
-The long-end version — has been structurally negative since SLR rules changed. Direction matters more than level. Lower priority than 10Y.
+**28. 30Y Swap Spread** — Signal: 7/10 | Paid (Bloomberg) — **NO FREE PATH** (FRED removed ICE swap rates 2022-01-31)
+The long-end version — has been structurally negative since SLR rules changed. Direction matters more than level. Lower priority than 10Y. Free path is genuinely closed: FRED hosted ICE swap rates until 2022-01-31 then dropped them; no other free source maintains daily settlements.
 
 **29. 5Y Breakeven** — Signal: 7/10 | Free (FRED `T5YIE`)
 Market-implied 5-year inflation from TIPS spreads. Above 2.75% or below 1.5% signals expectations un-anchoring. The Fed watches this carefully.
@@ -361,7 +361,7 @@ Daily revenue per PH/s — miner profitability gauge. Below $0.04 is capitulatio
 **103. Miner Reserves** — Signal: 7/10 | Free (CryptoQuant free tier)
 BTC held in mining pool wallets — falling fast = miners selling pressure. Pre-halving and post-halving dynamics matter. Useful for swing context.
 
-**104. Exchange BTC Reserves** — Signal: 8/10 | Free (CryptoQuant, Glassnode free)
+**104. Exchange BTC Reserves** — Signal: 8/10 | Free-via-proxy (CryptoQuant free tier limited; Glassnode has no free tier as of 2024-2025 — spec annotation stale; use BitMEX BTC reserves + Binance public Proof-of-Reserves snapshots as substitute)
 Coins on exchange wallets — falling means HODL conviction (bullish), rising means sell intent (bearish). One of the most useful flow signals available free.
 
 **105. Stablecoin Supply (USDT+USDC)** — Signal: 9/10 | Free (DefiLlama)
@@ -392,11 +392,11 @@ Ethereum vs Bitcoin — rising = altseason / risk-on within crypto. Cycle-stage 
 **112. H.8 C&I Loans (YoY)** — Signal: 8/10 | Free (FRED `BUSLOANS`)
 Commercial and industrial bank lending to businesses — credit creation gauge. Below 0% YoY is recession-adjacent; banks aren't lending. Weekly data, important leading signal.
 
-**113. H.8 CRE Loans** — Signal: 7/10 | Free (FRED `RREACBM027SBOG`)
-Commercial real estate loans on bank books — office unwind happening in slow motion. Watch the YoY trend; rapid declines mean banks are taking writedowns.
+**113. H.8 CRE Loans** — Signal: 7/10 | Free (FRED `CREACBM027SBOG`) — **SHIPPED 2026-05-12 as `cre_loans`**
+Commercial real estate loans on bank books — office unwind happening in slow motion. Watch the YoY trend; rapid declines mean banks are taking writedowns. Spec ID was originally `RREACBM027SBOG` (residential); corrected to `CREACBM027SBOG` (commercial) during Wave 1 verification. Wired as Tier 1, weight 7, YoY-based scoring: L1 >+3% · L3 -3 to 0 · L5 <-8%.
 
-**114. H.8 Consumer Loans** — Signal: 6/10 | Free (FRED `CONSUMER`)
-Cards, auto, household lending — stress at the consumer level. Slowing growth signals tapped-out consumer. Confirming rather than leading.
+**114. H.8 Consumer Loans** — Signal: 6/10 | Free (FRED `CONSUMER`) — **SHIPPED 2026-05-12 as `consumer_loans`**
+Cards, auto, household lending — stress at the consumer level. Slowing growth signals tapped-out consumer. Confirming rather than leading. Wired as Tier 2, weight 6, YoY-based scoring: L1 >+5% · L3 0-2 · L5 <-3%.
 
 **115. Commercial Bank Deposits** — Signal: 8/10 | Free (FRED `DPSACBW027SBOG`) — **SHIPPED 2026-05-10 as `bank_deposits`**
 System-wide deposits — deposit flight precedes bank failures (SVB lost $42B in a day). Track the trend; sudden drops at smaller banks are huge red flags. Weekly data. Wired as Tier 1, weight 8, scoring on YoY change (canonical SVB signal): L1 YoY >+5% · L3 0-2% · L5 <-2%, with 12w delta kick of -$200B → +1. Currently $19.1T at +healthy YoY growth → L1.
@@ -404,8 +404,8 @@ System-wide deposits — deposit flight precedes bank failures (SVB lost $42B in
 **116. Money Market Fund AUM** — Signal: 6/10 | Free (ICI weekly)
 Cash sitting in money market funds — $7T+ in 2025 is "stored capital" earning 5%. Deployment back into risk assets requires a Fed cut. Confirming context, not leading.
 
-**117. FHLB Advances Outstanding** — Signal: 8/10 | Free (FHFA quarterly, Office of Finance weekly)
-Banks borrowing from Federal Home Loan Banks — a pre-failure tell (SVB had $30B from FHLB). Spikes in regional bank borrowing precede stress. Niche but powerful signal.
+**117. FHLB Advances Outstanding** — Signal: 8/10 | Free (FHLB Office of Finance, **quarterly**)
+Banks borrowing from Federal Home Loan Banks — a pre-failure tell (SVB had $30B from FHLB). Spikes in regional bank borrowing precede stress. Niche but powerful signal. Cadence correction (2026-05-12 research): spec originally said weekly; Office of Finance reports are filed quarterly via combined financial reports, not weekly. Daily-ish path requires aggregating from individual FHLB bank financial reports.
 
 **118. KBW Regional Bank Index (KRX)** — Signal: 7/10 | Free (NASDAQ)
 Regional bank equity index — direct continuity of SVB-era stress. Tracks the smaller-bank fragility story. Underperformance vs large banks is the regime signal.
@@ -423,29 +423,29 @@ Regional vs large banks ratio — below 0.5 is regional crisis territory. Tells 
 **121. Continuing Claims** — Signal: 7/10 | Free (FRED `CCSA`)
 Total people receiving unemployment — measures persistence. Rising while initial claims stay flat means people aren't getting rehired. Companion to jobless claims.
 
-**122. JOLTS Quits Rate** — Signal: 7/10 | Free (FRED `JTSQUR`)
-Workers voluntarily leaving jobs — high quits = confidence (Great Resignation), below 2.0% = labor slack. Workers know the labor market better than economists.
+**122. JOLTS Quits Rate** — Signal: 7/10 | Free (FRED `JTSQUR`) — **SHIPPED 2026-05-12 as `jolts_quits`**
+Workers voluntarily leaving jobs — high quits = confidence (Great Resignation), below 2.0% = labor slack. Workers know the labor market better than economists. Wired as Tier 1, weight 7, level-based scoring: L1 >=2.8% · L3 2.0-2.4 · L5 <1.7% · 3m delta kick for low-zone deterioration.
 
-**123. ISM Manufacturing PMI** — Signal: 8/10 | Free (ISM)
-Survey of mfg purchasing managers — below 50 is contraction, below 45 is recession. Old-school but reliable. Manufacturing is small share of GDP but big share of cyclicality.
+**123. ISM Manufacturing PMI** — Signal: 8/10 | Paid (ISM direct) — **NO FREE PATH VIA FRED**
+Survey of mfg purchasing managers — below 50 is contraction, below 45 is recession. Old-school but reliable. Manufacturing is small share of GDP but big share of cyclicality. Spec correction (2026-05-12 research): FRED purged ISM series in 2016 after a license change. Free path requires direct ISM subscription, regional-Fed-PMI composite proxy (Empire, Philly, KC, Dallas, Richmond), or HTML scrape of ism.org press release. Move to Tier 3 (manual reference card with regional-Fed proxy panel).
 
-**124. ISM Services PMI** — Signal: 8/10 | Free (ISM)
-Services PMI — services are 70% of GDP, so this matters more for actual recession. Below 50 sustained is the confirmation signal.
+**124. ISM Services PMI** — Signal: 8/10 | Paid (ISM direct) — **NO FREE PATH VIA FRED**
+Services PMI — services are 70% of GDP, so this matters more for actual recession. Below 50 sustained is the confirmation signal. Same FRED-purge constraint as #123; no clean free path. Tier 3 reference card.
 
-**125. Conference Board LEI** — Signal: 6/10 | Free (Conference Board)
-Composite leading index of 10 indicators — 6-month annualized below -3% is recession-predictive. Has cried wolf the past two years; credibility currently shaken. Worth watching but not over-weighting.
+**125. Conference Board LEI** — Signal: 6/10 | Paid (Conference Board direct) — **NO FREE PATH**
+Composite leading index of 10 indicators — 6-month annualized below -3% is recession-predictive. Has cried wolf the past two years; credibility currently shaken. Worth watching but not over-weighting. Spec correction (2026-05-12 research): FRED `USSLIND` is Philly Fed State Leading Index, NOT the Conference Board LEI; the two are distinct. Conference Board LEI is paid. Tier 3 reference card, or substitute with Philly Fed USSLIND under a separate spec entry.
 
-**126. U-Mich Consumer Sentiment** — Signal: 5/10 | Free (FRED `UMCSENT`)
-Household mood survey — below 70 signals stress. Politically polarized post-2020 (people answer based on which party is in power), reducing reliability. Use as confirming signal.
+**126. U-Mich Consumer Sentiment** — Signal: 5/10 | Free (FRED `UMCSENT`) — **SHIPPED 2026-05-12 as `umich_sentiment`**
+Household mood survey — below 70 signals stress. Politically polarized post-2020 (people answer based on which party is in power), reducing reliability. Use as confirming signal. Wired as Tier 2, weight 5, level scoring: L1 >=85 · L3 65-75 · L5 <55 · 3m delta -10pt kick.
 
-**127. Retail Sales Control Group** — Signal: 6/10 | Free (FRED, variant of `RSXFS`)
-Core consumer spending excluding volatile categories — feeds GDP nowcasts directly. Monthly data with revision risk. Confirming spending strength or weakness.
+**127. Retail Sales Control Group** — Signal: 6/10 | Free (FRED `RSFSXMV`) — **SHIPPED 2026-05-12 as `retail_sales_control`**
+Core consumer spending excluding volatile categories — feeds GDP nowcasts directly. Monthly data with revision risk. Confirming spending strength or weakness. Spec ID correction (2026-05-12 research): correct series is `RSFSXMV` (Retail Sales: Total minus Food Services, Auto Dealers, Building Materials, Gasoline Stations), not the generic `RSXFS` variant the spec originally implied. Wired as Tier 2, weight 6, YoY-based: L1 >+4% · L3 -2 to +1 · L5 <-5%.
 
 **128. Treasury Net Issuance** — Signal: 8/10 | Free (TBAC refunding)
 Quarterly Treasury borrowing plans — Q1 2024 and Q4 2024 surges drained liquidity from markets. Watch the Quarterly Refunding Announcement (QRA). Bessent's bills-vs-bonds choice matters.
 
-**129. Federal Interest Expense (TTM)** — Signal: 7/10 | Free (FRED `A091RC1Q027SBEA`)
-Trailing-twelve-month federal debt service — above $1.2T sparks "fiscal dominance" conversations. Crowds out other spending. The slow-burn fiscal crisis indicator.
+**129. Federal Interest Expense (TTM)** — Signal: 7/10 | Free (FRED `A091RC1Q027SBEA`) — **SHIPPED 2026-05-12 as `fed_interest_expense`**
+Trailing-twelve-month federal debt service — above $1.2T sparks "fiscal dominance" conversations. Crowds out other spending. The slow-burn fiscal crisis indicator. Wired as Tier 2, weight 7, level-based with YoY kick: L1 <$800B · L3 $1000-1300B · L5 >=$1600B · +15% YoY in high zone → +1.
 
 **130. Deficit % GDP** — Signal: 7/10 | Free (CBO, Treasury Daily)
 Federal deficit as share of GDP — above 6% during expansion is abnormal. Pressure on Treasury issuance and yields. The structural fiscal trajectory signal.
