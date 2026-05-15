@@ -624,3 +624,40 @@ These were added during Session 75 (2026-05-10) to fill dimensional gaps the ori
 - **`building_permits` — Building Permits** (FRED `PERMIT`) — Tier 1, weight 7. Leading housing-activity indicator. Same dimensional gap as mortgage_30y. Live: 1363k, L2.
 - **`cpi_yoy` — CPI YoY** (FRED `CPIAUCSL` via yoyPct primitive) — Tier 1, weight 7. Realized headline inflation. The original spec covered forward expectations (5y5y inflation, breakevens) but not realized prints.
 - **`core_cpi_yoy` — Core CPI YoY** (FRED `CPILFESL` via yoyPct) — Tier 1, weight 7. Core inflation, the cleaner Fed-target signal.
+
+---
+
+## Pocket Mapping (Session 78 Wave 7 — OWA Headline Aggregator)
+
+The 16 spec sections above map to 16 aggregation pockets used by the top-3 weighted OWA headline. Each active indicator (Tier 1 + Tier 2, 76 total) belongs to exactly one pocket. Tier-3 reference cards are excluded from aggregation — they don't ship a numeric level. Section 10 is renamed "Bitcoin" in the aggregator (no non-BTC bundled).
+
+**Excluded from aggregation:**
+- `stablecoin_supply` — by design. It's a digital-money-expansion signal, not a macro-stress signal. Still displayed as a tile.
+- `sp500` — reference series for the BTC-SPX correlation compute, not a stress signal.
+
+| Pocket ID | Name | Active Indicators | Count |
+|---|---|---|---|
+| `funding_plumbing` | Funding Plumbing | sofr, effr, on_rrp, tga, walcl, bank_reserves, swap_lines, discount_window, fima_repo, srf_usage, fails_to_deliver, fed_net_liquidity | 12 |
+| `treasury` | Treasury Market | us10y, us2y, us30y, curve_2s10s, curve_3m10y, tbill_3m, real_yield_10y, real_yield_30y, breakeven_5y, breakeven_10y, 5y5y_inflation, auction_bid_to_cover, auction_indirect_bidder, auction_primary_dealer, treasury_net_issuance | 15 |
+| `credit` | Credit | hy_oas, ccc_hy_oas, ig_oas, em_corp_oas | 4 |
+| `fx` | FX & Imbalances | dxy, usdjpy | 2 |
+| `sovereign` | Sovereign | jgb_10y, bund_10y, gilt_10y, oat_10y, italy_btp_10y, btp_bund_spread, oat_bund_spread | 7 |
+| `equity_vol` | Equity Vol | vix, vix9d, vix3m, vix9d_vix_ratio, vix_vix3m_ratio, skew | 6 |
+| `energy` | Energy | wti, brent, natgas | 3 |
+| `metals` | Metals | copper, gold | 2 |
+| `agriculture` | Agriculture & Shipping | (empty — no soft-commodity feeds shipped; baltic_dry placed under creative_pro) | 0 |
+| `bitcoin` | Bitcoin | btc, btc_dominance, eth_btc, gold_btc_ratio, btc_perp_funding, hashrate_7dma, btc_realized_vol_30d, btc_spx_correlation_30d | 8 |
+| `banking` | Banking | bank_deposits, cre_loans, consumer_loans | 3 |
+| `real_economy` | Real Economy | jobless_claims, continuing_claims, ci_loans, jolts_quits, umich_sentiment, retail_sales_control, fed_interest_expense, mortgage_30y, building_permits, cpi_yoy, core_cpi_yoy | 11 |
+| `ai_labor` | AI & Labor | indeed_sw_dev_postings, hyperscaler_capex | 2 |
+| `top_decile` | Top-Decile Consumer | (empty — all Tier-3: LVMH, Hermès, Sotheby's, Manhattan apts, etc.) | 0 |
+| `geopolitics` | Geopolitics | (empty — all Tier-3) | 0 |
+| `creative_pro` | Creative / Pro | baltic_dry | 1 |
+
+**Aggregation method:**
+- Within a pocket: stress-weighted mean of indicator levels, with freshness decay (`1 / max(daysSinceUpdate, 1)`, floor 0.05) so stale quarterly readings don't dominate daily headlines.
+- ≥2-corroboration L5 rule: a pocket only reaches L5 if at least 2 indicators are L4+. Otherwise it's capped at the weighted mean. Single-indicator pockets (e.g. `creative_pro` with only baltic_dry) cannot trigger this path — by design, one signal shouldn't blow up a pocket from a single source.
+- Headline: Yager OWA over the top-3 pocket levels with weights `[0.5, 0.3, 0.2]`. If fewer than 3 pockets have data, weights scale to sum to 1 over what's available. Score = `(headlineLevel - 1) × 2.25 + 1` to map 1-5 → 1-10.
+- Contagion: pairwise EWMA correlation across pocket-level history (λ = 0.93, daily decay). Mean ρ̄ < 0.30 = isolated, 0.30-0.50 = broadcasting, ≥ 0.50 = contagion regime. Requires 30 daily snapshots before activating; below that → "calibrating".
+
+History file: `/home/openclaw/.openclaw/workspace/macro/pocket-history.json` — appended once per `runner.js all` invocation, rolling cap 365 entries (one year).

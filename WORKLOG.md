@@ -1,7 +1,34 @@
 # WORKLOG
 
-**Last saved:** 2026-05-12 (Session 78 — all 6 waves shipped; dashboard 49 → 114 tiles, spec coverage ~30% → ~60%)
-**Status:** Session 78 ran all 6 implementation waves of the 121-missing-indicator backlog autonomously. **Dashboard 49 → 114 tiles** (78 auto-scored + 36 Tier-3 reference cards). Spec coverage roughly doubled. Waves shipped: 1 (6 FRED drop-ins) + 2 (15 indicators via CBOE CDN + Treasury Fiscal Data fetchers + FRED OECD foreign-sovereigns + Stooq pivots after Stooq apikey wall) + 3 (9 indicators via DefiLlama, NY Fed Markets, OKX perp funding, mempool, CoinGecko global, plus 2 synthetic computes for BTC realized vol + BTC-SPX correlation) + 4 (4 indicators via SEC EDGAR XBRL hyperscaler capex + Treasury debt_to_penny + Indeed Hiring Lab CSV + HandyBulk BDI; 4 deferred to proxy-egress build) + Waves 5+6 (31 Tier-3 reference cards: 17 paid-only + 10 manual quarterly + 4 Wave 4 deferrals). Top new live readings: hyperscaler_capex L4 ($129.8B/qtr, +80% YoY = the AI-capex regime signal), stablecoin_supply L2 (+32% YoY), btc_perp_funding L1 (3.2%/yr), btc_dominance L1 (58.3%), umich_sentiment L5 (53.3 — recession-level consumer mood), srf_usage L1 (zero — Fed plumbing calm), btc_spx_correlation_30d L2 (+0.27 — BTC decoupling from SPX). Open follow-ups: proxy-egress build (unlocks spot_etf_flows signal 10/10 + 3 others), headless-Chrome scraper, EIA API-key registration. [jinn/gmail] Session 77 Gmail integration unchanged and stable.
+## From Inbox
+
+> Append-only. Proposals from /ingest-all analyzer. Promote items into What's Next or delete to dismiss.
+
+- [proposed 2026-05-14] Use Nate Herk's "5 Levels of Claude" as the OpenClaw curriculum scaffold
+  - Source: bookmark `2026-05-12-nateherk-httpstcouhjtuzcqef.md` | URL: https://x.com/nateherk/status/2054206361240490434
+  - Novelty: 5/5
+  - Adds vs current:
+    - A ready-made leveling ladder -- Enthusiast → Beginner → Intermediate → Advanced → Architect -- each with the specific friction point (the "stall") + cheat code that gets users to the next level.
+    - Maps to OpenClaw's existing 12-module structure better than the current ad-hoc topic ordering. Rough fit: Modules 1-3 = Levels 1-2, Modules 4-7 = Level 3 (Cowork + Skills + Crons), Modules 8-10 = Level 4 (Claude Code parallel sessions, MCP), Modules 11-12 = Level 5 (cloud routines + hooks + Agent SDK).
+    - Explicit framing -- "the real stall is trust, not technical" at Level 5. Gives students a name for the resistance they'll feel before letting agents run autonomously.
+  - Duplicates:
+    - Module ordering already loosely follows beginner-to-advanced but without explicit level naming or stall diagnosis.
+  - Proposed delta: Read the full article. Revise the course landing page (or wherever the module roadmap lives) to label each module's "level" using Nate's scheme. Add a "Stall Diagnosis" box per module naming what blocks students at that level + the cheat code to unblock them.
+  - Rationale: Students benefit from seeing the whole ladder before climbing. Explicit level-naming gives them a vocabulary for self-assessment between modules ("I'm a solid Level 3, working on Level 4").
+
+- [proposed 2026-05-14] Teach Agent Harness Engineering as a Module 0/1 lecture
+  - Source: bookmark `2026-05-09-addyosmani-httpstcofsx0recclh.md`
+  - Novelty: 4/5
+  - Adds vs current:
+    - "Agent = Model + Harness" as a named thesis. The ratchet pattern (every mistake becomes a permanent rule in the harness) is a teachable design principle.
+    - Working backwards from behavior ("if you can't name what behavior a component delivers, remove it") is a concrete decision rule students can apply to their own OpenClaw projects.
+  - Duplicates:
+    - OpenClaw modules teach configuration, skills, hooks individually but don't name the meta-framework that ties them together.
+  - Proposed delta: Add a Module 0 or Module 1 lecture titled "What's a Harness?" that introduces Trivedy's Model+Harness framing before diving into specific components. Frame the rest of the course as "we are building your harness, layer by layer."
+  - Rationale: A name for the thing students are building makes the abstractions click earlier. Currently the course teaches the parts (skills, hooks, agents.md) without naming the whole.
+
+**Last saved:** 2026-05-15 (Session 78 Wave 7 — OWA headline aggregator + CISS-lite contagion badge shipped. Headline now reads 7.8 / 10 Stressed, driven by Treasury / Sovereign / Energy all at L4.)
+**Status:** Session 78 ran all 6 implementation waves of the 121-missing-indicator backlog autonomously, plus Wave 7 replacing the prior even-weighted average headline with a top-3 weighted OWA over 16 pockets + EWMA-correlation contagion badge. **Dashboard 49 → 114 tiles** (78 auto-scored + 36 Tier-3 reference cards). Spec coverage roughly doubled. Waves shipped: 1 (6 FRED drop-ins) + 2 (15 indicators via CBOE CDN + Treasury Fiscal Data fetchers + FRED OECD foreign-sovereigns + Stooq pivots after Stooq apikey wall) + 3 (9 indicators via DefiLlama, NY Fed Markets, OKX perp funding, mempool, CoinGecko global, plus 2 synthetic computes for BTC realized vol + BTC-SPX correlation) + 4 (4 indicators via SEC EDGAR XBRL hyperscaler capex + Treasury debt_to_penny + Indeed Hiring Lab CSV + HandyBulk BDI; 4 deferred to proxy-egress build) + Waves 5+6 (31 Tier-3 reference cards: 17 paid-only + 10 manual quarterly + 4 Wave 4 deferrals). Top new live readings: hyperscaler_capex L4 ($129.8B/qtr, +80% YoY = the AI-capex regime signal), stablecoin_supply L2 (+32% YoY), btc_perp_funding L1 (3.2%/yr), btc_dominance L1 (58.3%), umich_sentiment L5 (53.3 — recession-level consumer mood), srf_usage L1 (zero — Fed plumbing calm), btc_spx_correlation_30d L2 (+0.27 — BTC decoupling from SPX). Open follow-ups: proxy-egress build (unlocks spot_etf_flows signal 10/10 + 3 others), headless-Chrome scraper, EIA API-key registration. [jinn/gmail] Session 77 Gmail integration unchanged and stable.
 
 ## Session 78 — Missing-Indicators Backlog Implementation [signals/macro] (LIVE — all 6 waves shipped)
 
@@ -179,6 +206,44 @@ Reference cards are metadata-only entries (id, name, sourceLabel, sourceUrl, sou
 3. **EIA API-key registration** unblocks #80 crack spreads, #81 SPR, #82 OPEC spare.
 4. **`btc_mvrv` from realized cap** — vendor-independent compute approach.
 5. **`hashprice` from primitives** — compute-only proxy without HashrateIndex paid tier.
+
+### Wave 7 — OWA Headline Aggregator + Contagion Badge (DONE)
+
+Replaced the prior even-weighted average across 78 indicators with a top-3 weighted Ordered Weighted Averaging (OWA) operator over 16 macro pockets, plus a CISS-lite contagion badge built on EWMA pairwise pocket-correlation (λ=0.93). Per `Macro-Dashboard/design/STRESS-AGGREGATION-RESEARCH.md` Option B (Yager 1988) + recommended contagion layer (Holló, Kremer, Lo Duca 2012). The intuition: macro stress doesn't propagate evenly; the worst pocket dominates the regime, but two-or-three hot pockets are worse than one — and contagion (rising cross-pocket correlation) is itself the canonical crisis signature.
+
+**What shipped:**
+- `.claude/macro-deploy/aggregator.js` (new, ~330 lines) — POCKETS taxonomy (16 pockets matching INDICATORS.md sections, with section 10 renamed "Bitcoin" per user), pocket-level computation with freshness decay + ≥2-corroboration L5 rule, top-3 OWA with `[0.5, 0.3, 0.2]` weights (scaled if fewer than 3 active pockets), `(level-1)*2.25 + 1` mapping to 1-10, pocket-history.json persistence (rolling 365-day cap), EWMA pairwise correlation for the contagion badge.
+- `runner.js` — calls `appendPocketSnapshot()` after every `runner.js all` so the daily history series builds organically. Replaces today's entry if multiple refreshes hit the same date.
+- `api.js` — `summary.stress` now includes `headlineLevel`, `topPockets[]`, `allPockets[]`, `contagion{}`, `method`. Removed `contributingIndicators` and `avgLevel` (no longer applicable).
+- `.claude/dashboard-deploy/macro-tab.js` — rewrote stress block: top-3 driver chips, contagion badge with state-specific coloring, expanded explainer with OWA / contagion paragraphs + full pocket breakdown table.
+- `.claude/dashboard-deploy/macro-tab.css` — new classes `.mc-stress-pockets`, `.mc-stress-pocket`, `.mc-stress-contagion`, `.mc-stress-pocket-table`. Bumped expanded `max-height` from 280 → 1400px to fit the table. Mobile rules added for `(max-width: 900px)`.
+- `Macro-Dashboard/design/INDICATORS.md` — added "Pocket Mapping" section listing every active indicator → pocket assignment + the aggregation method.
+
+**Exclusions from aggregation** (per user spec):
+- `stablecoin_supply` — digital-money expansion signal, not a macro-stress signal. Stays as a tile, excluded from OWA.
+- `sp500` — reference series used by the BTC-SPX correlation compute, not a stress signal itself.
+
+**Coverage**: 76 of 78 active indicators map to one of 16 pockets. 13 of 16 pockets have ≥1 active indicator. Empty pockets (`agriculture`, `top_decile`, `geopolitics`) hold reserved space — `top_decile` and `geopolitics` are all Tier-3 reference cards by design; `agriculture` has no soft-commodity feeds yet (baltic_dry sits under creative_pro by historical fetcher placement).
+
+**Live reading at deploy (2026-05-15, 1 history snapshot):**
+- Score: **7.8 / 10 — Stressed**
+- Headline level: 4.00 / 5 (OWA result)
+- Top-3 driving pockets: **Treasury Market L4** (0.5), **Sovereign L4** (0.3), **Energy L4** (0.2)
+- Contagion: **Calibrating** (1/30 days — need 29 more daily snapshots before activating)
+
+**Verification:**
+- `node --check` passes on aggregator.js, runner.js, api.js, indicators.js, macro-tab.js
+- 13/13 velocity tests pass, 55/55 composite tests pass (no regression)
+- Deployed to Jinn; `pm2 reload jinn-dashboard` clean; `/api/macro` returns new shape on port 4242
+- `pocket-history.json` created on Jinn at `/home/openclaw/.openclaw/workspace/macro/pocket-history.json` (1 entry, ~481 bytes)
+
+**Edge cases handled (per research brief §6):**
+- Freshness decay: `freshness = 1 / max(daysSinceUpdate, 1)`, floor 0.05. A 90-day-old quarterly indicator gets ~1.1% the weight of a 1-day-old daily indicator.
+- ≥2-corroboration rule: a pocket only reaches L5 if ≥2 indicators are L4+; otherwise capped at the weighted mean. Single-indicator pockets cannot trigger this path by design.
+- Weight scaling: OWA weights renormalize to sum to 1 if fewer than 3 pockets have data.
+- Empty / Tier-3-only pockets: excluded from headline; surfaced in `allPockets[]` with `level: null` and `indicatorCount: 0` so the UI shows the full taxonomy.
+- Corrupt / missing pocket-history.json: regenerated from current snapshot on next refresh.
+- Multiple same-day refreshes: replace today's entry rather than appending duplicates.
 
 ---
 
