@@ -27,7 +27,7 @@
   - Proposed delta: Add a Module 0 or Module 1 lecture titled "What's a Harness?" that introduces Trivedy's Model+Harness framing before diving into specific components. Frame the rest of the course as "we are building your harness, layer by layer."
   - Rationale: A name for the thing students are building makes the abstractions click earlier. Currently the course teaches the parts (skills, hooks, agents.md) without naming the whole.
 
-**Last saved:** 2026-05-15 (Session 78 Wave 7 — OWA headline aggregator + CISS-lite contagion badge shipped. Headline now reads 7.8 / 10 Stressed, driven by Treasury / Sovereign / Energy all at L4.)
+**Last saved:** 2026-05-15 (Session 78 Wave 8 — Today tab now shows top-3 pocket chips + contagion badge; every macro/signals tile labels its pocket; new HEADLINE-AGGREGATOR-EXPLAINER.md doc shipped.)
 **Status:** Session 78 ran all 6 implementation waves of the 121-missing-indicator backlog autonomously, plus Wave 7 replacing the prior even-weighted average headline with a top-3 weighted OWA over 16 pockets + EWMA-correlation contagion badge. **Dashboard 49 → 114 tiles** (78 auto-scored + 36 Tier-3 reference cards). Spec coverage roughly doubled. Waves shipped: 1 (6 FRED drop-ins) + 2 (15 indicators via CBOE CDN + Treasury Fiscal Data fetchers + FRED OECD foreign-sovereigns + Stooq pivots after Stooq apikey wall) + 3 (9 indicators via DefiLlama, NY Fed Markets, OKX perp funding, mempool, CoinGecko global, plus 2 synthetic computes for BTC realized vol + BTC-SPX correlation) + 4 (4 indicators via SEC EDGAR XBRL hyperscaler capex + Treasury debt_to_penny + Indeed Hiring Lab CSV + HandyBulk BDI; 4 deferred to proxy-egress build) + Waves 5+6 (31 Tier-3 reference cards: 17 paid-only + 10 manual quarterly + 4 Wave 4 deferrals). Top new live readings: hyperscaler_capex L4 ($129.8B/qtr, +80% YoY = the AI-capex regime signal), stablecoin_supply L2 (+32% YoY), btc_perp_funding L1 (3.2%/yr), btc_dominance L1 (58.3%), umich_sentiment L5 (53.3 — recession-level consumer mood), srf_usage L1 (zero — Fed plumbing calm), btc_spx_correlation_30d L2 (+0.27 — BTC decoupling from SPX). Open follow-ups: proxy-egress build (unlocks spot_etf_flows signal 10/10 + 3 others), headless-Chrome scraper, EIA API-key registration. [jinn/gmail] Session 77 Gmail integration unchanged and stable.
 
 ## Session 78 — Missing-Indicators Backlog Implementation [signals/macro] (LIVE — all 6 waves shipped)
@@ -244,6 +244,46 @@ Replaced the prior even-weighted average across 78 indicators with a top-3 weigh
 - Empty / Tier-3-only pockets: excluded from headline; surfaced in `allPockets[]` with `level: null` and `indicatorCount: 0` so the UI shows the full taxonomy.
 - Corrupt / missing pocket-history.json: regenerated from current snapshot on next refresh.
 - Multiple same-day refreshes: replace today's entry rather than appending duplicates.
+
+### Wave 8 — Today Tab + Pocket Labels + Explainer Doc (DONE)
+
+Wave 7 shipped the aggregator and rendered its output on the macro/signals tab. Wave 8 surfaces it everywhere it's needed:
+
+1. **Today tab integration.** `loadMacroSummary()` added in `index.html` (fetches `/api/macro`, stashes `summary.stress` on `state.macro`). Called on initial load when `savedSection === 'today'`, and on every `showSection('today', ...)` switch. `renderToday()` now augments the existing rainbow stress bar with a top-3 driver-pockets row (whispered serif italic chips) and a contagion badge underneath. Calibrating state renders as a subtle "·  calibrating (N/30 days of pocket history)" line; once activated the badge reads "Contagion: ISOLATED · ρ̄ = 0.18" or similar with state-tinted color (green isolated / yellow broadcasting / red contagion). The existing purple-to-red bar + pulsing marker is untouched — chips and badge sit beneath as subtle augmentation.
+
+2. **Pocket labels on macro/signals indicator tiles.** Every Tier-1 and Tier-2 indicator now ships with a `pocket` field on `/api/macro`. `getPocketForIndicator(id)` helper added to `aggregator.js` (also exports `EXCLUDED_INDICATORS`). `renderMacroTile()` renders a small `.mc-pocket-tag` (whispered serif italic, lowercase) inside a `.mc-stamp-group` flex column on the right of the tile's top row, stacked above the timestamp. Excluded indicators (`stablecoin_supply`, `sp500`) render `.mc-pocket-tag-excluded` ("EXCLUDED FROM AGGREGATOR" in uppercase whisper) instead. Tier-3 cards intentionally skip pocket labels — they're already grouped by source-type framing. Mobile rules shrink the tag font without breaking the existing 2-column grid layout.
+
+3. **Explainer doc.** `Macro-Dashboard/design/HEADLINE-AGGREGATOR-EXPLAINER.md` (~2900 words, 10 sections). User-facing reference: what the headline means, the 16 pockets + indicator counts, how pocket levels are computed (stress-weighted mean + freshness decay + ≥2-corroboration), how the headline aggregates pockets (top-3 OWA `0.5/0.3/0.2`, Yager 1988), how the contagion badge tracks regime (EWMA pairwise correlation, λ=0.93, Holló-Kremer-Lo Duca 2012), edge cases, what the headline does not capture, tuning knobs, reading the breakdown, and comparison to canonical Fed/ECB indices. Cross-links to `STRESS-AGGREGATION-RESEARCH.md` for the math.
+
+**Files modified:**
+- `.claude/macro-deploy/aggregator.js` — added `EXCLUDED_INDICATORS` set + `getPocketForIndicator(id)` helper (+19 lines)
+- `.claude/macro-deploy/api.js` — `publicIndicator(ind, withPocket)` attaches pocket descriptor; Tier-1+Tier-2 pass `withPocket=true`, Tier-3 false (+9 lines)
+- `.claude/dashboard-deploy/macro-tab.js` — pocket pill in tile top row, grouped with stamp via new `.mc-stamp-group` (+10 lines)
+- `.claude/dashboard-deploy/macro-tab.css` — `.mc-pocket-tag`, `.mc-pocket-tag-excluded`, `.mc-stamp-group` + mobile rules (+33 lines)
+- `.claude/dashboard-deploy/index.html` — `loadMacroSummary()` fetcher, calls on `showSection('today')` + initial load, `renderToday()` stress tile chips + contagion row, new `#today .t-stress-pockets` + `.t-stress-contagion` CSS (+92 lines)
+- `Macro-Dashboard/design/HEADLINE-AGGREGATOR-EXPLAINER.md` — new file (~2900 words)
+- `WORKLOG.md` — this section
+
+**Live API verification (post-deploy 2026-05-15):**
+```
+sample tier1[0]: {"id":"sofr","name":"SOFR","pocket":{"id":"funding_plumbing","name":"Funding Plumbing"}}
+sample excluded:  stablecoin_supply -> {"id":"excluded","name":"excluded from aggregator","excluded":true}
+tier3[0] pocket:  NO_POCKET_FIELD (correct — tier3 cards skip pocket attach)
+summary.stress keys: score, label, headlineLevel, topPockets, allPockets, contagion, method
+score: 7.8 Stressed · topPockets: Treasury L4 (0.5) / Sovereign L4 (0.3) / Energy L4 (0.2)
+contagion: calibrating · 1/30 days
+```
+
+**Verification:**
+- `node --check` clean on aggregator.js, api.js, macro-tab.js (local + Jinn)
+- 13/13 velocity tests pass, 55/55 composite tests pass (no regression)
+- All 78 Tier-1+Tier-2 indicators resolve to a pocket (76 pocketed + 2 excluded sentinel), 0 unassigned
+- `pm2 restart jinn-dashboard` clean; `/api/macro` returns indicator entries with `pocket` field + summary.stress shape unchanged
+- `curl /macro-tab.js` finds `mc-pocket-tag` + `mc-stamp-group` (3 occurrences); `curl /macro-tab.css` finds `mc-pocket-tag` (4 occurrences); `curl /` finds `loadMacroSummary` + `t-stress-pockets` + `t-stress-contagion` (13 occurrences)
+
+**Open / deferred:**
+- Optional 5-minute interval polling on `loadMacroSummary()` deferred — current trigger (initial load + every today-tab switch) is sufficient. Cron only refreshes the underlying data at 5pm ET anyway.
+- Today-tab stress-tile width on very narrow phones: chips wrap fine but a 4-word pocket name (`Funding Plumbing`) + L4.0 chip is borderline crowded under the bar. Acceptable in testing; revisit if user reports clipping.
 
 ---
 
