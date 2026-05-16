@@ -27,7 +27,7 @@
   - Proposed delta: Add a Module 0 or Module 1 lecture titled "What's a Harness?" that introduces Trivedy's Model+Harness framing before diving into specific components. Frame the rest of the course as "we are building your harness, layer by layer."
   - Rationale: A name for the thing students are building makes the abstractions click earlier. Currently the course teaches the parts (skills, hooks, agents.md) without naming the whole.
 
-**Last saved:** 2026-05-15 (Session 78 Wave 8 — Today tab now shows top-3 pocket chips + contagion badge; every macro/signals tile labels its pocket; new HEADLINE-AGGREGATOR-EXPLAINER.md doc shipped.)
+**Last saved:** 2026-05-15 (Session 78 Wave 9 — L6 "Breaking" tier shipped; headline scale 1-10 → 1-12; level-break ceiling logic with 3-day-close confirmation across 17 level-tracked indicators; indicator-history.json persistence; fed_interest_expense regime-tagged; explainer + INDICATORS.md updated.)
 **Status:** Session 78 ran all 6 implementation waves of the 121-missing-indicator backlog autonomously, plus Wave 7 replacing the prior even-weighted average headline with a top-3 weighted OWA over 16 pockets + EWMA-correlation contagion badge. **Dashboard 49 → 114 tiles** (78 auto-scored + 36 Tier-3 reference cards). Spec coverage roughly doubled. Waves shipped: 1 (6 FRED drop-ins) + 2 (15 indicators via CBOE CDN + Treasury Fiscal Data fetchers + FRED OECD foreign-sovereigns + Stooq pivots after Stooq apikey wall) + 3 (9 indicators via DefiLlama, NY Fed Markets, OKX perp funding, mempool, CoinGecko global, plus 2 synthetic computes for BTC realized vol + BTC-SPX correlation) + 4 (4 indicators via SEC EDGAR XBRL hyperscaler capex + Treasury debt_to_penny + Indeed Hiring Lab CSV + HandyBulk BDI; 4 deferred to proxy-egress build) + Waves 5+6 (31 Tier-3 reference cards: 17 paid-only + 10 manual quarterly + 4 Wave 4 deferrals). Top new live readings: hyperscaler_capex L4 ($129.8B/qtr, +80% YoY = the AI-capex regime signal), stablecoin_supply L2 (+32% YoY), btc_perp_funding L1 (3.2%/yr), btc_dominance L1 (58.3%), umich_sentiment L5 (53.3 — recession-level consumer mood), srf_usage L1 (zero — Fed plumbing calm), btc_spx_correlation_30d L2 (+0.27 — BTC decoupling from SPX). Open follow-ups: proxy-egress build (unlocks spot_etf_flows signal 10/10 + 3 others), headless-Chrome scraper, EIA API-key registration. [jinn/gmail] Session 77 Gmail integration unchanged and stable.
 
 ## Session 78 — Missing-Indicators Backlog Implementation [signals/macro] (LIVE — all 6 waves shipped)
@@ -284,6 +284,87 @@ contagion: calibrating · 1/30 days
 **Open / deferred:**
 - Optional 5-minute interval polling on `loadMacroSummary()` deferred — current trigger (initial load + every today-tab switch) is sufficient. Cron only refreshes the underlying data at 5pm ET anyway.
 - Today-tab stress-tile width on very narrow phones: chips wrap fine but a 4-word pocket name (`Funding Plumbing`) + L4.0 chip is borderline crowded under the bar. Acceptable in testing; revisit if user reports clipping.
+
+### Wave 9 — L6 "Breaking" + Level-Break Ceiling Logic (DONE)
+
+Wave 7 + 8 shipped the aggregator and surfaced it on the macro tab + today tab. Wave 9 extends the scale to L1-L6 and adds the level-break ceiling — a price-action filter that caps an indicator's max L based on how many of its declared technical thresholds it has confirmed-broken (3 consecutive daily closes past each level).
+
+**Scale extension:**
+- Per-indicator: still L1-L5 by default. Indicators with `levels[]` config can reach L6 via 3+ broken levels.
+- Headline: 1-10 → **1-12**. Mapping: `score = ((headlineLevel - 1) / 5) * 11 + 1`. L1→1, L3→5.4, L4→7.6, L5→9.8, L6→12.
+- Verbal anchors: **Calm** (1-3), Watching (4-6), Elevated (7-7.99), Stressed (8-8.99), Critical (9-9.99), **Breaking** (10-12). Renamed "Stable"→"Calm" for consistency with the new tier names.
+
+**Level-break ceiling rules:**
+- Each level-tracked indicator declares `levels: { direction, points: [4 thresholds], confirmation: 3 }`.
+- `highestLevelBroken(value, history, levels)` returns the highest threshold-index past which the last `confirmation` daily closes are all sustained, or -1 if none confirmed.
+- `levelBreakCap(highestBroken)` → -1 caps at L3; 0 → L4; 1 → L5; 2+ → L6.
+- Final level = `min(rawLevel, cap)`. Cap is a ceiling, never a floor.
+- `rawLevel` and `levelsBroken` exposed on each indicator value so the dashboard can show context.
+
+**Initial level set (17 indicators):**
+- Treasury: us10y [4.4/4.7/5.0/5.3], us2y [4.2/4.5/4.8/5.0], us30y [4.7/5.0/5.2/5.5], real_yield_10y [2.0/2.3/2.5/2.8], real_yield_30y [2.5/2.8/3.0/3.3].
+- Sovereign: jgb_10y [1.5/1.8/2.0/2.5], gilt_10y [4.5/4.7/5.0/5.3], bund_10y [2.5/2.8/3.0/3.5].
+- Credit: hy_oas [3.5/4.5/6.0/8.0 in %, = 350-800bp], ig_oas [1.0/1.3/1.6/2.0 in %, = 100-200bp], ccc_hy_oas [10/12/15/20 in %, = 1000-2000bp].
+- Equity vol: vix [20/25/30/40], skew [145/150/155/160].
+- FX: dxy [122/125/128/132 Broad Dollar], usdjpy [152/155/158/161 — 161 = MOF intervention].
+- Energy: brent [95/105/115/130], wti [85/95/105/120].
+
+**fed_interest_expense regime-tagged:** added `regime: true`. Indicator with this tag is skipped in `computePocketLevel` OWA aggregation but still rendered as a normal tile (so the fiscal-trajectory signal stays visible). Real Economy pocket indicator count dropped 11 → 10 in aggregation. Pattern is reusable for any future fiscal/trajectory indicator.
+
+**Indicator-history persistence:**
+- New file `/home/openclaw/.openclaw/workspace/macro/indicator-history.json` — `{id: [{date, value}, ...]}`, 90-entry rolling cap per indicator.
+- Seeded from FRED's trailing ~400-observation history on first run (level-break works immediately for FRED-sourced indicators).
+- Non-FRED level-tracked indicators (none in initial set, but if added) accumulate from first-run forward; `levelsBroken: -1` until `confirmation` daily closes exist.
+- Coexists with `pocket-history.json` (Wave 7 contagion correlation) without conflict.
+
+**Frontend (macro-tab.js / .css):**
+- Tile bar: 5 segments → 6 (`repeat(6, 1fr)`); L6 segment fill = `--mc-bar-6` (#7a1f3a deep red/magenta) with glow; tile gradient for L6 = `#1a060f` floor.
+- Tile label: "Level X of 5" → "Level X of 6"; labelMap adds `6: 'Breaking'`; renamed `1: 'Stable'`→`'Calm'` for consistency.
+- Headline stress bar: 10 segments → 12 (`repeat(12, 1fr)`); `is-6` color class + glow; pocket-table `is-6` row color.
+- colorBucket math: `< 4 ? 1 : < 7 ? 2 : < 8 ? 3 : < 9 ? 4 : < 10 ? 5 : 6`.
+- Score display: "/ 10" → "/ 12"; headline detail "of 5" → "of 6".
+- Today-tab marker: `(macroIndex / 10) * 100` → `(macroIndex / 12) * 100`; verbal anchor mapping updated to new buckets.
+
+**API additions (api.js):**
+- `publicIndicator()` now exposes `levels` config + `regime` flag.
+- `summarize()` counts now include `6: 0`; elevated includes counts[6].
+- Per-indicator value object adds `rawLevel`, `levelsBroken` fields alongside the capped `level`.
+
+**Verification:**
+- `node --check` clean on aggregator.js, runner.js, indicators.js, api.js, macro-tab.js (local + Jinn).
+- 13/13 velocity tests pass, 55/55 composite tests pass (no regression).
+- 22/22 new level-break + scale-mapping sanity tests pass (highestLevelBroken across 'up'/'down'/insufficient-history/no-levels/dip-failure cases; levelBreakCap mapping; levelToScore L1→1, L4→7.6, L5→9.8, L6→12; scoreLabel anchors).
+- pm2 restart clean, `runner.js all` ran to completion (78 indicators refreshed, indicator-history.json seeded with 1583 entries across 70 indicators).
+- `/api/macro` post-deploy: score 8.7 (Stressed, was 7.8 under /10), headlineLevel 4.5, topPockets Sovereign L5 (0.5) / Treasury L4 (0.3) / Energy L4 (0.2). counts: {1:30, 2:19, 3:17, 4:10, 5:2, 6:0}.
+- Curl spot-checks confirm `mc-bar-6`, `is-6`, `repeat(12,`, `repeat(6,`, "/ 12", "of 6", "Breaking", `macroIndex / 12` all present on live deploy.
+- Per-indicator API exposes `rawLevel`, `levelsBroken`, `levels` config — verified for us10y (broken=0, cap=4, L3), us30y (broken=1, cap=5, L3), real_yield_30y (broken=0, cap=4, L4), jgb_10y (broken=2, cap=6, L5), gilt_10y (broken=-1 → cap=3 ceiling kicks in, was rawL4 → L3 cap).
+
+**Predicted live readings vs prior:**
+- us10y 4.47% — L3 (unchanged, cap is L4 but raw is L3)
+- us30y 5.02% — L3 (unchanged, cap is L5 but raw is L3)
+- real_yield_30y 2.73% — L4 (unchanged, cap = L4 since 1 level broken at 2.5)
+- jgb_10y 2.515% — L5 (was L4; cap is L6 since 3 levels broken: 1.5/1.8/2.0; rawLevel jumped from L4 to L5 organically as the value crossed the L5 threshold band in computeLevel)
+- gilt_10y 4.82% — **L3 cap** (was L4; rawLevel=L4 but monthly OECD series's trailing-3-month values don't all confirm 4.5 break yet; correct early-deploy behavior, will lift to L4 after 3 consecutive monthly closes > 4.5)
+- brent 106.11 — L4 (unchanged)
+- Headline: **8.7 / 12 Stressed** (was 7.8/10). The shift to /12 with new label thresholds and Sovereign hitting L5 from jgb_10y's L5 jump drives the higher score + new label.
+
+**Files modified:**
+- `.claude/macro-deploy/aggregator.js` (+138 lines): levelToScore/scoreLabel /12 mapping, highestLevelBroken/levelBreakCap helpers, indicator-history persistence (read/write/append/seed), regime: true skip in computePocketLevel.
+- `.claude/macro-deploy/indicators.js` (+39 lines): `levels` config on 17 indicators, `regime: true` on fed_interest_expense.
+- `.claude/macro-deploy/runner.js` (+47 lines): load indicator-history, seed from FRED trailing history, append today's value, pass to scoreFromPending, persist on completion; scoreFromPending returns rawLevel + levelsBroken.
+- `.claude/macro-deploy/api.js` (+8 lines): expose levels + regime on publicIndicator, counts[6] in summary.
+- `.claude/dashboard-deploy/macro-tab.js` (+10 lines net): 6-segment tile bar, 12-segment headline bar, /12 score, Breaking label, new colorBucket math.
+- `.claude/dashboard-deploy/macro-tab.css` (+15 lines): `--mc-bar-6`, `is-6` classes for tile/state/pockets/table, `repeat(6, 1fr)` + `repeat(12, 1fr)` grid updates, L6 tile background gradient.
+- `.claude/dashboard-deploy/index.html` (+5 lines): /12 marker math, /12 verbal anchor mapping with breaking state.
+- `Macro-Dashboard/design/HEADLINE-AGGREGATOR-EXPLAINER.md` (+90 lines): new §3a Level-Break Ceiling Logic; updated /12 scale anchors in §1; updated mapping formula in §4; expanded excluded indicators with regime tag; new bootstrap edge case in §6; level-break + regime added to §8 tuning knobs.
+- `Macro-Dashboard/design/INDICATORS.md` (+40 lines): new "Level Definitions (Wave 9)" section with full 17-indicator table + regime-tag note.
+- `WORKLOG.md` (this section).
+
+**Open / deferred / flags for user review:**
+- **`real_yield_30y` cap discrepancy from spec example**: spec said "real_yield_30y at 2.68% should now read L3, not L4". With points `[2.5, 2.8, 3.0, 3.3]` and current value 2.73%, the indicator has broken 1 level (2.5 point) → cap = L4. rawLevel = L4 (since 2.5 < v < 3.0 in computeLevel). min(L4, L4) = L4. The implementation is correct per the table spec — the spec's narrative example doesn't match its own points table. If the user wanted L3, the L4-unlock point should be ≥ 2.75 (e.g., `[2.75, 2.9, 3.0, 3.3]`); flagging for user review.
+- **gilt_10y monthly cadence + 3-day confirmation**: OECD-sourced 10Y yields are monthly (~6w lag). The "3-day-close-confirmation" rule is interpreted as "3 most recent observations" — for monthlies that's 3 months. With current data, gilt's last 3 months (Feb 4.43, Mar 4.70, Apr 4.82) don't all exceed 4.5 (Feb fails), so cap stays L3. This is a working-as-designed edge: monthly indicators need 3 consecutive monthly observations above a level to confirm a break. The user may want a different confirmation strategy for monthlies (e.g., 2 monthlies, or hybrid daily/monthly logic) — not addressed in this wave.
+- Level-break for non-FRED level-tracked indicators (e.g., skew from CBOE, which has its own history fetcher) seeds correctly from the fetched history; works immediately.
+- No npm deps introduced. Mobile CSS (repeat(2, minmax(0, 1fr))) untouched. pocket-history.json + indicator-history.json coexist as designed.
 
 ---
 

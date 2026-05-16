@@ -6,17 +6,18 @@
 
 ## 1. What the headline number means
 
-The dashboard ships a single 1-10 stress score with a one-word state label. **The score is not an average of all 78 indicators.** It is a top-3 weighted Ordered Weighted Average over 16 macro pockets, with the worst pocket carrying 50%, the second-worst 30%, and the third-worst 20%.
+The dashboard ships a single 1-12 stress score with a one-word state label. **The score is not an average of all 78 indicators.** It is a top-3 weighted Ordered Weighted Average over 16 macro pockets, with the worst pocket carrying 50%, the second-worst 30%, and the third-worst 20%.
 
-Verbal anchors on the 1-10 scale:
+Verbal anchors on the 1-12 scale (Wave 9):
 
 | Score | Label | Reading |
 |---|---|---|
-| < 3 | **Stable** | All pockets quiet. Background regime. |
-| 3 – 5 | **Watching** | One pocket elevated, others calm. Worth checking but not acting. |
-| 5 – 6.5 | **Elevated** | Multiple pockets at L3, or one at L4. Something is moving. |
-| 6.5 – 8 | **Stressed** | A pocket has reached L4 (stress regime). |
-| ≥ 8 | **Critical** | Multiple pockets at L4 or any pocket at corroborated L5. |
+| 1 – 3 | **Calm** | All pockets quiet. Background regime. |
+| 4 – 6 | **Watching** | One pocket elevated, others calm. Worth checking but not acting. |
+| 7 – 7.99 | **Elevated** | Multiple pockets at L3, or one at L4. Something is moving. |
+| 8 – 8.99 | **Stressed** | A pocket has reached L4 (stress regime). |
+| 9 – 9.99 | **Critical** | Multiple pockets at L4 or any pocket at L5. |
+| 10 – 12 | **Breaking** | A pocket has reached L6 — a confirmed multi-level structural break. |
 
 The reason the headline is not a simple average: macro stress does not propagate evenly. One pocket on fire (e.g. funding plumbing breaking in 2008, sovereign rates breaking in 2022 UK gilts) dominates the regime regardless of how calm the rest of the system is. The old even-weighted average across all 78 indicators averaged the worst pocket away — a known pathology of PCA-based composites (Fed FSI family).
 
@@ -47,12 +48,11 @@ Indicators are grouped into 16 pockets aligned with the section headers in `INDI
 
 ### Indicators explicitly excluded
 
-Two Tier-1 indicators are excluded from every pocket and never contribute to the headline:
+Three indicators are excluded from every pocket and never contribute to the headline:
 
-- **`stablecoin_supply`** — measures growth of dollar-tokenized money. Read as a digital-money expansion signal, not stress.
-- **`sp500`** — included on the dashboard only as a reference series for correlation calculations (`btc_spx_correlation_30d`). Not a stress measure in its own right.
-
-These indicators show on the macro tab with the label *EXCLUDED FROM AGGREGATOR* so it's clear they are informational, not contributing.
+- **`stablecoin_supply`** — measures growth of dollar-tokenized money. Read as a digital-money expansion signal, not stress. Tile labeled *EXCLUDED FROM AGGREGATOR*.
+- **`sp500`** — included on the dashboard only as a reference series for correlation calculations (`btc_spx_correlation_30d`). Not a stress measure in its own right. Tile labeled *EXCLUDED FROM AGGREGATOR*.
+- **`fed_interest_expense`** (Wave 9) — `regime: true` tag. This is a fiscal-trajectory indicator (federal interest payments doubled 2020→2024 on the Fed's hiking cycle), not an acute-stress signal. The tile still renders normally on the macro tab so the trajectory remains visible, but the value is skipped in pocket OWA aggregation. Any indicator can be opted out the same way by adding `regime: true` to its config.
 
 ### Empty pockets
 
@@ -78,6 +78,88 @@ Three details:
 
 ---
 
+## 3a. Level-break ceiling logic (Wave 9)
+
+Absolute thresholds + velocity primitives reliably tag an indicator as L1-L5. **L6 "Breaking"** is reserved for the situation an analyst actually cares about: a price has confirmed-broken through one or more technically-defended levels. The level-break ceiling caps how high an indicator can score until that confirmation lands, and unlocks L6 only when the indicator has broken three or more levels with three consecutive daily closes past each threshold.
+
+### How it works
+
+Each level-tracked indicator declares a `levels` config in `indicators.js`:
+
+```js
+{
+  id: 'us10y',
+  // ...
+  levels: {
+    direction: 'up',          // 'up' = breaks ABOVE = stress; 'down' = breaks BELOW = stress
+    points: [4.4, 4.7, 5.0, 5.3],   // 4 ordered thresholds
+    confirmation: 3                  // require N consecutive daily closes past the level
+  }
+}
+```
+
+The runner then computes:
+
+1. The raw level from `computeLevel(value, ctx)` (absolute thresholds + velocity, as before).
+2. The "highest level broken" — the largest index `i` such that the last `confirmation` daily closes are all past `points[i]`. `-1` if no level is confirmed broken.
+3. The level-break cap, based on how many levels have been broken:
+
+| Levels broken | Cap |
+|---|---|
+| 0 (none) | L3 |
+| 1 | L4 |
+| 2 | L5 |
+| 3 or more | L6 |
+
+4. The final reported level is `min(rawLevel, cap)`.
+
+The cap is a *ceiling*, not a floor. If the raw scoring path produces L2 and no levels are broken, the indicator still reports L2 — the cap of L3 just means it cannot go higher without confirmation. If the raw scoring path produces L4 but no levels are confirmed broken, the indicator is capped at L3 until confirmation lands.
+
+### Why three-day-close confirmation
+
+Single-day spikes and intra-day moves are noise. Real regime-defining breaks hold their level. The 3-day-close-confirmation rule is the classical technical-analysis convention for confirming a break, and it filters out one-off auction days, single-print FRED revisions, and stop-hunt wicks. Configurable per-indicator via `levels.confirmation`.
+
+### Initial set (17 indicators)
+
+| Indicator | Direction | L4 / L5 / L6 unlock | Notes |
+|---|---|---|---|
+| us10y | up | 4.4 / 4.7 / 5.0 (extreme 5.3) | 4.4% = user-flagged defended level just broken |
+| us2y | up | 4.2 / 4.5 / 4.8 (extreme 5.0) | |
+| us30y | up | 4.7 / 5.0 / 5.2 (extreme 5.5) | 5.0% = Liz Truss spike anchor |
+| real_yield_10y | up | 2.0 / 2.3 / 2.5 (extreme 2.8) | |
+| real_yield_30y | up | 2.5 / 2.8 / 3.0 (extreme 3.3) | 3.0% not seen since 2008 |
+| jgb_10y | up | 1.5 / 1.8 / 2.0 (extreme 2.5) | 1.5% was NIRP-era ceiling |
+| gilt_10y | up | 4.5 / 4.7 / 5.0 (extreme 5.3) | 5.3% = Liz Truss anchor |
+| bund_10y | up | 2.5 / 2.8 / 3.0 (extreme 3.5) | |
+| hy_oas | up | 350 / 450 / 600 bp (extreme 800) | FRED returns %; 3.5 = 350bp |
+| ig_oas | up | 100 / 130 / 160 bp (extreme 200) | FRED returns %; 1.0 = 100bp |
+| ccc_hy_oas | up | 1000 / 1200 / 1500 bp (extreme 2000) | FRED returns %; 10 = 1000bp |
+| vix | up | 20 / 25 / 30 (extreme 40) | |
+| skew | up | 145 / 150 / 155 (extreme 160) | |
+| dxy | up | 122 / 125 / 128 (extreme 132) | Broad Dollar (DTWEXBGS) |
+| usdjpy | up | 152 / 155 / 158 (extreme 161) | 161+ = MOF intervention zone |
+| brent | up | 95 / 105 / 115 (extreme 130) | |
+| wti | up | 85 / 95 / 105 (extreme 120) | Goldilocks symmetric but ship 'up' path for v1 |
+
+All use `confirmation: 3`. Indicators not in this list keep current threshold scoring and cap at L5 (no L6 from absolute thresholds alone).
+
+### Indicator-history persistence
+
+The 3-day confirmation rule needs the last N daily values per indicator. Two files now persist on Jinn:
+
+- `pocket-history.json` — daily pocket-level snapshots (Wave 7, contagion correlation).
+- `indicator-history.json` — daily values per indicator (Wave 9, level-break confirmation). 90-entry rolling cap per indicator.
+
+Both files coexist without conflict; both are appended once per `runner.js all` invocation.
+
+### Bootstrap behavior
+
+For FRED-sourced indicators (which return ~400 trailing observations on every fetch), the runner seeds `indicator-history.json` from the fetched history on first run so level-break can fire immediately. For other sources (Stooq, CoinGecko, NY Fed) that return only the current value, history accumulates from first-run forward — level-break stays dormant until enough daily closes accumulate. This is surfaced via `levelsBroken: -1` in the API response.
+
+If history has fewer than `confirmation` entries, the cap defaults to L3. The first time `runner.js all` runs after Wave 9 deploys, non-FRED level-tracked indicators may show capped levels for 2 days while the confirmation history fills in.
+
+---
+
 ## 4. How the headline aggregates pockets
 
 Once each pocket has a level (or null, for empty pockets), the headline is a **top-3 weighted Ordered Weighted Average** (Yager 1988):
@@ -87,13 +169,13 @@ Once each pocket has a level (or null, for empty pockets), the headline is a **t
 3. Apply fixed weights: `headline_level = 0.5 · s₁ + 0.3 · s₂ + 0.2 · s₃`.
 4. If fewer than three pockets have non-null levels, renormalize the weights over whatever is available.
 
-The headline level is a 1-5 number. To map onto the 1-10 display scale:
+The headline level is a 1-6 number (L6 "Breaking" added in Wave 9). To map onto the 1-12 display scale:
 
 ```
-score = (headline_level − 1) · 2.25 + 1
+score = ((headline_level − 1) / 5) · 11 + 1
 ```
 
-So `L1 → 1`, `L3 → 5.5`, `L5 → 10`.
+So `L1 → 1`, `L3 → 5.4`, `L4 → 7.6`, `L5 → 9.8`, `L6 → 12`.
 
 This is a "moderate pessimist" OWA. Yager's OWA family covers everything from `max` (worst pocket wins, `w = [1, 0, 0]`) to `mean` (equal weights). The choice of `[0.5, 0.3, 0.2]` says: the worst pocket sets the regime, but a second hot pocket meaningfully escalates it, and a third adds a smaller marginal kick. It is between max-pooling and averaging — captures pocket dominance without single-pocket noise.
 
@@ -142,6 +224,7 @@ Requires 30 daily snapshots before activating. Until then, the badge shows **Cal
 - **Stale low-frequency indicators.** Monthly / quarterly indicators (Bank Deposits, JOLTS, Building Permits) carry a freshness decay that drops their pocket contribution as their reading ages. A 3-month-old Bank Deposits reading pulls 1/90th of its fresh-day weight.
 - **Empty pockets.** Agriculture & Shipping, Top-Decile Consumer, Geopolitics return `null` levels. They are visible in the pocket breakdown table but contribute zero to the headline. If they ship indicators, the aggregator picks them up — no code change.
 - **Calibrating contagion.** Until 30+ days of pocket history exist, the contagion badge displays as *Calibrating* and the headline is unchanged. The headline is fully functional on day one — contagion is an add-on signal.
+- **Level-break bootstrap (Wave 9).** For non-FRED level-tracked indicators (none in the initial 17, but if added), `indicator-history.json` accumulates from first-run forward. Until `confirmation` daily closes exist for an indicator, its `levelsBroken` returns `-1` and the cap defaults to L3. The first daily refresh after Wave 9 deploys has no level-break for those sources; the system is correct after `confirmation` runs. FRED-sourced indicators seed from the fetched ~400-observation history, so level-break works immediately.
 
 ---
 
@@ -171,6 +254,9 @@ If the aggregator's behavior needs to change, the levers are all in `.claude/mac
 | Min history for contagion | `MIN_HISTORY_FOR_CORRELATION` | 30 | Days of pocket-history snapshots required before correlations activate. |
 | Freshness decay floor | `freshnessWeight` | 0.05 | Minimum weight a stale indicator retains in its pocket. Lower means quarterly indicators decay further. |
 | Corroboration rule | `computePocketLevel` | `l4plusCount >= 2` | Number of L4+ indicators required to allow a pocket to reach the L5 floor. |
+| Level-break thresholds (Wave 9) | `levels` per indicator | 4-point array per indicator | The L4 / L5 / L6 unlock thresholds. Editorial calls — change a `points: [...]` array on any indicator to tune its ceiling. |
+| Level-break confirmation (Wave 9) | `levels.confirmation` per indicator | `3` for all initial indicators | Number of consecutive daily closes required to confirm a break. |
+| Regime tag (Wave 9) | `regime: true` on indicator | `fed_interest_expense` only | Excludes the indicator from pocket OWA aggregation while keeping its tile visible. |
 
 ---
 

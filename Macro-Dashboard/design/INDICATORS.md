@@ -657,7 +657,47 @@ The 16 spec sections above map to 16 aggregation pockets used by the top-3 weigh
 **Aggregation method:**
 - Within a pocket: stress-weighted mean of indicator levels, with freshness decay (`1 / max(daysSinceUpdate, 1)`, floor 0.05) so stale quarterly readings don't dominate daily headlines.
 - ≥2-corroboration L5 rule: a pocket only reaches L5 if at least 2 indicators are L4+. Otherwise it's capped at the weighted mean. Single-indicator pockets (e.g. `creative_pro` with only baltic_dry) cannot trigger this path — by design, one signal shouldn't blow up a pocket from a single source.
-- Headline: Yager OWA over the top-3 pocket levels with weights `[0.5, 0.3, 0.2]`. If fewer than 3 pockets have data, weights scale to sum to 1 over what's available. Score = `(headlineLevel - 1) × 2.25 + 1` to map 1-5 → 1-10.
+- Regime tag (Wave 9): indicators with `regime: true` are skipped in the pocket OWA aggregation but still rendered as tiles. Used for fiscal-trajectory indicators (currently only `fed_interest_expense`) that shouldn't drive acute-stress headlines.
+- Headline: Yager OWA over the top-3 pocket levels with weights `[0.5, 0.3, 0.2]`. If fewer than 3 pockets have data, weights scale to sum to 1 over what's available. Score = `((headlineLevel - 1) / 5) × 11 + 1` to map 1-6 → 1-12 (Wave 9).
 - Contagion: pairwise EWMA correlation across pocket-level history (λ = 0.93, daily decay). Mean ρ̄ < 0.30 = isolated, 0.30-0.50 = broadcasting, ≥ 0.50 = contagion regime. Requires 30 daily snapshots before activating; below that → "calibrating".
 
-History file: `/home/openclaw/.openclaw/workspace/macro/pocket-history.json` — appended once per `runner.js all` invocation, rolling cap 365 entries (one year).
+History files:
+- `/home/openclaw/.openclaw/workspace/macro/pocket-history.json` — daily pocket-level snapshots; appended once per `runner.js all`, rolling cap 365 entries.
+- `/home/openclaw/.openclaw/workspace/macro/indicator-history.json` — daily indicator values per ID (Wave 9, level-break confirmation), 90-entry rolling cap per indicator.
+
+---
+
+## Level Definitions (Wave 9)
+
+Wave 9 extends the indicator scale to L1-L6 ("Breaking" at L6) and the headline to /12. The `levels` config on each indicator declares the technical thresholds whose break, confirmed by 3 consecutive daily closes, unlocks higher L scores. No levels broken → max L3. 1 level broken → L4. 2 → L5. 3+ → L6.
+
+The four threshold values are interpreted as: `[L4_unlock, L5_unlock, L6_unlock, extreme_anchor]`. The extreme anchor (`points[3]`) is optional and only kicks in if all 4 are broken — same effect as the third (cap stays L6).
+
+Direction: `up` = breaking ABOVE is stress (yields, vol, OAS, FX strength, oil spikes). `down` = breaking BELOW is stress (deposits YoY contraction, BTC drawdown). All initial entries are `up`.
+
+All initial entries use `confirmation: 3` (3 consecutive daily closes past the threshold).
+
+| Indicator | Direction | L4 unlock | L5 unlock | L6 unlock | Extreme | Notes |
+|---|---|---|---|---|---|---|
+| us10y | up | 4.4 | 4.7 | 5.0 | 5.3 | 4.4% = defended level recently broken |
+| us2y | up | 4.2 | 4.5 | 4.8 | 5.0 | |
+| us30y | up | 4.7 | 5.0 | 5.2 | 5.5 | 5.0% = Liz Truss spike anchor |
+| real_yield_10y | up | 2.0 | 2.3 | 2.5 | 2.8 | |
+| real_yield_30y | up | 2.5 | 2.8 | 3.0 | 3.3 | 3.0% not seen since 2008 |
+| jgb_10y | up | 1.5 | 1.8 | 2.0 | 2.5 | 1.5% = NIRP-era ceiling |
+| gilt_10y | up | 4.5 | 4.7 | 5.0 | 5.3 | 5.3% = Liz Truss anchor |
+| bund_10y | up | 2.5 | 2.8 | 3.0 | 3.5 | |
+| hy_oas | up | 3.5 (350bp) | 4.5 (450bp) | 6.0 (600bp) | 8.0 (800bp) | FRED returns OAS in % |
+| ig_oas | up | 1.0 (100bp) | 1.3 (130bp) | 1.6 (160bp) | 2.0 (200bp) | FRED returns OAS in % |
+| ccc_hy_oas | up | 10.0 (1000bp) | 12.0 (1200bp) | 15.0 (1500bp) | 20.0 (2000bp) | FRED returns OAS in % |
+| vix | up | 20 | 25 | 30 | 40 | |
+| skew | up | 145 | 150 | 155 | 160 | |
+| dxy | up | 122 | 125 | 128 | 132 | Broad Dollar (DTWEXBGS) |
+| usdjpy | up | 152 | 155 | 158 | 161 | 161+ = MOF intervention zone |
+| brent | up | 95 | 105 | 115 | 130 | |
+| wti | up | 85 | 95 | 105 | 120 | Symmetric Goldilocks; v1 ships 'up' path |
+
+**Indicators without `levels[]` configured** continue using the existing absolute-threshold + velocity scoring path and cap at L5 (cannot reach L6). YoY-driven indicators (cpi_yoy, retail_sales_control, bank_deposits, etc.), all synthetics (fed_net_liquidity, gold_btc_ratio, btc_realized_vol_30d, etc.), banking/macro aggregates (mortgage_30y, treasury_net_issuance, auction_*, srf_usage, fails_to_deliver, etc.), and Bitcoin (btc, btc_dominance, btc_perp_funding) all fall in this category for Wave 9.
+
+**Regime-tagged indicators** (`regime: true`):
+- `fed_interest_expense` — fiscal-trajectory signal, tile-only, excluded from pocket OWA.
