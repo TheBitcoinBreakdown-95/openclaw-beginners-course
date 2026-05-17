@@ -27,7 +27,7 @@
   - Proposed delta: Add a Module 0 or Module 1 lecture titled "What's a Harness?" that introduces Trivedy's Model+Harness framing before diving into specific components. Frame the rest of the course as "we are building your harness, layer by layer."
   - Rationale: A name for the thing students are building makes the abstractions click earlier. Currently the course teaches the parts (skills, hooks, agents.md) without naming the whole.
 
-**Last saved:** 2026-05-15 (Session 78 Wave 9 — L6 "Breaking" tier shipped; headline scale 1-10 → 1-12; level-break ceiling logic with 3-day-close confirmation across 17 level-tracked indicators; indicator-history.json persistence; fed_interest_expense regime-tagged; explainer + INDICATORS.md updated.)
+**Last saved:** 2026-05-17 (Session 78 Wave 10 — recalibrated levels[] above current regime + cadence-aware confirmation for monthly OECD foreign sovereigns + FRED fetch timeout 12s→25s with retry. Headline 8.7/12 Stressed → 6.9/12 Watching, matching the "tight-but-not-breaking" regime intuition.)
 **Status:** Session 78 ran all 6 implementation waves of the 121-missing-indicator backlog autonomously, plus Wave 7 replacing the prior even-weighted average headline with a top-3 weighted OWA over 16 pockets + EWMA-correlation contagion badge. **Dashboard 49 → 114 tiles** (78 auto-scored + 36 Tier-3 reference cards). Spec coverage roughly doubled. Waves shipped: 1 (6 FRED drop-ins) + 2 (15 indicators via CBOE CDN + Treasury Fiscal Data fetchers + FRED OECD foreign-sovereigns + Stooq pivots after Stooq apikey wall) + 3 (9 indicators via DefiLlama, NY Fed Markets, OKX perp funding, mempool, CoinGecko global, plus 2 synthetic computes for BTC realized vol + BTC-SPX correlation) + 4 (4 indicators via SEC EDGAR XBRL hyperscaler capex + Treasury debt_to_penny + Indeed Hiring Lab CSV + HandyBulk BDI; 4 deferred to proxy-egress build) + Waves 5+6 (31 Tier-3 reference cards: 17 paid-only + 10 manual quarterly + 4 Wave 4 deferrals). Top new live readings: hyperscaler_capex L4 ($129.8B/qtr, +80% YoY = the AI-capex regime signal), stablecoin_supply L2 (+32% YoY), btc_perp_funding L1 (3.2%/yr), btc_dominance L1 (58.3%), umich_sentiment L5 (53.3 — recession-level consumer mood), srf_usage L1 (zero — Fed plumbing calm), btc_spx_correlation_30d L2 (+0.27 — BTC decoupling from SPX). Open follow-ups: proxy-egress build (unlocks spot_etf_flows signal 10/10 + 3 others), headless-Chrome scraper, EIA API-key registration. [jinn/gmail] Session 77 Gmail integration unchanged and stable.
 
 ## Session 78 — Missing-Indicators Backlog Implementation [signals/macro] (LIVE — all 6 waves shipped)
@@ -284,6 +284,49 @@ contagion: calibrating · 1/30 days
 **Open / deferred:**
 - Optional 5-minute interval polling on `loadMacroSummary()` deferred — current trigger (initial load + every today-tab switch) is sufficient. Cron only refreshes the underlying data at 5pm ET anyway.
 - Today-tab stress-tile width on very narrow phones: chips wrap fine but a 4-word pocket name (`Funding Plumbing`) + L4.0 chip is borderline crowded under the bar. Acceptable in testing; revisit if user reports clipping.
+
+### Wave 10 — Level Recalibration + Cadence-Aware Confirmation (DONE 2026-05-17)
+
+Wave 9 shipped the level-break ceiling machinery but the initial `levels[]` table was anchored on historical chart context (e.g., us10y L4-unlock at 4.4 = recently-defended). Result: chronic-regime indicators (real_yield_30y at 2.73%, jgb_10y at 2.52%, brent at $106) tripped L4-caps continuously, pushing the headline to 8.7/12 "Stressed" during what is actually a tight-but-stable regime. The user's intuition was that 8.7 overstated the macro pulse; Wave 10 fixes the calibration to match.
+
+**Recalibration principle:** L4-unlock = the level *just above* the current regime ceiling, not the regime norm. "Stays in regime → caps at L3; breaks regime ceiling → unlocks L4." Pushed each L4-unlock up by 0.2-0.5 pp (yields) or 5-10% (commodities/FX) to land above current values.
+
+| Indicator | Old L4-unlock | New L4-unlock | Current value | Result |
+|---|---:|---:|---:|---|
+| us10y | 4.4 | **4.7** | 4.47 | Below unlock → cap L3 |
+| us2y | 4.2 | **4.5** | 4.00 | Below → cap L3 |
+| us30y | 4.7 | **5.2** | 5.02 | Below → cap L3 |
+| real_yield_10y | 2.0 | **2.3** | 2.00 | At line → cap L3 |
+| real_yield_30y | 2.5 | **2.85** | 2.73 | Below → cap L3 (was L4) |
+| jgb_10y | 1.5 | **2.8** | 2.52 | Below → cap L3 (was L5) |
+| gilt_10y | 4.5 | **5.0** | 4.82 | Below → cap L3 (unchanged from W9) |
+| bund_10y | 2.5 | **3.0** | 2.99 | At line → cap L3 |
+| usdjpy | 152 | **158** | 156.64 | Below → cap L3 (was L4) |
+| brent | 95 | **115** | 106.11 | Below → cap L3 (was L4) |
+| wti | 85 | **105** | 101.56 | Below → cap L3 (was L4) |
+
+Plus **new entries** for `oat_10y` (L4-unlock 3.5, monthly) and `italy_btp_10y` (L4-unlock 5.0, monthly — 6%+ = unsustainable Italian fiscal arithmetic).
+
+**Cadence-aware confirmation:** monthly OECD foreign-sovereign indicators (jgb_10y, bund_10y, gilt_10y, oat_10y, italy_btp_10y) override `confirmation: 3` → `confirmation: 1`. Rationale: one monthly observation already represents a month of behavior; requiring 3 consecutive monthly observations would mean 3+ months of sustained breach before a level counts, which is too strict for a regime-shift signal.
+
+**FRED fetch reliability fix:** caught tbill_3m (DTB3) failing with a 12-second timeout on the recent cron run. Bumped `fetchFred` timeout 12000ms → 25000ms with a retry-once-on-timeout fallback at 30000ms. Other FRED indicators benefit too — handles the transient slow-response pattern documented in `feedback_outofband_drift.md` adjacents (FRED is reliable but occasionally slow under load).
+
+**Result:**
+- Headline: **8.7/12 → 6.9/12 "Watching"** ← matches user intuition
+- Top-3 driving pockets shifted: Treasury Market L4 (driven by auction stats at L4, not chronic-regime yields anymore) → wt 0.5; AI & Labor L4 (hyperscaler_capex +80% YoY) → wt 0.3; Sovereign L2.5 (was L5) → wt 0.2
+- All level-tracked daily indicators currently `levelsBroken: -1` (no recalibrated L4-unlock broken) → cap L3
+- tbill_3m back to OK: raw=3.60, L1
+- Several chronic-regime indicators (real_yield_30y, jgb_10y, brent, wti, usdjpy) now correctly read L3 capped from L4-L5 raw
+
+**Files modified:**
+- `.claude/macro-deploy/indicators.js` (recalibrated 17 existing levels + added 2 new entries for oat_10y / italy_btp_10y)
+- `.claude/macro-deploy/fetchers.js` (FRED timeout + retry)
+- `Macro-Dashboard/design/INDICATORS.md` (replaced Wave 9 levels table with Wave 10 recalibrated table; added confirmation cadence note)
+- `WORKLOG.md` (this entry)
+
+Backups on Jinn: `indicators.js.2026-05-17-w10.bak`, `fetchers.js.2026-05-17-w10.bak`.
+
+---
 
 ### Wave 9 — L6 "Breaking" + Level-Break Ceiling Logic (DONE)
 

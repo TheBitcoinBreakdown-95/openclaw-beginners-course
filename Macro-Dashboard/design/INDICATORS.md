@@ -675,27 +675,31 @@ The four threshold values are interpreted as: `[L4_unlock, L5_unlock, L6_unlock,
 
 Direction: `up` = breaking ABOVE is stress (yields, vol, OAS, FX strength, oil spikes). `down` = breaking BELOW is stress (deposits YoY contraction, BTC drawdown). All initial entries are `up`.
 
-All initial entries use `confirmation: 3` (3 consecutive daily closes past the threshold).
+**Confirmation cadence (Wave 10):** daily-FRED indicators use `confirmation: 3` (3 consecutive daily closes past the threshold). Monthly OECD-sourced foreign sovereigns (jgb, bund, gilt, oat, italy_btp) use `confirmation: 1` — a single monthly observation past the threshold counts as breakage, since one monthly print already represents a month of behavior. Without this, monthly indicators would require 3+ months of sustained breach which is too strict.
 
-| Indicator | Direction | L4 unlock | L5 unlock | L6 unlock | Extreme | Notes |
-|---|---|---|---|---|---|---|
-| us10y | up | 4.4 | 4.7 | 5.0 | 5.3 | 4.4% = defended level recently broken |
-| us2y | up | 4.2 | 4.5 | 4.8 | 5.0 | |
-| us30y | up | 4.7 | 5.0 | 5.2 | 5.5 | 5.0% = Liz Truss spike anchor |
-| real_yield_10y | up | 2.0 | 2.3 | 2.5 | 2.8 | |
-| real_yield_30y | up | 2.5 | 2.8 | 3.0 | 3.3 | 3.0% not seen since 2008 |
-| jgb_10y | up | 1.5 | 1.8 | 2.0 | 2.5 | 1.5% = NIRP-era ceiling |
-| gilt_10y | up | 4.5 | 4.7 | 5.0 | 5.3 | 5.3% = Liz Truss anchor |
-| bund_10y | up | 2.5 | 2.8 | 3.0 | 3.5 | |
-| hy_oas | up | 3.5 (350bp) | 4.5 (450bp) | 6.0 (600bp) | 8.0 (800bp) | FRED returns OAS in % |
-| ig_oas | up | 1.0 (100bp) | 1.3 (130bp) | 1.6 (160bp) | 2.0 (200bp) | FRED returns OAS in % |
-| ccc_hy_oas | up | 10.0 (1000bp) | 12.0 (1200bp) | 15.0 (1500bp) | 20.0 (2000bp) | FRED returns OAS in % |
-| vix | up | 20 | 25 | 30 | 40 | |
-| skew | up | 145 | 150 | 155 | 160 | |
-| dxy | up | 122 | 125 | 128 | 132 | Broad Dollar (DTWEXBGS) |
-| usdjpy | up | 152 | 155 | 158 | 161 | 161+ = MOF intervention zone |
-| brent | up | 95 | 105 | 115 | 130 | |
-| wti | up | 85 | 95 | 105 | 120 | Symmetric Goldilocks; v1 ships 'up' path |
+**Recalibration history (Wave 10, 2026-05-17):** Initial Wave 9 levels were anchored on historical chart context (e.g., us10y L4-unlock at 4.4 = recently-defended). This caused chronic-regime indicators to trip L4 caps continuously and drove the headline to read "Stressed 8.7/12" during what is in fact a tight-but-stable regime. Recalibrated below to anchor each L4-unlock **just above the current regime ceiling** — the principle being "stays in regime → caps at L3; breaks regime ceiling → unlocks L4." Headline dropped to 6.9/12 "Watching" which matches the actual macro pulse.
+
+| Indicator | Direction | L4 unlock | L5 unlock | L6 unlock | Extreme | Confirm | Notes |
+|---|---|---|---|---|---|---|---|
+| us10y | up | 4.7 | 5.0 | 5.3 | 5.7 | 3d | 4.7 = above current 4.47 regime ceiling |
+| us2y | up | 4.5 | 4.8 | 5.0 | 5.3 | 3d | |
+| us30y | up | 5.2 | 5.5 | 5.8 | 6.0 | 3d | 5.0% = Liz Truss anchor (now L3-cap zone) |
+| real_yield_10y | up | 2.3 | 2.5 | 2.8 | 3.0 | 3d | |
+| real_yield_30y | up | 2.85 | 3.0 | 3.3 | 3.6 | 3d | 2.5-2.7% is current chronic regime |
+| jgb_10y | up | 2.8 | 3.0 | 3.3 | 3.6 | **1mo** | Monthly OECD; recently broke 2.5 (now in regime) |
+| gilt_10y | up | 5.0 | 5.3 | 5.5 | 5.8 | **1mo** | Monthly OECD; 5.3 = Liz Truss anchor |
+| bund_10y | up | 3.0 | 3.3 | 3.5 | 4.0 | **1mo** | Monthly OECD |
+| oat_10y | up | 3.5 | 4.0 | 4.5 | 5.0 | **1mo** | Monthly OECD; new in Wave 10 |
+| italy_btp_10y | up | 5.0 | 6.0 | 7.0 | 8.0 | **1mo** | Monthly OECD; 6%+ = unsustainable fiscal arithmetic |
+| hy_oas | up | 3.5 (350bp) | 4.5 (450bp) | 6.0 (600bp) | 8.0 (800bp) | 3d | FRED returns OAS in % |
+| ig_oas | up | 1.0 (100bp) | 1.3 (130bp) | 1.6 (160bp) | 2.0 (200bp) | 3d | |
+| ccc_hy_oas | up | 10.0 (1000bp) | 12.0 (1200bp) | 15.0 (1500bp) | 20.0 (2000bp) | 3d | |
+| vix | up | 20 | 25 | 30 | 40 | 3d | |
+| skew | up | 145 | 150 | 155 | 160 | 3d | |
+| dxy | up | 122 | 125 | 128 | 132 | 3d | Broad Dollar (DTWEXBGS) |
+| usdjpy | up | 158 | 161 | 163 | 165 | 3d | 161+ = MOF intervention zone |
+| brent | up | 115 | 125 | 135 | 150 | 3d | 115 = above current $106 |
+| wti | up | 105 | 115 | 125 | 140 | 3d | 105 = above current $101 |
 
 **Indicators without `levels[]` configured** continue using the existing absolute-threshold + velocity scoring path and cap at L5 (cannot reach L6). YoY-driven indicators (cpi_yoy, retail_sales_control, bank_deposits, etc.), all synthetics (fed_net_liquidity, gold_btc_ratio, btc_realized_vol_30d, etc.), banking/macro aggregates (mortgage_30y, treasury_net_issuance, auction_*, srf_usage, fails_to_deliver, etc.), and Bitcoin (btc, btc_dominance, btc_perp_funding) all fall in this category for Wave 9.
 
