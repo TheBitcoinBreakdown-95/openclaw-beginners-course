@@ -27,7 +27,7 @@
   - Proposed delta: Add a Module 0 or Module 1 lecture titled "What's a Harness?" that introduces Trivedy's Model+Harness framing before diving into specific components. Frame the rest of the course as "we are building your harness, layer by layer."
   - Rationale: A name for the thing students are building makes the abstractions click earlier. Currently the course teaches the parts (skills, hooks, agents.md) without naming the whole.
 
-**Last saved:** 2026-05-17 (Session 78 Wave 10 — recalibrated levels[] above current regime + cadence-aware confirmation for monthly OECD foreign sovereigns + FRED fetch timeout 12s→25s with retry. Headline 8.7/12 Stressed → 6.9/12 Watching, matching the "tight-but-not-breaking" regime intuition.)
+**Last saved:** 2026-05-17 (Session 78 Wave 11 — expanded "How this is computed" explainer with full methodology: 9 sub-sections covering the headline meaning, per-indicator scoring + level-break ceiling, pocket aggregation + freshness weighting + ≥2-corroboration, OWA top-3 math, contagion CISS-lite badge, edge cases, honest limits, tuning knobs, and comparison to Fed/ECB indices. ~12 paragraphs + cheat-sheet table. Plus Wave 10's level recalibration: headline dropped 8.7/12 → 6.9/12 "Watching" matching the tight-but-not-breaking regime.)
 **Status:** Session 78 ran all 6 implementation waves of the 121-missing-indicator backlog autonomously, plus Wave 7 replacing the prior even-weighted average headline with a top-3 weighted OWA over 16 pockets + EWMA-correlation contagion badge. **Dashboard 49 → 114 tiles** (78 auto-scored + 36 Tier-3 reference cards). Spec coverage roughly doubled. Waves shipped: 1 (6 FRED drop-ins) + 2 (15 indicators via CBOE CDN + Treasury Fiscal Data fetchers + FRED OECD foreign-sovereigns + Stooq pivots after Stooq apikey wall) + 3 (9 indicators via DefiLlama, NY Fed Markets, OKX perp funding, mempool, CoinGecko global, plus 2 synthetic computes for BTC realized vol + BTC-SPX correlation) + 4 (4 indicators via SEC EDGAR XBRL hyperscaler capex + Treasury debt_to_penny + Indeed Hiring Lab CSV + HandyBulk BDI; 4 deferred to proxy-egress build) + Waves 5+6 (31 Tier-3 reference cards: 17 paid-only + 10 manual quarterly + 4 Wave 4 deferrals). Top new live readings: hyperscaler_capex L4 ($129.8B/qtr, +80% YoY = the AI-capex regime signal), stablecoin_supply L2 (+32% YoY), btc_perp_funding L1 (3.2%/yr), btc_dominance L1 (58.3%), umich_sentiment L5 (53.3 — recession-level consumer mood), srf_usage L1 (zero — Fed plumbing calm), btc_spx_correlation_30d L2 (+0.27 — BTC decoupling from SPX). Open follow-ups: proxy-egress build (unlocks spot_etf_flows signal 10/10 + 3 others), headless-Chrome scraper, EIA API-key registration. [jinn/gmail] Session 77 Gmail integration unchanged and stable.
 
 ## Session 78 — Missing-Indicators Backlog Implementation [signals/macro] (LIVE — all 6 waves shipped)
@@ -284,6 +284,42 @@ contagion: calibrating · 1/30 days
 **Open / deferred:**
 - Optional 5-minute interval polling on `loadMacroSummary()` deferred — current trigger (initial load + every today-tab switch) is sufficient. Cron only refreshes the underlying data at 5pm ET anyway.
 - Today-tab stress-tile width on very narrow phones: chips wrap fine but a 4-word pocket name (`Funding Plumbing`) + L4.0 chip is borderline crowded under the bar. Acceptable in testing; revisit if user reports clipping.
+
+### Wave 11 — Expanded Methodology Explainer (DONE 2026-05-17)
+
+User asked for the dashboard's "How this is computed" section to carry the full methodology instead of just a 2-paragraph overview. Expanded the `.mc-stress-explainer` block (rendered in `macro-tab.js` inside `renderMacro`) from 2 paragraphs + pocket table to 9 sub-sections + cheat-sheet table:
+
+1. **What the headline number means** — /12 scale, top-3 weighted OWA over 16 pockets, why worst-pocket-dominates beats even-weighted average. Plus the verbal anchor cheat-sheet (Calm 1-3 / Watching 4-6 / Elevated 7-7.99 / Stressed 8-8.99 / Critical 9-9.99 / Breaking 10-12).
+2. **Step 1 — Indicator scoring (1-6)** with computeLevel logic + Wave 9 level-break ceiling explained (3-day-close confirmation, Wave 10 cadence-aware 1-month for monthly OECD).
+3. **Step 2 — Pocket aggregation** with the stress-weighted-mean formula `Σ(L × weight × freshness) / Σ(weight × freshness)`, freshness penalty (1/days), ≥2-indicator corroboration rule.
+4. **Step 3 — OWA headline** with `0.5·s₁ + 0.3·s₂ + 0.2·s₃` formula + Yager 1988 reference + /6 → /12 score-mapping formula.
+5. **Step 4 — Contagion badge** with full CISS-lite math (EWMA λ=0.93, pairwise correlation, average), band definitions (<0.3 / 0.3-0.5 / ≥0.5), 30-day calibration period.
+6. **Edge cases** — regime-tagged indicators, excluded indicators (stablecoin_supply, sp500), stale-data freshness penalty, single-indicator false-positive protection, calibrating contagion bootstrap.
+7. **Honest limits** — what the model doesn't capture: causal lead-lag, idiosyncratic stress below corroboration, tail-event correlations outside EWMA window.
+8. **Tuning knobs** — pocket membership, OWA weights, top-k, EWMA λ, contagion thresholds, per-indicator levels[]/confirmation. Cross-link to INDICATORS.md + STRESS-AGGREGATION-RESEARCH.md + HEADLINE-AGGREGATOR-EXPLAINER.md.
+9. **Why this differs from canonical Fed / ECB indices** — every major Fed FSI (STLFSI, KCFSI, NFCI, OFR) is PCA / dynamic-factor model and inherits the average-away pathology. CISS is the only institutional index that addresses contagion. Level-break ceiling is custom to this dashboard.
+
+Plus the pre-existing live pocket-breakdown table at the bottom.
+
+**CSS additions:**
+- `.mc-stress-h4` — Didot italic serif, /signals-palette, italic style matching dashboard aesthetic (not bold heavy headings, more "newspaper subhead" feel).
+- `.mc-stress-explainer` `max-height: 1400px → 6000px` to accommodate the longer content (transition still smooth).
+- First-of-type `.mc-stress-h4` gets reduced top margin so the section header doesn't double-space at the top of the expanded block.
+
+**Files modified:**
+- `.claude/dashboard-deploy/macro-tab.js` (gitignored, deployed) — expanded explainer HTML in `renderMacro()`
+- `.claude/dashboard-deploy/macro-tab.css` (gitignored, deployed) — `.mc-stress-h4` styles + max-height bump
+- `WORKLOG.md` (this entry)
+
+Backups on Jinn: `macro-tab.js.2026-05-17-w11.bak`, `macro-tab.css.2026-05-17-w11.bak`.
+
+**Verification:**
+- `node --check` clean on macro-tab.js
+- Deploy succeeded: served at `/macro-tab.js` HTTP 200, size 25911 (up from ~17k pre-Wave-11)
+- 10 occurrences of `mc-stress-h4` in served JS (9 sub-headers + class definition)
+- No regression on tile rendering, today-tab integration, or pocket labels (Wave 8-10 functionality intact)
+
+---
 
 ### Wave 10 — Level Recalibration + Cadence-Aware Confirmation (DONE 2026-05-17)
 
